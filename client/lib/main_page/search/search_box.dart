@@ -1,11 +1,6 @@
+import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/utils/shadow.dart';
 import 'package:flutter/material.dart';
-
-const double borderRadius = 30;
-const double paddingSize = 16;
-const double maxWidth = 700;
-const double minHeight = 50;
-const double elevation = 4;
-const double iconSize = 20;
 
 class FakeSearchBox extends StatelessWidget {
   const FakeSearchBox({
@@ -107,30 +102,6 @@ class SearchBoxTheme extends StatelessWidget {
         minHeight: minHeight,
       ),
       child: Shadow(color: color, child: child),
-    );
-  }
-}
-
-class Shadow extends StatelessWidget {
-  const Shadow({
-    super.key,
-    required this.color,
-    required this.child,
-  });
-
-  final ColorScheme color;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      shadowColor: color.secondary,
-      elevation: elevation,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      color: color.secondary,
-      child: child,
     );
   }
 }

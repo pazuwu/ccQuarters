@@ -1,9 +1,9 @@
 import 'package:ccquarters/main_page/gate.dart';
-import 'package:ccquarters/main_page/search/search_box.dart';
 import 'package:flutter/material.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'add_announcement/add_announcement_gate.dart';
+import 'utils/consts.dart';
 import 'profile/profile_gate.dart';
 
 class NavigationGate extends StatefulWidget {
