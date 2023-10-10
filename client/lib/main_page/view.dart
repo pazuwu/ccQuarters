@@ -48,26 +48,39 @@ class AnnouncementsContainer extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              // color: Theme.of(context).colorScheme.surface,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                    child: Text(
-                      title,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
+                ListOfAnnouncementsLabel(title: title),
                 const AnnouncementList(),
                 SeeMoreButton(),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ListOfAnnouncementsLabel extends StatelessWidget {
+  const ListOfAnnouncementsLabel({
+    super.key,
+    required this.title,
+  });
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+        child: Text(
+          title,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -80,16 +93,22 @@ class AnnouncementList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = Random();
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Expanded(
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        height: 200,
+        margin: const EdgeInsets.all(8.0),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => AnnouncementItem(
-              prize: r.nextDouble() * 1000000,
-              image: Image.network("https://picsum.photos/256")),
+          itemBuilder: (context, index) => LayoutBuilder(
+            builder: (context, constraints) => AnnouncementItem(
+                prize: r.nextDouble() * 1000000,
+                image: Image.network(
+                  index % 2 == 0
+                      ? "https://picsum.photos/512"
+                      : "https://picsum.photos/216/300",
+                  height: constraints.maxHeight * 0.85,
+                  fit: BoxFit.fitHeight,
+                )),
+          ),
           itemCount: 30,
         ),
       ),
@@ -105,18 +124,23 @@ class AnnouncementItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      width: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Column(
-        children: [
-          image,
-          Text("${prize.toStringAsFixed(2)} zł"),
-        ],
+    return FittedBox(
+      child: Card(
+        shadowColor: Theme.of(context).colorScheme.secondary,
+        elevation: elevation,
+        margin: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: Column(
+            children: [
+              image,
+              Text("${prize.toStringAsFixed(2)} zł", style: labelStyle),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -147,3 +171,6 @@ class SeeMoreButton extends StatelessWidget {
 
 const TextStyle textButtonStyle =
     TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+
+const TextStyle labelStyle =
+    TextStyle(fontSize: 18, fontWeight: FontWeight.w400);
