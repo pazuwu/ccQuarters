@@ -1,7 +1,8 @@
 import 'package:ccquarters/navigation_gate.dart';
+import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -37,6 +38,49 @@ class MyApp extends StatelessWidget {
           errorColor: Colors.red,
           brightness: Brightness.light,
         ),
+        inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: Colors.blueGrey[50],
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(formBorderRadius),
+              borderSide: BorderSide(
+                color: Colors.blueGrey[200]!,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(formBorderRadius),
+              borderSide: const BorderSide(
+                color: Colors.blueGrey,
+                width: 2.0,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(formBorderRadius),
+              borderSide: BorderSide(
+                color: Colors.blueGrey.shade300,
+                width: 2.0,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(formBorderRadius),
+              borderSide: const BorderSide(
+                color: Colors.red,
+                width: 2.0,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(formBorderRadius),
+              borderSide: BorderSide(
+                color: Colors.red[200]!,
+                width: 2.0,
+              ),
+            ),
+            errorStyle: const TextStyle(
+              color: Colors.red,
+            ),
+            labelStyle: const TextStyle(
+              color: Colors.black,
+            )),
         useMaterial3: true,
       ),
       home: const NavigationGate(),

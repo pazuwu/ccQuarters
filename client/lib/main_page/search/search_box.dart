@@ -29,6 +29,12 @@ class FakeSearchBox extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: "Szukaj...",
                   border: InputBorder.none,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(borderRadius),
+                    ),
+                  ),
                   prefixIcon: Padding(
                     padding: EdgeInsets.all(paddingSize),
                     child: Icon(Icons.search, size: iconSize),
@@ -48,10 +54,12 @@ class SearchBox extends StatelessWidget {
     super.key,
     required this.color,
     required this.controller,
+    required this.onSubmitted,
   });
 
   final ColorScheme color;
   final TextEditingController controller;
+  final Function(String)? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +83,21 @@ class SearchBox extends StatelessWidget {
               controller.clear();
             },
           ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(
+              Radius.circular(borderRadius),
+            ),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(
+              Radius.circular(borderRadius),
+            ),
+          ),
         ),
         onChanged: (value) => {},
-        onSubmitted: (value) => {},
+        onSubmitted: onSubmitted,
         textInputAction: TextInputAction.search,
       ),
     );

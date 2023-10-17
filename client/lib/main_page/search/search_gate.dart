@@ -27,6 +27,7 @@ class _SearchGateState extends State<SearchGate> {
           title: SearchBox(
             color: color,
             controller: controller,
+            onSubmitted: null,
           ),
         ),
         body: Container());
