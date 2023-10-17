@@ -55,11 +55,7 @@ class _LocationFormViewState extends State<LocationFormView> {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveLocation(widget.location);
-            if (!kIsWeb) {
-              context.read<AddHouseFormCubit>().goToMap();
-            } else {
-              context.read<AddHouseFormCubit>().goToPhotosForm();
-            }
+            context.read<AddHouseFormCubit>().goToMap();
           }
         });
   }

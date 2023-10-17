@@ -32,11 +32,7 @@ class _PhotoViewState extends State<PhotoView> {
           inBetweenWidget: _buildPhotosGrid(context),
           goBackOnPressed: () {
             context.read<AddHouseFormCubit>().savePhotos(widget.photos);
-            if (kIsWeb) {
-              context.read<AddHouseFormCubit>().goToLocationForm();
-            } else {
-              context.read<AddHouseFormCubit>().goToMap();
-            }
+            context.read<AddHouseFormCubit>().goToMap();
           },
           nextOnPressed: () {
             context.read<AddHouseFormCubit>().savePhotos(widget.photos);
