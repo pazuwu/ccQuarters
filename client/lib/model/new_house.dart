@@ -32,8 +32,8 @@ class NewLocation {
   String zipCode;
   String? streetNumber;
   String? flatNumber;
-  int? geoX;
-  int? geoY;
+  double? geoX;
+  double? geoY;
 }
 
 class NewHouseDetails {

@@ -85,6 +85,11 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     house.location = location;
   }
 
+  void saveCoordinates({double? longitute, double? latitude}) {
+    house.location.geoX = longitute ?? house.location.geoX;
+    house.location.geoY = latitude ?? house.location.geoX;
+  }
+
   void saveOfferType(OfferType offerType) {
     house.offerType = offerType;
   }

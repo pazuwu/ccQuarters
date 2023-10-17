@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.blueGrey,
-          primaryColorDark: Colors.blue[700],
           accentColor: Colors.blueGrey[50],
           cardColor: Colors.white,
           backgroundColor: Colors.white,
@@ -83,7 +82,7 @@ class MyApp extends StatelessWidget {
             )),
         useMaterial3: true,
       ),
-      home: const NavigationGate(),
+      home: const SafeArea(child: NavigationGate()),
     );
   }
 }
