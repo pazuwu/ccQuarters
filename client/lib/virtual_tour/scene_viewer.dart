@@ -92,7 +92,7 @@ class _SceneViewerState extends State<SceneViewer> {
             icon: icon,
           ),
         const SizedBox(
-          height: 4.0,
+          height: 3.0,
         ),
         text != null ? _buildLabel(context, text: text) : Container(),
       ],
@@ -162,7 +162,9 @@ class _SceneViewerState extends State<SceneViewer> {
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
-        child: const SceneLinkForm(),
+        child: const SceneLinkForm(
+          formType: SceneLinkFormType.edit,
+        ),
       ),
     );
   }
@@ -177,7 +179,9 @@ class _SceneViewerState extends State<SceneViewer> {
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
-        child: const SceneLinkForm(),
+        child: const SceneLinkForm(
+          formType: SceneLinkFormType.create,
+        ),
       ),
     );
 

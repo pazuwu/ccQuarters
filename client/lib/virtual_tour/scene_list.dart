@@ -1,30 +1,21 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ccquarters/virtual_tour/scene.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:ccquarters/virtual_tour/scene_viewer.dart';
 
-class Room {
-  Room({
-    required this.name,
-    required this.url,
-  });
-
-  final String name;
-  final String url;
-}
-
-class RoomsList extends StatelessWidget {
-  const RoomsList({
+class SceneList extends StatelessWidget {
+  const SceneList({
     Key? key,
     required this.rooms,
   }) : super(key: key);
 
-  final List<Room> rooms;
+  final List<Scene> rooms;
 
-  void _showRoom(BuildContext context, Room room) {
+  void _showRoom(BuildContext context, Scene room) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return SceneViewer(
         editable: true,
@@ -58,7 +49,7 @@ class RoomsList extends StatelessWidget {
     );
   }
 
-  Widget _buildRoomTile(BuildContext context, Room room) {
+  Widget _buildRoomTile(BuildContext context, Scene room) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(24.0),
       child: Card(
@@ -106,10 +97,8 @@ class RoomsList extends StatelessWidget {
         const SizedBox(
           width: 4.0,
         ),
-        Expanded(
-            child: 2 * index + 1 < rooms.length
-                ? _buildRoomTile(context, rooms[2 * index + 1])
-                : Container())
+        if (2 * index + 1 < rooms.length)
+          _buildRoomTile(context, rooms[2 * index + 1]),
       ],
     );
   }
@@ -126,7 +115,7 @@ class RoomsList extends StatelessWidget {
               );
             },
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            itemCount: rooms.length ~/ 2 + 1,
+            itemCount: (rooms.length / 2).ceil() + 1,
             itemBuilder: (context, index) {
               if (index == 0) return _buildAddNew(context);
 
