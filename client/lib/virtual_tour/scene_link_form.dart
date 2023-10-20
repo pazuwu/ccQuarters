@@ -1,3 +1,5 @@
+import 'package:ccquarters/utils/icon_360.dart';
+import 'package:ccquarters/utils/radio_list.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ccquarters/utils/input_decorator_form.dart';
@@ -21,8 +23,6 @@ class SceneLinkForm extends StatefulWidget {
 }
 
 class _SceneLinkFormState extends State<SceneLinkForm> {
-  final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final List<Scene> _scenes = [
@@ -43,136 +43,6 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
     Scene(name: "Sypialnia", url: ""),
     Scene(name: "Łazienka", url: "")
   ];
-
-  late List<Scene> _filteredScenes;
-
-  Scene? chosenScene;
-  bool _isSearching = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _filteredScenes = _scenes;
-
-    _searchController.addListener(() {
-      var searchedInLower = _searchController.text.toLowerCase();
-
-      setState(() {
-        _filteredScenes = _scenes
-            .where((element) =>
-                element.name.toLowerCase().contains(searchedInLower))
-            .toList();
-      });
-    });
-
-    _searchFocusNode.addListener(() {
-      setState(() {
-        _isSearching = _searchFocusNode.hasFocus;
-      });
-    });
-  }
-
-  Widget _buildSearchField(
-      BuildContext context,
-      TextEditingController controller,
-      FocusNode focusNode,
-      void Function() onFieldSubmitted) {
-    return TextFormField(
-      onFieldSubmitted: (text) => onFieldSubmitted(),
-      controller: controller,
-      focusNode: focusNode,
-      textAlignVertical: TextAlignVertical.center,
-      style: const TextStyle(color: Colors.black),
-      decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          suffixIcon: _isSearching
-              ? IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                  },
-                  icon: const Icon(Icons.close),
-                )
-              : const Icon(Icons.search),
-          fillColor: Theme.of(context).scaffoldBackgroundColor,
-          filled: true,
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          hintText: "Szukaj sceny..."),
-    );
-  }
-
-  _buildSceneList(BuildContext context) {
-    return Flexible(
-      child: FormField<Scene>(
-        onSaved: (newValue) {},
-        validator: (value) => value == null ? "Wybierz scenę docelową" : null,
-        builder: (formFieldState) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Scrollbar(
-                thumbVisibility: true,
-                radius: const Radius.circular(8.0),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _filteredScenes.length,
-                        itemBuilder: (context, index) {
-                          return RadioListTile(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            selected: chosenScene == _filteredScenes[index],
-                            selectedTileColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.65),
-                            fillColor: MaterialStateColor.resolveWith((states) {
-                              if (formFieldState.hasError) {
-                                return Theme.of(context).colorScheme.error;
-                              }
-
-                              return Theme.of(context).colorScheme.primary;
-                            }),
-                            value: _filteredScenes[index],
-                            groupValue: chosenScene,
-                            onChanged: (newValue) {
-                              setState(() {
-                                _searchFocusNode.unfocus();
-                                chosenScene = newValue;
-                              });
-                            },
-                            title: Text(_filteredScenes[index].name),
-                            secondary: TextButton.icon(
-                                label: const Text("360°"),
-                                onPressed: () {},
-                                icon: const Icon(Icons.visibility)),
-                          );
-                        }),
-                  ),
-                ),
-              ),
-            ),
-            if (formFieldState.hasError)
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Text(
-                  formFieldState.errorText ?? "",
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              )
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildTitle(BuildContext context) {
     return Column(
@@ -206,16 +76,22 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
 
   Widget _buildSceneSelectionField(BuildContext context) {
     return Flexible(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildSearchField(
-              context, _searchController, _searchFocusNode, () {}),
-          const SizedBox(
-            height: 16.0,
-          ),
-          _buildSceneList(context),
-        ],
+      child: RadioListForm(
+        values: _scenes,
+        defaultValue: _scenes.first,
+        filter: (scenes, text) {
+          var textInLowerCase = text.toLowerCase();
+
+          return scenes
+              .where(
+                  (scene) => scene.name.toLowerCase().contains(textInLowerCase))
+              .toList();
+        },
+        searchBoxHintText: "Szukaj sceny...",
+        validator: (scene) => scene == null ? "Wybierz scenę docelową" : null,
+        titleBuilder: (scene) => Text(scene.name),
+        secondaryBuilder: (scene) => const Icon360(),
+        onSaved: (scene) {},
       ),
     );
   }
