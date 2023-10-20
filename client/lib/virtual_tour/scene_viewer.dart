@@ -1,3 +1,4 @@
+import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:panorama/panorama.dart';
@@ -33,22 +34,6 @@ class SceneViewer extends StatefulWidget {
 class _SceneViewerState extends State<SceneViewer> {
   SceneEditingMode editingMode = SceneEditingMode.move;
   final List<SceneLink> _links = [];
-
-  Widget _buildLabel(BuildContext context,
-      {required String text, double? fontSize}) {
-    return Container(
-      padding: const EdgeInsets.all(4.0),
-      decoration: const BoxDecoration(
-          color: Colors.black38,
-          borderRadius: BorderRadius.all(Radius.circular(4))),
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(color: Colors.white, fontSize: fontSize),
-        ),
-      ),
-    );
-  }
 
   Widget _buildAlwaysVisibleButton(
       {VoidCallback? onPressed, Color? color, required IconData icon}) {
@@ -94,7 +79,7 @@ class _SceneViewerState extends State<SceneViewer> {
         const SizedBox(
           height: 3.0,
         ),
-        text != null ? _buildLabel(context, text: text) : Container(),
+        text != null ? AlwaysVisibleTextLabel(text: text) : Container(),
       ],
     );
   }
@@ -203,7 +188,7 @@ class _SceneViewerState extends State<SceneViewer> {
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
-          child: _buildLabel(context,
+          child: const AlwaysVisibleTextLabel(
               text: "Naciśnij miejsce, w którym chcesz dodać łącznik",
               fontSize: 16),
         ),
