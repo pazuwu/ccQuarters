@@ -42,9 +42,9 @@ dependencies:
   pointer_interceptor: ^0.9.3+6
   cached_network_image: ^3.3.0
   font_awesome_flutter: ^10.6.0
-  panorama: ^0.4.1
   smooth_page_indicator: ^1.1.0
   accordion: ^2.6.0
+  panorama_viewer: ^1.0.1
 
 dev_dependencies:
   flutter_test:
