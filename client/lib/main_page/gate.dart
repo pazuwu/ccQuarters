@@ -4,6 +4,8 @@ import 'package:ccquarters/main_page/search/search_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../house_details/gate.dart';
+
 class MainPageGate extends StatefulWidget {
   const MainPageGate({super.key});
 
@@ -22,6 +24,10 @@ class _MainPageGateState extends State<MainPageGate> {
             return const MainPage();
           } else if (state is SearchState) {
             return const SearchGate();
+          } else if (state is DetailsState) {
+            return HouseDetailsGate(
+              house: state.house,
+            );
           }
           return Container();
         },

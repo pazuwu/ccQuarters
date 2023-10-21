@@ -56,37 +56,29 @@ class _NavigationGateState extends State<NavigationGate> {
               onTap: _onItemTapped,
             )
           : null,
-      body: typeOfDevice == DeviceType.mobile
-          ? Center(
-              child: _selectedIndex == 3
-                  ? const ProfileGate(
-                      login: "",
-                      isFromSearch: false,
-                    )
-                  : _pages.elementAt(_selectedIndex),
-            )
-          : Row(
-              children: [
-                SideNavigationBar(
-                  selectedIndex: _selectedIndex,
-                  items: _items,
-                  theme: SideNavigationBarTheme(
-                    backgroundColor: color.background,
-                    togglerTheme: SideNavigationBarTogglerTheme.standard(),
-                    itemTheme: SideNavigationBarItemTheme(
-                      unselectedItemColor: Colors.black,
-                      selectedItemColor: color.primary,
-                      iconSize: 32.5,
-                    ),
-                    dividerTheme: SideNavigationBarDividerTheme.standard(),
-                  ),
-                  onTap: _onItemTapped,
+      body: Row(
+        children: [
+          if (typeOfDevice == DeviceType.web)
+            SideNavigationBar(
+              selectedIndex: _selectedIndex,
+              items: _items,
+              theme: SideNavigationBarTheme(
+                backgroundColor: color.background,
+                togglerTheme: SideNavigationBarTogglerTheme.standard(),
+                itemTheme: SideNavigationBarItemTheme(
+                  unselectedItemColor: Colors.black,
+                  selectedItemColor: color.primary,
+                  iconSize: 32.5,
                 ),
-                Expanded(
-                  child: _pages.elementAt(_selectedIndex),
-                )
-              ],
+                dividerTheme: SideNavigationBarDividerTheme.standard(),
+              ),
+              onTap: _onItemTapped,
             ),
+          Expanded(
+            child: _pages.elementAt(_selectedIndex),
+          )
+        ],
+      ),
     );
   }
 

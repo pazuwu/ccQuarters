@@ -5,6 +5,7 @@ import 'package:ccquarters/utils/input_decorator_form.dart';
 import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ccquarters/model/building_type.dart';
 
 class DetailsFormView extends StatelessWidget {
   const DetailsFormView({

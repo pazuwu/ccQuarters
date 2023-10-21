@@ -7,6 +7,7 @@ import 'package:ccquarters/utils/views_with_vertical_divider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ccquarters/model/building_type.dart';
 
 class LocationFormView extends StatefulWidget {
   const LocationFormView({

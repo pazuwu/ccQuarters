@@ -1,7 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:ccquarters/model/new_house.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/offer_type.dart';
 
 class HouseFormState {}
 
@@ -39,7 +42,10 @@ class PhotosFormState extends HouseFormState {
   List<Uint8List> photos;
 }
 
-class SummaryState extends HouseFormState {}
+class SummaryState extends HouseFormState {
+  SummaryState(this.house);
+  NewHouse house;
+}
 
 class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit() : super(ChooseTypeFormState(NewHouseDetails()));
@@ -74,7 +80,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void goToSummary() {
-    emit(SummaryState());
+    emit(SummaryState(house));
   }
 
   void saveDetails(NewHouseDetails details) {
