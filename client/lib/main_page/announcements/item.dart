@@ -1,5 +1,8 @@
+import 'package:ccquarters/main_page/cubit.dart';
+import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../utils/consts.dart';
 
@@ -8,12 +11,12 @@ class AnnouncementItem extends StatelessWidget {
       {super.key,
       required this.prize,
       required this.image,
-      required this.url,
-      required this.height});
+      required this.height,
+      required this.house});
 
   final double prize;
   final Image image;
-  final String url;
+  final House house;
   final double height;
 
   @override
@@ -35,7 +38,9 @@ class AnnouncementItem extends StatelessWidget {
                 Text("${prize.toStringAsFixed(2)} zł", style: labelStyle),
               ],
             ),
-            onTap: () {},
+            onTap: () {
+              context.read<MainPageCubit>().goToDetails(house);
+            },
           ),
         ),
       ),
