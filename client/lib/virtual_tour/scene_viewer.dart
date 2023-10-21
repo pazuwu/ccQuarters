@@ -1,9 +1,9 @@
 import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:panorama/panorama.dart';
 
 import 'package:ccquarters/virtual_tour/scene_link_form.dart';
+import 'package:panorama_viewer/panorama_viewer.dart';
 
 class SceneLink {
   SceneLink({
@@ -210,7 +210,7 @@ class _SceneViewerState extends State<SceneViewer> {
         title: _buildAddHint(context),
       ),
       floatingActionButton: _buildToolbar(context),
-      body: Panorama(
+      body: PanoramaViewer(
         onTap: _onTap,
         hotspots: _buildHotSpots(context),
         minZoom: 1,
