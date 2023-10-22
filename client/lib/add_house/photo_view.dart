@@ -28,16 +28,22 @@ class _PhotoViewState extends State<PhotoView> {
         });
       },
       child: ViewWithHeader(
-          title: "Dodaj zdjęcia",
-          inBetweenWidget: _buildPhotosGrid(context),
-          goBackOnPressed: () {
-            context.read<AddHouseFormCubit>().savePhotos(widget.photos);
+        title: "Dodaj zdjęcia",
+        inBetweenWidget: _buildPhotosGrid(context),
+        goBackOnPressed: () {
+          context.read<AddHouseFormCubit>().savePhotos(widget.photos);
+          if (kIsWeb) {
+            context.read<AddHouseFormCubit>().goToLocationForm();
+          } else {
             context.read<AddHouseFormCubit>().goToMap();
-          },
-          nextOnPressed: () {
-            context.read<AddHouseFormCubit>().savePhotos(widget.photos);
-            context.read<AddHouseFormCubit>().goToSummary();
-          }),
+          }
+        },
+        nextOnPressed: () {
+          context.read<AddHouseFormCubit>().savePhotos(widget.photos);
+          context.read<AddHouseFormCubit>().goToSummary();
+        },
+        hasScrollBody: true,
+      ),
     );
   }
 

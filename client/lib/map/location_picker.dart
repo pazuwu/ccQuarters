@@ -77,6 +77,8 @@ class _LocationPickerState extends State<LocationPicker> {
 
       _autocompleteController.location =
           _mapController.listenerMapSingleTapping.value!;
+
+      widget.onLocationChosen?.call(location);
     });
 
     _autocompleteController.addListener(() async {
@@ -93,6 +95,7 @@ class _LocationPickerState extends State<LocationPicker> {
         await _mapController.goToLocation(searchInfo.point!);
 
         await _mapController.addMarker(searchInfo.point!);
+        widget.onLocationChosen?.call(searchInfo);
       }
     });
   }
