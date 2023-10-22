@@ -1,11 +1,12 @@
-import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/map/location_picker.dart';
-import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+
+import 'package:ccquarters/add_house/cubit.dart';
+import 'package:ccquarters/map/location_picker.dart';
+import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
@@ -15,7 +16,9 @@ class MapView extends StatelessWidget {
     return ViewWithHeader(
         scrollable: false,
         title: "Wybierz lokalizację",
-        inBetweenWidget: const ChooseLocationOnMap(),
+        inBetweenWidget: ChooseLocationOnMap(
+          addHouseFormCubit: context.read(),
+        ),
         goBackOnPressed: () {
           context.read<AddHouseFormCubit>().goToLocationForm();
         },
@@ -25,8 +28,34 @@ class MapView extends StatelessWidget {
   }
 }
 
-class ChooseLocationOnMap extends StatelessWidget {
-  const ChooseLocationOnMap({super.key});
+class ChooseLocationOnMap extends StatefulWidget {
+  const ChooseLocationOnMap({
+    Key? key,
+    required this.addHouseFormCubit,
+  }) : super(key: key);
+
+  final AddHouseFormCubit addHouseFormCubit;
+
+  @override
+  State<ChooseLocationOnMap> createState() => _ChooseLocationOnMapState();
+}
+
+class _ChooseLocationOnMapState extends State<ChooseLocationOnMap> {
+  final LocationPickerController _locationPickerController =
+      LocationPickerController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _locationPickerController.addListener(() {
+      var location = _locationPickerController.location;
+
+      widget.addHouseFormCubit.saveCoordinates(
+          longitute: location?.point?.longitude,
+          latitude: location?.point?.latitude);
+    });
+  }
 
   SearchInfo _mapAddress(NewLocation location) {
     return SearchInfo(
@@ -40,23 +69,20 @@ class ChooseLocationOnMap extends StatelessWidget {
                 city: location.city,
                 postcode: location.zipCode,
                 street: location.streetName,
-                name: "${location.streetNumber}/${location.flatNumber}")
+                name: "${location.streetNumber}/${location.flatNumber}",
+              )
             : null);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(paddingSize),
+    return Padding(
+      padding: const EdgeInsets.all(paddingSize),
+      child: Expanded(
         child: LocationPicker(
+          controller: _locationPickerController,
           initPosition:
               _mapAddress(context.read<AddHouseFormCubit>().house.location),
-          onLocationChosen: (location) {
-            context.read<AddHouseFormCubit>().saveCoordinates(
-                longitute: location?.point?.longitude,
-                latitude: location?.point?.latitude);
-          },
         ),
       ),
     );

@@ -37,7 +37,8 @@ class _LocationFormViewState extends State<LocationFormView> {
                     location: widget.location,
                     buildingType: widget.buildingType,
                     formKey: _formKey),
-                secondView: const ChooseLocationOnMap(),
+                secondView:
+                    ChooseLocationOnMap(addHouseFormCubit: context.read()),
               )
             : LocationForm(
                 location: widget.location,

@@ -1,46 +1,101 @@
-import 'package:ccquarters/map/geo_autocomplete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+
+import 'package:ccquarters/map/geo_autocomplete.dart';
+
+class LocationPickerController implements Listenable {
+  final List<VoidCallback> _listeners = [];
+
+  late MapController _mapController;
+  late GeoAutocompleteController _autocompleteController;
+
+  SearchInfo? _location;
+  SearchInfo? get location => _location;
+
+  @override
+  void addListener(VoidCallback listener) {
+    _listeners.add(listener);
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    _listeners.remove(listener);
+  }
+
+  Future setLocation(SearchInfo location) async {
+    if (location.point != null) {
+      return _setLocationInner(location);
+    }
+
+    if (location.address == null) return;
+
+    var suggestions = await addressSuggestion(location.address!.toString(),
+        limitInformation: 1);
+
+    if (suggestions.isNotEmpty && suggestions.first.point != null) {
+      location =
+          SearchInfo(address: location.address, point: suggestions.first.point);
+      _setLocationInner(location);
+    }
+  }
+
+  Future _setLocationInner(SearchInfo location,
+      {bool updateAutocomplete = true, bool goToLocation = true}) async {
+    if (location.point != null) {
+      _location = location;
+      await _mapController.addMarker(location.point!);
+
+      if (goToLocation) {
+        await _mapController.setZoom(zoomLevel: 18.0);
+        await _mapController.goToLocation(location.point!);
+      }
+
+      if (updateAutocomplete) {
+        _autocompleteController.location = location.point;
+      }
+    }
+  }
+
+  void _publishNewLocation(SearchInfo? newValue) {
+    _location = newValue;
+    for (var listener in _listeners) {
+      listener();
+    }
+  }
+
+  void _initializeControlers(
+      {required MapController mapController,
+      required GeoAutocompleteController autocompleteController}) {
+    _mapController = mapController;
+    _autocompleteController = autocompleteController;
+  }
+}
 
 class LocationPicker extends StatefulWidget {
   const LocationPicker({
     Key? key,
     this.localizeUser,
     this.initPosition,
-    this.onLocationChosen,
+    this.controller,
   }) : super(key: key);
 
   final bool? localizeUser;
   final SearchInfo? initPosition;
-  final void Function(SearchInfo?)? onLocationChosen;
+  final LocationPickerController? controller;
 
   @override
   State<LocationPicker> createState() => _LocationPickerState();
 }
 
 class _LocationPickerState extends State<LocationPicker> {
+  late LocationPickerController _controller;
   late MapController _mapController;
   final GeoAutocompleteController _autocompleteController =
       GeoAutocompleteController();
 
-  SearchInfo? location;
-
   Future _goToInitLocation() async {
-    if (widget.initPosition?.point != null ||
-        widget.initPosition?.address == null) return;
-
-    var suggestions = await addressSuggestion(
-        widget.initPosition!.address!.toString(),
-        limitInformation: 1);
-
-    if (suggestions.isNotEmpty && suggestions.first.point != null) {
-      location = SearchInfo(
-          address: widget.initPosition!.address,
-          point: suggestions.first.point);
-      await _mapController.addMarker(location!.point!);
-      await _mapController.setZoom(zoomLevel: 18.0);
-      await _mapController.goToLocation(location!.point!);
-      _autocompleteController.location = suggestions.first.point!;
+    if (widget.initPosition != null) {
+      await _controller.setLocation(widget.initPosition!);
     }
   }
 
@@ -58,6 +113,11 @@ class _LocationPickerState extends State<LocationPicker> {
             initPosition: widget.initPosition?.point ??
                 GeoPoint(longitude: 19.0, latitude: 52.0));
 
+    _controller = widget.controller ?? LocationPickerController();
+    _controller._initializeControlers(
+        autocompleteController: _autocompleteController,
+        mapController: _mapController);
+
     _mapController.listenerMapSingleTapping.addListener(() async {
       if (_mapController.listenerMapSingleTapping.value == null) return;
 
@@ -66,36 +126,27 @@ class _LocationPickerState extends State<LocationPicker> {
         return;
       }
 
-      if (location?.point != null) {
-        await _mapController.removeMarker(location!.point!);
+      if (_controller.location?.point != null) {
+        await _mapController.removeMarker(_controller.location!.point!);
       }
 
-      location =
+      var newlocation =
           SearchInfo(point: _mapController.listenerMapSingleTapping.value);
 
-      await _mapController.addMarker(location!.point!);
-
-      _autocompleteController.location =
-          _mapController.listenerMapSingleTapping.value!;
-
-      widget.onLocationChosen?.call(location);
+      _controller._setLocationInner(newlocation, goToLocation: false);
+      _controller._publishNewLocation(newlocation);
     });
 
     _autocompleteController.addListener(() async {
       var searchInfo = _autocompleteController.searchInfo;
 
-      if (location?.point != null) {
-        await _mapController.removeMarker(location!.point!);
+      if (_controller.location?.point != null) {
+        await _mapController.removeMarker(_controller.location!.point!);
       }
 
-      location = searchInfo;
-
       if (searchInfo != null) {
-        await _mapController.setZoom(zoomLevel: 16.0);
-        await _mapController.goToLocation(searchInfo.point!);
-
-        await _mapController.addMarker(searchInfo.point!);
-        widget.onLocationChosen?.call(searchInfo);
+        _controller._setLocationInner(searchInfo, updateAutocomplete: false);
+        _controller._publishNewLocation(searchInfo);
       }
     });
   }
