@@ -1,4 +1,5 @@
 import 'package:ccquarters/add_house/cubit.dart';
+import 'package:ccquarters/add_house/map_view.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/input_decorator_form.dart';
@@ -36,9 +37,8 @@ class _LocationFormViewState extends State<LocationFormView> {
                     location: widget.location,
                     buildingType: widget.buildingType,
                     formKey: _formKey),
-                secondView: Expanded(
-                  child: Container(),
-                ))
+                secondView: const ChooseLocationOnMap(),
+              )
             : LocationForm(
                 location: widget.location,
                 buildingType: widget.buildingType,
@@ -56,7 +56,11 @@ class _LocationFormViewState extends State<LocationFormView> {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveLocation(widget.location);
-            context.read<AddHouseFormCubit>().goToMap();
+            if (kIsWeb) {
+              context.read<AddHouseFormCubit>().goToPhotosForm();
+            } else {
+              context.read<AddHouseFormCubit>().goToMap();
+            }
           }
         });
   }

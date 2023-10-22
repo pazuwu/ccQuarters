@@ -10,6 +10,7 @@ class ViewWithHeader extends StatelessWidget {
     required this.title,
     required this.inBetweenWidget,
     this.scrollable = true,
+    this.hasScrollBody = false,
     required this.goBackOnPressed,
     required this.nextOnPressed,
   }) : super(key: key);
@@ -17,6 +18,7 @@ class ViewWithHeader extends StatelessWidget {
   final String title;
   final Widget inBetweenWidget;
   final bool scrollable;
+  final bool hasScrollBody;
   final Function()? goBackOnPressed;
   final Function() nextOnPressed;
 
@@ -39,7 +41,7 @@ class ViewWithHeader extends StatelessWidget {
         ? CustomScrollView(
             slivers: [
               SliverFillRemaining(
-                  hasScrollBody: true, child: _buildMainColumn(context)),
+                  hasScrollBody: hasScrollBody, child: _buildMainColumn(context)),
             ],
           )
         : _buildMainColumn(context);

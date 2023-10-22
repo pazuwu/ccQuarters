@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {
@@ -19,7 +21,9 @@ class Header extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             title,
-            style: const TextStyle(fontSize: 40, color: Colors.white),
+            style: TextStyle(
+                fontSize: min(MediaQuery.of(context).size.width * 0.1, 40),
+                color: Colors.white),
           ),
         ),
       ),

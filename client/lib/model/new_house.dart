@@ -23,7 +23,7 @@ class NewLocation {
     this.district,
     this.streetName,
     this.zipCode = '',
-    this.streetNumber,
+    this.streetNumber = '',
     this.flatNumber,
     this.geoX,
     this.geoY,
@@ -33,7 +33,7 @@ class NewLocation {
   String? district;
   String? streetName;
   String zipCode;
-  String? streetNumber;
+  String streetNumber;
   String? flatNumber;
   double? geoX;
   double? geoY;
