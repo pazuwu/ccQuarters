@@ -5,8 +5,9 @@ import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:ccquarters/utils/icon_360.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
 import 'package:ccquarters/virtual_tour/import_type_dialog.dart';
-import 'package:ccquarters/virtual_tour/scene.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:ccquarters/virtual_tour/scene_viewer.dart';
@@ -14,16 +15,17 @@ import 'package:ccquarters/virtual_tour/scene_viewer.dart';
 class SceneList extends StatelessWidget {
   const SceneList({
     Key? key,
-    required this.rooms,
+    required this.scenes,
   }) : super(key: key);
 
-  final List<Scene> rooms;
+  final List<Scene> scenes;
 
-  void _showScene(BuildContext context, Scene room) {
+  void _showScene(BuildContext context, Scene scene) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return SceneViewer(
         editable: true,
-        sceneUrl: room.url,
+        scene: scene,
+        cubit: context.read(),
       );
     }));
   }
@@ -65,7 +67,7 @@ class SceneList extends StatelessWidget {
     ));
   }
 
-  Widget _buildRoomTile(BuildContext context, Scene room) {
+  Widget _buildSceneTile(BuildContext context, Scene room) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(24.0),
       child: Card(
@@ -126,16 +128,16 @@ class SceneList extends StatelessWidget {
     );
   }
 
-  Widget _buildSingleRoomsRow(BuildContext context, int index) {
+  Widget _buildSingleScenesRow(BuildContext context, int index) {
     return Row(
       children: [
-        Expanded(child: _buildRoomTile(context, rooms[2 * index])),
-        if (2 * index + 1 < rooms.length)
+        Expanded(child: _buildSceneTile(context, scenes[2 * index])),
+        if (2 * index + 1 < scenes.length)
           const SizedBox(
             width: 4.0,
           ),
-        if (2 * index + 1 < rooms.length)
-          Expanded(child: _buildRoomTile(context, rooms[2 * index + 1])),
+        if (2 * index + 1 < scenes.length)
+          Expanded(child: _buildSceneTile(context, scenes[2 * index + 1])),
       ],
     );
   }
@@ -161,12 +163,12 @@ class SceneList extends StatelessWidget {
                 child: ListView.separated(
                     separatorBuilder: (context, index) {
                       return const SizedBox(
-                        height: 8,
+                        height: 8.0,
                       );
                     },
-                    itemCount: (rooms.length / 2).ceil(),
+                    itemCount: (scenes.length / 2).ceil(),
                     itemBuilder: (context, index) {
-                      return _buildSingleRoomsRow(context, index);
+                      return _buildSingleScenesRow(context, index);
                     }),
               ),
             ],
