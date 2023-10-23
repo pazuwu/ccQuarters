@@ -1,4 +1,6 @@
 
+using CCQuartersAPI.Endpoints;
+
 namespace CCQuartersAPI
 {
     public class Program
@@ -27,25 +29,23 @@ namespace CCQuartersAPI
 
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+            HousesEndpoints.Init(builder.Configuration["db"]!);
+            AlertsEndpoints.Init(builder.Configuration["db"]!);
 
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+            app.MapGet("/houses", HousesEndpoints.GetHouses).WithOpenApi();
+            app.MapGet("/houses/liked", HousesEndpoints.GetLikedHouses).WithOpenApi();
+            app.MapPost("/houses", HousesEndpoints.CreateHouse).WithOpenApi();
+            app.MapGet("/houses/{houseId}", HousesEndpoints.GetHouse).WithOpenApi();
+            app.MapPut("/houses/{houseId}", HousesEndpoints.UpdateHouse).WithOpenApi();
+            app.MapPut("/houses/{houseId}/delete", HousesEndpoints.DeleteHouse).WithOpenApi();
+            app.MapPut("/houses/{houseId}/like", HousesEndpoints.LikeHouse).WithOpenApi();
+            app.MapPut("/houses/{houseId}/unlike", HousesEndpoints.UnlikeHouse).WithOpenApi();
+            app.MapPost("/houses/{houseId}/photos", HousesEndpoints.AddPhotos).WithOpenApi();
+
+            app.MapGet("/alerts", AlertsEndpoints.GetAlerts).WithOpenApi();
+            app.MapPost("/alerts", AlertsEndpoints.CreateAlert).WithOpenApi();
+            app.MapPut("/alerts/{alertId}", AlertsEndpoints.UpdateAlert).WithOpenApi();
+            app.MapDelete("/alerts/{alertId}/delete", AlertsEndpoints.DeleteAlert).WithOpenApi();
 
             app.Run();
         }
