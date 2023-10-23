@@ -1,19 +1,13 @@
-import 'package:ccquarters/utils/always_visible_label.dart';
+import 'package:ccquarters/virtual_tour/model/geo_point.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:ccquarters/virtual_tour/scene_link_form.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
-class SceneLink {
-  SceneLink({
-    required this.longitude,
-    required this.latitude,
-  });
-
-  double longitude;
-  double latitude;
-}
+import 'package:ccquarters/utils/always_visible_label.dart';
+import 'package:ccquarters/virtual_tour/cubit.dart';
+import 'package:ccquarters/virtual_tour/model/link.dart';
+import 'package:ccquarters/virtual_tour/scene_link_form.dart';
 
 enum SceneEditingMode { delete, add, edit, move }
 
@@ -21,11 +15,13 @@ class SceneViewer extends StatefulWidget {
   const SceneViewer({
     Key? key,
     this.editable = false,
-    required this.sceneUrl,
+    required this.scene,
+    required this.cubit,
   }) : super(key: key);
 
   final bool editable;
-  final String sceneUrl;
+  final Scene scene;
+  final VirtualTourCubit cubit;
 
   @override
   State<SceneViewer> createState() => _SceneViewerState();
@@ -33,7 +29,8 @@ class SceneViewer extends StatefulWidget {
 
 class _SceneViewerState extends State<SceneViewer> {
   SceneEditingMode editingMode = SceneEditingMode.move;
-  final List<SceneLink> _links = [];
+
+  final List<Link> _links = [];
 
   Widget _buildAlwaysVisibleButton(
       {VoidCallback? onPressed, Color? color, required IconData icon}) {
@@ -48,7 +45,7 @@ class _SceneViewerState extends State<SceneViewer> {
     );
   }
 
-  Widget _buildHotspotButton(BuildContext context, SceneLink link,
+  Widget _buildHotspotButton(BuildContext context, Link link,
       {String? text, required icon, VoidCallback? onPressed}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -117,10 +114,10 @@ class _SceneViewerState extends State<SceneViewer> {
     ]);
   }
 
-  Hotspot _buildHotspot(BuildContext context, SceneLink link) {
+  Hotspot _buildHotspot(BuildContext context, Link link) {
     return Hotspot(
-      latitude: link.latitude,
-      longitude: link.longitude,
+      latitude: link.position.latitude,
+      longitude: link.position.longitude,
       width: 90,
       height: 75,
       widget: _buildHotspotButton(
@@ -137,7 +134,7 @@ class _SceneViewerState extends State<SceneViewer> {
     return [for (var link in _links) _buildHotspot(context, link)];
   }
 
-  void _editLink(SceneLink link) async {
+  void _editLink(Link link) async {
     await showModalBottomSheet(
       useSafeArea: true,
       isDismissible: false,
@@ -170,9 +167,17 @@ class _SceneViewerState extends State<SceneViewer> {
       ),
     );
 
-    setState(() {
-      _links.add(SceneLink(longitude: longitude, latitude: latitude));
-    });
+    var newLink = await widget.cubit.addNewLinkToScene(
+      widget.scene,
+      Link(
+        id: "",
+        destinationId: "",
+        text: "",
+        position: GeoPoint(latitude: latitude, longitude: longitude),
+      ),
+    );
+
+    _links.add(newLink);
   }
 
   void _onTap(double longitude, double latitude, double tilt) {
@@ -215,7 +220,7 @@ class _SceneViewerState extends State<SceneViewer> {
         hotspots: _buildHotSpots(context),
         minZoom: 1,
         sensitivity: 1.5,
-        child: Image.network(widget.sceneUrl,
+        child: Image.network(widget.scene.photo360Url,
             loadingBuilder: (context, widget, chunkEvent) {
           return const Center(child: CircularProgressIndicator());
         }),

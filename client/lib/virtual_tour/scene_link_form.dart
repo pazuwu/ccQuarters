@@ -3,7 +3,7 @@ import 'package:ccquarters/utils/radio_list.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ccquarters/utils/input_decorator_form.dart';
-import 'package:ccquarters/virtual_tour/scene.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
 
 enum SceneLinkFormType {
   edit,
@@ -26,22 +26,18 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final List<Scene> _scenes = [
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Sypialnia", url: ""),
-    Scene(name: "Łazienka", url: "")
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Sypialnia", photo360Url: ""),
+    Scene(id: "", name: "Łazienka", photo360Url: ""),
   ];
 
   Widget _buildTitle(BuildContext context) {
