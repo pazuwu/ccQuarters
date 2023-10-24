@@ -1,9 +1,9 @@
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/add_house/details_view.dart';
-import 'package:ccquarters/add_house/location_view.dart';
-import 'package:ccquarters/add_house/map_view.dart';
-import 'package:ccquarters/add_house/photo_view.dart';
-import 'package:ccquarters/add_house/view.dart';
+import 'package:ccquarters/add_house/views/details_view.dart';
+import 'package:ccquarters/add_house/views/location_view.dart';
+import 'package:ccquarters/add_house/views/map_view.dart';
+import 'package:ccquarters/add_house/views/photo_view.dart';
+import 'package:ccquarters/add_house/views/choose_type_and_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

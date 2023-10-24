@@ -1,7 +1,6 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:ccquarters/model/house.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 const headerStyle = TextStyle(
@@ -18,31 +17,30 @@ class AccordionPage extends StatelessWidget {
     return Accordion(
       headerBorderColor: colorScheme.primary,
       headerBorderColorOpened: Colors.transparent,
-      // headerBorderWidth: 1,
       maxOpenSections: 10,
       headerBackgroundColorOpened: colorScheme.primary.withOpacity(0.7),
       contentBackgroundColor: Colors.white,
       contentBorderColor: colorScheme.primary.withOpacity(0.7),
       contentBorderWidth: 3,
       contentHorizontalPadding: 20,
-      scaleWhenAnimating: true,
+      scaleWhenAnimating: false,
       openAndCloseAnimation: true,
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
       sectionOpeningHapticFeedback: SectionHapticFeedback.heavy,
       sectionClosingHapticFeedback: SectionHapticFeedback.light,
       disableScrolling: true,
       children: [
-        _buildDescriptionAccordionSection(),
-        _buildDetailsAccordionSection(),
-        _buildLocationAccordionSection(),
+        _buildDescriptionAccordionSection(context),
+        _buildDetailsAccordionSection(context),
+        _buildLocationAccordionSection(context),
       ],
     );
   }
 
-  AccordionSection _buildDescriptionAccordionSection() {
+  AccordionSection _buildDescriptionAccordionSection(BuildContext context) {
     return AccordionSection(
       contentVerticalPadding: 20,
-      isOpen: kIsWeb,
+      isOpen: _shouldBeOpen(context),
       leftIcon: const Icon(Icons.description_outlined, color: Colors.white),
       header: const Text('Opis', style: headerStyle),
       content: Text(house.houseDetails.description,
@@ -53,9 +51,9 @@ class AccordionPage extends StatelessWidget {
     );
   }
 
-  AccordionSection _buildDetailsAccordionSection() {
+  AccordionSection _buildDetailsAccordionSection(BuildContext context) {
     return AccordionSection(
-        isOpen: kIsWeb,
+        isOpen: _shouldBeOpen(context),
         leftIcon: const Icon(Icons.details_outlined, color: Colors.white),
         header: const Text('Szczegóły ogłoszenia', style: headerStyle),
         content: Column(
@@ -78,33 +76,37 @@ class AccordionPage extends StatelessWidget {
         ));
   }
 
-  AccordionSection _buildLocationAccordionSection() {
+  AccordionSection _buildLocationAccordionSection(BuildContext context) {
     return AccordionSection(
-        isOpen: kIsWeb,
-        leftIcon: const Icon(Icons.location_on_outlined, color: Colors.white),
-        header: const Text('Lokalizacja', style: headerStyle),
-        content: Column(
-          children: [
-            HouseDetailsRow(title: "Miasto", value: house.location.city),
-            if (house.location.district != null)
-              HouseDetailsRow(
-                  title: "Dzielnica", value: house.location.district!),
-            if (house.location.streetName != null)
-              HouseDetailsRow(
-                  title: "Ulica", value: house.location.streetName!),
-            if (house.location.streetNumber != null)
-              HouseDetailsRow(
-                  title: "Numer domu", value: house.location.streetNumber!),
-            if (house.location.flatNumber != null)
-              HouseDetailsRow(
-                  title: "Numer mieszkania", value: house.location.flatNumber!),
+      isOpen: _shouldBeOpen(context),
+      leftIcon: const Icon(Icons.location_on_outlined, color: Colors.white),
+      header: const Text('Adres', style: headerStyle),
+      content: Column(
+        children: [
+          HouseDetailsRow(title: "Miasto", value: house.location.city),
+          if (house.location.district != null)
             HouseDetailsRow(
-              title: "Kod pocztowy",
-              value: house.location.zipCode,
-              isLast: true,
-            ),
-          ],
-        ));
+                title: "Dzielnica", value: house.location.district!),
+          if (house.location.streetName != null)
+            HouseDetailsRow(title: "Ulica", value: house.location.streetName!),
+          if (house.location.streetNumber != null)
+            HouseDetailsRow(
+                title: "Numer domu", value: house.location.streetNumber!),
+          if (house.location.flatNumber != null)
+            HouseDetailsRow(
+                title: "Numer mieszkania", value: house.location.flatNumber!),
+          HouseDetailsRow(
+            title: "Kod pocztowy",
+            value: house.location.zipCode,
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _shouldBeOpen(BuildContext context) {
+    return MediaQuery.of(context).size.height > 600;
   }
 }
 

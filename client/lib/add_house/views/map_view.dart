@@ -76,9 +76,9 @@ class _ChooseLocationOnMapState extends State<ChooseLocationOnMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(paddingSize),
-      child: Expanded(
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(paddingSize),
         child: LocationPicker(
           controller: _locationPickerController,
           initPosition:

@@ -25,8 +25,8 @@ class Location {
     this.zipCode = '14-121',
     this.streetNumber = "12",
     this.flatNumber,
-    this.geoX = 53.13136734945723,
-    this.geoY = 23.14663008605068,
+    this.geoX = 21.714504058106577,
+    this.geoY = 53.759196803704,
   });
 
   String city;

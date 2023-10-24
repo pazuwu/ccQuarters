@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
@@ -8,6 +9,7 @@ class LocationPickerController implements Listenable {
 
   late MapController _mapController;
   late GeoAutocompleteController _autocompleteController;
+  late bool _isReadOnly;
 
   SearchInfo? _location;
   SearchInfo? get location => _location;
@@ -43,7 +45,9 @@ class LocationPickerController implements Listenable {
       {bool updateAutocomplete = true, bool goToLocation = true}) async {
     if (location.point != null) {
       _location = location;
-      await _mapController.addMarker(location.point!);
+      if ((_isReadOnly && !kIsWeb) || !_isReadOnly) {
+        await _mapController.addMarker(location.point!);
+      }
 
       if (goToLocation) {
         await _mapController.setZoom(zoomLevel: 18.0);
@@ -63,11 +67,14 @@ class LocationPickerController implements Listenable {
     }
   }
 
-  void _initializeControlers(
-      {required MapController mapController,
-      required GeoAutocompleteController autocompleteController}) {
+  void _initialize({
+    required MapController mapController,
+    required GeoAutocompleteController autocompleteController,
+    required bool isReadOnly,
+  }) {
     _mapController = mapController;
     _autocompleteController = autocompleteController;
+    _isReadOnly = isReadOnly;
   }
 }
 
@@ -77,11 +84,13 @@ class LocationPicker extends StatefulWidget {
     this.localizeUser,
     this.initPosition,
     this.controller,
+    this.isReadOnly = false,
   }) : super(key: key);
 
   final bool? localizeUser;
   final SearchInfo? initPosition;
   final LocationPickerController? controller;
+  final bool isReadOnly;
 
   @override
   State<LocationPicker> createState() => _LocationPickerState();
@@ -114,41 +123,44 @@ class _LocationPickerState extends State<LocationPicker> {
                 GeoPoint(longitude: 19.0, latitude: 52.0));
 
     _controller = widget.controller ?? LocationPickerController();
-    _controller._initializeControlers(
+    _controller._initialize(
         autocompleteController: _autocompleteController,
-        mapController: _mapController);
+        mapController: _mapController,
+        isReadOnly: widget.isReadOnly);
 
-    _mapController.listenerMapSingleTapping.addListener(() async {
-      if (_mapController.listenerMapSingleTapping.value == null) return;
+    if (!widget.isReadOnly) {
+      _mapController.listenerMapSingleTapping.addListener(() async {
+        if (_mapController.listenerMapSingleTapping.value == null) return;
 
-      if (_autocompleteController.hasFocus) {
-        _autocompleteController.unfocus();
-        return;
-      }
+        if (_autocompleteController.hasFocus) {
+          _autocompleteController.unfocus();
+          return;
+        }
 
-      if (_controller.location?.point != null) {
-        await _mapController.removeMarker(_controller.location!.point!);
-      }
+        if (_controller.location?.point != null) {
+          await _mapController.removeMarker(_controller.location!.point!);
+        }
 
-      var newlocation =
-          SearchInfo(point: _mapController.listenerMapSingleTapping.value);
+        var newlocation =
+            SearchInfo(point: _mapController.listenerMapSingleTapping.value);
 
-      _controller._setLocationInner(newlocation, goToLocation: false);
-      _controller._publishNewLocation(newlocation);
-    });
+        _controller._setLocationInner(newlocation, goToLocation: false);
+        _controller._publishNewLocation(newlocation);
+      });
 
-    _autocompleteController.addListener(() async {
-      var searchInfo = _autocompleteController.searchInfo;
+      _autocompleteController.addListener(() async {
+        var searchInfo = _autocompleteController.searchInfo;
 
-      if (_controller.location?.point != null) {
-        await _mapController.removeMarker(_controller.location!.point!);
-      }
+        if (_controller.location?.point != null) {
+          await _mapController.removeMarker(_controller.location!.point!);
+        }
 
-      if (searchInfo != null) {
-        _controller._setLocationInner(searchInfo, updateAutocomplete: false);
-        _controller._publishNewLocation(searchInfo);
-      }
-    });
+        if (searchInfo != null) {
+          _controller._setLocationInner(searchInfo, updateAutocomplete: false);
+          _controller._publishNewLocation(searchInfo);
+        }
+      });
+    }
   }
 
   @override
@@ -189,19 +201,20 @@ class _LocationPickerState extends State<LocationPicker> {
                   roadColor: Colors.yellowAccent,
                 ),
               )),
-          Row(
-            children: [
-              Flexible(
-                child: GeoAutocomplete(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0, vertical: 16.0),
-                  criticalWidth: 500.0,
-                  maxSuggestionsHeight: 300.0,
-                  controller: _autocompleteController,
+          if (!widget.isReadOnly)
+            Row(
+              children: [
+                Flexible(
+                  child: GeoAutocomplete(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 16.0),
+                    criticalWidth: 500.0,
+                    maxSuggestionsHeight: 300.0,
+                    controller: _autocompleteController,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );
