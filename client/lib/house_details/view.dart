@@ -1,6 +1,8 @@
 import 'package:ccquarters/house_details/accordion.dart';
+import 'package:ccquarters/house_details/map.dart';
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,16 +27,28 @@ class _DetailsViewState extends State<DetailsView> {
         title: Text(widget.house.houseDetails.title),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Photos(
-              photos: widget.house.photos,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: getDeviceType(context) == DeviceType.web
+                ? BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width / 2)
+                : const BoxConstraints(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Photos(
+                //   photos: widget.house.photos,
+                // ),
+                AccordionPage(
+                  house: widget.house,
+                ),
+                if (widget.house.location.geoX != null &&
+                    widget.house.location.geoY != null)
+                  MapCard(location: widget.house.location),
+              ],
             ),
-            AccordionPage(
-              house: widget.house,
-            )
-          ],
+          ),
         ),
       ),
     );

@@ -25,8 +25,8 @@ class Location {
     this.zipCode = '14-121',
     this.streetNumber = "12",
     this.flatNumber,
-    this.geoX,
-    this.geoY,
+    this.geoX = 53.13136734945723,
+    this.geoY = 23.14663008605068,
   });
 
   String city;
@@ -35,8 +35,8 @@ class Location {
   String zipCode;
   String? streetNumber;
   String? flatNumber;
-  int? geoX;
-  int? geoY;
+  double? geoX;
+  double? geoY;
 }
 
 class HouseDetails {
