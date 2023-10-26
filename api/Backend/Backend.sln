@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCQuartersAPI", "CCQuarters
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourAPI", "VirtualTourAPI\VirtualTourAPI.csproj", "{E05CD50F-C56A-414C-8FF5-342997CED57F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourProcessingAPI", "VirtualTourProcessingAPI\VirtualTourProcessingAPI.csproj", "{1DA4A255-EC26-448F-9630-2505A8E73E5D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourProcessingServer", "VirtualTourProcessingAPI\VirtualTourProcessingServer.csproj", "{1DA4A255-EC26-448F-9630-2505A8E73E5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
