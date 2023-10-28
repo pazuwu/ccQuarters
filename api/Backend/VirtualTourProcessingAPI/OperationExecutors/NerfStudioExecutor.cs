@@ -15,7 +15,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
             _logger = logger;
             _nsOptions = nsOptions.Value;
 
-            if(_nsOptions.EnvironmentPath is null)
+            if(string.IsNullOrWhiteSpace(_nsOptions.EnvironmentPath))
                 throw new Exception("NerfStudio EnvironmentPath is empty. Check your configuration file.");
         
             string environmentPath = _nsOptions.EnvironmentPath;
@@ -31,35 +31,30 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Process(ColmapParameters parameters)
         {
-            var nsCommand = "ns-process-data";
-            var arguments = $"images --data {parameters.InputDataPath} --output-dir {parameters.OutputDirectoryPath}";
-
-            var startInfo = new ProcessStartInfo(nsCommand, arguments)
+            if(string.IsNullOrWhiteSpace(parameters.InputDataPath) || string.IsNullOrWhiteSpace(parameters.OutputDirectoryPath))
             {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                StandardOutputEncoding = Encoding.ASCII
-            };
-
-            var nsProcess = new Process()
-            {
-                StartInfo = startInfo,
-            };
-
-            nsProcess.Start();
-            ReadLogs(nsProcess);
-            await nsProcess.WaitForExitAsync();
-
-            if(!File.Exists($"{parameters.OutputDirectoryPath}/transforms.json") || nsProcess.ExitCode != 0)
-            {
-                _logger.LogError("COLMAP processing failed. File: transforms.json was not created");
-
                 return new ExecutorResponse()
                 {
                     Status = StatusCode.Error,
+                    Message = $"COLMAP processing failed. Wrong parameters: {nameof(parameters.InputDataPath)} and {nameof(parameters.OutputDirectoryPath)} should not be null",
                 };
             }
+
+            var nsCommand = "ns-process-data";
+            var arguments = $"images --data {parameters.InputDataPath} --output-dir {parameters.OutputDirectoryPath}";
+
+            //var nsProcess = StartExecutorProcess(nsCommand, arguments);
+            //ReadAllLogs(nsProcess);
+            //await nsProcess.WaitForExitAsync();
+
+            //if (!File.Exists($"{parameters.OutputDirectoryPath}/transforms.json") || nsProcess.ExitCode != 0)
+            //{
+            //    return new ExecutorResponse()
+            //    {
+            //        Status = StatusCode.Error,
+            //        Message = "COLMAP processing failed. File: transforms.json not found"
+            //    };
+            //}
 
             return new ExecutorResponse()
             {
@@ -69,30 +64,27 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Train(TrainParameters parameters)
         {
+            if (string.IsNullOrWhiteSpace(parameters.DataDirectoryPath))
+            {
+                return new ExecutorResponse()
+                {
+                    Status = StatusCode.Error,
+                    Message = $"COLMAP processing failed. Wrong parameters: {nameof(parameters.DataDirectoryPath)} should not be null",
+                };
+            }
+
             var nsCommand = "ns-train";
             var arguments = $"nerfacto --data {parameters.DataDirectoryPath}";
-
-            var startInfo = new ProcessStartInfo(nsCommand, arguments)
-            {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                StandardOutputEncoding = Encoding.ASCII
-            };
-
-            var nsProcess = new Process()
-            {
-                StartInfo = startInfo,
-            };
-
-            nsProcess.Start();
-            ReadLogs(nsProcess);
+            
+            var nsProcess = StartExecutorProcess(nsCommand, arguments);
+            ReadAllLogs(nsProcess);
             await nsProcess.WaitForExitAsync();
 
             if (nsProcess.ExitCode != 0)
                 return new ExecutorResponse()
                 {
                     Status = StatusCode.Error,
+                    Message = $"Training failed. See logs for more information",
                 };
 
             return new ExecutorResponse()
@@ -101,7 +93,58 @@ namespace VirtualTourProcessingServer.OperationExecutors
             };
         }
 
-        private void ReadLogs(Process process)
+        public async Task<ExecutorResponse> Render(RenderParameters parameters)
+        {
+            if (string.IsNullOrWhiteSpace(parameters.CameraConfigPath))
+            {
+                return new ExecutorResponse()
+                {
+                    Status = StatusCode.Error,
+                    Message = $"COLMAP processing failed. Wrong parameters: {nameof(parameters.CameraConfigPath)} should not be null",
+                };
+            }
+
+            var nsCommand = "ns-render";
+            var arguments = $"camera-path --load-config {parameters.CameraConfigPath} --output-path {parameters.OutputPath}";
+
+            var nsProcess = StartExecutorProcess(nsCommand, arguments);
+            ReadAllLogs(nsProcess);
+            await nsProcess.WaitForExitAsync();
+
+            if (nsProcess.ExitCode != 0)
+                return new ExecutorResponse()
+                {
+                    Status = StatusCode.Error,
+                    Message = $"Rendering failed. See logs for more information",
+                };
+
+            return new ExecutorResponse()
+            {
+                Status = StatusCode.Ok,
+            };
+        }
+
+        private Process StartExecutorProcess(string command, string arguments)
+        {
+            var startInfo = new ProcessStartInfo(command, arguments)
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                StandardOutputEncoding = Encoding.ASCII
+            };
+
+            var process = new Process()
+            {
+                StartInfo = startInfo,
+            };
+
+            process.Start();
+
+            return process;
+        }
+
+        private void ReadAllLogs(Process process)
         {
             while (!process.StandardError.EndOfStream)
             {
@@ -113,11 +156,6 @@ namespace VirtualTourProcessingServer.OperationExecutors
                 var line = process.StandardOutput.ReadLine();
                 _logger.LogDebug(line);
             }
-        }
-
-        public Task<ExecutorResponse> Render(RenderParameters parameters)
-        {
-            throw new NotImplementedException();
         }
     }
 }

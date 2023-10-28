@@ -6,9 +6,9 @@ namespace VirtualTourProcessingServer.OperationHub
     internal class OperationPriority : IComparable<OperationPriority>
     {
         public Timestamp LastModified { get; }
-        public OperationStatus Status { get; }
+        public OperationStage Status { get; }
 
-        public OperationPriority(Timestamp lastModified, OperationStatus status)
+        public OperationPriority(Timestamp lastModified, OperationStage status)
         {
             LastModified = lastModified;
             Status = status;
