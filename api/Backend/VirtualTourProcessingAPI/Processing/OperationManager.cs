@@ -1,20 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.Model;
-using VirtualTourProcessingServer.Postprocessing;
+using VirtualTourProcessingServer.Processing.Interfaces;
 
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.Processing
 {
     internal class OperationManager : IOperationManager
     {
-        private readonly IOperationHub _processingHub;
-        private readonly IOperationHub _postprocessingHub;
+        private readonly IOperationHub _operationHub;
+        private readonly IOperationHub _multiOperationHub;
 
         public OperationManager(ILogger<OperationManager> logger, IOptions<ProcessingOptions> options, 
-            IPostprocessingRunner postprocessingRunner, IOperationRunner operationRunner)
+            IMultiOperationRunner postprocessingRunner, IOperationRunner operationRunner)
         {
-            _processingHub = new OperationHub(logger, operationRunner, options);
-            _postprocessingHub = new OperationHub(logger, postprocessingRunner, options);
+            _operationHub = new OperationHub(logger, operationRunner, options);
+            _multiOperationHub = new OperationHub(logger, postprocessingRunner, options);
         }
 
         public void RegisterNewOperations(IReadOnlyList<VTOperation> newOperations)
@@ -26,13 +26,15 @@ namespace VirtualTourProcessingServer.OperationHub
                     case OperationStage.Colmap:
                     case OperationStage.Train:
                     case OperationStage.Render:
-                        _processingHub.RegisterNewOperations(newOperations);
+                        _operationHub.RegisterNewOperation(newOperation);
                         break;
+                    case OperationStage.Waiting:
+                    case OperationStage.PrepareData:
                     case OperationStage.SavingColmap:
                     case OperationStage.CleanupTrain:
                     case OperationStage.SavingRender:
                     case OperationStage.Finished:
-                        _postprocessingHub.RegisterNewOperations(newOperations);
+                        _multiOperationHub.RegisterNewOperation(newOperation);
                         break;
                     default:
                         break;
@@ -47,13 +49,15 @@ namespace VirtualTourProcessingServer.OperationHub
                 case OperationStage.Colmap:
                 case OperationStage.Train:
                 case OperationStage.Render:
-                    _postprocessingHub.RunNext();
+                    _operationHub.RunNext();
                     break;
+                case OperationStage.Waiting:
+                case OperationStage.PrepareData:
                 case OperationStage.SavingColmap:
                 case OperationStage.CleanupTrain:
                 case OperationStage.SavingRender:
                 case OperationStage.Finished:
-                    _processingHub.RunNext();
+                    _multiOperationHub.RunNext();
                     break;
                 default:
                     break;

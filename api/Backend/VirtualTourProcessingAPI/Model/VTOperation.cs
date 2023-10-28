@@ -26,6 +26,8 @@ namespace VirtualTourProcessingServer.Model
 
     public enum OperationStage
     {
+        Waiting,
+        PrepareData,
         Colmap,
         SavingColmap,
         Train,

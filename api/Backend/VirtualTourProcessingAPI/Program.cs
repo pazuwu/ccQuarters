@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using VirtualTourProcessingServer.OperationExecutors;
-using VirtualTourProcessingServer.OperationHub;
 using VirtualTourProcessingServer.OperationRepository;
-using VirtualTourProcessingServer.Postprocessing;
+using VirtualTourProcessingServer.Processing;
+using VirtualTourProcessingServer.Processing.Interfaces;
 using VirtualTourProcessingServer.Services;
 
 var builder = Host.CreateApplicationBuilder();
@@ -20,7 +20,7 @@ builder.Services.Configure<ProcessingOptions>(options =>
 
 builder.Services.AddSingleton<IOperationManager, OperationManager>();
 builder.Services.AddSingleton<IOperationRunner, OperationRunner>();
-builder.Services.AddSingleton<IPostprocessingRunner, PostprocessingRunner>();
+builder.Services.AddSingleton<IMultiOperationRunner, MultiOperationRunner>();
 
 builder.Services.Configure<NerfStudioOptions>(options =>
     builder.Configuration.GetSection(nameof(NerfStudioOptions)).Bind(options));

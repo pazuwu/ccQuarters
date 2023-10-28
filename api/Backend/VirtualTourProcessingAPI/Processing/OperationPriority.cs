@@ -1,7 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using VirtualTourProcessingServer.Model;
 
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.Processing
 {
     internal class OperationPriority : IComparable<OperationPriority>
     {
