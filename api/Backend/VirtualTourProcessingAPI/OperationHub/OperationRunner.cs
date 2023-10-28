@@ -9,18 +9,18 @@ namespace VirtualTourProcessingServer.OperationHub
         private readonly ILogger<OperationRunner> _logger;
         private readonly ITrainExecutor _trainExecutor;
         private readonly IColmapExecutor _colmapExecutor;
-        private readonly IExportExecutor _exportExecutor;
+        private readonly IRenderExecutor _renderExecutor;
 
         private Task? _runningTask;
         public event Action? OperationFinished;
 
         public OperationRunner(ILogger<OperationRunner> logger, ITrainExecutor trainExecutor, 
-            IColmapExecutor colmapExecutor, IExportExecutor exportExecutor)
+            IColmapExecutor colmapExecutor, IRenderExecutor exportExecutor)
         {
             _logger = logger;
             _trainExecutor = trainExecutor;
             _colmapExecutor = colmapExecutor;
-            _exportExecutor = exportExecutor;
+            _renderExecutor = exportExecutor;
         }
 
         public bool TryRun(VTOperation operation)
@@ -37,7 +37,7 @@ namespace VirtualTourProcessingServer.OperationHub
                     _runningTask = RunTrain(operation);
                     break;
                 case OperationStatus.Render:
-                    _runningTask = RunExport(operation);
+                    _runningTask = RunRender(operation);
                     break;
             }
 
@@ -70,12 +70,12 @@ namespace VirtualTourProcessingServer.OperationHub
             FinishOperation();
         }
 
-        private async Task RunExport(VTOperation operation)
+        private async Task RunRender(VTOperation operation)
         {
             _logger.LogInformation($"Running export for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var exportParameters = new ExportParameters();
-            await _exportExecutor.Export(exportParameters);
+            var renderParameters = new RenderParameters();
+            await _renderExecutor.Render(renderParameters);
 
             FinishOperation();
         }
