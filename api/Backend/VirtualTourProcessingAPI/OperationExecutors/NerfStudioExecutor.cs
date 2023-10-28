@@ -5,7 +5,7 @@ using System.Text;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
-    public class NerfStudioExecutor : ITrainExecutor, IColmapExecutor, IExportExecutor
+    public class NerfStudioExecutor : ITrainExecutor, IColmapExecutor, IRenderExecutor
     {
         ILogger<NerfStudioExecutor> _logger;
         private readonly NerfStudioOptions _nsOptions;
@@ -115,7 +115,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
             }
         }
 
-        public Task<ExecutorResponse> Export(ExportParameters parameters)
+        public Task<ExecutorResponse> Render(RenderParameters parameters)
         {
             throw new NotImplementedException();
         }

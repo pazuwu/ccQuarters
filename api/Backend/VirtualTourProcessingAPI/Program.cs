@@ -17,7 +17,7 @@ builder.Services.Configure<NerfStudioOptions>(options =>
 builder.Services.AddSingleton<NerfStudioExecutor>();
 builder.Services.AddSingleton<IColmapExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
 builder.Services.AddSingleton<ITrainExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
-builder.Services.AddSingleton<IExportExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
+builder.Services.AddSingleton<IRenderExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 builder.Services.AddHostedService<OperationListener>();
