@@ -43,18 +43,18 @@ namespace VirtualTourProcessingServer.OperationExecutors
             var nsCommand = "ns-process-data";
             var arguments = $"images --data {parameters.InputDataPath} --output-dir {parameters.OutputDirectoryPath}";
 
-            //var nsProcess = StartExecutorProcess(nsCommand, arguments);
-            //ReadAllLogs(nsProcess);
-            //await nsProcess.WaitForExitAsync();
+            var nsProcess = StartExecutorProcess(nsCommand, arguments);
+            ReadAllLogs(nsProcess);
+            await nsProcess.WaitForExitAsync();
 
-            //if (!File.Exists($"{parameters.OutputDirectoryPath}/transforms.json") || nsProcess.ExitCode != 0)
-            //{
-            //    return new ExecutorResponse()
-            //    {
-            //        Status = StatusCode.Error,
-            //        Message = "COLMAP processing failed. File: transforms.json not found"
-            //    };
-            //}
+            if (!File.Exists($"{parameters.OutputDirectoryPath}/transforms.json") || nsProcess.ExitCode != 0)
+            {
+                return new ExecutorResponse()
+                {
+                    Status = StatusCode.Error,
+                    Message = "COLMAP processing failed. File: transforms.json not found"
+                };
+            }
 
             return new ExecutorResponse()
             {
