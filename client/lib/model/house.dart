@@ -16,7 +16,11 @@ class House {
   User user;
   List<String> photos = <String>[
     "https://picsum.photos/512",
-    "https://picsum.photos/600/900"
+    "https://picsum.photos/600/900",
+    "https://picsum.photos/600/900",
+    "https://picsum.photos/900/600",
+    "https://picsum.photos/1900/600",
+    "https://picsum.photos/900",
   ];
 }
 

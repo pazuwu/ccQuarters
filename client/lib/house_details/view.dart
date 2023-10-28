@@ -1,6 +1,7 @@
 import 'package:ccquarters/house_details/accordion.dart';
 import 'package:ccquarters/house_details/contact.dart';
 import 'package:ccquarters/house_details/map.dart';
+import 'package:ccquarters/house_details/photos.dart';
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/device_type.dart';
@@ -53,6 +54,9 @@ class Inside extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Photos(
+                      photos: house.photos,
+                    ),
                     AccordionPage(
                       house: house,
                     ),
@@ -67,22 +71,5 @@ class Inside extends StatelessWidget {
               ContactWidget(user: house.user),
           ]),
     );
-  }
-}
-
-class Photos extends StatefulWidget {
-  const Photos({super.key, required this.photos});
-
-  final List<String> photos;
-  @override
-  State<Photos> createState() => _PhotosState();
-}
-
-class _PhotosState extends State<Photos> {
-  final controller = PageController(viewportFraction: 0.8, keepPage: true);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
   }
 }

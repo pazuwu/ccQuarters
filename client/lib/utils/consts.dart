@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 const double borderRadius = 30;
 const double formBorderRadius = 16;
+const double smallPaddingSize = 6;
 const double paddingSize = 16;
 const double maxWidth = 700;
 const double maxWidthForGrid = 1200;

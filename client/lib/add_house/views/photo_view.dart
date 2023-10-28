@@ -50,57 +50,60 @@ class _PhotoViewState extends State<PhotoView> {
   Widget _buildPhotosGrid(BuildContext context) {
     return Expanded(
       child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount:
-                getDeviceTypeForGrid(context) == DeviceType.mobile ? 3 : 4,
-          ),
-          itemCount: widget.photos.length + 1,
-          itemBuilder: (context, index) {
-            if (index == widget.photos.length) {
-              return GridTile(
-                onTap: () async {
-                  var images = await _getFromGallery();
-                  if (images.isNotEmpty) {
-                    var imagesInBytes = <Uint8List>[];
-                    for (var image in images) {
-                      imagesInBytes.add(await image.readAsBytes());
-                    }
-                    setState(() => widget.photos.addAll(imagesInBytes));
-                  }
-                },
-                child: Icon(
-                  Icons.add_a_photo_outlined,
-                  size: getDeviceTypeForGrid(context) == DeviceType.mobile
-                      ? 64
-                      : 96,
-                ),
-              );
-            } else {
-              return GridTile(
-                onTap: () async {
-                  if (index == _selectedIndex) {
-                    setState(() {
-                      _selectedIndex = null;
-                      widget.photos.removeAt(index);
-                    });
-                  } else {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  }
-                },
-                canBeRemoved: index == _selectedIndex,
-                child: SizedBox.expand(
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: Image.memory(
-                      widget.photos[index],
-                    ),
-                  ),
-                ),
-              );
-            }
-          }),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount:
+              getDeviceTypeForGrid(context) == DeviceType.mobile ? 3 : 4,
+        ),
+        itemCount: widget.photos.length + 1,
+        itemBuilder: (context, index) {
+          if (index == widget.photos.length) {
+            return _buildAddGridTile(context);
+          } else {
+            return _buildPhotoGridTIle(index);
+          }
+        },
+      ),
+    );
+  }
+
+  GridTile _buildAddGridTile(BuildContext context) {
+    return GridTile(
+      onTap: () async {
+        var images = await _getFromGallery();
+        if (images.isNotEmpty) {
+          var imagesInBytes = <Uint8List>[];
+          for (var image in images) {
+            imagesInBytes.add(await image.readAsBytes());
+          }
+          setState(() => widget.photos.addAll(imagesInBytes));
+        }
+      },
+      child: Icon(
+        Icons.add_a_photo_outlined,
+        size: getDeviceTypeForGrid(context) == DeviceType.mobile ? 64 : 96,
+      ),
+    );
+  }
+
+  GridTile _buildPhotoGridTIle(int index) {
+    return GridTile(
+      onTap: () async {
+        if (index == _selectedIndex) {
+          setState(() {
+            _selectedIndex = null;
+            widget.photos.removeAt(index);
+          });
+        } else {
+          setState(() {
+            _selectedIndex = index;
+          });
+        }
+      },
+      canBeRemoved: index == _selectedIndex,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Image.memory(widget.photos[index], fit: BoxFit.cover),
+      ),
     );
   }
 
@@ -123,31 +126,35 @@ class GridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Card(
-        shape: const RoundedRectangleBorder(),
-        borderOnForeground: true,
-        elevation: 0,
-        color: Colors.grey.shade200,
-        clipBehavior: Clip.antiAlias,
-        child: InkWellWithPhoto(
-          onTap: onTap,
-          imageWidget: Center(child: child),
-          inkWellChild: canBeRemoved ?? false
-              ? Center(
-                  child: Container(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Card(
+          shape: const RoundedRectangleBorder(),
+          borderOnForeground: true,
+          elevation: 0,
+          color: Colors.grey.shade200,
+          clipBehavior: Clip.antiAlias,
+          child: InkWellWithPhoto(
+            onTap: onTap,
+            imageWidget: Center(child: child),
+            inkWellChild: canBeRemoved ?? false
+                ? Center(
+                    child: Container(
                       width: constraints.maxWidth,
                       height: constraints.maxHeight,
                       color: Colors.grey.withOpacity(0.2),
-                      child: Icon(Icons.delete,
-                          size:
-                              getDeviceTypeForGrid(context) == DeviceType.mobile
-                                  ? 64
-                                  : 96)),
-                )
-              : null,
-        ),
-      );
-    });
+                      child: Icon(
+                        Icons.delete,
+                        size: getDeviceTypeForGrid(context) == DeviceType.mobile
+                            ? 64
+                            : 96,
+                      ),
+                    ),
+                  )
+                : null,
+          ),
+        );
+      },
+    );
   }
 }
