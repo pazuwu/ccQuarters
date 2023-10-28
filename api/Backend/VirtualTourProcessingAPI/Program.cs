@@ -1,44 +1,26 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Reflection;
+using VirtualTourProcessingServer.OperationExecutors;
+using VirtualTourProcessingServer.OperationHub;
+using VirtualTourProcessingServer.Services;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var builder = Host.CreateApplicationBuilder();
 
-var app = builder.Build();
+builder.Services.AddSingleton<IOperationHub, OperationHub>();
+builder.Services.AddSingleton<IOperationRunner, OperationRunner>();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+builder.Services.Configure<NerfStudioOptions>(options =>
+    builder.Configuration.GetSection(nameof(NerfStudioOptions)).Bind(options));
 
-app.UseHttpsRedirection();
+builder.Services.AddSingleton<NerfStudioExecutor>();
+builder.Services.AddSingleton<IColmapExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
+builder.Services.AddSingleton<ITrainExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
+builder.Services.AddSingleton<IExportExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.AddHostedService<OperationListener>();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+using IHost host = builder.Build();
+host.Run();
