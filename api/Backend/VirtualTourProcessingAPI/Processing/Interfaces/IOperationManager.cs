@@ -1,6 +1,6 @@
 ﻿using VirtualTourProcessingServer.Model;
 
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.Processing.Interfaces
 {
     public interface IOperationManager
     {

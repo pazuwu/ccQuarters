@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.Model;
+using VirtualTourProcessingServer.Processing.Interfaces;
 
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.Processing
 {
     public class OperationHub : IOperationHub
     {
@@ -19,22 +20,19 @@ namespace VirtualTourProcessingServer.OperationHub
             _processingOptions = processingOptions.Value;
         }
 
-        public void RegisterNewOperations(IReadOnlyList<VTOperation> newOperations)
+        public void RegisterNewOperation(VTOperation operation)
         {
-            foreach (var operation in newOperations)
+            if (operation.ProcessingAttempts >= _processingOptions.MaxProcessingAttempts)
+                return;
+
+            var priority = new OperationPriority(operation.LastModified, operation.Stage);
+
+            lock (_operationQueue)
             {
-                if (operation.ProcessingAttempts >= _processingOptions.MaxProcessingAttempts)
-                    continue;
-
-                var priority = new OperationPriority(operation.LastModified, operation.Stage);
-
-                lock (_operationQueue)
-                {
-                    _operationQueue.Enqueue(operation, priority);
-                }
-
-                _logger.LogInformation("New operation has been registered: {0}, stage: {1}", operation.OperationId, operation.Stage);
+                _operationQueue.Enqueue(operation, priority);
             }
+
+            _logger.LogInformation("New operation has been registered: {0}, stage: {1}", operation.OperationId, operation.Stage);
 
             RunNext();
         }

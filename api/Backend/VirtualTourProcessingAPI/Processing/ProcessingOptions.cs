@@ -1,5 +1,5 @@
 ﻿
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.Processing
 {
     public class ProcessingOptions
     {

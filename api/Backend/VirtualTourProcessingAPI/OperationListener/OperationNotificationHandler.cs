@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using VirtualTourProcessingServer.OperationHub;
+using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Services
 {

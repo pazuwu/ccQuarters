@@ -2,8 +2,9 @@
 using Microsoft.Extensions.Logging;
 using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
+using VirtualTourProcessingServer.Processing.Interfaces;
 
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.Processing
 {
     public class OperationRunner : IOperationRunner
     {
@@ -62,18 +63,10 @@ namespace VirtualTourProcessingServer.OperationHub
             if (response.Status == StatusCode.Error)
             {
                 _logger.LogError(response.Message);
-                operation.ProcessingAttempts++;
-                operation.Status = OperationStatus.Error;
-            }
-
-            if (response.Status == StatusCode.Ok)
-            {
-                operation.ProcessingAttempts = 0;
-                operation.Stage++;
             }
 
             _runningOperation = null;
-            return _mediator.Publish(new OperationFinishedNotification(operation));
+            return _mediator.Publish(new OperationFinishedNotification(operation, response.Status));
         }
 
         private async Task RunColmap(VTOperation operation)
