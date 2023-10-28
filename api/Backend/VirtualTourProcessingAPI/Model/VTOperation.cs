@@ -8,20 +8,33 @@ namespace VirtualTourProcessingServer.Model
         [FirestoreDocumentId]
         public string? OperationId { get; set; }
 
-        [FirestoreProperty("areaId")]
+        [FirestoreProperty]
         public string? AreaId { get; set; }
 
-        [FirestoreProperty("status", ConverterType = typeof(FirestoreEnumNameConverter<OperationStatus>))]
-        public OperationStatus Status { get; set; }
+        [FirestoreProperty(ConverterType = typeof(FirestoreEnumNameConverter<OperationStage>))]
+        public OperationStage Stage { get; set; }
 
         [FirestoreDocumentUpdateTimestamp]
         public Timestamp LastModified { get; set; }
+
+        [FirestoreProperty(ConverterType = typeof(FirestoreEnumNameConverter<OperationStatus>))]
+        public OperationStatus Status { get; set; }
+
+        [FirestoreProperty]
+        public int ProcessingAttempts { get; set; }
     }
 
-    public enum OperationStatus
+    public enum OperationStage
     {
         Colmap,
         Train,
         Render,
+        Finished,
+    }
+
+    public enum OperationStatus
+    {
+        Ok,
+        Error,
     }
 }

@@ -4,9 +4,18 @@ using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationHub;
+using VirtualTourProcessingServer.OperationRepository;
 using VirtualTourProcessingServer.Services;
 
 var builder = Host.CreateApplicationBuilder();
+
+builder.Services.Configure<DocumentDBOptions>(options =>
+    builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
+
+builder.Services.AddSingleton<IOperationRepository, OperationRepository>();
+
+builder.Services.Configure<ProcessingOptions>(options =>
+    builder.Configuration.GetSection(nameof(ProcessingOptions)).Bind(options));
 
 builder.Services.AddSingleton<IOperationHub, OperationHub>();
 builder.Services.AddSingleton<IOperationRunner, OperationRunner>();

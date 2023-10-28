@@ -1,24 +1,30 @@
 ﻿using Google.Cloud.Firestore;
 using MediatR;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.Model;
+using VirtualTourProcessingServer.OperationRepository;
 
 namespace VirtualTourProcessingServer.Services
 {
     public class OperationListener : IHostedService
     {
-        IMediator _mediator;
-        FirestoreChangeListener? _listener;
+        private readonly IMediator _mediator;
+        private readonly FirestoreDb _firestore;
+        private FirestoreChangeListener? _listener;
 
-        public OperationListener(IMediator mediator)
+        public OperationListener(IMediator mediator, IOptions<DocumentDBOptions> options)
         {
+            if (string.IsNullOrWhiteSpace(options.Value.ProjectId))
+                throw new Exception("DocumentDB ProjectId is empty. Check your configuration file.");
+
             _mediator = mediator;
+            _firestore = FirestoreDb.Create(options.Value.ProjectId);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var firestore = FirestoreDb.Create("ccquartersmini");
-            var collectionRef = firestore.Collection("operations");
+            var collectionRef = _firestore.Collection("operations");
             _listener = collectionRef.Listen(OperationsDBUpdateHandler);
 
             return Task.CompletedTask;
@@ -37,7 +43,7 @@ namespace VirtualTourProcessingServer.Services
 
                 foreach (var change in snapshot.Changes)
                 {
-                    if(change is not null && change.ChangeType == DocumentChange.Type.Added)
+                    if(change is not null && (change.ChangeType == DocumentChange.Type.Added || change.ChangeType == DocumentChange.Type.Modified))
                     {
                         var operation = change.Document.ConvertTo<VTOperation>();
                         operations.Add(operation);
