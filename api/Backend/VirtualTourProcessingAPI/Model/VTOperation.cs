@@ -27,8 +27,11 @@ namespace VirtualTourProcessingServer.Model
     public enum OperationStage
     {
         Colmap,
+        SavingColmap,
         Train,
+        CleanupTrain,
         Render,
+        SavingRender,
         Finished,
     }
 

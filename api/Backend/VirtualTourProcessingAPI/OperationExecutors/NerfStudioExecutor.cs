@@ -15,10 +15,10 @@ namespace VirtualTourProcessingServer.OperationExecutors
             _logger = logger;
             _nsOptions = nsOptions.Value;
 
-            if(string.IsNullOrWhiteSpace(_nsOptions.EnvironmentPath))
+            if(string.IsNullOrWhiteSpace(_nsOptions.EnvironmentDirectory))
                 throw new Exception("NerfStudio EnvironmentPath is empty. Check your configuration file.");
         
-            string environmentPath = _nsOptions.EnvironmentPath;
+            string environmentPath = _nsOptions.EnvironmentDirectory;
             string scriptsPath = $@"{environmentPath}\Scripts";
             string libraryPath = $@"{environmentPath}\Library";
             string binPath = $@"{environmentPath}\bin";
@@ -31,7 +31,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Process(ColmapParameters parameters)
         {
-            if(string.IsNullOrWhiteSpace(parameters.InputDataPath) || string.IsNullOrWhiteSpace(parameters.OutputDirectoryPath))
+            if (string.IsNullOrWhiteSpace(parameters.InputDataPath) || string.IsNullOrWhiteSpace(parameters.OutputDirectoryPath))
             {
                 return new ExecutorResponse()
                 {
@@ -75,7 +75,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
             var nsCommand = "ns-train";
             var arguments = $"nerfacto --data {parameters.DataDirectoryPath}";
-            
+
             var nsProcess = StartExecutorProcess(nsCommand, arguments);
             ReadAllLogs(nsProcess);
             await nsProcess.WaitForExitAsync();

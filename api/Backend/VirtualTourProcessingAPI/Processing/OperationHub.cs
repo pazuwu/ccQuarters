@@ -8,11 +8,11 @@ namespace VirtualTourProcessingServer.OperationHub
     {
         private readonly PriorityQueue<VTOperation, OperationPriority> _operationQueue = new();
 
-        private readonly ILogger<OperationHub> _logger;
+        private readonly ILogger _logger;
         private readonly IOperationRunner _operationRunner;
         private readonly ProcessingOptions _processingOptions;
 
-        public OperationHub(ILogger<OperationHub> logger, IOperationRunner operationRunner, IOptions<ProcessingOptions> processingOptions)
+        public OperationHub(ILogger logger, IOperationRunner operationRunner, IOptions<ProcessingOptions> processingOptions)
         {
             _logger = logger;
             _operationRunner = operationRunner;
@@ -33,7 +33,7 @@ namespace VirtualTourProcessingServer.OperationHub
                     _operationQueue.Enqueue(operation, priority);
                 }
 
-                _logger.LogInformation("New operation has been registered: {0}, status: {1}", operation.OperationId, operation.Stage);
+                _logger.LogInformation("New operation has been registered: {0}, stage: {1}", operation.OperationId, operation.Stage);
             }
 
             RunNext();
@@ -50,7 +50,7 @@ namespace VirtualTourProcessingServer.OperationHub
                     if (_operationRunner.TryRegister(nextOperation))
                     {
                         _operationQueue.Dequeue();
-                        _operationRunner.Run();
+                        _operationRunner.Run(nextOperation);
                     }
                 }
             }

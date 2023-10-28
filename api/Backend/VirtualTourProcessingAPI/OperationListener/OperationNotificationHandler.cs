@@ -5,16 +5,16 @@ namespace VirtualTourProcessingServer.Services
 {
     public class OperationNotificationHandler : INotificationHandler<OperationNotification>
     {
-        private readonly IOperationHub _operationHub;
+        private readonly IOperationManager _operationManager;
 
-        public OperationNotificationHandler(IOperationHub operationHub)
+        public OperationNotificationHandler(IOperationManager operationManager)
         {
-            _operationHub = operationHub;
+            _operationManager = operationManager;
         }
 
         public Task Handle(OperationNotification notification, CancellationToken cancellationToken)
         {
-            _operationHub.RegisterNewOperations(notification.Operations);
+            _operationManager.RegisterNewOperations(notification.Operations);
             return Task.CompletedTask;
         }
     }

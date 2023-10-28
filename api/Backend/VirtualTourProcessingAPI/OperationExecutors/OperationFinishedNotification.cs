@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using VirtualTourProcessingServer.Model;
 
-namespace VirtualTourProcessingServer.OperationHub
+namespace VirtualTourProcessingServer.OperationExecutors
 {
     public class OperationFinishedNotification : INotification
     {
