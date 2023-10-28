@@ -4,7 +4,7 @@ namespace VirtualTourProcessingServer.OperationHub
 {
     public interface IOperationHub
     {
-        void RegisterNewOperations(IReadOnlyList<VTOperation> newOperation);
+        void RegisterNewOperations(IReadOnlyList<VTOperation> newOperations);
         void RunNext();
     }
 }

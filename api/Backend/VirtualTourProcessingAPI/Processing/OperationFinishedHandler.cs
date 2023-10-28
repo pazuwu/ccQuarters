@@ -1,29 +1,23 @@
 ﻿using MediatR;
+using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationRepository;
 
 namespace VirtualTourProcessingServer.OperationHub
 {
     internal class OperationFinishedHandler : INotificationHandler<OperationFinishedNotification>
     {
-        private readonly IOperationHub _operationHub;
+        private readonly IOperationManager _operationManager;
         private readonly IOperationRepository _operationRepository;
 
-        public OperationFinishedHandler(IOperationHub operationHub, IOperationRepository repository)
+        public OperationFinishedHandler(IOperationManager operationHub, IOperationRepository repository)
         {
-            _operationHub = operationHub;
+            _operationManager = operationHub;
             _operationRepository = repository;
         }
 
         public async Task Handle(OperationFinishedNotification notification, CancellationToken cancellationToken)
         {
-            _operationHub.RunNext();
-
-            if(notification.Operation.Stage == Model.OperationStage.Finished)
-            {
-                await _operationRepository.DeleteOperation(notification.Operation);
-                return;
-            }
-
+            _operationManager.RunNext(notification.Operation.Stage);
             await _operationRepository.UpdateOperation(notification.Operation);
         }
     }

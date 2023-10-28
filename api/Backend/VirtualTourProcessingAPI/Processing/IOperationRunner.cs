@@ -5,6 +5,6 @@ namespace VirtualTourProcessingServer.OperationHub
     public interface IOperationRunner
     {
         bool TryRegister(VTOperation operation);
-        void Run();
+        void Run(VTOperation operation);
     }
 }

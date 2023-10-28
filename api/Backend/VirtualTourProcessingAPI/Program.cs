@@ -5,6 +5,7 @@ using System.Reflection;
 using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationHub;
 using VirtualTourProcessingServer.OperationRepository;
+using VirtualTourProcessingServer.Postprocessing;
 using VirtualTourProcessingServer.Services;
 
 var builder = Host.CreateApplicationBuilder();
@@ -17,8 +18,9 @@ builder.Services.AddSingleton<IOperationRepository, OperationRepository>();
 builder.Services.Configure<ProcessingOptions>(options =>
     builder.Configuration.GetSection(nameof(ProcessingOptions)).Bind(options));
 
-builder.Services.AddSingleton<IOperationHub, OperationHub>();
+builder.Services.AddSingleton<IOperationManager, OperationManager>();
 builder.Services.AddSingleton<IOperationRunner, OperationRunner>();
+builder.Services.AddSingleton<IPostprocessingRunner, PostprocessingRunner>();
 
 builder.Services.Configure<NerfStudioOptions>(options =>
     builder.Configuration.GetSection(nameof(NerfStudioOptions)).Bind(options));

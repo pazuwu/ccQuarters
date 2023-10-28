@@ -38,7 +38,7 @@ namespace VirtualTourProcessingServer.OperationHub
             return false;
         }
 
-        public void Run()
+        public void Run(VTOperation operation)
         {
             if (_runningOperation == null)
                 return;
