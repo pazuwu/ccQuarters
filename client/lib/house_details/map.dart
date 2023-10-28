@@ -1,8 +1,7 @@
-import 'package:ccquarters/map/location_picker.dart';
+import 'package:ccquarters/map/map.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 
 class MapCard extends StatelessWidget {
   const MapCard({super.key, required this.location});
@@ -27,17 +26,13 @@ class MapCard extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: const BoxConstraints(maxHeight: 500),
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.5),
           child: Padding(
             padding: const EdgeInsets.all(paddingSize),
-            child: LocationPicker(
-              initPosition: SearchInfo(
-                point: GeoPoint(
-                  longitude: location.geoX!,
-                  latitude: location.geoY!,
-                ),
-              ),
-              isReadOnly: true,
+            child: MapReadOnly(
+              latitude: location.geoX!,
+              longitude: location.geoY!,
             ),
           ),
         ),

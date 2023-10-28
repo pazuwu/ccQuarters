@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/user.dart';
 import 'package:flutter/material.dart';
 import 'item.dart';
 
@@ -25,7 +26,7 @@ class AnnouncementList extends StatelessWidget {
                       fit: BoxFit.fitHeight,
                     ),
                     height: constraints.maxHeight * 0.85,
-                    house: House(Location(), HouseDetails()),
+                    house: House(Location(), HouseDetails(), User()),
                   )),
           itemCount: 30,
         ),

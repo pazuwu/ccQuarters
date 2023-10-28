@@ -1,7 +1,9 @@
 import 'package:ccquarters/house_details/accordion.dart';
+import 'package:ccquarters/house_details/contact.dart';
 import 'package:ccquarters/house_details/map.dart';
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +14,10 @@ class DetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: const Key("details_view"),
+      bottomNavigationBar: getDeviceType(context) == DeviceType.mobile
+          ? ButtomContactWidget(user: house.user)
+          : null,
       appBar: AppBar(
         toolbarHeight: 68,
         leading: IconButton(
@@ -20,27 +26,46 @@ class DetailsView extends StatelessWidget {
         ),
         title: Text(house.houseDetails.title),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Photos(
-                //   photos: widget.house.photos,
-                // ),
-                AccordionPage(
-                  house: house,
+      body: Inside(house: house),
+    );
+  }
+}
+
+class Inside extends StatelessWidget {
+  const Inside({
+    super.key,
+    required this.house,
+  });
+
+  final House house;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AccordionPage(
+                      house: house,
+                    ),
+                    if (house.location.geoX != null &&
+                        house.location.geoY != null)
+                      MapCard(location: house.location),
+                  ],
                 ),
-                if (house.location.geoX != null && house.location.geoY != null)
-                  MapCard(location: house.location),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
+            if (getDeviceType(context) == DeviceType.web)
+              ContactWidget(user: house.user),
+          ]),
     );
   }
 }

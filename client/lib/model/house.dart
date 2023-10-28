@@ -1,16 +1,19 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/user.dart';
 
 class House {
   House(
     this.location,
-    this.houseDetails, {
+    this.houseDetails,
+    this.user, {
     this.offerType = OfferType.rent,
   });
 
   Location location;
   HouseDetails houseDetails;
   OfferType offerType;
+  User user;
   List<String> photos = <String>[
     "https://picsum.photos/512",
     "https://picsum.photos/600/900"
@@ -18,16 +21,15 @@ class House {
 }
 
 class Location {
-  Location({
-    this.city = 'Warszawa',
-    this.district = "Wilanów",
-    this.streetName = "Klimczaka",
-    this.zipCode = '14-121',
-    this.streetNumber = "12",
-    this.flatNumber,
-    this.geoX = 21.714504058106577,
-    this.geoY = 53.759196803704,
-  });
+  Location(
+      {this.city = 'Warszawa',
+      this.district = "Wilanów",
+      this.streetName = "Klimczaka",
+      this.zipCode = '14-121',
+      this.streetNumber = "12",
+      this.flatNumber,
+      this.geoX = 52.22202584979946,
+      this.geoY = 21.006980596300632});
 
   String city;
   String? district;
