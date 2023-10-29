@@ -1,6 +1,6 @@
-import 'package:ccquarters/add_house/choose_type.dart';
+import 'package:ccquarters/add_house/views/choose_type.dart';
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/add_house/details_view.dart';
+import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
 import 'package:ccquarters/utils/views_with_vertical_divider.dart';
