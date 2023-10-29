@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 const double borderRadius = 30;
 const double formBorderRadius = 16;
+const double paddingSizeForScrollBar = 12;
+const double smallPaddingSizeForScrollBar = 6;
 const double smallPaddingSize = 6;
+const double extraSmallPaddingSize = 3;
 const double paddingSize = 16;
 const double maxWidth = 700;
 const double maxWidthForGrid = 1200;

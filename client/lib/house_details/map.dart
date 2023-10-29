@@ -13,7 +13,8 @@ class MapCard extends StatelessWidget {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.all(paddingSize),
+          padding:
+              EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, paddingSize),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -29,7 +30,8 @@ class MapCard extends StatelessWidget {
           constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.5),
           child: Padding(
-            padding: const EdgeInsets.all(paddingSize),
+            padding: const EdgeInsets.fromLTRB(
+                paddingSize, 0, paddingSize, paddingSize),
             child: MapReadOnly(
               latitude: location.geoX!,
               longitude: location.geoY!,

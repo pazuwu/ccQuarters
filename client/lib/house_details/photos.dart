@@ -1,4 +1,5 @@
 import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 
@@ -19,30 +20,50 @@ class _PhotosState extends State<Photos> {
     return Padding(
       padding: const EdgeInsets.all(paddingSize),
       child: LayoutBuilder(
-        builder: (context, constraints) => Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildPhotoList(context, constraints),
-            _buildMainPhoto(context, constraints),
-          ],
-        ),
+        builder: (context, constraints) =>
+            getDeviceType(context) == DeviceType.web
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPhotoList(context, constraints, false),
+                      _buildMainPhoto(context, constraints, false),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildMainPhoto(context, constraints, true),
+                      _buildPhotoList(context, constraints, true),
+                    ],
+                  ),
       ),
     );
   }
 
-  Container _buildPhotoList(BuildContext context, BoxConstraints constraints) {
+  Container _buildPhotoList(
+      BuildContext context, BoxConstraints constraints, bool isMobile) {
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.5,
-        maxWidth: constraints.maxWidth * 0.2,
+        maxHeight: isMobile
+            ? MediaQuery.of(context).size.height * 0.1
+            : MediaQuery.of(context).size.height * 0.5,
+        maxWidth: isMobile ? constraints.maxWidth : constraints.maxWidth * 0.2,
       ),
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
         child: Scrollbar(
+          controller: _scrollController,
           thumbVisibility: true,
-          scrollbarOrientation: ScrollbarOrientation.left,
+          scrollbarOrientation: isMobile
+              ? ScrollbarOrientation.bottom
+              : ScrollbarOrientation.left,
           child: Padding(
-            padding: const EdgeInsets.only(left: 12.0),
+            padding: EdgeInsets.fromLTRB(
+              isMobile ? 0 : paddingSizeForScrollBar,
+              isMobile ? extraSmallPaddingSize : 0,
+              isMobile ? 0 : smallPaddingSize,
+              isMobile ? smallPaddingSizeForScrollBar : 0,
+            ),
             child: ListView.builder(
               controller: _scrollController,
               shrinkWrap: true,
@@ -54,18 +75,24 @@ class _PhotosState extends State<Photos> {
                       _selectedIndex = index;
                     });
                     _scrollController.animateTo(
-                        index *
-                            (constraints.maxWidth * 0.2 -
-                                12.0 +
-                                smallPaddingSize),
+                        isMobile
+                            ? index *
+                                (MediaQuery.of(context).size.height * 0.1 -
+                                    smallPaddingSizeForScrollBar +
+                                    extraSmallPaddingSize)
+                            : index *
+                                (constraints.maxWidth * 0.2 -
+                                    paddingSizeForScrollBar +
+                                    smallPaddingSize),
                         duration: const Duration(milliseconds: 400),
                         curve: Curves.ease);
                   },
-                  isLast: index == widget.photos.length - 1,
+                  isFirst: index == 0,
+                  isMobile: isMobile,
                 );
               },
               itemCount: widget.photos.length,
-              scrollDirection: Axis.vertical,
+              scrollDirection: isMobile ? Axis.horizontal : Axis.vertical,
             ),
           ),
         ),
@@ -73,11 +100,12 @@ class _PhotosState extends State<Photos> {
     );
   }
 
-  Container _buildMainPhoto(BuildContext context, BoxConstraints constraints) {
+  Container _buildMainPhoto(
+      BuildContext context, BoxConstraints constraints, bool isMobile) {
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.5,
-        maxWidth: constraints.maxWidth * 0.8,
+        maxWidth: constraints.maxWidth * (isMobile ? 1 : 0.8),
       ),
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -98,16 +126,19 @@ class PhotoTile extends StatelessWidget {
       {super.key,
       required this.photo,
       required this.onTap,
-      required this.isLast});
+      required this.isFirst,
+      required this.isMobile});
 
   final String photo;
   final Function() onTap;
-  final bool isLast;
+  final bool isFirst;
+  final bool isMobile;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-          0, 0, smallPaddingSize, isLast ? 0 : smallPaddingSize),
+      padding: isMobile
+          ? EdgeInsets.only(left: isFirst ? 0 : extraSmallPaddingSize)
+          : EdgeInsets.only(top: isFirst ? 0 : smallPaddingSize),
       child: InkWellWithPhoto(
         onTap: onTap,
         imageWidget: AspectRatio(

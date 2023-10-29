@@ -4,37 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 
-class ButtomContactWidget extends StatelessWidget {
-  const ButtomContactWidget({super.key, required this.user});
+class ButtonContactWidget extends StatelessWidget {
+  const ButtonContactWidget({super.key, required this.user});
 
   final User user;
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      child: TextButton(
-        onPressed: () => showModalBottomSheet<void>(
-          context: context,
-          enableDrag: true,
-          showDragHandle: true,
-          builder: (BuildContext context) => Column(
-            children: [
-              ContactWidget(user: user),
-              Padding(
-                padding: const EdgeInsets.all(paddingSize),
-                child: TextButton(
-                  child: const Text(
-                    "Zamknij",
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
+    return TextButton(
+      onPressed: () => showModalBottomSheet<void>(
+        context: context,
+        enableDrag: true,
+        showDragHandle: true,
+        builder: (BuildContext context) => Column(
+          children: [
+            ContactWidget(user: user),
+            TextButton(
+              child: const Text(
+                "Zamknij",
               ),
-            ],
-          ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
         ),
-        child: const Text(
-          "Skontaktuj się z wystawiającym",
-          textScaler: TextScaler.linear(1.3),
-        ),
+      ),
+      child: const Text(
+        "Skontaktuj się z wystawiającym",
+        textScaler: TextScaler.linear(1.3),
       ),
     );
   }

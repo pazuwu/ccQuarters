@@ -16,9 +16,6 @@ class DetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: const Key("details_view"),
-      bottomNavigationBar: getDeviceType(context) == DeviceType.mobile
-          ? ButtomContactWidget(user: house.user)
-          : null,
       appBar: AppBar(
         toolbarHeight: 68,
         leading: IconButton(
@@ -57,6 +54,8 @@ class Inside extends StatelessWidget {
                     Photos(
                       photos: house.photos,
                     ),
+                    if (getDeviceType(context) == DeviceType.mobile)
+                      ButtonContactWidget(user: house.user),
                     AccordionPage(
                       house: house,
                     ),

@@ -1,6 +1,7 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
 
 const headerStyle = TextStyle(
@@ -15,14 +16,16 @@ class AccordionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Accordion(
+      paddingListTop: paddingSize,
+      paddingListBottom: paddingSize,
       headerBorderColor: colorScheme.primary,
       headerBorderColorOpened: Colors.transparent,
-      maxOpenSections: 10,
+      maxOpenSections: 3,
       headerBackgroundColorOpened: colorScheme.primary.withOpacity(0.7),
       contentBackgroundColor: Colors.white,
       contentBorderColor: colorScheme.primary.withOpacity(0.7),
       contentBorderWidth: 3,
-      contentHorizontalPadding: 20,
+      contentHorizontalPadding: paddingSize,
       scaleWhenAnimating: false,
       openAndCloseAnimation: true,
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
