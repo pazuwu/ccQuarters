@@ -1,7 +1,13 @@
+using VirtualTourAPI.Endpoints;
+using VirtualTourAPI.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.Configure<DocumentDBOptions>(options =>
+    builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
+
+builder.Services.AddScoped<IVTRepository, VTRepository>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -16,29 +22,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/tours/{tourId}", TourEndpoints.Get).WithOpenApi();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapPost("/tours/{tourId}/areas", AreaEndpoints.Post).WithOpenApi();
+app.MapDelete("/tours/{tourId}/areas/{areaId}", AreaEndpoints.Delete).WithOpenApi();
+
+app.MapPost("/tours/{tourId}/scenes", SceneEndpoints.Post).WithOpenApi();
+app.MapDelete("/tours/{tourId}/scenes/{sceneId}", SceneEndpoints.Delete).WithOpenApi();
+
+app.MapPost("/tours/{tourId}/links", LinkEndpoints.Post).WithOpenApi();
+app.MapPut("/tours/{tourId}/links/{linkId}", LinkEndpoints.Put).WithOpenApi();
+app.MapDelete("/tours/{tourId}/links/{linkId}", LinkEndpoints.Delete).WithOpenApi();
+
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
