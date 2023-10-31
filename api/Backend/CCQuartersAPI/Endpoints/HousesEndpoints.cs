@@ -283,7 +283,7 @@ namespace CCQuartersAPI.Endpoints
             await connection.ExecuteAsync(insertQuery);
 
             string token = (await httpContext.GetTokenAsync("access_token"))!;
-            await storage.UploadFileAsync(token, "housePhotos", file.OpenReadStream(), filename);
+            await storage.UploadFileAsync("housePhotos", file.OpenReadStream(), filename);
             return Results.Ok();
         }
     }

@@ -1,4 +1,6 @@
-﻿using VirtualTourAPI.Model;
+﻿using AuthLibrary;
+using CloudStorageLibrary;
+using VirtualTourAPI.Model;
 using VirtualTourAPI.Repository;
 using VirtualTourAPI.Requests;
 
@@ -19,6 +21,13 @@ namespace VirtualTourAPI.Endpoints
         public static async Task<IResult> Delete(string tourId, string areaId, IVTRepository repository)
         {
             await repository.DeleteArea(tourId, areaId);
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> PostImage(string tourId, string areaId, IFormFile file, IStorage storage)
+        {
+            using var fileStream = file.OpenReadStream();
+            await storage.UploadFileAsync($"tours/{tourId}/{areaId}", fileStream, file.FileName);
             return Results.Ok();
         }
     }

@@ -1,23 +1,38 @@
 ﻿using Firebase.Storage;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System.Text;
 
 namespace CloudStorageLibrary
 {
     public class FirebaseCloudStorage : IStorage
     {
         private readonly string _bucketName;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public FirebaseCloudStorage(IConfiguration config)
+        public FirebaseCloudStorage(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
-            _bucketName = config["BucketName"];
+            var bucketName = config["BucketName"];
+            if (string.IsNullOrWhiteSpace(bucketName))
+                throw new Exception("Storage BucketName is empty. Check your configuration file.");
+
+            _bucketName = bucketName;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task UploadFileAsync(string authToken, string collectionName, Stream stream, string fileName)
+        private async Task<string> GetToken()
+        {
+            if(_httpContextAccessor.HttpContext != null)
+                return await _httpContextAccessor.HttpContext.GetTokenAsync("access_token") ?? string.Empty;
+
+            return string.Empty;
+        }
+
+        public async Task UploadFileAsync(string collectionName, Stream stream, string fileName)
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(authToken)
+                AuthTokenAsyncFactory = GetToken
             });
             await storage.Child(collectionName)
                 .Child(fileName)
@@ -28,7 +43,7 @@ namespace CloudStorageLibrary
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(authToken)
+                AuthTokenAsyncFactory = GetToken
             });
             await storage.Child(collectionName)
                 .Child(fileName)
@@ -39,7 +54,7 @@ namespace CloudStorageLibrary
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(authToken)
+                AuthTokenAsyncFactory = GetToken
             });
             return await storage
                 .Child(collectionName)
