@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:ccquarters/utils/icon_360.dart';
+import 'package:ccquarters/utils/image.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
 import 'package:ccquarters/virtual_tour/import_type_dialog.dart';
 import 'package:ccquarters/virtual_tour/scene.dart';
@@ -78,21 +78,10 @@ class SceneList extends StatelessWidget {
             children: [
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 250),
-                child: CachedNetworkImage(
-                    fadeInDuration: const Duration(milliseconds: 700),
-                    placeholder: (context, text) {
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                    imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              )),
-                        ),
-                    imageUrl:
-                        'https://picsum.photos/1000/2000?=${Random().nextDouble()}'),
+                child: ImageWidget(
+                  imageUrl:
+                      'https://picsum.photos/1000/2000?=${Random().nextDouble()}',
+                ),
               ),
               Positioned.fill(
                 child: Column(

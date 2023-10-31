@@ -1,12 +1,10 @@
-import 'dart:ui';
-
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/utils/image.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-
-const textScaler = TextScaler.linear(1.2);
 
 class HouseListTile extends StatefulWidget {
   const HouseListTile({super.key, required this.house});
@@ -29,95 +27,24 @@ class _HouseListTileState extends State<HouseListTile> {
       ),
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(borderRadius),
-              topRight: Radius.circular(borderRadius),
-            ),
-            child: InkWellWithPhoto(
-                imageWidget: Image.network(
-                  widget.house.photos.first,
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  fit: BoxFit.cover,
-                ),
-                onTap: () {},
-                onDoubleTap: () {
-                  setState(() {
-                    widget.house.isLiked = !widget.house.isLiked;
-                  });
-                }),
+          InkWellWithPhoto(
+            imageWidget: _buildPhoto(context),
+            onTap: () {},
+            onDoubleTap: () {
+              setState(() {
+                widget.house.isLiked = !widget.house.isLiked;
+              });
+            },
+            inkWellChild: _buildCityAndDistrictLabel(context),
           ),
           Padding(
-            padding: const EdgeInsets.all(paddingSize),
+            padding: const EdgeInsets.fromLTRB(
+                paddingSize, mediumPaddingSize, paddingSize, mediumPaddingSize),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: smallPaddingSize),
-                  child: Text(
-                    "${widget.house.details.price.toStringAsFixed(0)} zł",
-                    textScaler: textScaler,
-                  ),
-                ),
-                Expanded(
-                  child: Wrap(
-                    children: [
-                      Text(
-                        "${widget.house.details.area.toStringAsFixed(1)} m",
-                        textScaler: textScaler,
-                      ),
-                      const Text(
-                        '2',
-                        style: TextStyle(
-                          fontFeatures: [FontFeature.superscripts()],
-                        ),
-                        textScaler: textScaler,
-                      ),
-                      if (widget.house.details.roomCount != null &&
-                          widget.house.details.roomCount! > 0)
-                        Text(
-                          "/${formatRoomCount(widget.house.details.roomCount!)}",
-                          textScaler: textScaler,
-                        ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: <Widget>[
-                      Text(
-                        _getCityAndDistrict(widget.house.location),
-                        textScaler: textScaler,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: smallPaddingSize),
-                  child: LikeButton(
-                    bubblesColor: const BubblesColor(
-                        dotPrimaryColor: Colors.red,
-                        dotSecondaryColor: Colors.redAccent,
-                        dotThirdColor: Colors.redAccent,
-                        dotLastColor: Colors.redAccent),
-                    circleSize: 0,
-                    isLiked: widget.house.isLiked,
-                    size: 36,
-                    likeBuilder: (bool isLiked) {
-                      return Icon(
-                        Icons.favorite,
-                        color: isLiked ? Colors.red : Colors.grey,
-                        size: 36,
-                      );
-                    },
-                    onTap: (isLiked) {
-                      widget.house.isLiked = !isLiked;
-                      return Future.value(!isLiked);
-                    },
-                  ),
-                ),
+                _buildInfo(),
+                _buildLikeButton(),
               ],
             ),
           )
@@ -126,10 +53,94 @@ class _HouseListTileState extends State<HouseListTile> {
     );
   }
 
+  ConstrainedBox _buildPhoto(BuildContext context) {
+    return ConstrainedBox(
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
+      child: ImageWidget(
+        imageUrl:
+            "${widget.house.photos.first}?=${DateTime.now().millisecondsSinceEpoch}",
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(borderRadius),
+          topRight: Radius.circular(borderRadius),
+        ),
+      ),
+    );
+  }
+
+  Column _buildCityAndDistrictLabel(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Expanded(child: Container()),
+        AlwaysVisibleTextLabel(
+          text: _getCityAndDistrict(widget.house.location),
+          fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
+          fontWeight: FontWeight.w400,
+          background: Colors.grey.withOpacity(0),
+          alignment: Alignment.centerLeft,
+          paddingSize: 8.0,
+        ),
+      ],
+    );
+  }
+
+  Column _buildInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "${widget.house.details.price.toStringAsFixed(0)} zł",
+          textScaler: const TextScaler.linear(1.4),
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        Text(
+          _getAreaAndRoomCount(widget.house.details),
+          style: TextStyle(
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
+    );
+  }
+
+  LikeButton _buildLikeButton() {
+    return LikeButton(
+      bubblesColor: const BubblesColor(
+          dotPrimaryColor: Colors.red,
+          dotSecondaryColor: Colors.redAccent,
+          dotThirdColor: Colors.redAccent,
+          dotLastColor: Colors.redAccent),
+      circleSize: 0,
+      isLiked: widget.house.isLiked,
+      size: 40,
+      likeBuilder: (bool isLiked) {
+        return Icon(
+          Icons.favorite,
+          color: isLiked ? Colors.red : Colors.grey,
+          size: 40,
+        );
+      },
+      onTap: (isLiked) {
+        widget.house.isLiked = !isLiked;
+        return Future.value(!isLiked);
+      },
+    );
+  }
+
   _getCityAndDistrict(Location location) {
     var result = location.city;
     if (location.district != null && location.district!.isNotEmpty) {
-      result += "/${location.district}";
+      result += ", ${location.district}";
+    }
+    return result;
+  }
+
+  _getAreaAndRoomCount(HouseDetails details) {
+    var result = "${details.area.toStringAsFixed(1)} m\u00B2";
+    if (widget.house.details.roomCount != null &&
+        widget.house.details.roomCount! > 0) {
+      result += ", ${formatRoomCount(widget.house.details.roomCount!)}";
     }
     return result;
   }

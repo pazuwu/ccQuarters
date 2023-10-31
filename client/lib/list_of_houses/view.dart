@@ -14,23 +14,28 @@ class ListOfHouses extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Ogłoszenia na wynajem"),
       ),
-      body: Center(
-        child: Container(
-          constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width *
-                  (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
-          child: Padding(
-            padding: const EdgeInsets.only(
-                left: smallPaddingSize, right: smallPaddingSize),
-            child: ListView.builder(
-              itemCount: 30,
-              itemBuilder: (context, index) {
-                return LayoutBuilder(
-                  builder: (context, constraints) => HouseListTile(
-                    house: House(Location(), HouseDetails(), User()),
-                  ),
-                );
-              },
+      body: RefreshIndicator(
+        onRefresh: () {
+          return Future.delayed(const Duration(seconds: 1));
+        },
+        child: Center(
+          child: Container(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width *
+                    (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: smallPaddingSize, right: smallPaddingSize),
+              child: ListView.builder(
+                itemCount: 30,
+                itemBuilder: (context, index) {
+                  return LayoutBuilder(
+                    builder: (context, constraints) => HouseListTile(
+                      house: House(Location(), HouseDetails(), User()),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),
