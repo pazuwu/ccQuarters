@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/user.dart';
 import 'package:flutter/material.dart';
 import 'item.dart';
 
@@ -23,8 +25,8 @@ class AnnouncementList extends StatelessWidget {
                       height: constraints.maxHeight * 0.85,
                       fit: BoxFit.fitHeight,
                     ),
-                    url: "https://picsum.photos/216/300",
                     height: constraints.maxHeight * 0.85,
+                    house: House(Location(), HouseDetails(), User()),
                   )),
           itemCount: 30,
         ),

@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCQuartersAPI", "CCQuarters
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudStorageLibrary", "CloudStorageLibrary\CloudStorageLibrary.csproj", "{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourAPI", "VirtualTourAPI\VirtualTourAPI.csproj", "{E05CD50F-C56A-414C-8FF5-342997CED57F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourProcessingServer", "VirtualTourProcessingAPI\VirtualTourProcessingServer.csproj", "{1DA4A255-EC26-448F-9630-2505A8E73E5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
