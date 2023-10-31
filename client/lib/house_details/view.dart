@@ -22,7 +22,7 @@ class DetailsView extends StatelessWidget {
           onPressed: () => context.read<MainPageCubit>().goBack(),
           icon: const Icon(Icons.arrow_back),
         ),
-        title: Text(house.houseDetails.title),
+        title: Text(house.details.title),
       ),
       body: Inside(house: house),
     );

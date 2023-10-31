@@ -1,3 +1,4 @@
+import 'package:ccquarters/list_of_houses/view.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/shadow.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,12 @@ class AnnouncementsContainer extends StatelessWidget {
                 ListLabel(title: title),
                 const AnnouncementList(),
                 SeeMoreButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ListOfHouses()));
+                  },
                 ),
               ],
             ),

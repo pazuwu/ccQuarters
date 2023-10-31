@@ -7,10 +7,12 @@ class InkWellWithPhoto extends StatelessWidget {
     required this.onTap,
     this.inkWellChild,
     this.fit = StackFit.loose,
+    this.onDoubleTap,
   });
 
   final Widget imageWidget;
   final Function() onTap;
+  final Function()? onDoubleTap;
   final Widget? inkWellChild;
   final StackFit fit;
 
@@ -25,6 +27,7 @@ class InkWellWithPhoto extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: onTap,
+              onDoubleTap: onDoubleTap,
               child: inkWellChild,
             ),
           ),

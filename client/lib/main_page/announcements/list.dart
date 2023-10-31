@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ class AnnouncementList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final r = Random();
     return Expanded(
       child: Container(
         margin: const EdgeInsets.all(8.0),
@@ -17,15 +15,6 @@ class AnnouncementList extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) => LayoutBuilder(
               builder: (context, constraints) => AnnouncementItem(
-                    prize: r.nextDouble() * 1000000,
-                    image: Image.network(
-                      index % 2 == 0
-                          ? "https://picsum.photos/512"
-                          : "https://picsum.photos/216/300",
-                      height: constraints.maxHeight * 0.85,
-                      fit: BoxFit.fitHeight,
-                    ),
-                    height: constraints.maxHeight * 0.85,
                     house: House(Location(), HouseDetails(), User()),
                   )),
           itemCount: 30,
