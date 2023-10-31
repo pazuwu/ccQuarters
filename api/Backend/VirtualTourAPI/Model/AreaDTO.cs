@@ -16,7 +16,5 @@ namespace VirtualTourAPI.Model
 
         [FirestoreProperty]
         public List<string>? PhotoIds { get; set; }
-        
-        public List<SceneDTO>? Scenes { get; set; }  
     }
 }
