@@ -20,7 +20,6 @@ namespace VirtualTourAPI.Endpoints
             var newScene = new SceneDTO()
             {
                 ParentId = request.ParentId,
-                Photo360Id = request.Photo360Id,
             };
 
             var createdSceneId = await repository.CreateScene(tourId, newScene);
