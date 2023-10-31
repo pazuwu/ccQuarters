@@ -39,7 +39,7 @@ namespace CloudStorageLibrary
                 .PutAsync(stream);
         }
 
-        public async Task DeleteFileAsync(string authToken, string collectionName, string fileName)
+        public async Task DeleteFileAsync(string collectionName, string fileName)
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
@@ -50,7 +50,7 @@ namespace CloudStorageLibrary
                 .DeleteAsync();
         }
 
-        public async Task<string> GetDownloadUrl(string authToken, string collectionName, string filename)
+        public async Task<string> GetDownloadUrl(string collectionName, string filename)
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
