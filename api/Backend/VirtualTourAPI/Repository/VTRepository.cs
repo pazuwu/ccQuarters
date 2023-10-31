@@ -135,32 +135,16 @@ namespace VirtualTourAPI.Repository
             await Task.WhenAll(tourTask, areasTask, scenesTask, linksTask);
 
             var links = ConvertCollection<LinkDTO>(linksTask).ToList();
-            var scenes = ConvertCollection<SceneDTO>(scenesTask).ToDictionary(s => s.Id!);
-            var areas = ConvertCollection<AreaDTO>(areasTask).ToDictionary(a => a.Id!); ;
+            var scenes = ConvertCollection<SceneDTO>(scenesTask).ToList();
+            var areas = ConvertCollection<AreaDTO>(areasTask).ToList();
             var tour = tourTask.GetAwaiter().GetResult().ConvertTo<TourDTO>();
 
             if (tour == null)
                 return null;
 
-            tour.Areas = areas.Values.ToList();
-
-            foreach (var link in links)
-            {
-                if(link.ParentId != null && scenes.TryGetValue(link.ParentId, out var scene))
-                {
-                    scene.Links ??= new();
-                    scene.Links.Add(link); 
-                }
-            }
-
-            foreach (var scene in scenes.Values)
-            {
-                if (scene.ParentId != null && areas.TryGetValue(scene.ParentId, out var area))
-                {
-                    area.Scenes ??= new();
-                    area.Scenes.Add(scene);
-                }
-            }
+            tour.Areas = areas;
+            tour.Scenes = scenes;
+            tour.Links = links;
 
             return tour;
         }

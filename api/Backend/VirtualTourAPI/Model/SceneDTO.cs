@@ -13,7 +13,5 @@ namespace VirtualTourAPI.Model
 
         [FirestoreProperty]
         public string? Photo360Id { get; set; }
-
-        public List<LinkDTO>? Links { get; set; }
     }
 }
