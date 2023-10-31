@@ -37,7 +37,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> PostImage(string tourId, string sceneId, IFormFile file, IStorage storage)
+        public static async Task<IResult> PostPhoto(string tourId, string sceneId, IFormFile file, IStorage storage)
         {
             using var fileStream = file.OpenReadStream();
             await storage.UploadFileAsync($"tours/{tourId}/scenes", fileStream, sceneId);

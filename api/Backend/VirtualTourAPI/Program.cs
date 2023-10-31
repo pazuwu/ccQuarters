@@ -41,11 +41,11 @@ app.MapGet("/tours/{tourId}", TourEndpoints.Get).WithOpenApi().RequireFBAuthoriz
 
 app.MapPost("/tours/{tourId}/areas", AreaEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("/tours/{tourId}/areas/{areaId}", AreaEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
-app.MapPost("/tours/{tourId}/areas/{areaId}/image", AreaEndpoints.PostImage).WithOpenApi().RequireFBAuthorization();
+app.MapPost("/tours/{tourId}/areas/{areaId}/photos", AreaEndpoints.PostPhotos).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/scenes", SceneEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("/tours/{tourId}/scenes/{sceneId}", SceneEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
-app.MapDelete("/tours/{tourId}/scenes/{sceneId}/image", SceneEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
+app.MapPost("/tours/{tourId}/scenes/{sceneId}/photo", SceneEndpoints.PostPhoto).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/links", LinkEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapPut("/tours/{tourId}/links/{linkId}", LinkEndpoints.Put).WithOpenApi().RequireFBAuthorization();
