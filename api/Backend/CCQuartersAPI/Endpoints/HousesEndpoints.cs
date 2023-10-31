@@ -2,9 +2,11 @@
 using CCQuartersAPI.Mappers;
 using CCQuartersAPI.Requests;
 using CCQuartersAPI.Responses;
+using CloudStorageLibrary;
 using Dapper;
 using Google.Cloud.Firestore;
-using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CCQuartersAPI.Endpoints
 {
@@ -266,9 +268,23 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> AddPhotos(Guid houseId)
+        public static async Task<IResult> AddPhoto([FromServices]IStorage storage, Guid houseId, IFormFile file, HttpContext httpContext)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(connectionString);
+
+            var selectQuery = $@"SELECT COUNT(*) FROM HousePhotos WHERE HouseId = '{houseId}'";
+
+            int count = connection.ExecuteScalar<int>(selectQuery);
+
+            string filename = $@"{houseId}_{count + 1}";
+
+            var insertQuery = $@"INSERT INTO HousePhotos VALUES ('{houseId}', '{filename}', {count + 1})";
+
+            await connection.ExecuteAsync(insertQuery);
+
+            string token = (await httpContext.GetTokenAsync("access_token"))!;
+            await storage.UploadFileAsync(token, "housePhotos", file.OpenReadStream(), filename);
+            return Results.Ok();
         }
     }
 }
