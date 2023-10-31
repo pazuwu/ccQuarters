@@ -18,7 +18,7 @@ class VTLoadingState extends VTState {
 class VTLoadedState extends VTState {
   VTLoadedState({required this.virtualTour});
 
-  final VirtualTour virtualTour;
+  final Tour virtualTour;
 }
 
 class VTErrorState extends VTState {
