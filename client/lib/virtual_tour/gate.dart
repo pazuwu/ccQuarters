@@ -31,10 +31,7 @@ class VirtualTourGate extends StatelessWidget {
             }
 
             if (state is VTLoadedState) {
-              return SceneList(
-                  scenes: state.virtualTour.areas
-                      .map((e) => e.scenes)
-                      .reduce((value, element) => value + element));
+              return SceneList(scenes: state.virtualTour.scenes);
             }
 
             if (state is VTErrorState) {

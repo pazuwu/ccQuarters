@@ -1,8 +1,13 @@
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-
 class Area {
   final String id;
-  final List<Scene> scenes;
+  final String? transformsid;
+  final String name;
+  final List<String> photoIds;
 
-  Area({required this.id, required this.scenes});
+  Area({
+    required this.id,
+    this.transformsid,
+    required this.name,
+    this.photoIds = const [],
+  });
 }
