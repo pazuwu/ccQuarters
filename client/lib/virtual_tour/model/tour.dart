@@ -30,17 +30,17 @@ class Tour {
     return Tour(
       id: map['id'] as String,
       areas: List<Area>.from(
-        (map['areas'] as List<int>).map<Area>(
+        (map['areas'] as List<dynamic>).map<Area>(
           (x) => Area.fromMap(x as Map<String, dynamic>),
         ),
       ),
       scenes: List<Scene>.from(
-        (map['scenes'] as List<int>).map<Scene>(
+        (map['scenes'] as List<dynamic>).map<Scene>(
           (x) => Scene.fromMap(x as Map<String, dynamic>),
         ),
       ),
       links: List<Link>.from(
-        (map['links'] as List<int>).map<Link>(
+        (map['links'] as List<dynamic>).map<Link>(
           (x) => Link.fromMap(x as Map<String, dynamic>),
         ),
       ),

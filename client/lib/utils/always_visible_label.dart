@@ -32,7 +32,7 @@ class AlwaysVisibleLabel extends StatelessWidget {
     Key? key,
     required this.child,
     this.background,
-    this.stretch = false,
+    this.stretch = true,
     this.padding,
   }) : super(key: key);
 
@@ -48,7 +48,7 @@ class AlwaysVisibleLabel extends StatelessWidget {
       decoration: BoxDecoration(
           color: background ?? Colors.black38,
           borderRadius: const BorderRadius.all(Radius.circular(4))),
-      child: Center(child: child),
+      child: stretch ? Center(child: child) : child,
     );
   }
 }

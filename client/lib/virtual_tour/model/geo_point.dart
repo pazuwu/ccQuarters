@@ -15,8 +15,12 @@ class GeoPoint {
 
   factory GeoPoint.fromMap(Map<String, dynamic> map) {
     return GeoPoint(
-      latitude: map['latitude'] as double,
-      longitude: map['longitude'] as double,
+      latitude: double.tryParse(map['latitude'].toString()) ??
+          int.tryParse(map['latitude'])?.toDouble() ??
+          0.0,
+      longitude: double.tryParse(map['longitude'].toString()) ??
+          int.tryParse(map['longitude'])?.toDouble() ??
+          0.0,
     );
   }
 

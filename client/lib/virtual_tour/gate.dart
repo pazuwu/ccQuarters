@@ -1,28 +1,29 @@
-import 'package:ccquarters/virtual_tour/scene_list.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/virtual_tour/scene_viewer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/virtual_tour/cubit.dart';
-import 'package:provider/provider.dart';
+import 'package:ccquarters/virtual_tour/scene_list.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 
 class VirtualTourGate extends StatelessWidget {
   const VirtualTourGate({
     Key? key,
-    required this.houseId,
+    required this.tourId,
+    required this.readOnly,
   }) : super(key: key);
 
-  final String houseId;
+  final String tourId;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (context) => VTService(dio: Dio(), url: ""),
-      child: BlocProvider.value(
+    return Scaffold(
+      body: BlocProvider.value(
           value: VirtualTourCubit(
-              initialState: VTLoadingState(houseId: houseId),
-              service: context.read()),
+              initialState: VTLoadingState(tourId: tourId, readOnly: readOnly),
+              service: VTService(dio: Dio(), url: "https://localhost:7101")),
           child: BlocBuilder<VirtualTourCubit, VTState>(
             builder: (context, state) {
               if (state is VTLoadingState) {
@@ -31,14 +32,26 @@ class VirtualTourGate extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       CircularProgressIndicator(),
+                      SizedBox(
+                        height: 32.0,
+                      ),
                       Text("Trwa ładowanie wirtualnego spaceru..."),
                     ],
                   ),
                 );
               }
 
-              if (state is VTLoadedState) {
+              if (state is VTEditingState) {
                 return SceneList(scenes: state.virtualTour.scenes);
+              }
+
+              if (state is VTViewingState) {
+                return SceneViewer(
+                  scene: state.currentScene,
+                  links: state.links,
+                  cubit: context.read(),
+                  editable: !readOnly,
+                );
               }
 
               if (state is VTErrorState) {

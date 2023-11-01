@@ -8,8 +8,10 @@ class House {
     this.houseDetails,
     this.user, {
     this.offerType = OfferType.rent,
+    this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",
   });
 
+  String? virtualTourId;
   Location location;
   HouseDetails houseDetails;
   OfferType offerType;

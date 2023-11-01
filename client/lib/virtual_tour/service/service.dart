@@ -40,12 +40,12 @@ class VTService {
         "$_url/$_tours/$tourId",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
-          HttpHeaders.contentTypeHeader: ContentType.json,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return VTServiceResponse(data: Tour.fromJson(response.data));
+        return VTServiceResponse(data: Tour.fromMap(response.data));
       } else {
         return VTServiceResponse(error: ErrorType.unknown);
       }

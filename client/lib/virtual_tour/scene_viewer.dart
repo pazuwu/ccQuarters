@@ -1,12 +1,13 @@
-import 'package:ccquarters/virtual_tour/model/geo_point.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:ccquarters/virtual_tour/cubit.dart';
+import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/scene_link_form.dart';
 
 enum SceneEditingMode { delete, add, edit, move }
@@ -16,11 +17,13 @@ class SceneViewer extends StatefulWidget {
     Key? key,
     this.editable = false,
     required this.scene,
+    this.links = const [],
     required this.cubit,
   }) : super(key: key);
 
   final bool editable;
   final Scene scene;
+  final List<Link> links;
   final VirtualTourCubit cubit;
 
   @override
@@ -30,7 +33,14 @@ class SceneViewer extends StatefulWidget {
 class _SceneViewerState extends State<SceneViewer> {
   SceneEditingMode editingMode = SceneEditingMode.move;
 
-  final List<Link> _links = [];
+  List<Link> _links = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _links = widget.links;
+  }
 
   Widget _buildAlwaysVisibleButton(
       {VoidCallback? onPressed, Color? color, required IconData icon}) {
@@ -121,10 +131,12 @@ class _SceneViewerState extends State<SceneViewer> {
       width: 90,
       height: 75,
       widget: _buildHotspotButton(
-        onPressed: () {},
+        onPressed: () {
+          context.read<VirtualTourCubit>().useLink(link);
+        },
         context,
         link,
-        text: "next spot",
+        text: link.text,
         icon: Icons.arrow_upward,
       ),
     );
@@ -214,7 +226,7 @@ class _SceneViewerState extends State<SceneViewer> {
         backgroundColor: Colors.transparent,
         title: _buildAddHint(context),
       ),
-      floatingActionButton: _buildToolbar(context),
+      floatingActionButton: widget.editable ? _buildToolbar(context) : null,
       body: PanoramaViewer(
         onTap: _onTap,
         hotspots: _buildHotSpots(context),

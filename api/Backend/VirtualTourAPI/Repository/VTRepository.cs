@@ -12,13 +12,15 @@ namespace VirtualTourAPI.Repository
         private const string LinksCollection = "links";
 
         private readonly FirestoreDb _firestore;
+        private readonly ILogger _logger;
 
-        public VTRepository(IOptions<DocumentDBOptions> options)
+        public VTRepository(IOptions<DocumentDBOptions> options, ILogger<VTRepository> logger)
         {
             if (string.IsNullOrWhiteSpace(options.Value.ProjectId))
                 throw new Exception("DocumentDB ProjectId is empty. Check your configuration file.");
 
             _firestore = FirestoreDb.Create(options.Value.ProjectId);
+            _logger = logger;
         }
 
         public async Task<string?> CreateArea(string tourId, AreaDTO area)
@@ -123,6 +125,8 @@ namespace VirtualTourAPI.Repository
 
         public async Task<TourDTO?> GetTour(string tourId)
         {
+            _logger.LogInformation("Get tour from documents, id: {tourId}", tourId);
+
             var tourDocument = _firestore
                 .Collection(ToursCollection)
                 .Document(tourId);

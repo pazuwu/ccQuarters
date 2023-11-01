@@ -144,34 +144,36 @@ class SceneList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ConstrainedBox(
-        constraints: BoxConstraints.loose(const Size.fromWidth(600)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 8.0,
-              ),
-              _buildAddNew(context),
-              const SizedBox(
-                height: 8.0,
-              ),
-              Expanded(
-                child: ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        height: 8.0,
-                      );
-                    },
-                    itemCount: (scenes.length / 2).ceil(),
-                    itemBuilder: (context, index) {
-                      return _buildSingleScenesRow(context, index);
-                    }),
-              ),
-            ],
+    return SafeArea(
+      child: Scaffold(
+        body: ConstrainedBox(
+          constraints: BoxConstraints.loose(const Size.fromWidth(600)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 8.0,
+                ),
+                _buildAddNew(context),
+                const SizedBox(
+                  height: 8.0,
+                ),
+                Expanded(
+                  child: ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          height: 8.0,
+                        );
+                      },
+                      itemCount: (scenes.length / 2).ceil(),
+                      itemBuilder: (context, index) {
+                        return _buildSingleScenesRow(context, index);
+                      }),
+                ),
+              ],
+            ),
           ),
         ),
       ),

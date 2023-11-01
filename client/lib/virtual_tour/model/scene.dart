@@ -11,7 +11,7 @@ class Scene {
   final String? id;
   final String? parentId;
   final String name;
-  final String photo360Url;
+  final String? photo360Url;
 
   @override
   String toString() {

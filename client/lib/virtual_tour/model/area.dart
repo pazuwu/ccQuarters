@@ -21,7 +21,7 @@ class Area {
 
   factory Area.fromMap(Map<String, dynamic> map) {
     return Area(
-      id: map['id'] as String,
+      id: map['id'] as String?,
       transformsid:
           map['transformsid'] != null ? map['transformsid'] as String : null,
       name: map['name'] as String,

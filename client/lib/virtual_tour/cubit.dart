@@ -1,28 +1,42 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:ccquarters/virtual_tour/model/link.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/virtual_tour/service/service_response.dart';
 
 class VTState {}
 
 class VTLoadingState extends VTState {
   VTLoadingState({
-    required this.houseId,
+    required this.tourId,
+    required this.readOnly,
   });
 
-  String houseId;
+  final String tourId;
+  final bool readOnly;
 }
 
-class VTLoadedState extends VTState {
-  VTLoadedState({required this.virtualTour});
+class VTEditingState extends VTState {
+  VTEditingState({required this.virtualTour});
 
   final Tour virtualTour;
+}
+
+class VTViewingState extends VTState {
+  final Scene currentScene;
+  final List<Link> links;
+
+  VTViewingState({
+    required this.currentScene,
+    required this.links,
+  });
 }
 
 class VTErrorState extends VTState {
@@ -39,16 +53,43 @@ class VirtualTourCubit extends Cubit<VTState> {
       : _service = service,
         super(initialState) {
     if (initialState is VTLoadingState) {
-      loadVirtualTour(initialState.houseId);
+      loadVirtualTour(initialState.tourId, initialState.readOnly);
     }
   }
 
-  Future loadVirtualTour(String tourId) async {
+  Future loadVirtualTour(String tourId, bool readOnly) async {
     var serviceResponse = await _service.getTour(tourId);
 
     if (serviceResponse.error == null && serviceResponse.data != null) {
       _tour = serviceResponse.data;
-      emit(VTLoadedState(virtualTour: serviceResponse.data!));
+
+      if (readOnly) {
+        var scene = _tour!.scenes.first;
+
+        emit(
+          VTViewingState(
+            currentScene: scene,
+            links: _tour!.links
+                .where((element) => element.parentId == scene.id)
+                .toList(),
+          ),
+        );
+      } else {
+        emit(VTEditingState(virtualTour: serviceResponse.data!));
+      }
+    } else {
+      switch (serviceResponse.error) {
+        case ErrorType.unauthorized:
+          emit(VTErrorState(text: "Nie masz uprawnień do tego spaceru"));
+        case ErrorType.notFound:
+          emit(VTErrorState(text: "Spacer nie został odnaleziony"));
+        case ErrorType.badRequest:
+        case null:
+        case ErrorType.unknown:
+          emit(VTErrorState(
+              text:
+                  "Wystąpił błąd podczas próby pobrania spaceru. Spróbuj później."));
+      }
     }
   }
 
@@ -95,6 +136,19 @@ class VirtualTourCubit extends Cubit<VTState> {
       var photoFile = File(path);
       var photoBytes = await photoFile.readAsBytes();
       await _service.uploadAreaPhoto(_tour!.id, area.id!, photoBytes);
+    }
+  }
+
+  void useLink(Link link) {
+    var destination =
+        _tour?.scenes.firstWhere((element) => element.id == link.destinationId);
+
+    if (_tour != null && destination != null) {
+      emit(VTViewingState(
+          currentScene: destination,
+          links: _tour!.links
+              .where((element) => element.parentId == destination.id)
+              .toList()));
     }
   }
 }
