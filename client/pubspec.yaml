@@ -48,6 +48,9 @@ dependencies:
   url_launcher: ^6.2.1
   flutter_map: ^6.0.1
   latlong2: ^0.9.0
+  dio: ^5.3.3
+  http_status_code: ^0.0.2
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

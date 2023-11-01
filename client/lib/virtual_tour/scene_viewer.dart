@@ -167,17 +167,17 @@ class _SceneViewerState extends State<SceneViewer> {
       ),
     );
 
-    var newLink = await widget.cubit.addNewLinkToScene(
-      widget.scene,
+    var newLink = await widget.cubit.addNewLink(
       Link(
-        id: "",
         destinationId: "",
         text: "",
         position: GeoPoint(latitude: latitude, longitude: longitude),
       ),
     );
 
-    _links.add(newLink);
+    if (newLink != null) {
+      _links.add(newLink);
+    }
   }
 
   void _onTap(double longitude, double latitude, double tilt) {
@@ -220,7 +220,7 @@ class _SceneViewerState extends State<SceneViewer> {
         hotspots: _buildHotSpots(context),
         minZoom: 1,
         sensitivity: 1.5,
-        child: Image.network(widget.scene.photo360Url,
+        child: Image.network(widget.scene.photo360Url!,
             loadingBuilder: (context, widget, chunkEvent) {
           return const Center(child: CircularProgressIndicator());
         }),
