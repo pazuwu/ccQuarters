@@ -2,10 +2,10 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/utils/input_decorator_form.dart';
 import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
 import 'package:ccquarters/utils/views_with_vertical_divider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/model/building_type.dart';
@@ -31,7 +31,7 @@ class _LocationFormViewState extends State<LocationFormView> {
   Widget build(BuildContext context) {
     return ViewWithHeader(
         title: "Uzupełnij lokalizację",
-        inBetweenWidget: kIsWeb
+        inBetweenWidget: getDeviceType(context) == DeviceType.web
             ? ViewsWithVerticalDivider(
                 firstView: LocationForm(
                     location: widget.location,
@@ -47,7 +47,7 @@ class _LocationFormViewState extends State<LocationFormView> {
         goBackOnPressed: () {
           _formKey.currentState!.save();
           context.read<AddHouseFormCubit>().saveLocation(widget.location);
-          if (kIsWeb) {
+          if (getDeviceType(context) == DeviceType.web) {
             context.read<AddHouseFormCubit>().goToChooseTypeForm();
           } else {
             context.read<AddHouseFormCubit>().goToDetailsForm();
@@ -57,7 +57,7 @@ class _LocationFormViewState extends State<LocationFormView> {
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveLocation(widget.location);
-            if (kIsWeb) {
+            if (getDeviceType(context) == DeviceType.web) {
               context.read<AddHouseFormCubit>().goToPhotosForm();
             } else {
               context.read<AddHouseFormCubit>().goToMap();

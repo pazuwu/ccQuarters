@@ -7,11 +7,13 @@ class ImageWidget extends StatelessWidget {
     required this.imageUrl,
     this.borderRadius = const BorderRadius.all(Radius.circular(10)),
     this.fit = BoxFit.cover,
+    this.shape = BoxShape.rectangle,
   });
 
   final String imageUrl;
   final BoxFit fit;
   final BorderRadius borderRadius;
+  final BoxShape shape;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,8 @@ class ImageWidget extends StatelessWidget {
       },
       imageBuilder: (context, imageProvider) => Container(
         decoration: BoxDecoration(
-          borderRadius: borderRadius,
+          borderRadius: shape != BoxShape.circle ? borderRadius : null,
+          shape: shape,
           image: DecorationImage(
             image: imageProvider,
             fit: fit,
