@@ -17,7 +17,7 @@ class House {
   User user;
   bool isLiked;
   List<String> photos = <String>[
-    "https://picsum.photos/600/900",
+    "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}",
     "https://picsum.photos/1900/600",
     "https://picsum.photos/512",
     "https://picsum.photos/600/900",

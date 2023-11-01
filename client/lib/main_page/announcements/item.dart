@@ -1,9 +1,8 @@
-import 'package:ccquarters/main_page/cubit.dart';
+import 'package:ccquarters/house_details/view.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AnnouncementItem extends StatelessWidget {
   const AnnouncementItem({
@@ -38,7 +37,10 @@ class AnnouncementItem extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                context.read<MainPageCubit>().goToDetails(house);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailsView(house: house)));
               },
             ),
           ),

@@ -58,8 +58,7 @@ class _HouseListTileState extends State<HouseListTile> {
       constraints:
           BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
       child: ImageWidget(
-        imageUrl:
-            "${widget.house.photos.first}?=${DateTime.now().millisecondsSinceEpoch}",
+        imageUrl: widget.house.photos.first,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(borderRadius),
           topRight: Radius.circular(borderRadius),

@@ -1,10 +1,11 @@
 import 'package:ccquarters/main_page/gate.dart';
+import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'add_house/gate.dart';
-import 'profile/profile_gate.dart';
+import 'profile/gate.dart';
 
 class NavigationGate extends StatefulWidget {
   const NavigationGate({super.key});
@@ -18,10 +19,7 @@ class _NavigationGateState extends State<NavigationGate> {
   final List<Widget> _pages = <Widget>[
     const MainPageGate(),
     const AddHouseGate(),
-    const ProfileGate(
-      login: "",
-      isFromSearch: false,
-    ),
+    const ProfileGate(),
   ];
 
   final List<SideNavigationBarItem> _items = <SideNavigationBarItem>[
@@ -75,7 +73,11 @@ class _NavigationGateState extends State<NavigationGate> {
               onTap: _onItemTapped,
             ),
           Expanded(
-            child: _pages.elementAt(_selectedIndex),
+            child: _selectedIndex == 2
+                ? ProfileGate(
+                    user: User(),
+                  )
+                : _pages.elementAt(_selectedIndex),
           )
         ],
       ),
