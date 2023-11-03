@@ -10,14 +10,14 @@ class Link {
       required this.destinationId,
       required this.position,
       this.nextOrientation,
-      required this.text});
+      this.text});
 
   final String? id;
   final String? parentId;
   final String destinationId;
   final GeoPoint position;
   final GeoPoint? nextOrientation;
-  final String text;
+  final String? text;
 
   Link copyWith({
     String? id,

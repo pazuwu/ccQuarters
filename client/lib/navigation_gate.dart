@@ -1,5 +1,6 @@
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:side_navigation/side_navigation.dart';
 
@@ -16,7 +17,10 @@ class NavigationGate extends StatefulWidget {
 class _NavigationGateState extends State<NavigationGate> {
   int _selectedIndex = 0;
   final List<Widget> _pages = <Widget>[
-    const MainPageGate(),
+    const VirtualTourGate(
+      tourId: 'vu7TKNy0zkPj6jHy6lIq',
+      readOnly: false,
+    ),
     const AddHouseGate(),
     const ProfileGate(
       login: "",

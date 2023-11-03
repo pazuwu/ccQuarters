@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 class Scene {
   Scene({
@@ -6,12 +7,14 @@ class Scene {
     this.parentId,
     required this.name,
     required this.photo360Url,
+    this.photo360,
   });
 
   final String? id;
   final String? parentId;
   final String name;
   final String? photo360Url;
+  Uint8List? photo360;
 
   @override
   String toString() {

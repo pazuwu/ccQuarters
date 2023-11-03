@@ -1,30 +1,29 @@
+import 'package:ccquarters/virtual_tour/viewer/cached_memory_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 import 'package:ccquarters/utils/always_visible_label.dart';
-import 'package:ccquarters/virtual_tour/cubit.dart';
-import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/scene_link_form.dart';
+import 'package:ccquarters/virtual_tour/viewer/cubit.dart';
 
 enum SceneEditingMode { delete, add, edit, move }
 
 class SceneViewer extends StatefulWidget {
   const SceneViewer({
     Key? key,
-    this.editable = false,
+    this.readOnly = false,
     required this.scene,
     this.links = const [],
     required this.cubit,
   }) : super(key: key);
 
-  final bool editable;
+  final bool readOnly;
   final Scene scene;
   final List<Link> links;
-  final VirtualTourCubit cubit;
+  final VTViewerCubit cubit;
 
   @override
   State<SceneViewer> createState() => _SceneViewerState();
@@ -32,15 +31,6 @@ class SceneViewer extends StatefulWidget {
 
 class _SceneViewerState extends State<SceneViewer> {
   SceneEditingMode editingMode = SceneEditingMode.move;
-
-  List<Link> _links = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    _links = widget.links;
-  }
 
   Widget _buildAlwaysVisibleButton(
       {VoidCallback? onPressed, Color? color, required IconData icon}) {
@@ -62,10 +52,8 @@ class _SceneViewerState extends State<SceneViewer> {
       children: [
         if (editingMode == SceneEditingMode.delete)
           _buildAlwaysVisibleButton(
-            onPressed: () {
-              setState(() {
-                _links.remove(link);
-              });
+            onPressed: () async {
+              await widget.cubit.removeLink(link);
             },
             color: Colors.red,
             icon: Icons.delete,
@@ -132,7 +120,7 @@ class _SceneViewerState extends State<SceneViewer> {
       height: 75,
       widget: _buildHotspotButton(
         onPressed: () {
-          context.read<VirtualTourCubit>().useLink(link);
+          widget.cubit.useLink(link);
         },
         context,
         link,
@@ -143,11 +131,17 @@ class _SceneViewerState extends State<SceneViewer> {
   }
 
   List<Hotspot> _buildHotSpots(BuildContext context) {
-    return [for (var link in _links) _buildHotspot(context, link)];
+    return [for (var link in widget.links) _buildHotspot(context, link)];
+  }
+
+  List<Scene> getOtherScenes() {
+    return widget.cubit.scenes
+        .where((element) => element.id != widget.scene.id)
+        .toList();
   }
 
   void _editLink(Link link) async {
-    await showModalBottomSheet(
+    var linkFormModel = await showModalBottomSheet<SceneLinkFormModel>(
       useSafeArea: true,
       isDismissible: false,
       isScrollControlled: true,
@@ -156,15 +150,26 @@ class _SceneViewerState extends State<SceneViewer> {
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
-        child: const SceneLinkForm(
+        child: SceneLinkForm(
+          initialModel: SceneLinkFormModel(
+              destinationId: link.destinationId, text: link.text ?? ""),
           formType: SceneLinkFormType.edit,
+          scenes: getOtherScenes(),
         ),
       ),
     );
+
+    if (linkFormModel != null) {
+      await widget.cubit.updateLink(
+        link,
+        destinationId: linkFormModel.destinationId,
+        text: linkFormModel.text,
+      );
+    }
   }
 
   void _addNewLink(double longitude, double latitude) async {
-    await showModalBottomSheet(
+    var linkFormModel = await showModalBottomSheet<SceneLinkFormModel>(
       useSafeArea: true,
       isDismissible: false,
       isScrollControlled: true,
@@ -173,22 +178,20 @@ class _SceneViewerState extends State<SceneViewer> {
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
-        child: const SceneLinkForm(
+        child: SceneLinkForm(
+          scenes: getOtherScenes(),
           formType: SceneLinkFormType.create,
         ),
       ),
     );
 
-    var newLink = await widget.cubit.addNewLink(
-      Link(
-        destinationId: "",
-        text: "",
-        position: GeoPoint(latitude: latitude, longitude: longitude),
-      ),
-    );
-
-    if (newLink != null) {
-      _links.add(newLink);
+    if (linkFormModel != null) {
+      await widget.cubit.addLink(
+          parentId: widget.scene.id!,
+          destinationId: linkFormModel.destinationId,
+          text: linkFormModel.text,
+          latitude: latitude,
+          longitude: longitude);
     }
   }
 
@@ -226,16 +229,18 @@ class _SceneViewerState extends State<SceneViewer> {
         backgroundColor: Colors.transparent,
         title: _buildAddHint(context),
       ),
-      floatingActionButton: widget.editable ? _buildToolbar(context) : null,
+      floatingActionButton: !widget.readOnly ? _buildToolbar(context) : null,
       body: PanoramaViewer(
         onTap: _onTap,
         hotspots: _buildHotSpots(context),
         minZoom: 1,
         sensitivity: 1.5,
-        child: Image.network(widget.scene.photo360Url!,
-            loadingBuilder: (context, widget, chunkEvent) {
-          return const Center(child: CircularProgressIndicator());
-        }),
+        child: widget.scene.photo360 != null
+            ? Image.memory(widget.scene.photo360!)
+            : Image.network(widget.scene.photo360Url!,
+                loadingBuilder: (context, widget, chunkEvent) {
+                return const Center(child: CircularProgressIndicator());
+              }),
       ),
     );
   }

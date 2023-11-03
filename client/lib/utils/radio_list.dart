@@ -93,6 +93,7 @@ class _RadioListFormState<T> extends State<RadioListForm<T>> {
   _buildSceneList(BuildContext context) {
     return Flexible(
       child: FormField<T>(
+        initialValue: _filteredValues.first,
         onSaved: widget.onSaved,
         validator: widget.validator,
         builder: (formFieldState) => Column(
@@ -131,6 +132,7 @@ class _RadioListFormState<T> extends State<RadioListForm<T>> {
                             value: _filteredValues[index],
                             groupValue: _chosenValue,
                             onChanged: (newValue) {
+                              formFieldState.didChange(newValue);
                               setState(() {
                                 _searchFocusNode.unfocus();
                                 _chosenValue = newValue;

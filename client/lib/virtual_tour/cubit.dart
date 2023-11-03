@@ -10,6 +10,7 @@ import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class VTState {}
 
@@ -17,10 +18,12 @@ class VTLoadingState extends VTState {
   VTLoadingState({
     required this.tourId,
     required this.readOnly,
+    this.progress = 0.0,
   });
 
   final String tourId;
   final bool readOnly;
+  final double progress;
 }
 
 class VTEditingState extends VTState {
@@ -31,11 +34,11 @@ class VTEditingState extends VTState {
 
 class VTViewingState extends VTState {
   final Scene currentScene;
-  final List<Link> links;
+  final Tour virtualTour;
 
   VTViewingState({
     required this.currentScene,
-    required this.links,
+    required this.virtualTour,
   });
 }
 
@@ -63,15 +66,40 @@ class VirtualTourCubit extends Cubit<VTState> {
     if (serviceResponse.error == null && serviceResponse.data != null) {
       _tour = serviceResponse.data;
 
+      var currentSceneIndx = 0;
+      for (var scene in _tour!.scenes) {
+        if (scene.photo360Url != null) {
+          var response = await _service.downloadFile(scene.photo360Url!,
+              progressCallback: (progress, total) {
+            emit(VTLoadingState(
+              tourId: tourId,
+              readOnly: readOnly,
+              progress: progress * 1 / _tour!.scenes.length / total +
+                  currentSceneIndx * 1 / _tour!.scenes.length,
+            ));
+          });
+
+          if (response.data != null) {
+            var result = await FlutterImageCompress.compressWithList(
+              response.data!,
+              minHeight: 1920,
+              minWidth: 1080,
+              quality: 98,
+              format: CompressFormat.png,
+            );
+            scene.photo360 = result;
+          }
+        }
+
+        currentSceneIndx++;
+      }
+
       if (readOnly) {
         var scene = _tour!.scenes.first;
-
         emit(
           VTViewingState(
             currentScene: scene,
-            links: _tour!.links
-                .where((element) => element.parentId == scene.id)
-                .toList(),
+            virtualTour: _tour!,
           ),
         );
       } else {
@@ -93,41 +121,46 @@ class VirtualTourCubit extends Cubit<VTState> {
     }
   }
 
-  Future<Link?> addNewLink(Link link) async {
+  Future addLink(
+      {String? text,
+      required String destinationId,
+      required double longitude,
+      required double latitude}) async {
+    if (_tour == null) return;
+
+    var link = Link(
+        destinationId: destinationId,
+        text: text,
+        position: GeoPoint(longitude: longitude, latitude: latitude));
+
+    var response = await _service.postLink(_tour!.id, link);
+
+    if (response.data != null) {
+      link.copyWith(id: response.data!);
+      _tour?.links.add(link);
+    }
+  }
+
+  Future createNewSceneFromPhoto(String path) async {
+    if (_tour == null) return Future.value();
+
+    var serviceResponse = await _service.postScene(
+        tourId: _tour!.id, parentId: "", name: "new scene");
+
+    if (serviceResponse.data != null) {
+      var url = await _uploadScenePhoto(serviceResponse.data!, path);
+
+      var newScene =
+          Scene(name: "", photo360Url: url, id: serviceResponse.data!);
+      _tour!.scenes.add(newScene);
+    }
+  }
+
+  Future _uploadScenePhoto(String sceneId, String path) async {
     if (_tour != null) {
-      var serviceResponse = await _service.postLink(_tour!.id, link);
-
-      if (serviceResponse.data != null) {
-        return link.copyWith(id: serviceResponse.data!);
-      }
-    }
-
-    return null;
-  }
-
-  Future removeLink(Link link) async {
-    if (_tour != null && link.id != null) {
-      await _service.deleteLink(_tour!.id, link.id!);
-    }
-  }
-
-  Future<Link> updateLinkPosition(Link link, GeoPoint position) async {
-    if (_tour != null && link.id != null) {
-      var serviceResponse =
-          await _service.updateLink(_tour!.id, link.id!, position: position);
-      if (serviceResponse.data == true) {
-        return link.copyWith(position: position);
-      }
-    }
-
-    return link;
-  }
-
-  Future uploadScenePhoto(Scene scene, String path) async {
-    if (_tour != null && scene.id != null) {
       var photoFile = File(path);
       var photoBytes = await photoFile.readAsBytes();
-      await _service.uploadScenePhoto(_tour!.id, scene.id!, photoBytes);
+      await _service.uploadScenePhoto(_tour!.id, sceneId, photoBytes);
     }
   }
 
@@ -136,19 +169,6 @@ class VirtualTourCubit extends Cubit<VTState> {
       var photoFile = File(path);
       var photoBytes = await photoFile.readAsBytes();
       await _service.uploadAreaPhoto(_tour!.id, area.id!, photoBytes);
-    }
-  }
-
-  void useLink(Link link) {
-    var destination =
-        _tour?.scenes.firstWhere((element) => element.id == link.destinationId);
-
-    if (_tour != null && destination != null) {
-      emit(VTViewingState(
-          currentScene: destination,
-          links: _tour!.links
-              .where((element) => element.parentId == destination.id)
-              .toList()));
     }
   }
 }
