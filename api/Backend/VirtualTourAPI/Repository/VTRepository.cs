@@ -10,6 +10,7 @@ namespace VirtualTourAPI.Repository
         private const string AreasCollection = "areas";
         private const string ScenesCollection = "scenes";
         private const string LinksCollection = "links";
+        private const string OperationsCollection = "operations";
 
         private readonly FirestoreDb _firestore;
         private readonly ILogger _logger;
@@ -79,6 +80,26 @@ namespace VirtualTourAPI.Repository
             foreach (var link in snapshot)
                 await DeleteScene(tourId, link.Id);
         }
+
+        public async Task<string?> CreateOperation(string tourId, string areaId)
+        {
+            var collection = _firestore.Collection(OperationsCollection);
+
+            var operations = await collection.WhereEqualTo(nameof(VTOperationDTO.AreaId), areaId).Count().GetSnapshotAsync();
+
+            if (operations.Count > 0)
+                return null;
+
+            var operation = new VTOperationDTO() 
+            { 
+                AreaId = areaId, 
+                TourId = tourId 
+            };
+
+            var addedOperation = await collection.AddAsync(operation);
+            return addedOperation.Id;
+        }
+
 
         public async Task DeleteScene(string tourId, string sceneId)
         {

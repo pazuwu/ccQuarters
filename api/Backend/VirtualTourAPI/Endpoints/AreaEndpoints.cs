@@ -35,5 +35,15 @@ namespace VirtualTourAPI.Endpoints
             var url = await storage.GetDownloadUrl(collectionName, filename);
             return Results.Created(url, null);
         }
+
+        public static async Task<IResult> Process(string tourId, string areaId, IVTRepository repository)
+        {
+            var operationId = await repository.CreateOperation(tourId, areaId);
+
+            if (operationId == null) 
+                return Results.Conflict();
+
+            return Results.Accepted(operationId);
+        }
     }
 }
