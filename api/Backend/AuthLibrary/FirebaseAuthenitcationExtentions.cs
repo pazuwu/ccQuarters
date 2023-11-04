@@ -59,6 +59,12 @@ namespace AuthLibrary
                 });
         }
 
+        public static IEndpointConventionBuilder RequireFBAuthorization(this IEndpointConventionBuilder builder)
+        {
+            builder.RequireAuthorization("Auth");
+            return builder;
+        }
+        
         public static RouteHandlerBuilder RequireFBAuthorization(this RouteHandlerBuilder builder)
         {
             builder.RequireAuthorization("Auth");

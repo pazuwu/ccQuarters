@@ -59,6 +59,11 @@ namespace CCQuartersAPI
             app.MapPut("/alerts/{alertId}", AlertsEndpoints.UpdateAlert).WithOpenApi().RequireFBAuthorization();
             app.MapDelete("/alerts/{alertId}/delete", AlertsEndpoints.DeleteAlert).WithOpenApi().RequireFBAuthorization();
 
+            app.MapGet("/users/{userId}", UsersEndpoints.GetUser);
+            app.MapPut("/users/{userId}", UsersEndpoints.UpdateUser);
+            app.MapPut("/users/{userId}/delete", UsersEndpoints.DeleteUser);
+            app.MapPost("/users/{userId}/photo", UsersEndpoints.ChangePhoto);
+
             app.Run();
         }
     }
