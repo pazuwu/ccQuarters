@@ -8,7 +8,7 @@ class Area {
   Area({
     this.id,
     this.transformsid,
-    required this.name,
+    this.name = "",
   });
 
   Map<String, dynamic> toMap() {

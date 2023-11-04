@@ -1,11 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/model/area.dart';
-import 'package:ccquarters/virtual_tour/model/geo_point.dart';
-import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
@@ -27,9 +21,10 @@ class VTLoadingState extends VTState {
 }
 
 class VTEditingState extends VTState {
-  VTEditingState({required this.virtualTour});
+  VTEditingState({required this.virtualTour, this.uploadProgress = 0.0});
 
   final Tour virtualTour;
+  final double uploadProgress;
 }
 
 class VTViewingState extends VTState {
@@ -114,61 +109,11 @@ class VirtualTourCubit extends Cubit<VTState> {
         case ErrorType.badRequest:
         case null:
         case ErrorType.unknown:
+        default:
           emit(VTErrorState(
               text:
                   "Wystąpił błąd podczas próby pobrania spaceru. Spróbuj później."));
       }
-    }
-  }
-
-  Future addLink(
-      {String? text,
-      required String destinationId,
-      required double longitude,
-      required double latitude}) async {
-    if (_tour == null) return;
-
-    var link = Link(
-        destinationId: destinationId,
-        text: text,
-        position: GeoPoint(longitude: longitude, latitude: latitude));
-
-    var response = await _service.postLink(_tour!.id, link);
-
-    if (response.data != null) {
-      link.copyWith(id: response.data!);
-      _tour?.links.add(link);
-    }
-  }
-
-  Future createNewSceneFromPhoto(String path) async {
-    if (_tour == null) return Future.value();
-
-    var serviceResponse = await _service.postScene(
-        tourId: _tour!.id, parentId: "", name: "new scene");
-
-    if (serviceResponse.data != null) {
-      var url = await _uploadScenePhoto(serviceResponse.data!, path);
-
-      var newScene =
-          Scene(name: "", photo360Url: url, id: serviceResponse.data!);
-      _tour!.scenes.add(newScene);
-    }
-  }
-
-  Future _uploadScenePhoto(String sceneId, String path) async {
-    if (_tour != null) {
-      var photoFile = File(path);
-      var photoBytes = await photoFile.readAsBytes();
-      await _service.uploadScenePhoto(_tour!.id, sceneId, photoBytes);
-    }
-  }
-
-  Future uploadAreaPhoto(Area area, String path) async {
-    if (_tour != null && area.id != null) {
-      var photoFile = File(path);
-      var photoBytes = await photoFile.readAsBytes();
-      await _service.uploadAreaPhoto(_tour!.id, area.id!, photoBytes);
     }
   }
 }

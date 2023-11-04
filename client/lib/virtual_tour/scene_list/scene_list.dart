@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:ccquarters/utils/icon_360.dart';
 import 'package:ccquarters/utils/inkwell_with_photo.dart';
-import 'package:ccquarters/virtual_tour/cubit.dart';
-import 'package:ccquarters/virtual_tour/import_type_dialog.dart';
+import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
+import 'package:ccquarters/virtual_tour/scene_list/import_type_dialog.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
@@ -47,14 +47,24 @@ class SceneList extends StatelessWidget {
     );
   }
 
-  void _importHandler(BuildContext context, VirtualTourCubit cubit) async {
+  void _importHandler(BuildContext context, VTScenesCubit cubit) async {
     var importType = await _showChooseImportTypeDialog(context);
 
     if (importType == ImportType.photos360) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
 
       if (result?.files.single.path != null) {
         await cubit.createNewSceneFromPhoto(result!.files.single.path!);
+      }
+    } else if (importType == ImportType.photos) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.image,
+      );
+
+      if (result != null) {
+        await cubit.createNewAreaFromPhotos(result.paths);
       }
     }
   }
@@ -165,37 +175,70 @@ class SceneList extends StatelessWidget {
     );
   }
 
+  Widget _buildProgress(double progress) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text("Trwa dodawanie zdjęć..."),
+        Row(
+          children: [
+            LinearProgressIndicator(
+              backgroundColor: Colors.blueGrey.shade200,
+              value: progress,
+            ),
+            const SizedBox(
+              width: 8.0,
+            ),
+            Text("${(progress * 100).toStringAsFixed(2)}%"),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: ConstrainedBox(
-          constraints: BoxConstraints.loose(const Size.fromWidth(600)),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 8.0,
-                ),
-                _buildAddNew(context),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                Expanded(
-                  child: ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          height: 8.0,
-                        );
-                      },
-                      itemCount: (tour.scenes.length / 2).ceil(),
-                      itemBuilder: (context, index) {
-                        return _buildSingleScenesRow(context, index);
-                      }),
-                ),
-              ],
+    return BlocProvider.value(
+      value: VTScenesCubit(context.read(), tour),
+      child: SafeArea(
+        child: Scaffold(
+          body: ConstrainedBox(
+            constraints: BoxConstraints.loose(const Size.fromWidth(600)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: BlocBuilder<VTScenesCubit, VTScenesState>(
+                  builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    _buildAddNew(context),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    if (state is VTScenesUploadingState)
+                      _buildProgress(state.progress),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(
+                              height: 8.0,
+                            );
+                          },
+                          itemCount: (tour.scenes.length / 2).ceil(),
+                          itemBuilder: (context, index) {
+                            return _buildSingleScenesRow(context, index);
+                          }),
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ),

@@ -5,7 +5,7 @@ import 'package:panorama_viewer/panorama_viewer.dart';
 import 'package:ccquarters/utils/always_visible_label.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/scene_link_form.dart';
+import 'package:ccquarters/virtual_tour/scene_list/scene_link_form.dart';
 import 'package:ccquarters/virtual_tour/viewer/cubit.dart';
 
 enum SceneEditingMode { delete, add, edit, move }

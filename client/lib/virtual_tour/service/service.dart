@@ -9,7 +9,6 @@ import 'package:ccquarters/virtual_tour/service/requests/put_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:dio/dio.dart';
 
-import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:http_status_code/http_status_code.dart';
@@ -23,7 +22,7 @@ class VTService {
   final Dio _dio;
   final String _url;
   String _token =
-      "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ0OWU0N2ZiZGQ0ZWUyNDE0Nzk2ZDhlMDhjZWY2YjU1ZDA3MDRlNGQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2NxdWFydGVyc21pbmkiLCJhdWQiOiJjY3F1YXJ0ZXJzbWluaSIsImF1dGhfdGltZSI6MTY5ODk2Nzk1MCwidXNlcl9pZCI6IjI0RXNmWEJYc0hjc2pMOHJCcHhlS2dQOFRNWjIiLCJzdWIiOiIyNEVzZlhCWHNIY3NqTDhyQnB4ZUtnUDhUTVoyIiwiaWF0IjoxNjk4OTY3OTUwLCJleHAiOjE2OTg5NzE1NTAsImVtYWlsIjoidnRAdGVzdC5wbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ2dEB0ZXN0LnBsIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.feaOfDnbp9hAoBhsRU8aKu0cuejvpWL8Lq8zc7fjSdpRcskNlUJKEVE-TpN0C4yLImhT89YSUdTuKB8lmafBe5fLYTd3jm4WGt-qCtmI8AMjO8aGupHPKmXgpf2xLgu19ZE7_w25K8N2JsApG9u2hWol_PDT-_lcTdllm5kiQqNCNjch4O08XHpiS3ChXwuzsNvifRwWf_Hkvoz7egK8kQSjeyKgEQJ1PbTatGl_2f87kIRR3osf8OBo0H93R7S9XRDqLPPkEYpar2kuEhsKP4Q8sDU9riNTR7oLKUHXu0UwGGPD0pixGUGIC63Aobn_xR8KubFb5pllax8sOAN78g";
+      "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ0OWU0N2ZiZGQ0ZWUyNDE0Nzk2ZDhlMDhjZWY2YjU1ZDA3MDRlNGQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2NxdWFydGVyc21pbmkiLCJhdWQiOiJjY3F1YXJ0ZXJzbWluaSIsImF1dGhfdGltZSI6MTY5OTA2NzQ0NCwidXNlcl9pZCI6IjI0RXNmWEJYc0hjc2pMOHJCcHhlS2dQOFRNWjIiLCJzdWIiOiIyNEVzZlhCWHNIY3NqTDhyQnB4ZUtnUDhUTVoyIiwiaWF0IjoxNjk5MDY3NDQ0LCJleHAiOjE2OTkwNzEwNDQsImVtYWlsIjoidnRAdGVzdC5wbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ2dEB0ZXN0LnBsIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.ZVjLDqF9WNcNZfhWwyMbsrX9auttw8hasPvLFlTR3oTubJFeM2pBgV0yh8LmxCnmbWp3CXg1auqzR-FtjSg8JZhONUFECI-hoFTIGzTMVJ4G-cd_i7Wd7zeCbnQOCh4n96Anwo_pL7CKCgbOfH8BdxNjmj1ayr-QP8ET5PSpcG5q0fce-bkT_ecJcMirMqXzOuFGbmh8EFXRce-tkBd510uhWdcEblSxpZJjy8GNdn4LO2RCPwMHYAM3p7oKPoo7FjZVlJUUVRiDR7A1XIImPAVKdBmP1IVip9u0b1WspiVxpTGMzxnZYmQ6UF1q2YnHnRE3ir28rOknV0JMx3hMpw";
   VTService({
     required dio,
     required url,
@@ -164,12 +163,13 @@ class VTService {
     }
   }
 
-  Future<VTServiceResponse<String?>> postArea(String tourId, Area area) async {
+  Future<VTServiceResponse<String?>> postArea(String tourId,
+      {String name = ""}) async {
     try {
       var response = await _dio.post(
         "$_url/$_tours/$tourId/$_areas",
         data: PostAreaRequest(
-          name: area.name,
+          name: name,
         ).toJson(),
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
@@ -192,13 +192,16 @@ class VTService {
   }
 
   Future<VTServiceResponse<String?>> uploadAreaPhoto(
-      String tourId, String areaId, Uint8List photo) async {
+      String tourId, String areaId, Uint8List photo,
+      {void Function(int count, int total)? progressCallback}) async {
     return _uploadPhoto(
-        "$_url/$_tours/$tourId/$_areas/$areaId/photo", areaId, photo);
+        "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo,
+        progressCallback: progressCallback);
   }
 
   Future<VTServiceResponse<String?>> _uploadPhoto(
-      String url, String filename, Uint8List photo) async {
+      String url, String filename, Uint8List photo,
+      {void Function(int count, int total)? progressCallback}) async {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(photo, filename: filename),
@@ -210,6 +213,9 @@ class VTService {
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
         }),
+        onSendProgress: (int sent, int total) {
+          progressCallback?.call(sent, total);
+        },
       );
 
       var createdUrl = response.headers.value("location");
@@ -231,6 +237,23 @@ class VTService {
       return VTServiceResponse(
           data: Uint8List.fromList(response.data as List<int>));
     } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future postOperation(String tourId, String areaId) async {
+    try {
+      final response = await _dio.post(
+        "$_url/$_tours/$tourId/$_areas/$areaId/process",
+      );
+
+      return VTServiceResponse(
+          data: Uint8List.fromList(response.data as List<int>));
+    } on DioException catch (e) {
+      if (e.response?.statusCode == StatusCode.CONFLICT) {
+        return VTServiceResponse(error: ErrorType.alreadyExists);
+      }
+
       return _catchCommonErrors(e);
     }
   }
