@@ -2,6 +2,10 @@
 using Dapper;
 using CCQuartersAPI.Responses;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using AuthLibrary;
+using Google.Api;
 
 namespace CCQuartersAPI.Endpoints
 {
@@ -14,12 +18,14 @@ namespace CCQuartersAPI.Endpoints
             AlertsEndpoints.connectionString = connectionString;
         }
 
-        public static async Task<IResult> GetAlerts()
+        public static async Task<IResult> GetAlerts(HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: get userId from context
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             var query = @$"SELECT * FROM Alerts WHERE UserId = '{userId}'";
 
@@ -30,12 +36,14 @@ namespace CCQuartersAPI.Endpoints
                 Alerts = alerts.ToArray()
             });
         }
-        public static async Task<IResult> CreateAlert(AlertDTO alert)
+        public static async Task<IResult> CreateAlert(AlertDTO alert, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: get userId from context
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             var queryBuilder = new StringBuilder();
 
@@ -122,20 +130,24 @@ namespace CCQuartersAPI.Endpoints
 
             return Results.Ok();
         }
-        public static async Task<IResult> UpdateAlert(Guid alertId, AlertDTO alert)
+        public static async Task<IResult> UpdateAlert(Guid alertId, AlertDTO alert, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: get userId from context
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             var query = @$"SELECT * FROM Alerts WHERE Id = '{alertId}'";
 
             var alertQueried = await connection.QueryFirstAsync<AlertDTO>(query);
 
+            if (alertQueried.UserId != userId)
+                return Results.Unauthorized();
+
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("UPDATE Alerts SET ");
-
 
             if (alert.MaxPrice is not null)
                 queryBuilder.Append($"MaxPrice = {alert.MaxPrice}, ");
@@ -188,16 +200,25 @@ namespace CCQuartersAPI.Endpoints
 
             return Results.Ok();
         }
-        public static async Task<IResult> DeleteAlert(Guid alertId)
+        public static async Task<IResult> DeleteAlert(Guid alertId, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: get userId from context
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
-            var query = @$"DELETE FROM Alerts WHERE Id = '{alertId}'";
+            var getQuery = @$"SELECT * FROM Alerts WHERE Id = '{alertId}'";
 
-            await connection.ExecuteAsync(query);
+            var alertQueried = await connection.QueryFirstAsync<AlertDTO>(getQuery);
+
+            if (alertQueried.UserId != userId)
+                return Results.Unauthorized();
+
+            var deleteQuery = @$"DELETE FROM Alerts WHERE Id = '{alertId}'";
+
+            await connection.ExecuteAsync(deleteQuery);
 
             return Results.Ok();
         }

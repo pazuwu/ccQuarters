@@ -1,9 +1,13 @@
 ﻿using System.Data.SqlClient;
+using System.Security.Claims;
+using AuthLibrary;
+using CCQuartersAPI.CommonClasses;
 using CCQuartersAPI.Mappers;
 using CCQuartersAPI.Requests;
 using CCQuartersAPI.Responses;
 using CloudStorageLibrary;
 using Dapper;
+using Google.Api;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -19,54 +23,68 @@ namespace CCQuartersAPI.Endpoints
             HousesEndpoints.connectionString = connectionString;
         }
 
-        public static async Task<IResult> GetHouses()
+        public static async Task<IResult> GetHouses(HttpContext context, IStorage storage)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
 
-            var query = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
                         WHERE h.DeleteDate IS NULL";
 
             var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
 
+            foreach (var house in houses)
+                if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
+                    house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
+
             return Results.Ok(new GetHousesResponse()
             {
                 Houses = houses.ToArray()
             });
         }
 
-        public static async Task<IResult> GetLikedHouses()
+        public static async Task<IResult> GetLikedHouses(HttpContext context, IStorage storage)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
-            var query = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
                         WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}') > 0 AND h.DeleteDate IS NULL";
 
             var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
 
+            foreach (var house in houses)
+                if(!string.IsNullOrWhiteSpace(house.PhotoUrl))
+                    house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
+
             return Results.Ok(new GetHousesResponse()
             {
                 Houses = houses.ToArray()
             });
         }
 
-        public static async Task<IResult> CreateHouse(CreateHouseRequest houseRequest)
+        public static async Task<IResult> CreateHouse(CreateHouseRequest houseRequest, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             connection.Open();
             try
@@ -109,12 +127,12 @@ namespace CCQuartersAPI.Endpoints
 
             return Results.Ok();
         }
-        public static async Task<IResult> GetHouse(Guid houseId)
+        public static async Task<IResult> GetHouse(Guid houseId, HttpContext context, IStorage storage)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
 
             var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
                                 FROM Houses h
@@ -125,9 +143,14 @@ namespace CCQuartersAPI.Endpoints
             var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(houseQuery);
             var house = houseQueried.Map();
 
-            var photosQuery = @$"SELECT PhotoId FROM HousePhotos WHERE HouseId = '{houseId}'";
+            var photosQuery = @$"SELECT PhotoId FROM HousePhotos WHERE HouseId = '{houseId}' ORDER BY [Order]";
 
-            var photoIds = await connection.QueryAsync<PhotoIdWrapper>(photosQuery);
+            var photoIds = await connection.QueryAsync<string>(photosQuery);
+
+            List<string> photosUrls = new List<string>();
+            foreach (var photoId in photoIds)
+                if(!string.IsNullOrWhiteSpace(photoId))
+                    photosUrls.Add(await storage.GetDownloadUrl("housePhotos", photoId));
 
             FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
             DocumentReference descriptionDoc = firestoreDb.Collection("descriptions").Document($"{houseQueried.DescriptionId}");
@@ -145,18 +168,32 @@ namespace CCQuartersAPI.Endpoints
                 house.Details = detailsSnapshot.ToDictionary();
             }
 
-#warning TODO: user and photos from firebase
+            var user = await firestoreDb.GetUser(houseQueried.UserId, storage);
+
+            if(user != null) 
+            {
+                house.UserName = user.Name;
+                house.UserSurname = user.Surname;
+                house.UserCompany = user.Company;
+                house.UserEmail = user.Email;
+                house.UserPhoneNumber = user.PhoneNumber;
+            }
 
             return Results.Ok(new GetHouseResponse()
             {
                 House = house,
-                PhotoIds = photoIds?.Select(x => x.PhotoId)?.ToArray()
+                PhotoUrls = photosUrls.ToArray()
             });
         }
 
-        public static async Task<IResult> UpdateHouse(Guid houseId, CreateHouseRequest houseRequest)
+        public static async Task<IResult> UpdateHouse(Guid houseId, CreateHouseRequest houseRequest, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
+
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             connection.Open();
             try
@@ -170,9 +207,10 @@ namespace CCQuartersAPI.Endpoints
                 var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(houseQuery);
 
                 if (houseQueried is null)
-                {
                     return Results.NotFound("House not found");
-                }
+
+                if (houseQueried.UserId != userId)
+                    return Results.Unauthorized();
 
                 using var trans = connection.BeginTransaction();
                 FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
@@ -220,28 +258,43 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> DeleteHouse(Guid houseId)
+        public static async Task<IResult> DeleteHouse(Guid houseId, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
-            var query = @$"UPDATE Houses
+            var getQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 0 AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
+                        FROM Houses h
+                        JOIN Details d ON h.DetailsId = d.Id
+                        JOIN Locations l ON h.LocationId = l.Id
+                        WHERE h.Id = '{houseId}' AND h.DeleteDate IS NULL";
+
+            var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(getQuery);
+
+            if (houseQueried.UserId != userId)
+                return Results.Unauthorized();
+
+            var deleteQuery = @$"UPDATE Houses
                         SET DeleteDate = GETDATE()
                         WHERE Id = '{houseId}'";
 
-            await connection.ExecuteAsync(query);
+            await connection.ExecuteAsync(deleteQuery);
 
             return Results.Ok();
         }
 
-        public static async Task<IResult> LikeHouse(Guid houseId)
+        public static async Task<IResult> LikeHouse(Guid houseId, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             var query = @$"IF NOT EXISTS (SELECT * FROM LikedHouses WHERE HouseId = '{houseId}' AND UserId = '{userId}')
                        BEGIN
@@ -254,12 +307,14 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> UnlikeHouse(Guid houseId)
+        public static async Task<IResult> UnlikeHouse(Guid houseId, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
 
-#warning TODO: Get user id from token
-            Guid userId = Guid.Empty;
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
 
             var query = @$"DELETE FROM LikedHouses WHERE UserId = '{userId}' AND HouseId = '{houseId}'";
 
@@ -268,9 +323,25 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> AddPhoto([FromServices]IStorage storage, Guid houseId, IFormFile file, HttpContext httpContext)
+        public static async Task<IResult> AddPhoto([FromServices]IStorage storage, Guid houseId, IFormFile file, HttpContext context)
         {
             using var connection = new SqlConnection(connectionString);
+
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
+
+            var getQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 0 AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
+                        FROM Houses h
+                        JOIN Details d ON h.DetailsId = d.Id
+                        JOIN Locations l ON h.LocationId = l.Id
+                        WHERE h.Id = '{houseId}' AND h.DeleteDate IS NULL";
+
+            var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(getQuery);
+
+            if (houseQueried?.UserId != userId)
+                return Results.Unauthorized();
 
             var selectQuery = $@"SELECT COUNT(*) FROM HousePhotos WHERE HouseId = '{houseId}'";
 
@@ -282,7 +353,6 @@ namespace CCQuartersAPI.Endpoints
 
             await connection.ExecuteAsync(insertQuery);
 
-            string token = (await httpContext.GetTokenAsync("access_token"))!;
             await storage.UploadFileAsync("housePhotos", file.OpenReadStream(), filename);
             return Results.Ok();
         }
