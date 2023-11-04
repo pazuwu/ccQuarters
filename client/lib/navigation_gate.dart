@@ -1,4 +1,3 @@
-import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:flutter/material.dart';
