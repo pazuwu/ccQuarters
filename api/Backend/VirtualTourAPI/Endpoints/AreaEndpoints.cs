@@ -29,7 +29,7 @@ namespace VirtualTourAPI.Endpoints
         {
             using var fileStream = file.OpenReadStream();
             var collectionName = $"tours/{tourId}/{areaId}";
-            var filename = file.FileName;
+            var filename = Guid.NewGuid().ToString();
 
             await storage.UploadFileAsync(collectionName, fileStream, filename);
             var url = await storage.GetDownloadUrl(collectionName, filename);
