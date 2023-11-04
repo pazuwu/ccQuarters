@@ -33,6 +33,8 @@ namespace VirtualTourAPI.Repository
 
             var addedArea = await collection.AddAsync(area);
 
+            _logger.LogInformation("Created new area in tour: {tourId}, id: {Id}", tourId, addedArea.Id);
+
             return addedArea.Id;
         }
 
@@ -45,6 +47,8 @@ namespace VirtualTourAPI.Repository
 
             var addedScene = await collection.AddAsync(scene);
 
+            _logger.LogInformation("Created new scene in tour: {tourId}, id: {Id}", tourId, addedScene.Id);
+
             return addedScene.Id;
         }
 
@@ -56,6 +60,8 @@ namespace VirtualTourAPI.Repository
                 .Collection(LinksCollection);
 
             var addedLink = await collection.AddAsync(link);
+
+            _logger.LogInformation("Created new link in tour: {tourId}, id: {Id}", tourId, addedLink.Id);
 
             return addedLink.Id;
         }
@@ -77,6 +83,8 @@ namespace VirtualTourAPI.Repository
                 .WhereEqualTo(nameof(SceneDTO.ParentId), areaId)
                 .GetSnapshotAsync();
 
+            _logger.LogInformation("Area deleted in tour: {tourId}, id: {areaId}", tourId, areaId);
+
             foreach (var link in snapshot)
                 await DeleteScene(tourId, link.Id);
         }
@@ -97,6 +105,9 @@ namespace VirtualTourAPI.Repository
             };
 
             var addedOperation = await collection.AddAsync(operation);
+
+            _logger.LogInformation("Created new operation for tour: {tourId}, area: {areaId}", tourId, areaId);
+
             return addedOperation.Id;
         }
 
@@ -118,6 +129,8 @@ namespace VirtualTourAPI.Repository
                 .WhereEqualTo(nameof(LinkDTO.ParentId), sceneId)
                 .GetSnapshotAsync();
 
+            _logger.LogInformation("Scene deleted in tour: {tourId}, id: {sceneId}", tourId, sceneId);
+
             foreach (var link in snapshot)
                 await DeleteLink(tourId, link.Id);
         }
@@ -131,6 +144,8 @@ namespace VirtualTourAPI.Repository
                 .Document(linkId);
 
             await document.DeleteAsync();
+
+            _logger.LogInformation("Link deleted in tour: {tourId}, id: {linkId}", tourId, linkId);
         }
 
         public async Task UpdateLink(string tourId, LinkDTO link)
