@@ -25,6 +25,8 @@ builder.Services.AddSingleton<IMultiOperationRunner, MultiOperationRunner>();
 builder.Services.Configure<NerfStudioOptions>(options =>
     builder.Configuration.GetSection(nameof(NerfStudioOptions)).Bind(options));
 
+builder.Services.AddSingleton<IDownloadExecutor, DownloadExecutor>();
+
 builder.Services.AddSingleton<NerfStudioExecutor>();
 builder.Services.AddSingleton<IColmapExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());
 builder.Services.AddSingleton<ITrainExecutor>(x => x.GetRequiredService<NerfStudioExecutor>());

@@ -5,5 +5,6 @@ namespace VirtualTourProcessingServer.Processing
     {
         public int MaxProcessingAttempts { get; set; } = 5;
         public int MaxPostprocessingThreads { get; set; } = 5; 
+        public string? StorageDirectory { get; set; }
     }
 }

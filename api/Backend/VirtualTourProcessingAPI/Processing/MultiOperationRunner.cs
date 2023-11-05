@@ -15,11 +15,18 @@ namespace VirtualTourProcessingServer.Processing
         private readonly ILogger _logger;
         private readonly IMediator _mediator;
 
-        public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator)
+        private readonly IDownloadExecutor _downloader;
+
+        public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator, 
+            IDownloadExecutor downloader)
         {
+            if (string.IsNullOrWhiteSpace(options.Value.StorageDirectory))
+                throw new Exception("StorageDirectory is empty. Check your configuration file");
+
             _logger = logger;
             _options = options.Value;
             _mediator = mediator;
+            _downloader = downloader;
         }
 
         public bool TryRegister(VTOperation operation)
@@ -77,6 +84,10 @@ namespace VirtualTourProcessingServer.Processing
         private async Task PrepareData(VTOperation operation)
         {
             _logger.LogInformation($"Downloading data for operation: {operation.OperationId}, areaId: {operation.AreaId}");
+
+            var areaLocalDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId, "images");
+            await _downloader.DownloadPhotos(operation.TourId, operation.AreaId, areaLocalDirectory);
+
             await FinishOperation(operation, new ExecutorResponse());
         }
 
