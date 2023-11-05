@@ -49,6 +49,8 @@ dependencies:
   flutter_map: ^6.0.1
   latlong2: ^0.9.0
   like_button: ^2.0.5
+  multiselect: ^0.1.0
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

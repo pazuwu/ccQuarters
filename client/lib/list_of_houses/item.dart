@@ -21,7 +21,7 @@ class _HouseListTileState extends State<HouseListTile> {
     return Card(
       shadowColor: Theme.of(context).colorScheme.secondary,
       elevation: elevation,
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
       ),
