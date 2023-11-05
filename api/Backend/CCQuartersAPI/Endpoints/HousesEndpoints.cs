@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using System.Security.Claims;
+using System.Text;
 using AuthLibrary;
 using CCQuartersAPI.CommonClasses;
 using CCQuartersAPI.Mappers;
@@ -7,9 +8,7 @@ using CCQuartersAPI.Requests;
 using CCQuartersAPI.Responses;
 using CloudStorageLibrary;
 using Dapper;
-using Google.Api;
 using Google.Cloud.Firestore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CCQuartersAPI.Endpoints
@@ -23,21 +22,30 @@ namespace CCQuartersAPI.Endpoints
             HousesEndpoints.connectionString = connectionString;
         }
 
-        public static async Task<IResult> GetHouses(HttpContext context, IStorage storage)
+        public static async Task<IResult> GetHouses(HttpContext context, [FromServices]IStorage storage, [FromBody]GetHousesBody? body)
         {
             using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
+            var queryBuilder = new StringBuilder();
+
             var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE h.DeleteDate IS NULL";
+                        WHERE h.DeleteDate IS NULL AND ";
 
-            var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
+            queryBuilder.Append(query);
+
+            if (body is not null)
+                queryBuilder.Append(body);
+            else 
+                queryBuilder.Append("1=1");
+
+            var houses = await connection.QueryAsync<SimpleHouseDTO>(queryBuilder.ToString());
 
             foreach (var house in houses)
                 if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
@@ -69,6 +77,34 @@ namespace CCQuartersAPI.Endpoints
 
             foreach (var house in houses)
                 if(!string.IsNullOrWhiteSpace(house.PhotoUrl))
+                    house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
+
+            return Results.Ok(new GetHousesResponse()
+            {
+                Houses = houses.ToArray()
+            });
+        }
+
+        public static async Task<IResult> GetMyHouses(HttpContext context, IStorage storage)
+        {
+            using var connection = new SqlConnection(connectionString);
+
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
+
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
+                        FROM Houses h
+                        JOIN Details d ON h.DetailsId = d.Id
+                        JOIN Locations l ON h.LocationId = l.Id
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
+                        WHERE UserId = '{userId}' AND h.DeleteDate IS NULL";
+
+            var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
+
+            foreach (var house in houses)
+                if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
                     house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
 
             return Results.Ok(new GetHousesResponse()
@@ -147,7 +183,7 @@ namespace CCQuartersAPI.Endpoints
 
             var photoIds = await connection.QueryAsync<string>(photosQuery);
 
-            List<string> photosUrls = new List<string>();
+            List<string> photosUrls = new();
             foreach (var photoId in photoIds)
                 if(!string.IsNullOrWhiteSpace(photoId))
                     photosUrls.Add(await storage.GetDownloadUrl("housePhotos", photoId));
