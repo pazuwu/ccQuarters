@@ -57,7 +57,7 @@ class AccordionPage extends StatelessWidget {
   AccordionSection _buildDetailsAccordionSection(BuildContext context) {
     return AccordionSection(
         isOpen: _shouldBeOpen(context),
-        leftIcon: const Icon(Icons.details_outlined, color: Colors.white),
+        leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
         header: const Text('Szczegóły ogłoszenia', style: headerStyle),
         content: Column(
           children: [
