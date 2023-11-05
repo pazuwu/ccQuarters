@@ -12,4 +12,13 @@
         Apartment,
         Room
     }
+
+    public enum SortingMethod
+    {
+        ByUpdateDateDescending = 0,
+        ByPriceAscending,
+        ByPriceDescending,
+        ByPricePerM2Ascending,
+        ByPricePerM2Descending,
+    }
 }
