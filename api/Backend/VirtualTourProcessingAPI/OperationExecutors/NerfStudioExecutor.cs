@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Text;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {

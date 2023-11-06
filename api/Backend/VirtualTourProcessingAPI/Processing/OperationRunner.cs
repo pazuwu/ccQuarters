@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing

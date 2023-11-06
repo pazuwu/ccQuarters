@@ -35,6 +35,7 @@ namespace VirtualTourProcessingServer.Model
         SavingColmap,
         Train,
         CleanupTrain,
+        PrepareRender,
         Render,
         SavingRender,
         Finished,

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
@@ -16,9 +17,10 @@ namespace VirtualTourProcessingServer.Processing
         private readonly IMediator _mediator;
 
         private readonly IDownloadExecutor _downloader;
+        private readonly IRenderSettingsGenerator _renderSettingsGenerator;
 
-        public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator, 
-            IDownloadExecutor downloader)
+        public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator,
+            IDownloadExecutor downloader, IRenderSettingsGenerator renderSettingsGenerator)
         {
             if (string.IsNullOrWhiteSpace(options.Value.StorageDirectory))
                 throw new Exception("StorageDirectory is empty. Check your configuration file");
@@ -27,16 +29,17 @@ namespace VirtualTourProcessingServer.Processing
             _options = options.Value;
             _mediator = mediator;
             _downloader = downloader;
+            _renderSettingsGenerator = renderSettingsGenerator;
         }
 
         public bool TryRegister(VTOperation operation)
         {
-            if(_operations.Count >= _options.MaxPostprocessingThreads * 0.8)
+            if(_operations.Count >= _options.MaxMultiprocessingThreads * 0.8)
             {
                 CleanUpTasks();
             }
 
-            if (_operations.Count < _options.MaxPostprocessingThreads)
+            if (_operations.Count < _options.MaxMultiprocessingThreads)
             {
                 return _operations.TryAdd(operation, null);
             }
@@ -61,6 +64,9 @@ namespace VirtualTourProcessingServer.Processing
                         break;
                     case OperationStage.CleanupTrain:
                         _operations[operation] = CleanupTrain(operation);
+                        break;
+                    case OperationStage.PrepareRender:
+                        _operations[operation] = PrepareRender(operation);
                         break;
                     case OperationStage.SavingRender:
                         _operations[operation] = SaveRender(operation);
@@ -101,6 +107,22 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Cleaning trainig for operation: {operation.OperationId}, areaId: {operation.AreaId}");
             await FinishOperation(operation, new ExecutorResponse());
+        }
+
+        private async Task PrepareRender(VTOperation operation)
+        {
+            _logger.LogInformation($"Preparing render settings for operation: {operation.OperationId}, areaId: {operation.AreaId}");
+
+            var workingDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
+
+            var parameters = new GenerateRenderSettingsParameters()
+            {
+                ColmapTransformsFilePath = Path.Combine(workingDirectory, "transforms.json"),
+                OutputFilePath = Path.Combine(workingDirectory, "render_settings.json")
+            };
+
+            var response = await _renderSettingsGenerator.GenerateSettings(parameters);
+            await FinishOperation(operation, response);
         }
 
         private async Task SaveRender(VTOperation operation)

@@ -1,16 +1,10 @@
 ﻿using CloudStorageLibrary;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
     public class DownloadExecutor : IDownloadExecutor
     {
-        private readonly IStorage _storage;
-
-        public DownloadExecutor(IStorage storage)
-        {
-            _storage = storage;
-        }
-
         public Task<ExecutorResponse> DownloadPhotos(string tourId, string areaId, string outputDirectory)
         {
             try

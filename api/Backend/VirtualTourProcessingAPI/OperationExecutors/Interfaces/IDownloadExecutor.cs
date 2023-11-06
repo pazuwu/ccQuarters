@@ -1,5 +1,4 @@
-﻿
-namespace VirtualTourProcessingServer.OperationExecutors
+﻿namespace VirtualTourProcessingServer.OperationExecutors.Interfaces
 {
     public interface IDownloadExecutor
     {
