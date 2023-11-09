@@ -21,6 +21,7 @@ class ListOfHouses extends StatelessWidget {
           return Future.delayed(const Duration(seconds: 1));
         },
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (getDeviceType(context) == DeviceType.web)
               Container(

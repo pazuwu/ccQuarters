@@ -44,34 +44,35 @@ class MyApp extends StatelessWidget {
               borderRadius: BorderRadius.circular(formBorderRadius),
               borderSide: BorderSide(
                 color: Colors.blueGrey[200]!,
+                width: inputDecorationBorderSide,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(formBorderRadius),
               borderSide: const BorderSide(
                 color: Colors.blueGrey,
-                width: 2.0,
+                width: inputDecorationBorderSide,
               ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(formBorderRadius),
               borderSide: BorderSide(
                 color: Colors.blueGrey.shade300,
-                width: 2.0,
+                width: inputDecorationBorderSide,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(formBorderRadius),
               borderSide: const BorderSide(
                 color: Colors.red,
-                width: 2.0,
+                width: inputDecorationBorderSide,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(formBorderRadius),
               borderSide: BorderSide(
                 color: Colors.red[200]!,
-                width: 2.0,
+                width: inputDecorationBorderSide,
               ),
             ),
             errorStyle: const TextStyle(

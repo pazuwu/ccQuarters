@@ -14,6 +14,7 @@ const double minHeight = 50;
 const double elevation = 4;
 const double iconSize = 20;
 const double sizedBoxHeight = 10;
+const double inputDecorationBorderSide = 1.5;
 
 const TextStyle textButtonStyle =
     TextStyle(fontSize: 18, fontWeight: FontWeight.w600);

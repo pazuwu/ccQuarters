@@ -31,7 +31,7 @@ class SceneList extends StatelessWidget {
   }
 
   Future<void> _showChooseImportTypeDialog(BuildContext context) {
-    return showModalBottomSheet<void>(
+    return showModalBottomSheet(
       context: context,
       enableDrag: true,
       showDragHandle: true,
