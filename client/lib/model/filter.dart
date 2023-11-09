@@ -1,5 +1,6 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/voivodeship.dart';
 
 class HouseFilter {
   HouseFilter(
@@ -31,6 +32,8 @@ class HouseFilter {
   int? minFloor;
   BuildingType? buildingType;
   OfferType? offerType;
+  List<CityWithVoivodeship> voivodeshipsAndCities = [];
+  List<String> districts = [];
   SortByType sortBy;
 }
 

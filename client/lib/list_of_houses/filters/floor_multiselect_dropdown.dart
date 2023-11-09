@@ -34,16 +34,15 @@ class FloorMultiSelectDropdown extends StatelessWidget {
               maxHeight: 100,
             ),
             child: DropDownMultiSelect(
-                onChanged: onChanged,
-                options: List.generate(12, (index) => FloorNumber(index)),
-                selectedValues: filters.floor != null
-                    ? filters.floor!.map((e) => FloorNumber(e)).toList()
-                    : <FloorNumber>[],
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                )),
+              onChanged: onChanged,
+              options: List.generate(12, (index) => FloorNumber(index)),
+              selectedValues: filters.floor != null
+                  ? filters.floor!.map((e) => FloorNumber(e)).toList()
+                  : <FloorNumber>[],
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(),
+              ),
+            ),
           ),
           IconButton(
             onPressed: onClear,
