@@ -33,5 +33,11 @@ namespace VirtualTourAPI.Endpoints
 
             return Results.Created(tourId, null);
         }
+
+        public static async Task<IResult> Delete(string tourId, IVTRepository repository)
+        {
+            await repository.DeleteTour(tourId);
+            return Results.Ok();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using Microsoft.Extensions.Options;
 using VirtualTourAPI.Model;
+using static Google.Rpc.Help.Types;
 
 namespace VirtualTourAPI.Repository
 {
@@ -203,7 +204,20 @@ namespace VirtualTourAPI.Repository
             
             var addedTour = await collection.AddAsync(new());
 
+            _logger.LogInformation("Created new tour: {Id}", addedTour.Id);
+
             return addedTour.Id;
+        }
+
+        public async Task DeleteTour(string tourId)
+        {
+            var document = _firestore
+                .Collection(ToursCollection)
+                .Document(tourId);
+
+            await document.DeleteAsync();
+
+            _logger.LogInformation("Tour deleted: {tourId}", tourId);
         }
     }
 }
