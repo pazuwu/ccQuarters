@@ -196,5 +196,14 @@ namespace VirtualTourAPI.Repository
                 .GetResult()
                 .Documents.Select(d => d.ConvertTo<T>());
         }
+
+        public async Task<string?> CreateTour()
+        {
+            var collection = _firestore.Collection(ToursCollection);
+            
+            var addedTour = await collection.AddAsync(new());
+
+            return addedTour.Id;
+        }
     }
 }

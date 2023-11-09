@@ -23,5 +23,15 @@ namespace VirtualTourAPI.Endpoints
 
             return Results.Ok(tour);
         }
+
+        public static async Task<IResult> Post(IVTRepository repository)
+        {
+            var tourId = await repository.CreateTour();
+
+            if (tourId == null)
+                return Results.Problem("An error occured while creating new tour in database");
+
+            return Results.Created(tourId, null);
+        }
     }
 }

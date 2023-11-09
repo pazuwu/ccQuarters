@@ -5,6 +5,7 @@ namespace VirtualTourAPI.Repository
     public interface IVTRepository
     {
         Task<TourDTO?> GetTour(string tourId);
+        Task<string?> CreateTour();
 
         Task<string?> CreateArea(string tourId, AreaDTO area);
         Task DeleteArea(string tourId, string areaId);
