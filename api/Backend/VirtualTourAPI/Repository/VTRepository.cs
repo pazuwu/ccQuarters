@@ -1,7 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using Microsoft.Extensions.Options;
 using VirtualTourAPI.Model;
-using static Google.Rpc.Help.Types;
 
 namespace VirtualTourAPI.Repository
 {
@@ -202,7 +201,7 @@ namespace VirtualTourAPI.Repository
         {
             var collection = _firestore.Collection(ToursCollection);
             
-            var addedTour = await collection.AddAsync(new());
+            var addedTour = await collection.AddAsync(new Dictionary<string,string>());
 
             _logger.LogInformation("Created new tour: {Id}", addedTour.Id);
 

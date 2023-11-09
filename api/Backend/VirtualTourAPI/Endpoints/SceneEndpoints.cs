@@ -9,14 +9,6 @@ namespace VirtualTourAPI.Endpoints
     {
         public static async Task<IResult> Post(string tourId, PostSceneRequest request, IVTRepository repository)
         {
-            Dictionary<string, string[]> validationErrors = new();
-
-            if (string.IsNullOrWhiteSpace(request.ParentId))
-                validationErrors.Add(nameof(request.ParentId), new[] { "Is mandatory." });
-
-            if (validationErrors.Count > 0)
-                return Results.ValidationProblem(validationErrors);
-
             var newScene = new SceneDTO()
             {
                 ParentId = request.ParentId,
