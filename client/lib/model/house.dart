@@ -5,23 +5,25 @@ import 'package:ccquarters/model/user.dart';
 class House {
   House(
     this.location,
-    this.houseDetails,
+    this.details,
     this.user, {
     this.offerType = OfferType.rent,
+    this.isLiked = false,
     this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",
   });
 
   String? virtualTourId;
   Location location;
-  HouseDetails houseDetails;
+  HouseDetails details;
   OfferType offerType;
   User user;
+  bool isLiked;
   List<String> photos = <String>[
+    "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}",
+    "https://picsum.photos/1900/600",
     "https://picsum.photos/512",
     "https://picsum.photos/600/900",
-    "https://picsum.photos/600/900",
     "https://picsum.photos/900/600",
-    "https://picsum.photos/1900/600",
     "https://picsum.photos/900",
   ];
 }

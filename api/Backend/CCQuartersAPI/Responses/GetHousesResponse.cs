@@ -2,13 +2,13 @@
 
 namespace CCQuartersAPI.Responses
 {
-    public class GetHousesResponse
+    public class GetHousesResponse : BaseBulkResponse<SimpleHouseDTO>
     {
-        public SimpleHouseDTO[] Houses { get; set; }
     }
 
     public class SimpleHouseDTO
     {
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public double Price { get; set; }
         public int RoomCount { get; set; }
@@ -23,5 +23,12 @@ namespace CCQuartersAPI.Responses
         public OfferType OfferType { get; set; }
         public BuildingType BuildingType { get; set; }
         public bool IsLiked { get; set; }
+        public string PhotoUrl { get; set; }
+    }
+
+    public class PhotoDTO
+    {
+        public Guid HouseId { get; set; }
+        public string PhotoId { get; set; }
     }
 }

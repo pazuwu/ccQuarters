@@ -7,21 +7,34 @@ class AlwaysVisibleTextLabel extends StatelessWidget {
     this.fontSize,
     this.fontWeight,
     this.background,
+    this.alignment = Alignment.center,
+    this.paddingSize = 0,
   }) : super(key: key);
 
   final String text;
   final double? fontSize;
   final FontWeight? fontWeight;
   final Color? background;
+  final AlignmentGeometry alignment;
+  final double paddingSize;
 
   @override
   Widget build(BuildContext context) {
     return AlwaysVisibleLabel(
       background: background,
-      child: Text(
-        text,
-        style: TextStyle(
-            color: Colors.white, fontSize: fontSize, fontWeight: fontWeight),
+      child: Padding(
+        padding: EdgeInsets.all(paddingSize),
+        child: Align(
+          alignment: alignment,
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -5,7 +5,6 @@ class User {
     this.company = "CCQuarters",
     this.email = "adna@ccquarters.com",
     this.phoneNumber = "21314134",
-    this.photoUrl = "https://picsum.photos/512",
   });
 
   String? name;
@@ -13,5 +12,7 @@ class User {
   String? company;
   String? email;
   String? phoneNumber;
-  String? photoUrl;
+  String? photoUrl =
+      "https://picsum.photos/512?=${DateTime.now().millisecondsSinceEpoch}";
+  DateTime registrationDate = DateTime(2021, 1, 1);
 }

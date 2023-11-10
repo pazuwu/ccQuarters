@@ -11,7 +11,7 @@ class ButtonContactWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () => showModalBottomSheet<void>(
+      onPressed: () => showModalBottomSheet(
         context: context,
         enableDrag: true,
         showDragHandle: true,

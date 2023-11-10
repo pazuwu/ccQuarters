@@ -10,6 +10,7 @@ namespace CCQuartersAPI.Responses
     public class AlertDTO
     {
         public Guid Id { get; set; }
+        public string UserId {  get; set; }
         public double? MaxPrice { get; set; }
         public double? MaxPricePerM2 { get; set; }
         public double? MinArea { get; set; }

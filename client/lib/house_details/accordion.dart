@@ -46,7 +46,7 @@ class AccordionPage extends StatelessWidget {
       isOpen: _shouldBeOpen(context),
       leftIcon: const Icon(Icons.description_outlined, color: Colors.white),
       header: const Text('Opis', style: headerStyle),
-      content: Text(house.houseDetails.description,
+      content: Text(house.details.description,
           style: const TextStyle(
             color: Color(0xff999999),
             fontSize: 14,
@@ -57,22 +57,20 @@ class AccordionPage extends StatelessWidget {
   AccordionSection _buildDetailsAccordionSection(BuildContext context) {
     return AccordionSection(
         isOpen: _shouldBeOpen(context),
-        leftIcon: const Icon(Icons.details_outlined, color: Colors.white),
+        leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
         header: const Text('Szczegóły ogłoszenia', style: headerStyle),
         content: Column(
           children: [
+            HouseDetailsRow(title: "Cena", value: '${house.details.price} zł'),
             HouseDetailsRow(
-                title: "Cena", value: '${house.houseDetails.price} zł'),
-            HouseDetailsRow(
-                title: "Powierzchnia", value: '${house.houseDetails.area} m2'),
-            if (house.houseDetails.roomCount != null)
+                title: "Powierzchnia", value: '${house.details.area} m2'),
+            if (house.details.roomCount != null)
               HouseDetailsRow(
-                  title: "Liczba pokoi",
-                  value: '${house.houseDetails.roomCount}'),
-            if (house.houseDetails.floor != null)
+                  title: "Liczba pokoi", value: '${house.details.roomCount}'),
+            if (house.details.floor != null)
               HouseDetailsRow(
                 title: "Piętro",
-                value: '${house.houseDetails.floor}',
+                value: '${house.details.floor}',
                 isLast: true,
               ),
           ],

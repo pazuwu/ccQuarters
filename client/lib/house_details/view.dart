@@ -2,13 +2,11 @@ import 'package:ccquarters/house_details/accordion.dart';
 import 'package:ccquarters/house_details/contact.dart';
 import 'package:ccquarters/house_details/map.dart';
 import 'package:ccquarters/house_details/photos.dart';
-import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/utils/icon_360.dart';
 import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key, required this.house});
@@ -21,10 +19,10 @@ class DetailsView extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 68,
         leading: IconButton(
-          onPressed: () => context.read<MainPageCubit>().goBack(),
+          onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back),
         ),
-        title: Text(house.houseDetails.title),
+        title: Text(house.details.title),
         actions: [
           if (house.virtualTourId != null)
             Icon360(

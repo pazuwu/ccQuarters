@@ -2,9 +2,9 @@ import 'package:ccquarters/add_house/views/choose_type.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
 import 'package:ccquarters/utils/views_with_vertical_divider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/model/building_type.dart';
@@ -33,7 +33,7 @@ class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
   Widget build(BuildContext context) {
     return ViewWithHeader(
       title: "Dodaj ogłoszenie",
-      inBetweenWidget: kIsWeb
+      inBetweenWidget: getDeviceType(context) == DeviceType.web
           ? ViewsWithVerticalDivider(
               firstView: ChooseTypeView(
                 offerType: widget.offerType,
@@ -48,7 +48,7 @@ class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
               offerType: widget.offerType, buildingType: widget.buildingType),
       goBackOnPressed: null,
       nextOnPressed: () {
-        if (kIsWeb) {
+        if (getDeviceType(context) == DeviceType.web) {
           if (formKey.currentState!.validate()) {
             formKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveDetails(widget.details);
