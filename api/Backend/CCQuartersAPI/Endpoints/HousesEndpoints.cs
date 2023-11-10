@@ -16,14 +16,19 @@ namespace CCQuartersAPI.Endpoints
     public class HousesEndpoints
     {
         private static string connectionString = "";
+        private const int DEFAULT_PAGE_NUMBER = 0;
+        private const int DEFAULT_PAGE_SIZE = 50;
 
         public static void Init(string connectionString)
         {
             HousesEndpoints.connectionString = connectionString;
         }
 
-        public static async Task<IResult> GetHouses(HttpContext context, [FromServices]IStorage storage, [FromBody]GetHousesBody? body)
+        public static async Task<IResult> GetHouses(HttpContext context, [FromServices]IStorage storage, [FromBody]GetHousesBody body, int? pageNumber, int? pageSize)
         {
+            int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
+            int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
+
             using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
@@ -40,10 +45,11 @@ namespace CCQuartersAPI.Endpoints
 
             queryBuilder.Append(query);
 
-            if (body is not null)
-                queryBuilder.Append(body);
-            else 
-                queryBuilder.Append("1=1");
+            queryBuilder.Append(body);
+
+            queryBuilder.AppendLine();
+            queryBuilder.Append($@"OFFSET {pageNumberValue * pageSizeValue} ROWS
+                                FETCH NEXT {pageSizeValue} ROWS ONLY");
 
             var houses = await connection.QueryAsync<SimpleHouseDTO>(queryBuilder.ToString());
 
@@ -53,12 +59,17 @@ namespace CCQuartersAPI.Endpoints
 
             return Results.Ok(new GetHousesResponse()
             {
-                Houses = houses.ToArray()
+                Data = houses.ToArray(),
+                PageNumber = pageNumberValue,
+                PageSize = pageSizeValue,
             });
         }
 
-        public static async Task<IResult> GetLikedHouses(HttpContext context, IStorage storage)
+        public static async Task<IResult> GetLikedHouses(HttpContext context, IStorage storage, int? pageNumber, int? pageSize)
         {
+            int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
+            int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
+
             using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
@@ -71,7 +82,10 @@ namespace CCQuartersAPI.Endpoints
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}') > 0 AND h.DeleteDate IS NULL";
+                        WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}') > 0 AND h.DeleteDate IS NULL
+                        ORDER BY h.UpdateDate
+                        OFFSET {pageNumberValue * pageSizeValue} ROWS
+                        FETCH NEXT {pageSizeValue} ROWS ONLY";
 
             var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
 
@@ -81,12 +95,17 @@ namespace CCQuartersAPI.Endpoints
 
             return Results.Ok(new GetHousesResponse()
             {
-                Houses = houses.ToArray()
+                Data = houses.ToArray(),
+                PageNumber = pageNumberValue,
+                PageSize = pageSizeValue
             });
         }
 
-        public static async Task<IResult> GetMyHouses(HttpContext context, IStorage storage)
+        public static async Task<IResult> GetMyHouses(HttpContext context, IStorage storage, int? pageNumber, int? pageSize)
         {
+            int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
+            int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
+
             using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
@@ -99,7 +118,10 @@ namespace CCQuartersAPI.Endpoints
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE UserId = '{userId}' AND h.DeleteDate IS NULL";
+                        WHERE UserId = '{userId}' AND h.DeleteDate IS NULL
+                        ORDER BY h.UpdateDate
+                        OFFSET {pageNumberValue * pageSizeValue} ROWS
+                        FETCH NEXT {pageSizeValue} ROWS ONLY";
 
             var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
 
@@ -109,7 +131,9 @@ namespace CCQuartersAPI.Endpoints
 
             return Results.Ok(new GetHousesResponse()
             {
-                Houses = houses.ToArray()
+                Data = houses.ToArray(),
+                PageNumber = pageNumberValue,
+                PageSize = pageSizeValue
             });
         }
 
