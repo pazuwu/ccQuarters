@@ -19,7 +19,7 @@ namespace VirtualTourAPI.ServiceClient
         Task<AddPhotoToSceneResult> AddPhotoToScene(AddPhotoToSceneParameters parameters);
 
         Task<CreateLinkResult> CreateLink(CreateLinkParameters parameters);
-        Task<CreateLinkResult> DeleteLink(CreateLinkParameters parameters);
+        Task<DeleteLinkResult> DeleteLink(DeleteLinkParameters parameters);
         Task<UpdateLinkResult> UpdateLink(UpdateLinkParameters parameters);
     }
 }

@@ -1,11 +1,9 @@
 ﻿using VirtualTourAPI.ServiceClient.Model;
 
-namespace VirtualTourAPI.Client.Parameters
+namespace VirtualTourAPI.ServiceClient.Requests
 {
-    public class UpdateLinkParameters
+    public class PutLinkRequest
     {
-        public required string TourId { get; set; }
-        public required string LinkId { get; set; }
         public string? Text { get; set; }
         public string? DestinationId { get; set; }
         public GeoPointDTO? Position { get; set; }

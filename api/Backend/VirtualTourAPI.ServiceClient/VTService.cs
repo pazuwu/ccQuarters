@@ -16,24 +16,97 @@ namespace VirtualTourAPI.ServiceClient
             _http = http;
         }
 
-        public Task<AddPhotoToAreaResult> AddPhotoToArea(AddPhotoToAreaParameters parameters)
+        public async Task<AddPhotoToAreaResult> AddPhotoToArea(AddPhotoToAreaParameters parameters)
         {
-            throw new NotImplementedException();
+            using Stream stream = parameters.PhotoPath != null
+                ? File.OpenRead(parameters.PhotoPath)
+                : parameters.PhotoInBytes != null
+                ? new MemoryStream(parameters.PhotoInBytes)
+                : throw new ArgumentNullException();
+
+            using var content = new MultipartFormDataContent
+            {
+                { new StreamContent(stream), "file", string.Empty }
+            };
+
+            var response = await _http.PostAsync($"tours/{parameters.TourId}/areas/{parameters.AreaId}", content);
+
+            response.EnsureSuccessStatusCode();
+
+            return new();
         }
 
-        public Task<AddPhotoToSceneResult> AddPhotoToScene(AddPhotoToSceneParameters parameters)
+        public async Task<AddPhotoToSceneResult> AddPhotoToScene(AddPhotoToSceneParameters parameters)
         {
-            throw new NotImplementedException();
+            using Stream stream = parameters.PhotoPath != null
+                ? File.OpenRead(parameters.PhotoPath)
+                : parameters.PhotoInBytes != null
+                ? new MemoryStream(parameters.PhotoInBytes)
+                : throw new ArgumentNullException();
+
+            using var content = new MultipartFormDataContent
+            {
+                { new StreamContent(stream), "file", string.Empty }
+            };
+
+            var response = await _http.PostAsync($"tours/{parameters.TourId}/scenes/{parameters.SceneId}", content);
+
+            response.EnsureSuccessStatusCode();
+
+            return new();
         }
 
-        public Task<CreateAreaResult> CreateArea(CreateAreaParameters parameters)
+        public async Task<CreateAreaResult> CreateArea(CreateAreaParameters parameters)
         {
-            throw new NotImplementedException();
+            var request = new PostAreaRequest()
+            {
+                Name = parameters.Name
+            };
+
+            var response = await _http.PostAsync($"tours/{parameters.TourId}/areas", JsonContent.Create(request));
+
+            response.EnsureSuccessStatusCode();
+            var sceneId = response.Headers?.Location?.OriginalString;
+
+            return new()
+            {
+                Area = new AreaDTO()
+                {
+                    Id = sceneId,
+                    Name = parameters.Name
+                },
+            };
         }
 
-        public Task<CreateLinkResult> CreateLink(CreateLinkParameters parameters)
+        public async Task<CreateLinkResult> CreateLink(CreateLinkParameters parameters)
         {
-            throw new NotImplementedException();
+            var request = new PostLinkRequest()
+            {
+                DestinationId = parameters.DestinationId,
+                Latitude = parameters.Position?.Latitude,
+                Longitude = parameters.Position?.Latitude,
+                NextOrientation = parameters.NextOrientation,
+                ParentId = parameters.ParentId,
+                Text = parameters.Text
+            };
+
+            var response = await _http.PostAsync($"tours/{parameters.TourId}/links", JsonContent.Create(request));
+
+            response.EnsureSuccessStatusCode();
+            var sceneId = response.Headers?.Location?.OriginalString;
+
+            return new()
+            {
+                Link = new LinkDTO()
+                {
+                    Id = sceneId,
+                    Text = parameters.Text,
+                    DestinationId = parameters.DestinationId,
+                    ParentId = parameters.ParentId,
+                    NextOrientation = parameters.NextOrientation,
+                    Position = parameters.Position,
+                },
+            };
         }
 
         public async Task<CreateSceneResult> CreateScene(CreateSceneParameters parameters)
@@ -81,14 +154,20 @@ namespace VirtualTourAPI.ServiceClient
             return new();
         }
 
-        public Task<DeleteAreaResult> DeleteArea(DeleteAreaParameters parameters)
+        public async Task<DeleteAreaResult> DeleteArea(DeleteAreaParameters parameters)
         {
-            throw new NotImplementedException();
+            var response = await _http.DeleteAsync($"tours/{parameters.TourId}/areas/{parameters.AreaId}");
+
+            response.EnsureSuccessStatusCode();
+            return new();
         }
 
-        public Task<CreateLinkResult> DeleteLink(CreateLinkParameters parameters)
+        public async Task<DeleteLinkResult> DeleteLink(DeleteLinkParameters parameters)
         {
-            throw new NotImplementedException();
+            var response = await _http.DeleteAsync($"tours/{parameters.TourId}/links/{parameters.LinkId}");
+
+            response.EnsureSuccessStatusCode();
+            return new();
         }
 
         public async Task<DeleteSceneResult> DeleteScene(DeleteSceneParameters parameters)
@@ -99,14 +178,29 @@ namespace VirtualTourAPI.ServiceClient
             return new();
         }
 
-        public Task<GetTourResult> GetTourById(GetTourParameters parameters)
+        public async Task<GetTourResult> GetTourById(GetTourParameters parameters)
         {
-            throw new NotImplementedException();
+            var response = await _http.GetFromJsonAsync<TourDTO>($"tours/{parameters.TourId}");
+
+            return new()
+            {
+                Tour = response
+            };
         }
 
-        public Task<UpdateLinkResult> UpdateLink(UpdateLinkParameters parameters)
+        public async Task<UpdateLinkResult> UpdateLink(UpdateLinkParameters parameters)
         {
-            throw new NotImplementedException();
+            var request = new PutLinkRequest()
+            {
+                DestinationId = parameters.DestinationId,
+                NextOrientation = parameters.NextOrientation,
+                Text = parameters.Text
+            };
+
+            var response = await _http.PostAsync($"tours/{parameters.TourId}/links/{parameters.LinkId}", JsonContent.Create(request));
+
+            response.EnsureSuccessStatusCode();
+            return new();
         }
     }
 }

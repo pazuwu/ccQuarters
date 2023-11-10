@@ -4,6 +4,6 @@ namespace VirtualTourAPI.ServiceClient.Results
 {
     public class GetTourResult
     {
-        public required TourDTO Tour { get; set; }
+        public TourDTO? Tour { get; set; }
     }
 }
