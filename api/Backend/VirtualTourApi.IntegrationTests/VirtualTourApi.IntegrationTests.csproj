@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VirtualTourAPI.ServiceClient\VirtualTourAPI.ServiceClient.csproj" />
+    <ProjectReference Include="..\VirtualTourAPI\VirtualTourAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
