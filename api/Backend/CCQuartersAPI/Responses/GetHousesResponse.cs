@@ -2,9 +2,8 @@
 
 namespace CCQuartersAPI.Responses
 {
-    public class GetHousesResponse
+    public class GetHousesResponse : BaseBulkResponse<SimpleHouseDTO>
     {
-        public SimpleHouseDTO[] Houses { get; set; }
     }
 
     public class SimpleHouseDTO
