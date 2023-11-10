@@ -9,18 +9,9 @@ namespace VirtualTourAPI.Endpoints
     {
         public static async Task<IResult> Post(string tourId, PostSceneRequest request, IVTRepository repository)
         {
-            Dictionary<string, string[]> validationErrors = new();
-
-            if (string.IsNullOrWhiteSpace(request.ParentId))
-                validationErrors.Add(nameof(request.ParentId), new[] { "Is mandatory." });
-
-            if (validationErrors.Count > 0)
-                return Results.ValidationProblem(validationErrors);
-
             var newScene = new SceneDTO()
             {
                 ParentId = request.ParentId,
-                Photo360Id = request.Photo360Id,
             };
 
             var createdSceneId = await repository.CreateScene(tourId, newScene);
@@ -40,8 +31,12 @@ namespace VirtualTourAPI.Endpoints
         public static async Task<IResult> PostPhoto(string tourId, string sceneId, IFormFile file, IStorage storage)
         {
             using var fileStream = file.OpenReadStream();
-            await storage.UploadFileAsync($"tours/{tourId}/scenes", fileStream, sceneId);
-            return Results.Ok();
+            var collectionName = $"tours/{tourId}/scenes";
+            var filename = sceneId;
+
+            await storage.UploadFileAsync(collectionName, fileStream, filename);
+            var url = await storage.GetDownloadUrl(collectionName, filename);
+            return Results.Created(url, null);
         }
     }
 }

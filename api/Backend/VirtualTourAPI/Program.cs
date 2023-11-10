@@ -38,9 +38,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/tours/{tourId}", TourEndpoints.Get).WithOpenApi().RequireFBAuthorization();
+app.MapPost("tours", TourEndpoints.Post).WithOpenApi().RequireFBAuthorization();
+app.MapDelete("tours/{tourId}", TourEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/areas", AreaEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("/tours/{tourId}/areas/{areaId}", AreaEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
+app.MapPost("/tours/{tourId}/areas/{areaId}/process", AreaEndpoints.Process).WithOpenApi().RequireFBAuthorization();
 app.MapPost("/tours/{tourId}/areas/{areaId}/photos", AreaEndpoints.PostPhotos).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/scenes", SceneEndpoints.Post).WithOpenApi().RequireFBAuthorization();

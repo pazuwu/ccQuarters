@@ -4,6 +4,8 @@ import 'package:ccquarters/house_details/map.dart';
 import 'package:ccquarters/house_details/photos.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/utils/icon_360.dart';
+import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:flutter/material.dart';
 
 class DetailsView extends StatelessWidget {
@@ -21,6 +23,18 @@ class DetailsView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
         ),
         title: Text(house.details.title),
+        actions: [
+          if (house.virtualTourId != null)
+            Icon360(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => VirtualTourGate(
+                          tourId: house.virtualTourId!,
+                          readOnly: true,
+                        )));
+              },
+            ),
+        ],
       ),
       body: Inside(house: house),
     );

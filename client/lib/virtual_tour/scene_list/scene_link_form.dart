@@ -1,9 +1,19 @@
-import 'package:ccquarters/utils/icon_360.dart';
-import 'package:ccquarters/utils/radio_list.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
+import 'package:ccquarters/utils/icon_360.dart';
 import 'package:ccquarters/utils/input_decorator_form.dart';
+import 'package:ccquarters/utils/radio_list.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
+
+class SceneLinkFormModel {
+  String text;
+  String destinationId;
+  SceneLinkFormModel({
+    this.text = "",
+    this.destinationId = "",
+  });
+}
 
 enum SceneLinkFormType {
   edit,
@@ -14,9 +24,13 @@ class SceneLinkForm extends StatefulWidget {
   const SceneLinkForm({
     Key? key,
     this.formType = SceneLinkFormType.create,
+    this.initialModel,
+    this.scenes = const [],
   }) : super(key: key);
 
   final SceneLinkFormType formType;
+  final SceneLinkFormModel? initialModel;
+  final List<Scene> scenes;
 
   @override
   State<SceneLinkForm> createState() => _SceneLinkFormState();
@@ -25,20 +39,16 @@ class SceneLinkForm extends StatefulWidget {
 class _SceneLinkFormState extends State<SceneLinkForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final List<Scene> _scenes = [
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Sypialnia", photo360Url: ""),
-    Scene(id: "", name: "Łazienka", photo360Url: ""),
-  ];
+  late List<Scene> _scenes = [];
+  late SceneLinkFormModel _model;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scenes = widget.scenes;
+    _model = widget.initialModel ?? SceneLinkFormModel();
+  }
 
   Widget _buildTitle(BuildContext context) {
     return Column(
@@ -62,7 +72,10 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
 
   Widget _buildNameField(BuildContext context) {
     return TextFormField(
-      onSaved: (value) {},
+      initialValue: _model.text,
+      onSaved: (value) {
+        _model.text = value ?? "";
+      },
       validator: (value) =>
           value?.isEmpty ?? false ? "Podaj nazwę łącznika" : null,
       decoration:
@@ -74,7 +87,9 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
     return Flexible(
       child: RadioListForm(
         values: _scenes,
-        defaultValue: _scenes.first,
+        defaultValue: _scenes.firstWhere(
+            (element) => element.id == _model.destinationId,
+            orElse: () => _scenes.first),
         filter: (scenes, text) {
           var textInLowerCase = text.toLowerCase();
 
@@ -87,7 +102,9 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
         validator: (scene) => scene == null ? "Wybierz scenę docelową" : null,
         titleBuilder: (scene) => Text(scene.name),
         secondaryBuilder: (scene) => const Icon360(),
-        onSaved: (scene) {},
+        onSaved: (scene) {
+          _model.destinationId = scene?.id ?? "";
+        },
       ),
     );
   }
@@ -99,6 +116,8 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
         onPressed: () {
           if (_formKey.currentState?.validate() ?? false) {
             _formKey.currentState?.save();
+
+            Navigator.of(context).pop(_model);
           }
         },
         child: const Text("Zapisz"),

@@ -2,7 +2,7 @@ import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/model/virtual_tour.dart';
+import 'package:ccquarters/virtual_tour/model/tour.dart';
 
 class VirtualTourMock {
   static Tour from360Url(String url) {

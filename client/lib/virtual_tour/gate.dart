@@ -1,55 +1,91 @@
-import 'package:ccquarters/virtual_tour/scene_list.dart';
+import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/virtual_tour/cubit.dart';
+import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:provider/provider.dart';
 
 class VirtualTourGate extends StatelessWidget {
   const VirtualTourGate({
     Key? key,
-    required this.houseId,
+    required this.tourId,
+    required this.readOnly,
   }) : super(key: key);
 
-  final String houseId;
+  final String tourId;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-        value: VirtualTourCubit(VTLoadingState(houseId: houseId)),
-        child: BlocBuilder<VirtualTourCubit, VTState>(
-          builder: (context, state) {
-            if (state is VTLoadingState) {
-              return const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    Text("Trwa ładowanie wirtualnego spaceru..."),
-                  ],
-                ),
-              );
-            }
+    return Scaffold(
+      body: Provider(
+        create: (_) => VTService(dio: Dio(), url: "https://localhost:7101"),
+        builder: (context, widget) => BlocProvider.value(
+            value: VirtualTourCubit(
+              initialState: VTLoadingState(tourId: tourId, readOnly: readOnly),
+              service: context.read(),
+            ),
+            child: BlocBuilder<VirtualTourCubit, VTState>(
+              builder: (context, state) {
+                if (state is VTLoadingState) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(
+                          height: 32.0,
+                        ),
+                        const Text("Trwa ładowanie wirtualnego spaceru..."),
+                        const SizedBox(
+                          height: 32.0,
+                        ),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 200.0),
+                          child: LinearProgressIndicator(
+                            value: state.progress,
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
 
-            if (state is VTLoadedState) {
-              return SceneList(scenes: state.virtualTour.scenes);
-            }
+                if (state is VTEditingState) {
+                  return SceneList(tour: state.virtualTour);
+                }
 
-            if (state is VTErrorState) {
-              return Center(
-                child: Text(state.text),
-              );
-            }
+                if (state is VTViewingState) {
+                  return TourViewer(
+                    service: context.read(),
+                    tour: state.virtualTour,
+                    currentScene: state.currentScene,
+                    readOnly: readOnly,
+                  );
+                }
 
-            return const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Wystąpił błąd poczas ładowania wirtualnego spaceru. "),
-                  Text("Przepraszamy za utrudnienia"),
-                ],
-              ),
-            );
-          },
-        ));
+                if (state is VTErrorState) {
+                  return Center(
+                    child: Text(state.text),
+                  );
+                }
+
+                return const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                          "Wystąpił błąd poczas ładowania wirtualnego spaceru. "),
+                      Text("Przepraszamy za utrudnienia"),
+                    ],
+                  ),
+                );
+              },
+            )),
+      ),
+    );
   }
 }

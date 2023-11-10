@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
@@ -13,11 +15,12 @@ namespace VirtualTourProcessingServer.Processing
         private readonly ITrainExecutor _trainExecutor;
         private readonly IColmapExecutor _colmapExecutor;
         private readonly IRenderExecutor _renderExecutor;
+        private readonly ProcessingOptions _options;
 
         private VTOperation? _runningOperation;
         private Task? _runningTask;
 
-        public OperationRunner(ILogger<OperationRunner> logger, IMediator mediator,
+        public OperationRunner(ILogger<OperationRunner> logger, IMediator mediator, IOptions<ProcessingOptions> options,
             ITrainExecutor trainExecutor, IColmapExecutor colmapExecutor, IRenderExecutor exportExecutor)
         {
             _mediator = mediator;
@@ -25,6 +28,7 @@ namespace VirtualTourProcessingServer.Processing
             _trainExecutor = trainExecutor;
             _colmapExecutor = colmapExecutor;
             _renderExecutor = exportExecutor;
+            _options = options.Value;
         }
 
         public bool TryRegister(VTOperation operation)
@@ -73,7 +77,14 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Running COLMAP for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var colmapParameters = new ColmapParameters();
+            var areaDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
+            var imagesDirectory = Path.Combine(areaDirectory, "images");
+
+            var colmapParameters = new ColmapParameters()
+            {
+                InputDataPath = imagesDirectory,
+                OutputDirectoryPath = areaDirectory,
+            };
             var response = await _colmapExecutor.Process(colmapParameters);
 
             _logger.LogInformation($"COLMAP has been finished for operation: {operation.OperationId}, areaId: {operation.AreaId}");
@@ -85,7 +96,11 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Running training for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var trainParameters = new TrainParameters();
+            var areaDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
+            var trainParameters = new TrainParameters()
+            {
+                DataDirectoryPath = areaDirectory,
+            };
             var response = await _trainExecutor.Train(trainParameters);
 
             _logger.LogInformation($"Training has been finished for operation: {operation.OperationId}, areaId: {operation.AreaId}");

@@ -1,4 +1,5 @@
-﻿using VirtualTourAPI.Model;
+﻿using Google.Cloud.Firestore;
+using VirtualTourAPI.Model;
 using VirtualTourAPI.Repository;
 using VirtualTourAPI.Requests;
 
@@ -14,8 +15,10 @@ namespace VirtualTourAPI.Endpoints
                 errors.Add(nameof(request.ParentId), new[] { "Is mandatory." });
             if (string.IsNullOrWhiteSpace(request.DestinationId))
                 errors.Add(nameof(request.DestinationId), new[] { "Is mandatory." });
-            if (request.Position is null)
-                errors.Add(nameof(request.Position), new[] { "Is mandatory." });
+            if (request.Longitude is null)
+                errors.Add(nameof(request.Longitude), new[] { "Is mandatory." });
+            if (request.Latitude is null)
+                errors.Add(nameof(request.Latitude), new[] { "Is mandatory." });
 
             if (errors.Count > 0)
                 return Results.ValidationProblem(errors);
@@ -24,7 +27,7 @@ namespace VirtualTourAPI.Endpoints
             {
                 ParentId = request.ParentId,
                 DestinationId = request.DestinationId,
-                Position = request.Position!.Value,
+                Position = new GeoPoint(request.Latitude!.Value, request.Longitude!.Value),
                 Text = request.Text,
                 NextOrientation = request.NextOrientation,
             };

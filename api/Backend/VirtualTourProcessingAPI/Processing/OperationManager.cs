@@ -32,6 +32,7 @@ namespace VirtualTourProcessingServer.Processing
                     case OperationStage.PrepareData:
                     case OperationStage.SavingColmap:
                     case OperationStage.CleanupTrain:
+                    case OperationStage.PrepareRender:
                     case OperationStage.SavingRender:
                     case OperationStage.Finished:
                         _multiOperationHub.RegisterNewOperation(newOperation);
@@ -55,6 +56,7 @@ namespace VirtualTourProcessingServer.Processing
                 case OperationStage.PrepareData:
                 case OperationStage.SavingColmap:
                 case OperationStage.CleanupTrain:
+                case OperationStage.PrepareRender:
                 case OperationStage.SavingRender:
                 case OperationStage.Finished:
                     _multiOperationHub.RunNext();

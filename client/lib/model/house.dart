@@ -9,8 +9,10 @@ class House {
     this.user, {
     this.offerType = OfferType.rent,
     this.isLiked = false,
+    this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",
   });
 
+  String? virtualTourId;
   Location location;
   HouseDetails details;
   OfferType offerType;

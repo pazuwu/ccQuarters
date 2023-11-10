@@ -1,5 +1,6 @@
 ﻿using AuthLibrary;
 using CloudStorageLibrary;
+using System.Collections;
 using VirtualTourAPI.Model;
 using VirtualTourAPI.Repository;
 using VirtualTourAPI.Requests;
@@ -27,8 +28,22 @@ namespace VirtualTourAPI.Endpoints
         public static async Task<IResult> PostPhotos(string tourId, string areaId, IFormFile file, IStorage storage)
         {
             using var fileStream = file.OpenReadStream();
-            await storage.UploadFileAsync($"tours/{tourId}/{areaId}", fileStream, file.FileName);
-            return Results.Ok();
+            var collectionName = $"tours/{tourId}/{areaId}";
+            var filename = Guid.NewGuid().ToString();
+
+            await storage.UploadFileAsync(collectionName, fileStream, filename);
+            var url = await storage.GetDownloadUrl(collectionName, filename);
+            return Results.Created(url, null);
+        }
+
+        public static async Task<IResult> Process(string tourId, string areaId, IVTRepository repository)
+        {
+            var operationId = await repository.CreateOperation(tourId, areaId);
+
+            if (operationId == null) 
+                return Results.Conflict();
+
+            return Results.Accepted(operationId);
         }
     }
 }

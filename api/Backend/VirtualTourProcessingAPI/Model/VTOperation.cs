@@ -6,10 +6,13 @@ namespace VirtualTourProcessingServer.Model
     public class VTOperation
     {
         [FirestoreDocumentId]
-        public string? OperationId { get; set; }
+        public required string OperationId { get; set; }
 
         [FirestoreProperty]
-        public string? AreaId { get; set; }
+        public required string TourId { get; set; }
+
+        [FirestoreProperty]
+        public required string AreaId { get; set; }
 
         [FirestoreProperty(ConverterType = typeof(FirestoreEnumNameConverter<OperationStage>))]
         public OperationStage Stage { get; set; }
@@ -32,6 +35,7 @@ namespace VirtualTourProcessingServer.Model
         SavingColmap,
         Train,
         CleanupTrain,
+        PrepareRender,
         Render,
         SavingRender,
         Finished,

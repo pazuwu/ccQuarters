@@ -63,7 +63,7 @@ class _ImportTypeDialogState extends State<ImportTypeDialog> {
               ),
               child: const Text('Dalej'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(_selectedImport);
               },
             ),
           ),

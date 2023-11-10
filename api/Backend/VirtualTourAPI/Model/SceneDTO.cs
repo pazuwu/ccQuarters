@@ -12,6 +12,8 @@ namespace VirtualTourAPI.Model
         public string? ParentId { get; set; }
 
         [FirestoreProperty]
-        public string? Photo360Id { get; set; }
+        public string? Name { get; set; }
+
+        public string? Photo360Url { get; set; }
     }
 }

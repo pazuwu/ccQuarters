@@ -1,4 +1,4 @@
-﻿namespace VirtualTourProcessingServer.OperationExecutors
+﻿namespace VirtualTourProcessingServer.OperationExecutors.Interfaces
 {
     public class ColmapParameters
     {

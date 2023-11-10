@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Text;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
@@ -32,13 +33,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
         public async Task<ExecutorResponse> Process(ColmapParameters parameters)
         {
             if (string.IsNullOrWhiteSpace(parameters.InputDataPath) || string.IsNullOrWhiteSpace(parameters.OutputDirectoryPath))
-            {
-                return new ExecutorResponse()
-                {
-                    Status = StatusCode.Error,
-                    Message = $"COLMAP processing failed. Wrong parameters: {nameof(parameters.InputDataPath)} and {nameof(parameters.OutputDirectoryPath)} should not be null",
-                };
-            }
+                return ExecutorResponse.Problem($"COLMAP processing failed. Wrong parameters: {nameof(parameters.InputDataPath)} and {nameof(parameters.OutputDirectoryPath)} should not be null");
 
             var nsCommand = "ns-process-data";
             var arguments = $"images --data {parameters.InputDataPath} --output-dir {parameters.OutputDirectoryPath}";
@@ -48,61 +43,33 @@ namespace VirtualTourProcessingServer.OperationExecutors
             await nsProcess.WaitForExitAsync();
 
             if (!File.Exists($"{parameters.OutputDirectoryPath}/transforms.json") || nsProcess.ExitCode != 0)
-            {
-                return new ExecutorResponse()
-                {
-                    Status = StatusCode.Error,
-                    Message = "COLMAP processing failed. File: transforms.json not found"
-                };
-            }
+                return ExecutorResponse.Problem("COLMAP processing failed. File: transforms.json not found");
 
-            return new ExecutorResponse()
-            {
-                Status = StatusCode.Ok,
-            };
+            return ExecutorResponse.Ok();
         }
 
         public async Task<ExecutorResponse> Train(TrainParameters parameters)
         {
             if (string.IsNullOrWhiteSpace(parameters.DataDirectoryPath))
-            {
-                return new ExecutorResponse()
-                {
-                    Status = StatusCode.Error,
-                    Message = $"COLMAP processing failed. Wrong parameters: {nameof(parameters.DataDirectoryPath)} should not be null",
-                };
-            }
+                return ExecutorResponse.Problem($"COLMAP processing failed. Wrong parameters: {nameof(parameters.DataDirectoryPath)} should not be null");
 
             var nsCommand = "ns-train";
-            var arguments = $"nerfacto --data {parameters.DataDirectoryPath}";
+            var arguments = $"nerfacto --data {parameters.DataDirectoryPath} --viewer.quit-on-train-completion True";
 
             var nsProcess = StartExecutorProcess(nsCommand, arguments);
             ReadAllLogs(nsProcess);
             await nsProcess.WaitForExitAsync();
 
             if (nsProcess.ExitCode != 0)
-                return new ExecutorResponse()
-                {
-                    Status = StatusCode.Error,
-                    Message = $"Training failed. See logs for more information",
-                };
+                return ExecutorResponse.Problem($"Training failed. See logs for more information");
 
-            return new ExecutorResponse()
-            {
-                Status = StatusCode.Ok,
-            };
+            return ExecutorResponse.Ok();
         }
 
         public async Task<ExecutorResponse> Render(RenderParameters parameters)
         {
             if (string.IsNullOrWhiteSpace(parameters.CameraConfigPath))
-            {
-                return new ExecutorResponse()
-                {
-                    Status = StatusCode.Error,
-                    Message = $"COLMAP processing failed. Wrong parameters: {nameof(parameters.CameraConfigPath)} should not be null",
-                };
-            }
+                return ExecutorResponse.Problem($"COLMAP processing failed. Wrong parameters: {nameof(parameters.CameraConfigPath)} should not be null");
 
             var nsCommand = "ns-render";
             var arguments = $"camera-path --load-config {parameters.CameraConfigPath} --output-path {parameters.OutputPath}";
@@ -112,16 +79,9 @@ namespace VirtualTourProcessingServer.OperationExecutors
             await nsProcess.WaitForExitAsync();
 
             if (nsProcess.ExitCode != 0)
-                return new ExecutorResponse()
-                {
-                    Status = StatusCode.Error,
-                    Message = $"Rendering failed. See logs for more information",
-                };
+                return ExecutorResponse.Problem($"Rendering failed. See logs for more information");
 
-            return new ExecutorResponse()
-            {
-                Status = StatusCode.Ok,
-            };
+            return ExecutorResponse.Ok();
         }
 
         private Process StartExecutorProcess(string command, string arguments)
