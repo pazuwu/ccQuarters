@@ -1,10 +1,10 @@
-import 'package:ccquarters/house_details/view.dart';
+import 'package:ccquarters/house_details/views/view.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/utils/image.dart';
-import 'package:ccquarters/utils/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
@@ -136,7 +136,7 @@ class ProfileInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(top: mediumPaddingSize),
+        padding: const EdgeInsets.only(top: paddingSize),
         child: Table(
           defaultVerticalAlignment: TableCellVerticalAlignment.middle,
           children: [
@@ -146,7 +146,7 @@ class ProfileInfo extends StatelessWidget {
                   return SizedBox(
                     height: constraints.maxWidth * 0.8,
                     child: Padding(
-                      padding: const EdgeInsets.all(paddingSize),
+                      padding: const EdgeInsets.all(largePaddingSize),
                       child: user.photoUrl != null
                           ? ImageWidget(
                               imageUrl: user.photoUrl!,

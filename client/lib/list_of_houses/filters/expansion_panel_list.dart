@@ -166,7 +166,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
     return ExpansionPanel(
       isExpanded: _isExpanded[index] ?? false,
       headerBuilder: (context, isOpen) => Padding(
-        padding: const EdgeInsets.all(paddingSize),
+        padding: const EdgeInsets.all(largePaddingSize),
         child: Text(
           title,
           style: const TextStyle(
@@ -177,8 +177,8 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         ),
       ),
       body: Padding(
-        padding:
-            const EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, paddingSize),
+        padding: const EdgeInsets.fromLTRB(
+            largePaddingSize, 0, largePaddingSize, largePaddingSize),
         child: Column(
           children: children,
         ),

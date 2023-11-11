@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'consts.dart';
+import '../utils/consts.dart';
 
 class NumberTextField extends StatefulWidget {
   const NumberTextField({
@@ -40,11 +40,17 @@ class _NumberTextFieldState extends State<NumberTextField> {
     return TextField(
       controller: _controller,
       keyboardType: TextInputType.number,
-      inputFormatters: <TextInputFormatter>[
-        widget.isDecimal
-            ? FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
-            : FilteringTextInputFormatter.digitsOnly,
-      ],
+      inputFormatters: widget.isDecimal
+          ? [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'^(\d+([.,])?)?\d{0,2}'),
+                  replacementString: ""),
+              TextInputFormatter.withFunction((oldValue, newValue) {
+                return newValue.copyWith(
+                    text: newValue.text.replaceFirst(',', '.'));
+              }),
+            ]
+          : [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
@@ -53,7 +59,7 @@ class _NumberTextFieldState extends State<NumberTextField> {
         labelText: widget.label,
         suffixIcon: _showClearButton
             ? IconButton(
-                padding: const EdgeInsets.all(paddingSize),
+                padding: const EdgeInsets.all(largePaddingSize),
                 icon: const Icon(Icons.clear, size: iconSize),
                 onPressed: () {
                   _controller.clear();

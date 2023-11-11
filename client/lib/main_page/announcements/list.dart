@@ -10,7 +10,7 @@ class AnnouncementList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        margin: const EdgeInsets.all(8.0),
+        margin: const EdgeInsets.only(left: 8.0, right: 8.0),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) => LayoutBuilder(

@@ -19,27 +19,29 @@ class _MainPageState extends State<MainPage> {
       onRefresh: () {
         return Future.delayed(const Duration(seconds: 1));
       },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              FakeSearchBox(
-                color: color,
-                onTap: () => context.read<MainPageCubit>().search(),
-              ),
-              const AnnouncementsContainer(
-                title: "Do wynajęcia",
-              ),
-              const AnnouncementsContainer(
-                title: "Do kupienia",
-              ),
-            ],
+      child: LayoutBuilder(builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: constraints.maxHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FakeSearchBox(
+                  color: color,
+                  onTap: () => context.read<MainPageCubit>().search(),
+                ),
+                const AnnouncementsContainer(
+                  title: "Do wynajęcia",
+                ),
+                const AnnouncementsContainer(
+                  title: "Do kupienia",
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

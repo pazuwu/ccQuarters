@@ -8,12 +8,14 @@ class ImageWidget extends StatelessWidget {
     this.borderRadius = const BorderRadius.all(Radius.circular(10)),
     this.fit = BoxFit.cover,
     this.shape = BoxShape.rectangle,
+    this.height,
   });
 
   final String imageUrl;
   final BoxFit fit;
   final BorderRadius borderRadius;
   final BoxShape shape;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class ImageWidget extends StatelessWidget {
         return const Center(child: CircularProgressIndicator());
       },
       imageBuilder: (context, imageProvider) => Container(
+        height: height,
         decoration: BoxDecoration(
           borderRadius: shape != BoxShape.circle ? borderRadius : null,
           shape: shape,

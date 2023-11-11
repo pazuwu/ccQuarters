@@ -1,6 +1,7 @@
+import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/utils/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 
 class Photos extends StatefulWidget {
@@ -18,7 +19,7 @@ class _PhotosState extends State<Photos> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(paddingSize),
+      padding: const EdgeInsets.all(largePaddingSize),
       child: LayoutBuilder(
         builder: (context, constraints) =>
             getDeviceType(context) == DeviceType.web
@@ -143,9 +144,10 @@ class PhotoTile extends StatelessWidget {
         onTap: onTap,
         imageWidget: AspectRatio(
           aspectRatio: 1,
-          child: Image.network(
-            photo,
+          child: ImageWidget(
+            imageUrl: photo,
             fit: BoxFit.cover,
+            borderRadius: BorderRadius.zero,
           ),
         ),
       ),
@@ -162,9 +164,10 @@ class MainPhoto extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWellWithPhoto(
       onTap: onTap,
-      imageWidget: Image.network(
-        photo,
+      imageWidget: ImageWidget(
+        imageUrl: photo,
         fit: BoxFit.cover,
+        borderRadius: BorderRadius.zero,
       ),
       fit: StackFit.expand,
     );

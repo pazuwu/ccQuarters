@@ -17,3 +17,9 @@ DeviceType getDeviceTypeForGrid(BuildContext context) {
       ? DeviceType.mobile
       : DeviceType.web;
 }
+
+double getPaddingSizeForMainPage(BuildContext context) {
+  return getDeviceType(context) == DeviceType.mobile
+      ? smallPaddingSize
+      : mediumPaddingSize;
+}
