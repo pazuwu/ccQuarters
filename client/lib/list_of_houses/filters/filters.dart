@@ -66,14 +66,14 @@ class FilterForm extends StatelessWidget {
       body: ConstrainedBox(
         constraints: const BoxConstraints.expand(),
         child: Padding(
-          padding: const EdgeInsets.all(paddingSize),
+          padding: const EdgeInsets.all(largePaddingSize),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(paddingSize),
+                  padding: const EdgeInsets.all(largePaddingSize),
                   child: Text(
                     'Filtry',
                     style: Theme.of(context).textTheme.titleLarge,
@@ -90,7 +90,7 @@ class FilterForm extends StatelessWidget {
 
   Widget _buildButton(BuildContext context, String text, bool doesDelete) {
     return Padding(
-      padding: const EdgeInsets.all(paddingSize),
+      padding: const EdgeInsets.all(largePaddingSize),
       child: TextButton(
         style: ButtonStyle(
           foregroundColor: !doesDelete

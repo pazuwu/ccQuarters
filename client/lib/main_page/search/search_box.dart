@@ -1,5 +1,6 @@
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/shadow.dart';
+import 'package:ccquarters/common_widgets/shadow.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
 class FakeSearchBox extends StatelessWidget {
@@ -17,16 +18,18 @@ class FakeSearchBox extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+        padding: EdgeInsets.all(getPaddingSizeForMainPage(context)),
         child: SearchBoxTheme(
           color: color,
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(borderRadius),
-            child: const IgnorePointer(
+            child: IgnorePointer(
               child: TextField(
-                textAlignVertical: TextAlignVertical.center,
-                decoration: InputDecoration(
+                textAlignVertical: getDeviceType(context) == DeviceType.mobile
+                    ? TextAlignVertical.bottom
+                    : TextAlignVertical.center,
+                decoration: const InputDecoration(
                   hintText: "Szukaj...",
                   border: InputBorder.none,
                   enabledBorder: OutlineInputBorder(
@@ -36,7 +39,7 @@ class FakeSearchBox extends StatelessWidget {
                     ),
                   ),
                   prefixIcon: Padding(
-                    padding: EdgeInsets.all(paddingSize),
+                    padding: EdgeInsets.all(largePaddingSize),
                     child: Icon(Icons.search, size: iconSize),
                   ),
                 ),
@@ -67,17 +70,19 @@ class SearchBox extends StatelessWidget {
       color: color,
       child: TextField(
         autofocus: true,
-        textAlignVertical: TextAlignVertical.center,
+        textAlignVertical: getDeviceType(context) == DeviceType.mobile
+            ? TextAlignVertical.bottom
+            : TextAlignVertical.center,
         controller: controller,
         decoration: InputDecoration(
           hintText: "Szukaj...",
           border: InputBorder.none,
           prefixIcon: const Padding(
-            padding: EdgeInsets.all(paddingSize),
+            padding: EdgeInsets.all(largePaddingSize),
             child: Icon(Icons.search, size: iconSize),
           ),
           suffixIcon: IconButton(
-            padding: const EdgeInsets.all(paddingSize),
+            padding: const EdgeInsets.all(largePaddingSize),
             icon: const Icon(Icons.clear, size: iconSize),
             onPressed: () {
               controller.clear();
@@ -117,9 +122,12 @@ class SearchBoxTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
+      constraints: BoxConstraints(
         maxWidth: maxWidth,
         minHeight: minHeight,
+        maxHeight: getDeviceType(context) == DeviceType.mobile
+            ? mobileSearchBoxHeight
+            : webSearchBoxHeight,
       ),
       child: Shadow(color: color, child: child),
     );

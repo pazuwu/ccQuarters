@@ -16,8 +16,8 @@ class AccordionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Accordion(
-      paddingListTop: paddingSize,
-      paddingListBottom: paddingSize,
+      paddingListTop: largePaddingSize,
+      paddingListBottom: largePaddingSize,
       headerBorderColor: colorScheme.primary,
       headerBorderColorOpened: Colors.transparent,
       maxOpenSections: 3,
@@ -25,7 +25,7 @@ class AccordionPage extends StatelessWidget {
       contentBackgroundColor: Colors.white,
       contentBorderColor: colorScheme.primary.withOpacity(0.7),
       contentBorderWidth: 3,
-      contentHorizontalPadding: paddingSize,
+      contentHorizontalPadding: largePaddingSize,
       scaleWhenAnimating: false,
       openAndCloseAnimation: true,
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),

@@ -1,5 +1,5 @@
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/house_details/view.dart';
+import 'package:ccquarters/house_details/views/view.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

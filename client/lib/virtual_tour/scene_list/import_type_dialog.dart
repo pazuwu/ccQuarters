@@ -1,4 +1,4 @@
-import 'package:ccquarters/utils/radio_list.dart';
+import 'package:ccquarters/common_widgets/radio_list.dart';
 import 'package:flutter/material.dart';
 
 enum ImportType {

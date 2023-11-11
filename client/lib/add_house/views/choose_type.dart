@@ -70,7 +70,7 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
 
   Widget _buildBuildingType(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(paddingSize),
+      padding: const EdgeInsets.all(largePaddingSize),
       child: Column(
         children: [
           const Text(
@@ -174,7 +174,7 @@ class ToggleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(paddingSize),
+      padding: const EdgeInsets.all(largePaddingSize),
       child: Text(
         text,
         style: const TextStyle(fontSize: 20),

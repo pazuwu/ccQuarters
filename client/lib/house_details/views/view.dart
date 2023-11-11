@@ -1,10 +1,10 @@
-import 'package:ccquarters/house_details/accordion.dart';
-import 'package:ccquarters/house_details/contact.dart';
-import 'package:ccquarters/house_details/map.dart';
-import 'package:ccquarters/house_details/photos.dart';
+import 'package:ccquarters/house_details/views/accordion.dart';
+import 'package:ccquarters/house_details/views/contact.dart';
+import 'package:ccquarters/house_details/views/map.dart';
+import 'package:ccquarters/house_details/views/photos.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/utils/icon_360.dart';
+import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:flutter/material.dart';
 

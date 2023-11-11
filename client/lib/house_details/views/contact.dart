@@ -1,3 +1,4 @@
+import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
@@ -69,14 +70,20 @@ class ContactWidget extends StatelessWidget {
                     TableRow(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(paddingSize),
-                          child: ClipOval(
-                            clipBehavior: Clip.antiAlias,
+                            padding: const EdgeInsets.all(largePaddingSize),
                             child: user.photoUrl != null
-                                ? Image.network(user.photoUrl!)
-                                : const Icon(Icons.person),
-                          ),
-                        ),
+                                ? ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight: constraints.maxHeight * 0.3,
+                                    ),
+                                    child: ImageWidget(
+                                      imageUrl: user.photoUrl!,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  )
+                                : const ClipOval(
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Icon(Icons.person))),
                         _buildNameTable(context, user),
                       ],
                     ),
@@ -94,7 +101,7 @@ class ContactWidget extends StatelessWidget {
 
 Widget _buildNameTable(BuildContext context, User user) {
   return Padding(
-    padding: const EdgeInsets.all(paddingSize),
+    padding: const EdgeInsets.all(largePaddingSize),
     child: Table(
       columnWidths: const {
         0: FlexColumnWidth(2),

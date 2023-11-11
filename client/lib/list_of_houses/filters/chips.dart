@@ -1,6 +1,6 @@
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/voivodeship.dart';
-import 'package:ccquarters/utils/chip_keyboard_input.dart';
+import 'package:ccquarters/common_widgets/chip_keyboard_input.dart';
 import 'package:flutter/material.dart';
 
 class CityAndVoivodeshipChipKeyboardInput extends StatefulWidget {

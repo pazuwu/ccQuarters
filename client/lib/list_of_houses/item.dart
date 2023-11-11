@@ -1,8 +1,9 @@
+import 'package:ccquarters/house_details/views/view.dart';
 import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/utils/always_visible_label.dart';
+import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/image.dart';
-import 'package:ccquarters/utils/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 
@@ -29,17 +30,26 @@ class _HouseListTileState extends State<HouseListTile> {
         children: [
           InkWellWithPhoto(
             imageWidget: _buildPhoto(context),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailsView(house: widget.house),
+                ),
+              );
+            },
             onDoubleTap: () {
               setState(() {
-                widget.house.isLiked = !widget.house.isLiked;
+                if (!widget.house.isLiked) {
+                  widget.house.isLiked = !widget.house.isLiked;
+                }
               });
             },
             inkWellChild: _buildCityAndDistrictLabel(context),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(
-                paddingSize, mediumPaddingSize, paddingSize, mediumPaddingSize),
+                largePaddingSize, paddingSize, largePaddingSize, paddingSize),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -76,7 +86,7 @@ class _HouseListTileState extends State<HouseListTile> {
           text: _getCityAndDistrict(widget.house.location),
           fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
           fontWeight: FontWeight.w400,
-          background: Colors.grey.withOpacity(0),
+          background: Colors.black.withOpacity(0.5),
           alignment: Alignment.centerLeft,
           paddingSize: 8.0,
         ),

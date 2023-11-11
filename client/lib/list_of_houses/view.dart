@@ -35,7 +35,7 @@ class ListOfHouses extends StatelessWidget {
                       (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: paddingSize, right: paddingSize),
+                    left: largePaddingSize, right: largePaddingSize),
                 child: CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(

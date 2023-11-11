@@ -74,7 +74,7 @@ class _ChipKeyboardInputState extends State<ChipKeyboardInput> {
                   label: widget.label.isNotEmpty ? Text(widget.label) : null,
                   suffixIcon: _showClearButton
                       ? IconButton(
-                          padding: const EdgeInsets.all(paddingSize),
+                          padding: const EdgeInsets.all(largePaddingSize),
                           icon: const Icon(Icons.clear, size: iconSize),
                           onPressed: () {
                             widget.textEditingController.clear();
