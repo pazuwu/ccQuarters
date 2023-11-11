@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCQuartersAPI", "CCQuartersAPI\CCQuartersAPI.csproj", "{E2852D0C-8128-4A16-9180-3107773A6B0E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudStorageLibrary", "CloudStorageLibrary\CloudStorageLibrary.csproj", "{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI", "VirtualTourAPI\VirtualTourAPI.csproj", "{E05CD50F-C56A-414C-8FF5-342997CED57F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourProcessingServer", "VirtualTourProcessingAPI\VirtualTourProcessingServer.csproj", "{1DA4A255-EC26-448F-9630-2505A8E73E5D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthLibrary", "AuthLibrary\AuthLibrary.csproj", "{909E3FC3-682C-418C-9C5E-7FCE1AF269AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI.ServiceClient", "VirtualTourAPI.ServiceClient\VirtualTourAPI.ServiceClient.csproj", "{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourApi.IntegrationTests", "VirtualTourApi.IntegrationTests\VirtualTourApi.IntegrationTests.csproj", "{E60DBFD1-AA56-4574-A6E3-94A815746429}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E2852D0C-8128-4A16-9180-3107773A6B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2852D0C-8128-4A16-9180-3107773A6B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2852D0C-8128-4A16-9180-3107773A6B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2852D0C-8128-4A16-9180-3107773A6B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D4012B-0454-4B49-BEDE-1EF29FB7CCB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E05CD50F-C56A-414C-8FF5-342997CED57F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DA4A255-EC26-448F-9630-2505A8E73E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{909E3FC3-682C-418C-9C5E-7FCE1AF269AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{909E3FC3-682C-418C-9C5E-7FCE1AF269AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{909E3FC3-682C-418C-9C5E-7FCE1AF269AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{909E3FC3-682C-418C-9C5E-7FCE1AF269AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E60DBFD1-AA56-4574-A6E3-94A815746429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E60DBFD1-AA56-4574-A6E3-94A815746429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E60DBFD1-AA56-4574-A6E3-94A815746429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E60DBFD1-AA56-4574-A6E3-94A815746429}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E60DBFD1-AA56-4574-A6E3-94A815746429} = {F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E86A203A-98BB-4BA9-B95B-A3396E4DC11C}
+	EndGlobalSection
+EndGlobal
