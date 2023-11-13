@@ -1,4 +1,5 @@
-﻿using Firebase.Storage;
+﻿using AuthLibrary;
+using Firebase.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -8,22 +9,27 @@ namespace CloudStorageLibrary
     public class FirebaseCloudStorage : IStorage
     {
         private readonly string _bucketName;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ITokenGetter _tokenGetter;
 
-        public FirebaseCloudStorage(IConfiguration config, IHttpContextAccessor httpContextAccessor)
+        public FirebaseCloudStorage(IConfiguration config, ITokenGetter tokenGetter)
         {
             var bucketName = config["BucketName"];
             if (string.IsNullOrWhiteSpace(bucketName))
                 throw new Exception("Storage BucketName is empty. Check your configuration file.");
 
             _bucketName = bucketName;
-            _httpContextAccessor = httpContextAccessor;
+            _tokenGetter = tokenGetter;
         }
 
         private async Task<string> GetToken()
         {
-            if(_httpContextAccessor.HttpContext != null)
-                return await _httpContextAccessor.HttpContext.GetTokenAsync("access_token") ?? string.Empty;
+            string userToken = await _tokenGetter.GetUserToken();
+            if (!string.IsNullOrWhiteSpace(userToken))
+                return userToken;
+
+            string serverToken = await _tokenGetter.GetServerToken();
+            if (!string.IsNullOrWhiteSpace(serverToken))
+                return serverToken;
 
             return string.Empty;
         }
@@ -50,17 +56,22 @@ namespace CloudStorageLibrary
                 .DeleteAsync();
         }
 
-        public async Task<string> GetDownloadUrl(string collectionName, string filename)
+        public async Task<IEnumerable<string>> GetDownloadUrl(string collectionName, params string[] filenames)
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
                 AuthTokenAsyncFactory = GetToken
             });
-            return await storage
-                .Child(collectionName)
-                .Child(filename)
-                .GetDownloadUrlAsync();
+            
+            var ret = new List<string>(filenames.Length);
 
+            foreach (var filename in filenames)
+                ret.Add(await storage
+                 .Child(collectionName)
+                 .Child(filename)
+                 .GetDownloadUrlAsync());
+
+            return ret;
         }
 
     }

@@ -19,6 +19,7 @@ namespace CCQuartersAPI
             builder.Services.AddSwaggerGen(c => c.AddFirebaseSecurityDefinition());
 
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddTransient<ITokenGetter, TokenGetter>();
             builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
 
             var app = builder.Build();
