@@ -18,7 +18,7 @@ namespace CCQuartersAPI.CommonClasses
 
             try
             {
-                user.PhotoUrl = (await storage.GetDownloadUrl("userPhotos", user.Id)).FirstOrDefault();
+                user.PhotoUrl = await storage.GetDownloadUrl("userPhotos", user.Id);
             }
             catch
             {

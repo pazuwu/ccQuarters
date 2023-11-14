@@ -54,22 +54,37 @@ namespace CloudStorageLibrary
                 .DeleteAsync();
         }
 
-        public async Task<IEnumerable<string>> GetDownloadUrl(string collectionName, params string[] filenames)
+        public async Task<string> GetDownloadUrl(string collectionName, string filename)
+        {
+            var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
+            {
+                AuthTokenAsyncFactory = GetToken
+            });
+
+            return await storage
+                 .Child(collectionName)
+                 .Child(filename)
+                 .GetDownloadUrlAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetDownloadUrls(string collectionName, params string[] filenames)
         {
             var storage = new FirebaseStorage(_bucketName, new FirebaseStorageOptions()
             {
                 AuthTokenAsyncFactory = GetToken
             });
             
-            var ret = new List<string>(filenames.Length);
+            var tasks = new List<Task<string>>(filenames.Length);
 
             foreach (var filename in filenames)
-                ret.Add(await storage
+                tasks.Add(storage
                  .Child(collectionName)
                  .Child(filename)
                  .GetDownloadUrlAsync());
 
-            return ret;
+            await Task.WhenAll(tasks);
+
+            return tasks.Select(t => t.GetAwaiter().GetResult()).ToList();
         }
 
     }

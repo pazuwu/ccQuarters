@@ -55,7 +55,7 @@ namespace CCQuartersAPI.Endpoints
 
             foreach (var house in houses)
                 if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
-                    house.PhotoUrl = (await storage.GetDownloadUrl("housePhotos", house.PhotoUrl))?.FirstOrDefault();
+                    house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
 
             return Results.Ok(new GetHousesResponse()
             {
@@ -91,7 +91,7 @@ namespace CCQuartersAPI.Endpoints
 
             foreach (var house in houses)
                 if(!string.IsNullOrWhiteSpace(house.PhotoUrl))
-                    house.PhotoUrl = (await storage.GetDownloadUrl("housePhotos", house.PhotoUrl))?.FirstOrDefault();
+                    house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
 
             return Results.Ok(new GetHousesResponse()
             {
@@ -127,7 +127,7 @@ namespace CCQuartersAPI.Endpoints
 
             foreach (var house in houses)
                 if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
-                    house.PhotoUrl = (await storage.GetDownloadUrl("housePhotos", house.PhotoUrl))?.FirstOrDefault();
+                    house.PhotoUrl = await storage.GetDownloadUrl("housePhotos", house.PhotoUrl);
 
             return Results.Ok(new GetHousesResponse()
             {
@@ -207,7 +207,7 @@ namespace CCQuartersAPI.Endpoints
 
             var photoIds = await connection.QueryAsync<string>(photosQuery);
 
-            var photosUrls = await storage.GetDownloadUrl("housePhotos", photoIds.Where(photoId => !string.IsNullOrWhiteSpace(photoId)).ToArray());
+            var photosUrls = await storage.GetDownloadUrls("housePhotos", photoIds.Where(photoId => !string.IsNullOrWhiteSpace(photoId)).ToArray());
 
             FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
             DocumentReference descriptionDoc = firestoreDb.Collection("descriptions").Document($"{houseQueried.DescriptionId}");
