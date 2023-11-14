@@ -64,6 +64,22 @@ namespace VirtualTourApi.IntegrationTests.Mocks
             return Task.FromResult<string?>(tour.Id);
         }
 
+        public Task AddPhotoToArea(string tourId, string areaId, string photoId)
+        {
+            if (_tours.TryGetValue(tourId, out var tour))
+            {
+                var areaToChange = tour.Areas?.FirstOrDefault(a => a.Id == areaId);
+
+                if (areaToChange == null)
+                    return Task.CompletedTask;
+
+                areaToChange.PhotoIds ??= new();
+                areaToChange.PhotoIds.Add(photoId);
+            }
+
+            return Task.CompletedTask;
+        }
+
         public Task DeleteArea(string tourId, string areaId)
         {
             if (_tours.TryGetValue(tourId, out var tour))
