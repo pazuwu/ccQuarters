@@ -24,6 +24,21 @@ namespace VirtualTourAPI.Repository
             _logger = logger;
         }
 
+        public async Task<AreaDTO> GetArea(string tourId, string areaId)
+        {
+            var document = _firestore
+                .Collection(ToursCollection)
+                .Document(tourId)
+                .Collection(AreasCollection)
+                .Document(areaId);    
+
+            var addedArea = await document.GetSnapshotAsync();
+
+            _logger.LogInformation("Get area {Id} from tour {tourId}", tourId, addedArea.Id);
+
+            return addedArea.ConvertTo<AreaDTO>();
+        }
+
         public async Task<string?> CreateArea(string tourId, AreaDTO area)
         {
             var collection = _firestore
@@ -190,7 +205,7 @@ namespace VirtualTourAPI.Repository
             var links = ConvertCollection<LinkDTO>(linksTask).ToList();
             var scenes = ConvertCollection<SceneDTO>(scenesTask).ToList();
             var areas = ConvertCollection<AreaDTO>(areasTask).ToList();
-            var tour = tourTask.GetAwaiter().GetResult().ConvertTo<TourDTO>();
+            var tour = tourTask.GetAwaiter().GetResult().ConvertTo<TourDTO?>();
 
             if (tour == null)
                 return null;

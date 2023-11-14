@@ -1,27 +1,86 @@
-﻿using CloudStorageLibrary;
+﻿using VirtualTourAPI.ServiceClient;
+using VirtualTourAPI.ServiceClient.Parameters;
 using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
     public class DownloadExecutor : IDownloadExecutor
     {
-        public Task<ExecutorResponse> DownloadPhotos(string tourId, string areaId, string outputDirectory)
+        private readonly VTClient _vtClient;
+        private readonly IHttpClientFactory _httpFactory;
+
+        public DownloadExecutor(IHttpClientFactory httpFactory, VTClient vtClient)
+        {
+            _vtClient = vtClient;
+            _httpFactory = httpFactory;
+        }
+
+        public async Task<ExecutorResponse> DownloadPhotos(string tourId, string areaId, string outputDirectory)
         {
             try
             {
-                if(!Directory.Exists(outputDirectory)) 
+                if (!Directory.Exists(outputDirectory))
                     Directory.CreateDirectory(outputDirectory);
 
-                var collectionName = Path.Combine("tours", tourId, areaId);
+                var parameters = new GetAreaPhotosParameters()
+                {
+                    TourId = tourId,
+                    AreaId = areaId,
+                };
+                var res = await _vtClient.Service.GetAreaPhotos(parameters);
 
-                // TODO: Download photos using _storage
+                if (res.PhotoUrls == null)
+                    return ExecutorResponse.Problem("Get area photos returned empty collection of urls");
+
+                var downloadTasks = new List<Task<DownloadStatus>>();
+                foreach (var photoUrl in res.PhotoUrls)
+                {
+                    downloadTasks.Add(DownloadAndSavePhoto(photoUrl, outputDirectory));
+                }
+
+                await Task.WhenAll(downloadTasks);
+
+                foreach (var task in downloadTasks)
+                {
+                    var status = task.GetAwaiter().GetResult();
+
+                    if (status != DownloadStatus.Ok)
+                        return ExecutorResponse.Problem("Some files weren't downloaded.");
+                }
             }
             catch (Exception ex)
             {
-                return Task.FromResult(ExecutorResponse.Problem(ex.Message));
+                return ExecutorResponse.Problem(ex.Message);
             }
 
-            return Task.FromResult(ExecutorResponse.Ok());
+            return ExecutorResponse.Ok();
+        }
+
+        private async Task<DownloadStatus> DownloadAndSavePhoto(string photoUrl, string outputDirectory)
+        {
+            var photoPath = Path.Combine(outputDirectory, Guid.NewGuid().ToString());
+
+            if (File.Exists(photoPath))
+                return DownloadStatus.Ok;
+
+            try
+            {
+                using var httpClient = _httpFactory.CreateClient();
+                var photoBytes = await httpClient.GetByteArrayAsync(photoUrl);
+                File.WriteAllBytes(photoPath, photoBytes);
+            }
+            catch
+            {
+                return DownloadStatus.Failed;
+            }
+
+            return DownloadStatus.Ok;
+        }
+
+        private enum DownloadStatus
+        {
+            Ok,
+            Failed,
         }
     }
 }

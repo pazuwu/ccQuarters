@@ -16,7 +16,7 @@ namespace VirtualTourAPI.Endpoints
             if (string.IsNullOrWhiteSpace(createdAreaId))
                 return Results.Problem("DB error occured while creating object.");
 
-            return Results.Created(tourId, null);
+            return Results.Created(createdAreaId, null);
         }
 
         public static async Task<IResult> Delete(string tourId, string areaId, IVTRepository repository)
@@ -38,11 +38,28 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(url, null);
         }
 
+        public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IVTRepository repository)
+        {
+            var area = await repository.GetArea(tourId, areaId);
+            var collectionName = $"tours/{tourId}/{areaId}";
+
+            if (area == null)
+                return Results.NotFound();
+
+            if (area.PhotoIds != null)
+            {
+                var urls = await storage.GetDownloadUrls(collectionName, area.PhotoIds);
+                return Results.Ok(urls.ToArray());
+            }
+
+            return Results.Ok(Array.Empty<string>());
+        }
+
         public static async Task<IResult> Process(string tourId, string areaId, IVTRepository repository)
         {
             var operationId = await repository.CreateOperation(tourId, areaId);
 
-            if (operationId == null) 
+            if (operationId == null)
                 return Results.Conflict();
 
             return Results.Accepted(operationId);
