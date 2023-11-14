@@ -22,6 +22,18 @@ namespace VirtualTourApi.IntegrationTests.Mocks
             return Task.FromResult(string.Empty);
         }
 
+        public async Task<IEnumerable<string>> GetDownloadUrls(string collectionName, params string[] filenames)
+        {
+            var res = new List<string>();
+
+            foreach (var filename in filenames)
+            {
+                res.Add(await GetDownloadUrl(collectionName, filename));
+            }
+
+            return res;
+        }
+
         public Task UploadFileAsync(string collectionName, Stream stream, string fileName)
         {
             _files.TryAdd(CreateKey(collectionName, fileName), Guid.NewGuid().ToString());

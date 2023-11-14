@@ -1,3 +1,4 @@
+using AuthLibrary;
 using CloudStorageLibrary;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ using VirtualTourProcessingServer.Processing.Interfaces;
 using VirtualTourProcessingServer.Services;
 
 var builder = Host.CreateApplicationBuilder();
+
+builder.Services.AddTransient<ITokenProvider, TokenProvider>();
 
 builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));

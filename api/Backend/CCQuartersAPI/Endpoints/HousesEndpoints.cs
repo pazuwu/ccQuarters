@@ -207,10 +207,7 @@ namespace CCQuartersAPI.Endpoints
 
             var photoIds = await connection.QueryAsync<string>(photosQuery);
 
-            List<string> photosUrls = new();
-            foreach (var photoId in photoIds)
-                if(!string.IsNullOrWhiteSpace(photoId))
-                    photosUrls.Add(await storage.GetDownloadUrl("housePhotos", photoId));
+            var photosUrls = await storage.GetDownloadUrls("housePhotos", photoIds.Where(photoId => !string.IsNullOrWhiteSpace(photoId)).ToArray());
 
             FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
             DocumentReference descriptionDoc = firestoreDb.Collection("descriptions").Document($"{houseQueried.DescriptionId}");

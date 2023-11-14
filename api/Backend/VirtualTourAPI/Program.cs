@@ -14,7 +14,7 @@ builder.Services.AddCors();
 builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
 
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
 builder.Services.AddTransient<IVTRepository, VTRepository>();
 
