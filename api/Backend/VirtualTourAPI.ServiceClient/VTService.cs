@@ -202,5 +202,15 @@ namespace VirtualTourAPI.ServiceClient
             response.EnsureSuccessStatusCode();
             return new();
         }
+
+        public async Task<GetAreaPhotosResult> GetAreaPhotos(GetAreaPhotosParameters parameters)
+        {
+            var response = await _http.GetFromJsonAsync<string[]>($"tours/{parameters.TourId}/areas/{parameters.AreaId}/photos");
+
+            return new()
+            {
+                PhotoUrls = response
+            };
+        }
     }
 }

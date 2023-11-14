@@ -13,6 +13,7 @@ namespace VirtualTourAPI.ServiceClient
         Task<CreateAreaResult> CreateArea(CreateAreaParameters parameters);
         Task<DeleteAreaResult> DeleteArea(DeleteAreaParameters parameters);
         Task<AddPhotoToAreaResult> AddPhotoToArea(AddPhotoToAreaParameters parameters);
+        Task<GetAreaPhotosResult> GetAreaPhotos(GetAreaPhotosParameters parameters);
 
         Task<CreateSceneResult> CreateScene(CreateSceneParameters parameters);
         Task<DeleteSceneResult> DeleteScene(DeleteSceneParameters parameters);

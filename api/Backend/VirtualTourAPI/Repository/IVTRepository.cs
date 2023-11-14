@@ -8,6 +8,7 @@ namespace VirtualTourAPI.Repository
         Task<string?> CreateTour();
         Task DeleteTour(string tourId);
 
+        Task<AreaDTO?> GetArea(string tourId, string areaId);
         Task<string?> CreateArea(string tourId, AreaDTO area);
         Task AddPhotoToArea(string tourId, string areaId, string photoId);
         Task DeleteArea(string tourId, string areaId);
