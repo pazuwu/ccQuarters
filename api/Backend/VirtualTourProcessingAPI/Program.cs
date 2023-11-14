@@ -14,7 +14,7 @@ using VirtualTourProcessingServer.Services;
 
 var builder = Host.CreateApplicationBuilder();
 
-builder.Services.AddTransient<ITokenGetter, TokenGetter>();
+builder.Services.AddTransient<ITokenProvider, TokenProvider>();
 
 builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));

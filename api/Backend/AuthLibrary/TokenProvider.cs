@@ -3,18 +3,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Firebase.Auth;
 using Firebase.Auth.Providers;
-using FirebaseAdmin;
-using FirebaseAdmin.Auth;
-using Google.Apis.Auth.OAuth2;
 
 namespace AuthLibrary
 {
-    public class TokenGetter : ITokenGetter
+    public class TokenProvider : ITokenProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
-        public TokenGetter(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public TokenProvider(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;

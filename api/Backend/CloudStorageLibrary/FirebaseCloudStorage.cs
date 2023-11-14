@@ -1,7 +1,5 @@
 ﻿using AuthLibrary;
 using Firebase.Storage;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace CloudStorageLibrary
@@ -9,25 +7,25 @@ namespace CloudStorageLibrary
     public class FirebaseCloudStorage : IStorage
     {
         private readonly string _bucketName;
-        private readonly ITokenGetter _tokenGetter;
+        private readonly ITokenProvider _tokenProvider;
 
-        public FirebaseCloudStorage(IConfiguration config, ITokenGetter tokenGetter)
+        public FirebaseCloudStorage(IConfiguration config, ITokenProvider tokenProvider)
         {
             var bucketName = config["BucketName"];
             if (string.IsNullOrWhiteSpace(bucketName))
                 throw new Exception("Storage BucketName is empty. Check your configuration file.");
 
             _bucketName = bucketName;
-            _tokenGetter = tokenGetter;
+            _tokenProvider = tokenProvider;
         }
 
         private async Task<string> GetToken()
         {
-            string userToken = await _tokenGetter.GetUserToken();
+            string userToken = await _tokenProvider.GetUserToken();
             if (!string.IsNullOrWhiteSpace(userToken))
                 return userToken;
 
-            string serverToken = await _tokenGetter.GetServerToken();
+            string serverToken = await _tokenProvider.GetServerToken();
             if (!string.IsNullOrWhiteSpace(serverToken))
                 return serverToken;
 
