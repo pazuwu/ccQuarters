@@ -66,6 +66,19 @@ namespace VirtualTourAPI.Repository
             return addedLink.Id;
         }
 
+        public async Task AddPhotoToArea(string tourId, string areaId, string photoId)
+        {
+            var document = _firestore
+                .Collection(ToursCollection)
+                .Document(tourId)
+                .Collection(AreasCollection)
+                .Document(areaId);
+
+            await document.UpdateAsync(nameof(AreaDTO.PhotoIds), FieldValue.ArrayUnion(photoId));
+            _logger.LogInformation("Photo {photoId} was added to area {areaId} in tour {tourId}", photoId, areaId, tourId);
+        }
+
+
         public async Task DeleteArea(string tourId, string areaId)
         {
             var document = _firestore

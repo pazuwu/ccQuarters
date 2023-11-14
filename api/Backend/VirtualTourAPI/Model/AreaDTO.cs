@@ -13,5 +13,8 @@ namespace VirtualTourAPI.Model
 
         [FirestoreProperty]
         public string? Name { get; set; }
+
+        [FirestoreProperty]
+        public List<string>? PhotoIds { get; set; }
     }
 }
