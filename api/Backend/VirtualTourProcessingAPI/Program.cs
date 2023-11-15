@@ -48,6 +48,8 @@ builder.Services.Configure<RenderOptions>(options =>
     builder.Configuration.GetSection(nameof(RenderOptions)).Bind(options));
 builder.Services.AddSingleton<IRenderSettingsGenerator, RenderSettingsGenerator>();
 
+builder.Services.AddSingleton<IUploadExecutor, UploadExecutor>();
+
 builder.Services.Configure<NerfStudioOptions>(options =>
     builder.Configuration.GetSection(nameof(NerfStudioOptions)).Bind(options));
 builder.Services.AddSingleton<NerfStudioExecutor>();
