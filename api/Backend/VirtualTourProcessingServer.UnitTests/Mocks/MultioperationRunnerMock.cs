@@ -5,18 +5,27 @@ namespace VirtualTourProcessingServer.UnitTests.Mocks
 {
     internal class MultioperationRunnerMock : IMultiOperationRunner
     {
-        private List<VTOperation> _runningOperations { get; } = new();
+        private Queue<VTOperation> _runningOperations { get; } = new();
 
-        public IReadOnlyList<VTOperation> RunningOperations => _runningOperations;
+        public IReadOnlyCollection<VTOperation> RunningOperations => _runningOperations;
+        public int? MaxMultiprocessingThreadsMock { get; set; }
+
 
         public void Run(VTOperation operation)
         {
-            _runningOperations.Add(operation);
+            _runningOperations.Enqueue(operation);
         }
 
         public bool TryRegister(VTOperation operation)
         {
-            return true;
+            return MaxMultiprocessingThreadsMock.HasValue ? 
+                _runningOperations.Count < MaxMultiprocessingThreadsMock.Value
+                : true;
+        }
+
+        public void MockedEndProcessing()
+        {
+            _runningOperations.Dequeue();
         }
     }
 }
