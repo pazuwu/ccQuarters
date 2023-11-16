@@ -137,7 +137,7 @@ namespace VirtualTourProcessingServer.Processing
             {
                 AreaId = operation.AreaId,
                 TourId = operation.TourId,
-                DirectoryPath = workingDirectory
+                DirectoryPath = Path.Combine(workingDirectory, "renders")
             };
 
             var response = await _uploader.SaveScenes(parameters);
