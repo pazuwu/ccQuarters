@@ -39,6 +39,11 @@ namespace VirtualTourProcessingServer.Processing
 
                 if (notification.Operation.Stage != OperationStage.Finished)
                     notification.Operation.Stage++;
+                else
+                {
+                    await _operationRepository.DeleteOperation(operation);
+                    return;
+                }
             }
 
             await _operationRepository.UpdateOperation(notification.Operation);
