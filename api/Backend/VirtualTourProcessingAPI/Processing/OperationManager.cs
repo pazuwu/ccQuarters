@@ -5,7 +5,7 @@ using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
 {
-    internal class OperationManager : IOperationManager
+    public class OperationManager : IOperationManager
     {
         private readonly IOperationHub _operationHub;
         private readonly IOperationHub _multiOperationHub;
