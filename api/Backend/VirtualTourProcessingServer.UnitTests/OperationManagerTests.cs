@@ -34,13 +34,7 @@ namespace VirtualTourProcessingServer.UnitTests
         [DynamicData(nameof(Stages), DynamicDataSourceType.Property)]
         public void RegisterOperationExecutesCorrectRunner(OperationStage stage)
         {
-            var operation = new VTOperation()
-            {
-                AreaId = "",
-                OperationId = "",
-                TourId = "",
-                Stage = stage,
-            };
+            var operation = CreateOperation(stage);
             _manager.RegisterNewOperations(new List<VTOperation>() { operation });
 
             if(_runnerStages.Contains(stage))
@@ -50,8 +44,69 @@ namespace VirtualTourProcessingServer.UnitTests
                 _multiRunner.RunningOperations.Should().Contain(operation);
         }
 
+        [TestMethod]
+        [DynamicData(nameof(RunnerStages), DynamicDataSourceType.Property)]
+        public void RunNextRunsNextOperationInRunner(OperationStage stage)
+        {
+            var firstOperation = CreateOperation(stage);
+            var secondOperation = CreateOperation(stage);
+
+            _manager.RegisterNewOperations(new List<VTOperation>() { firstOperation, secondOperation });
+
+            _runner.RunningOperation.Should().NotBeNull()
+                .And.Subject.Should().BeSameAs(firstOperation);
+
+            _manager.RunNext(stage);
+            _runner.RunningOperation.Should().NotBeNull()
+                .And.Subject.Should().BeSameAs(firstOperation);
+
+            _runner.MockedEndProcessing();
+            _manager.RunNext(stage);
+
+            _runner.RunningOperation.Should().NotBeNull()
+                .And.Subject.Should().BeSameAs(secondOperation);
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(MultiRunnerStages), DynamicDataSourceType.Property)]
+        public void RunNextRunsNextOperationInMultiRunner(OperationStage stage)
+        {
+            _multiRunner.MaxMultiprocessingThreadsMock = 2;
+
+            var firstOperation = CreateOperation(stage);
+            var secondOperation = CreateOperation(stage);
+            var thirdOperation = CreateOperation(stage);
+
+            _manager.RegisterNewOperations(new List<VTOperation>() { firstOperation, secondOperation, thirdOperation });
+
+            _multiRunner.RunningOperations.Should().Contain(firstOperation)
+                .And.Subject.Should().Contain(secondOperation);
+
+            _manager.RunNext(stage);
+            _multiRunner.RunningOperations.Should().Contain(new List<VTOperation>() { firstOperation, secondOperation })
+                .And.Subject.Should().NotContain(thirdOperation);
+
+            _multiRunner.MockedEndProcessing();
+            _manager.RunNext(stage);
+
+            _multiRunner.RunningOperations.Should().Contain(thirdOperation);
+        }
+
+        private static VTOperation CreateOperation(OperationStage stage)
+        {
+            return new VTOperation()
+            {
+                AreaId = Guid.NewGuid().ToString(),
+                OperationId = Guid.NewGuid().ToString(),
+                TourId = Guid.NewGuid().ToString(),
+                Stage = stage,
+            };
+        }
+
         private static readonly OperationStage[] _runnerStages = { OperationStage.Colmap, OperationStage.Train, OperationStage.Render };
 
+        public static IEnumerable<object[]> RunnerStages => _runnerStages.Select(stage => new object[] { stage });
+        public static IEnumerable<object[]> MultiRunnerStages => Enum.GetValues<OperationStage>().Except(_runnerStages).Select(stage => new object[] { stage });
         public static IEnumerable<object[]> Stages => Enum.GetValues<OperationStage>().Select(stage => new object[] { stage });
     }
 }

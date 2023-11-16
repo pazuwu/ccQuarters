@@ -16,5 +16,10 @@ namespace VirtualTourProcessingServer.UnitTests.Mocks
         {
             return RunningOperation == null;
         }
+
+        public void MockedEndProcessing()
+        { 
+            RunningOperation = null;
+        }
     }
 }
