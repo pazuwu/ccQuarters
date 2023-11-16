@@ -24,7 +24,7 @@ namespace VirtualTourAPI.Repository
             _logger = logger;
         }
 
-        public async Task<AreaDTO> GetArea(string tourId, string areaId)
+        public async Task<AreaDTO?> GetArea(string tourId, string areaId)
         {
             var document = _firestore
                 .Collection(ToursCollection)
