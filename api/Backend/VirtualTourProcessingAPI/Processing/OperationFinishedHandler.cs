@@ -33,15 +33,12 @@ namespace VirtualTourProcessingServer.Processing
                 operation.ProcessingAttempts++;
                 operation.Status = OperationStatus.Error;
             }
-
-            if (notification.StatusCode == StatusCode.Ok)
+            else 
             {
                 operation.ProcessingAttempts = 0;
-            }
 
-            if (notification.Operation.Stage != OperationStage.Finished)
-            {
-                notification.Operation.Stage++;
+                if (notification.Operation.Stage != OperationStage.Finished)
+                    notification.Operation.Stage++;
             }
 
             await _operationRepository.UpdateOperation(notification.Operation);

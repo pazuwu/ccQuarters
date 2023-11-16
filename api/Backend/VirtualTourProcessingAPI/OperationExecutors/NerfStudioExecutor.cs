@@ -32,9 +32,6 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Process(ColmapParameters parameters)
         {
-            if (string.IsNullOrWhiteSpace(parameters.InputDataPath) || string.IsNullOrWhiteSpace(parameters.OutputDirectoryPath))
-                return ExecutorResponse.Problem($"COLMAP processing failed. Wrong parameters: {nameof(parameters.InputDataPath)} and {nameof(parameters.OutputDirectoryPath)} should not be null");
-
             var nsCommand = "ns-process-data";
             var arguments = $"images --data {parameters.InputDataPath} --output-dir {parameters.OutputDirectoryPath}";
 
@@ -50,11 +47,8 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Train(TrainParameters parameters)
         {
-            if (string.IsNullOrWhiteSpace(parameters.DataDirectoryPath))
-                return ExecutorResponse.Problem($"COLMAP processing failed. Wrong parameters: {nameof(parameters.DataDirectoryPath)} should not be null");
-
             var nsCommand = "ns-train";
-            var arguments = $"nerfacto --data {parameters.DataDirectoryPath} --viewer.quit-on-train-completion True";
+            var arguments = $"nerfacto --data {parameters.DataDirectoryPath} --viewer.quit-on-train-completion True --output-dir {parameters.OutputDirectoryPath}";
 
             var nsProcess = StartExecutorProcess(nsCommand, arguments);
             ReadAllLogs(nsProcess);
@@ -68,11 +62,8 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Render(RenderParameters parameters)
         {
-            if (string.IsNullOrWhiteSpace(parameters.CameraConfigPath))
-                return ExecutorResponse.Problem($"COLMAP processing failed. Wrong parameters: {nameof(parameters.CameraConfigPath)} should not be null");
-
             var nsCommand = "ns-render";
-            var arguments = $"camera-path --load-config {parameters.CameraConfigPath} --output-path {parameters.OutputPath}";
+            var arguments = $"camera-path --load-config {parameters.ConfigPath} --camera-path-filename {parameters.CameraConfigPath} --output-format images --image-format png --output-path {parameters.OutputPath}";
 
             var nsProcess = StartExecutorProcess(nsCommand, arguments);
             ReadAllLogs(nsProcess);
@@ -91,7 +82,6 @@ namespace VirtualTourProcessingServer.OperationExecutors
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                StandardOutputEncoding = Encoding.ASCII
             };
 
             var process = new Process()
@@ -106,15 +96,15 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         private void ReadAllLogs(Process process)
         {
-            while (!process.StandardError.EndOfStream)
-            {
-                var line = process.StandardError.ReadLine();
-                _logger.LogError(line);
-            }
             while (!process.StandardOutput.EndOfStream)
             {
                 var line = process.StandardOutput.ReadLine();
                 _logger.LogDebug(line);
+            }
+            while (!process.StandardError.EndOfStream)
+            {
+                var line = process.StandardError.ReadLine();
+                _logger.LogError(line);
             }
         }
     }
