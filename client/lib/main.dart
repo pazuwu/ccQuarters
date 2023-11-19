@@ -1,12 +1,23 @@
 import 'dart:io';
 
-import 'package:ccquarters/navigation_gate.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/app_gate.dart';
+import 'package:ccquarters/environment.dart';
+import 'package:ccquarters/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  HttpOverrides.global = CCQHttpOverrides();
+  await appSetup();
   runApp(const MyApp());
+}
+
+Future appSetup() async {
+  await dotenv.load(fileName: Environment.filename);
+  HttpOverrides.global = CCQHttpOverrides();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,64 +25,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.blueGrey,
-          accentColor: Colors.blueGrey[50],
-          cardColor: Colors.white,
-          backgroundColor: Colors.white,
-          errorColor: Colors.red,
-          brightness: Brightness.light,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.blueGrey[50],
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formBorderRadius),
-              borderSide: BorderSide(
-                color: Colors.blueGrey[200]!,
-                width: inputDecorationBorderSide,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formBorderRadius),
-              borderSide: const BorderSide(
-                color: Colors.blueGrey,
-                width: inputDecorationBorderSide,
-              ),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formBorderRadius),
-              borderSide: BorderSide(
-                color: Colors.blueGrey.shade300,
-                width: inputDecorationBorderSide,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formBorderRadius),
-              borderSide: const BorderSide(
-                color: Colors.red,
-                width: inputDecorationBorderSide,
-              ),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formBorderRadius),
-              borderSide: BorderSide(
-                color: Colors.red[200]!,
-                width: inputDecorationBorderSide,
-              ),
-            ),
-            errorStyle: const TextStyle(
-              color: Colors.red,
-            ),
-            labelStyle: const TextStyle(
-              color: Colors.black,
-            )),
-        useMaterial3: true,
-      ),
-      home: const SafeArea(child: NavigationGate()),
-    );
+    return const AppMainGate();
   }
 }
 

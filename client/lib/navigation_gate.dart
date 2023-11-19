@@ -1,7 +1,10 @@
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/device_type.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'add_house/gate.dart';
@@ -62,7 +65,14 @@ class _NavigationGateState extends State<NavigationGate> {
           if (typeOfDevice == DeviceType.web)
             SideNavigationBar(
               selectedIndex: _selectedIndex,
-              items: _items,
+              items: _items +
+                  (kIsWeb && context.read<AuthCubit>().user == null
+                      ? [
+                          const SideNavigationBarItem(
+                              icon: Icons.logout,
+                              label: "Zaloguj się lub zarejestruj")
+                        ]
+                      : []),
               theme: SideNavigationBarTheme(
                 backgroundColor: color.background,
                 togglerTheme: SideNavigationBarTogglerTheme.standard(),
@@ -88,6 +98,10 @@ class _NavigationGateState extends State<NavigationGate> {
   }
 
   void _onItemTapped(int index) {
+    if (index == 3) {
+      context.read<AuthCubit>().signOut();
+      return;
+    }
     setState(() {
       _selectedIndex = index;
     });

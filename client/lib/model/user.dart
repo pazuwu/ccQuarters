@@ -1,16 +1,16 @@
 class User {
   User({
-    this.name = "Jan",
-    this.surname = "Kowalski",
-    this.company = "CCQuarters",
-    this.email = "adna@ccquarters.com",
-    this.phoneNumber = "21314134",
+    this.name = "",
+    this.surname = "",
+    this.company,
+    this.email = "",
+    this.phoneNumber,
   });
 
-  String? name;
-  String? surname;
+  String name;
+  String surname;
   String? company;
-  String? email;
+  String email;
   String? phoneNumber;
   String? photoUrl =
       "https://picsum.photos/512?=${DateTime.now().millisecondsSinceEpoch}";
