@@ -1,6 +1,6 @@
 import 'package:ccquarters/common_widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/login_register/state.dart';
+import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/email_and_password_fields.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
 import 'package:ccquarters/model/user.dart';
@@ -65,63 +65,8 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
                 ? MediaQuery.of(context).size.width * 0.5
                 : MediaQuery.of(context).size.width),
         child: Scaffold(
-          appBar: AppBar(
-            leading: BackButton(
-              onPressed: () {
-                switch (widget.page) {
-                  case LoginRegisterPageType.login:
-                    _saveEmail();
-                    context.read<AuthCubit>().goToStartPage();
-                    break;
-                  case LoginRegisterPageType.registerPersonalInfo:
-                    _savePersonalInfo();
-                    context.read<AuthCubit>().goToStartPage();
-                    break;
-                  case LoginRegisterPageType.registerEmailAndPassword:
-                    _saveEmail();
-                    context.read<AuthCubit>().goToPersonalInfoRegisterPage();
-                    break;
-                }
-              },
-            ),
-          ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.only(
-              top: mediumPaddingSize,
-              bottom: mediumPaddingSize,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(widget.page == LoginRegisterPageType.login
-                    ? "Nie masz jeszcze konta?"
-                    : "Masz już konto?"),
-                TextButton(
-                  onPressed: () {
-                    switch (widget.page) {
-                      case LoginRegisterPageType.login:
-                        _saveEmail();
-                        context
-                            .read<AuthCubit>()
-                            .goToPersonalInfoRegisterPage();
-                        break;
-                      case LoginRegisterPageType.registerPersonalInfo:
-                        _savePersonalInfo();
-                        context.read<AuthCubit>().goToLoginPage();
-                        break;
-                      case LoginRegisterPageType.registerEmailAndPassword:
-                        _saveEmail();
-                        context.read<AuthCubit>().goToLoginPage();
-                        break;
-                    }
-                  },
-                  child: Text(widget.page == LoginRegisterPageType.login
-                      ? "Zarejestruj się"
-                      : "Zaloguj się"),
-                )
-              ],
-            ),
-          ),
+          appBar: _buildAppBar(context),
+          bottomNavigationBar: _buildBottomBar(context),
           resizeToAvoidBottomInset: false,
           body: Form(
             key: _formKey,
@@ -131,85 +76,117 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: largePaddingSize),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              widget.page == LoginRegisterPageType.login
-                                  ? "Witaj!"
-                                  : "Cześć!",
-                              style: const TextStyle(fontSize: 40)),
-                          Text(
-                            widget.page == LoginRegisterPageType.login
-                                ? "Zaloguj się, aby kontynuować"
-                                : "Stwórz nowe konto",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.blueGrey[400],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  _buildWelcomeText(),
                   if (state is InputDataState && state.error != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text(
-                        "${state.error!}!",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontFamily: "Arial"),
-                      ),
-                    ),
+                    _showErrors(state, context),
                   _buildFields(),
-                  Column(
-                    children: [
-                      WideTextButton(
-                        onPressed: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            switch (widget.page) {
-                              case LoginRegisterPageType.login:
-                                _saveEmail();
-                                context
-                                    .read<AuthCubit>()
-                                    .signIn(password: secondTextField.text);
-                                break;
-                              case LoginRegisterPageType.registerPersonalInfo:
-                                _savePersonalInfo();
-                                context
-                                    .read<AuthCubit>()
-                                    .goToEmailAndPasswordRegisterPage();
-                                break;
-                              case LoginRegisterPageType
-                                    .registerEmailAndPassword:
-                                _saveEmail();
-                                context
-                                    .read<AuthCubit>()
-                                    .register(password: secondTextField.text);
-                                break;
-                            }
-                          }
-                        },
-                        text: _getButtonText(),
-                      ),
-                      if (widget.page == LoginRegisterPageType.login)
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text("Zapomniałeś hasła?"),
-                        ),
-                    ],
-                  ),
+                  _buildButtons(context),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: BackButton(
+        onPressed: () {
+          switch (widget.page) {
+            case LoginRegisterPageType.login:
+              _saveEmail();
+              context.read<AuthCubit>().goToStartPage();
+              break;
+            case LoginRegisterPageType.registerPersonalInfo:
+              _savePersonalInfo();
+              context.read<AuthCubit>().goToStartPage();
+              break;
+            case LoginRegisterPageType.registerEmailAndPassword:
+              _saveEmail();
+              context.read<AuthCubit>().goToPersonalInfoRegisterPage();
+              break;
+          }
+        },
+      ),
+    );
+  }
+
+  Padding _buildBottomBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: mediumPaddingSize,
+        bottom: mediumPaddingSize,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(widget.page == LoginRegisterPageType.login
+              ? "Nie masz jeszcze konta?"
+              : "Masz już konto?"),
+          TextButton(
+            onPressed: () {
+              switch (widget.page) {
+                case LoginRegisterPageType.login:
+                  _saveEmail();
+                  context.read<AuthCubit>().goToPersonalInfoRegisterPage();
+                  break;
+                case LoginRegisterPageType.registerPersonalInfo:
+                  _savePersonalInfo();
+                  context.read<AuthCubit>().goToLoginPage();
+                  break;
+                case LoginRegisterPageType.registerEmailAndPassword:
+                  _saveEmail();
+                  context.read<AuthCubit>().goToLoginPage();
+                  break;
+              }
+            },
+            child: Text(widget.page == LoginRegisterPageType.login
+                ? "Zarejestruj się"
+                : "Zaloguj się"),
+          )
+        ],
+      ),
+    );
+  }
+
+  Padding _buildWelcomeText() {
+    return Padding(
+      padding: const EdgeInsets.only(top: largePaddingSize),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+                widget.page == LoginRegisterPageType.login
+                    ? "Witaj!"
+                    : "Cześć!",
+                style: const TextStyle(fontSize: 40)),
+            Text(
+              widget.page == LoginRegisterPageType.login
+                  ? "Zaloguj się, aby kontynuować"
+                  : "Stwórz nowe konto",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.blueGrey[400],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _showErrors(InputDataState state, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Text(
+        "${state.error!}!",
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.error, fontFamily: "Arial"),
       ),
     );
   }
@@ -235,6 +212,43 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
           repeatPassword: thirdTextField,
         );
     }
+  }
+
+  Column _buildButtons(BuildContext context) {
+    return Column(
+      children: [
+        WideTextButton(
+          onPressed: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              switch (widget.page) {
+                case LoginRegisterPageType.login:
+                  _saveEmail();
+                  context
+                      .read<AuthCubit>()
+                      .signIn(password: secondTextField.text);
+                  break;
+                case LoginRegisterPageType.registerPersonalInfo:
+                  _savePersonalInfo();
+                  context.read<AuthCubit>().goToEmailAndPasswordRegisterPage();
+                  break;
+                case LoginRegisterPageType.registerEmailAndPassword:
+                  _saveEmail();
+                  context
+                      .read<AuthCubit>()
+                      .register(password: secondTextField.text);
+                  break;
+              }
+            }
+          },
+          text: _getButtonText(),
+        ),
+        if (widget.page == LoginRegisterPageType.login)
+          TextButton(
+            onPressed: () {},
+            child: const Text("Zapomniałeś hasła?"),
+          ),
+      ],
+    );
   }
 
   String _getButtonText() {

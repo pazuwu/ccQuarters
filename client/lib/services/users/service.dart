@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
@@ -28,8 +30,8 @@ class UserService {
           phoneNumber: user.phoneNumber,
         ).toJson(),
         options: Options(headers: {
-          "Authorization": _token,
-          "HttpHeaders.contentTypeHeader": "application/json",
+          HttpHeaders.authorizationHeader: _token,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
 

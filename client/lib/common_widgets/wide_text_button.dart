@@ -1,5 +1,4 @@
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
 class WideTextButton extends StatelessWidget {
@@ -20,7 +19,9 @@ class WideTextButton extends StatelessWidget {
       padding: const EdgeInsets.all(smallPaddingSize),
       child: SizedBox(
         width: MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.web ? 0.25 : 0.5),
+            (MediaQuery.of(context).orientation == Orientation.landscape
+                ? 0.25
+                : 0.5),
         child: ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(

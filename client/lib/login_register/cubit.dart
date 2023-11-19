@@ -7,15 +7,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-import 'state.dart';
+import 'states.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit({required this.authService, required this.userService})
       : super(kIsWeb ? SignedInState() : NeedsSigningInState()) {
     if (kIsWeb) {
       user = null;
-      authService.signInAnnonymously();
-      setTokens();
+      authService.signInAnnonymously().then((value) => setTokens());
     } else {
       user = User();
     }
@@ -25,18 +24,11 @@ class AuthCubit extends Cubit<AuthState> {
   UserService userService;
   User? user;
 
-  void startLoggingIn() {
-    if (state is NeedsSigningInState) emit(InputDataState(user: user!));
-  }
-
-  void startRegister() {
-    emit(PersonalInfoRegisterState(user: user));
-  }
-
-  void skipRegisterAndLogin() {
+  Future<void> skipRegisterAndLogin() async {
+    emit(SigningInState());
     user = null;
-    authService.signInAnnonymously();
-    setTokens();
+    await authService.signInAnnonymously();
+    await setTokens();
     emit(SignedInState());
   }
 
@@ -140,7 +132,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(NeedsSigningInState());
   }
 
-  setTokens() async {
+  Future<void> setTokens() async {
     var token = await authService.getToken();
     if (token != null) {
       userService.setToken(token);

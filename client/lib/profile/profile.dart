@@ -3,7 +3,6 @@ import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +42,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width *
-                (getDeviceType(context) == DeviceType.web ? 0.5 : 1),
+                (MediaQuery.of(context).orientation == Orientation.landscape
+                    ? 0.5
+                    : 1),
           ),
           child: Column(
             children: [
@@ -76,17 +77,17 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   Widget _buildButtons(BuildContext context) {
     return Row(
       children: [
-        if (getDeviceType(context) == DeviceType.mobile)
+        if (MediaQuery.of(context).orientation == Orientation.portrait)
           IconButton(
               onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
               icon: const Icon(Icons.menu_rounded)),
-        if (getDeviceType(context) == DeviceType.web)
+        if (MediaQuery.of(context).orientation == Orientation.landscape)
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.edit),
             tooltip: "Edytuj profil",
           ),
-        if (getDeviceType(context) == DeviceType.web)
+        if (MediaQuery.of(context).orientation == Orientation.landscape)
           IconButton(
             onPressed: () {
               context.read<AuthCubit>().signOut();

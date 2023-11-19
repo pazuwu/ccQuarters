@@ -1,4 +1,4 @@
-import 'package:ccquarters/login_register/state.dart';
+import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/choose.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/views/login_register_view.dart';

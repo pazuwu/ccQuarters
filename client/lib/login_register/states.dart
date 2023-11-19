@@ -4,9 +4,7 @@ abstract class AuthState {}
 
 class NeedsSigningInState extends AuthState {}
 
-class SignedInState extends AuthState {
-  SignedInState();
-}
+class SignedInState extends AuthState {}
 
 class SigningInState extends AuthState {}
 
