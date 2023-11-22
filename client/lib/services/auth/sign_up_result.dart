@@ -3,7 +3,10 @@ enum SignUpResult {
   emailAlreadyInUse,
   operationNotAllowed,
   weakPassword,
-  success,
+  success;
+
+  @override
+  String toString() => name;
 }
 
 extension SignUpResultEx on SignUpResult {

@@ -4,7 +4,10 @@ enum SignInResult {
   userNotFound,
   emailAlreadyInUse,
   wrongPassword,
-  success,
+  success;
+
+  @override
+  String toString() => name;
 }
 
 extension SignInResultEx on SignInResult {

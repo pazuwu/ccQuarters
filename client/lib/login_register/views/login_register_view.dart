@@ -5,7 +5,6 @@ import 'package:ccquarters/login_register/views/email_and_password_fields.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -61,9 +60,10 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-            maxWidth: getDeviceType(context) == DeviceType.web
-                ? MediaQuery.of(context).size.width * 0.5
-                : MediaQuery.of(context).size.width),
+            maxWidth:
+                MediaQuery.of(context).orientation == Orientation.landscape
+                    ? MediaQuery.of(context).size.width * 0.5
+                    : MediaQuery.of(context).size.width),
         child: Scaffold(
           appBar: _buildAppBar(context),
           bottomNavigationBar: _buildBottomBar(context),

@@ -1,7 +1,6 @@
 import 'package:ccquarters/common_widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -36,9 +35,10 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-              maxWidth: getDeviceType(context) == DeviceType.web
-                  ? MediaQuery.of(context).size.width * 0.5
-                  : MediaQuery.of(context).size.width),
+              maxWidth:
+                  MediaQuery.of(context).orientation == Orientation.landscape
+                      ? MediaQuery.of(context).size.width * 0.5
+                      : MediaQuery.of(context).size.width),
           child: Padding(
             padding: const EdgeInsets.all(paddingSize),
             child: Column(
