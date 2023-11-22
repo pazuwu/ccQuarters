@@ -138,9 +138,8 @@ Widget _buildContactTable(BuildContext context, User user) {
       if (user.phoneNumber != null)
         _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
             () => CallUtils.openDialer(user.phoneNumber!, context)),
-      if (user.email != null)
-        _buildContactTableRow(context, user.email!, Icons.email,
-            () => CallUtils.openDialerForEmail(user.email!, context)),
+      _buildContactTableRow(context, user.email, Icons.email,
+          () => CallUtils.openDialerForEmail(user.email, context)),
     ],
   );
 }
