@@ -13,6 +13,7 @@ class House {
     this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",
   });
 
+  String? id;
   String? virtualTourId;
   Location location;
   HouseDetails details;

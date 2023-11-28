@@ -43,25 +43,25 @@ class HousesFilter {
     this.districts,
   );
 
-  HousesFilter.fromHouseFilter(HouseFilter filter) {
-    minPrice = filter.minPrice;
-    maxPrice = filter.maxPrice;
-    minPricePerM2 = filter.minPricePerMeter;
-    maxPricePerM2 = filter.maxPricePerMeter;
-    maxArea = filter.maxArea;
-    minArea = filter.minArea;
-    maxRoomCount = filter.maxRoomCount;
-    minRoomCount = filter.minRoomCount;
-    floors = filter.floor;
-    minFloor = filter.minFloor;
-    offerTypes = filter.offerType != null ? [filter.offerType!] : null;
-    buildingTypes = filter.buildingType != null ? [filter.buildingType!] : null;
-    cities = filter.voivodeshipsAndCities.map((e) => e.city).toList();
-    voivodeships = filter.voivodeshipsAndCities
-        .map((e) => e.voivodeship.toString())
-        .toList();
-    districts = filter.districts;
-  }
+  HousesFilter.fromHouseFilter(HouseFilter filter)
+      : minPrice = filter.minPrice,
+        maxPrice = filter.maxPrice,
+        minPricePerM2 = filter.minPricePerMeter,
+        maxPricePerM2 = filter.maxPricePerMeter,
+        maxArea = filter.maxArea,
+        minArea = filter.minArea,
+        maxRoomCount = filter.maxRoomCount,
+        minRoomCount = filter.minRoomCount,
+        floors = filter.floor,
+        minFloor = filter.minFloor,
+        offerTypes = filter.offerType != null ? [filter.offerType!] : null,
+        buildingTypes =
+            filter.buildingType != null ? [filter.buildingType!] : null,
+        cities = filter.voivodeshipsAndCities.map((e) => e.city).toList(),
+        voivodeships = filter.voivodeshipsAndCities
+            .map((e) => e.voivodeship.toString())
+            .toList(),
+        districts = filter.districts;
 
   Map<String, dynamic> toJson() => _$HousesFilterToJson(this);
   factory HousesFilter.fromJson(Map<String, dynamic> json) =>
