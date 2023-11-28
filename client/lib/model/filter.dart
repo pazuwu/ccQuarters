@@ -17,7 +17,7 @@ class HouseFilter {
       this.minFloor,
       this.buildingType,
       this.offerType,
-      this.sortBy = SortByType.newest});
+      this.sortBy = SortingMethod.newest});
 
   String? title;
   double? minPrice;
@@ -34,10 +34,10 @@ class HouseFilter {
   OfferType? offerType;
   List<CityWithVoivodeship> voivodeshipsAndCities = [];
   List<String> districts = [];
-  SortByType sortBy;
+  SortingMethod sortBy;
 }
 
-enum SortByType {
+enum SortingMethod {
   newest,
   lowestPrice,
   highestPrice,
@@ -48,18 +48,18 @@ enum SortByType {
   toString() => name;
 }
 
-extension SortByTypeEx on SortByType {
+extension SortByTypeEx on SortingMethod {
   String get name {
     switch (this) {
-      case SortByType.newest:
+      case SortingMethod.newest:
         return "Najnowsze";
-      case SortByType.lowestPrice:
+      case SortingMethod.lowestPrice:
         return "Najtańsze";
-      case SortByType.highestPrice:
+      case SortingMethod.highestPrice:
         return "Najdroższe";
-      case SortByType.lowestPricePerMeter:
+      case SortingMethod.lowestPricePerMeter:
         return "Najtańsze za m2";
-      case SortByType.highestPricePerMeter:
+      case SortingMethod.highestPricePerMeter:
         return "Najdroższe za m2";
     }
   }

@@ -6,7 +6,8 @@ class House {
   House(
     this.location,
     this.details,
-    this.user, {
+    this.user,
+    this.photos, {
     this.offerType = OfferType.rent,
     this.isLiked = false,
     this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",

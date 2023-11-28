@@ -1,7 +1,6 @@
 import 'package:ccquarters/common_widgets/themed_form_field.dart';
 import 'package:flutter/material.dart';
 
-
 class PersonalInfoFields extends StatelessWidget {
   const PersonalInfoFields({
     super.key,

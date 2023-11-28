@@ -15,7 +15,7 @@ class AnnouncementList extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) => LayoutBuilder(
               builder: (context, constraints) => AnnouncementItem(
-                    house: House(Location(), HouseDetails(), User()),
+                    house: House(Location(), HouseDetails(), User(), []),
                   )),
           itemCount: 30,
         ),

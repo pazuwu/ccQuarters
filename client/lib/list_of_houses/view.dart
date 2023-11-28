@@ -48,7 +48,7 @@ class ListOfHouses extends StatelessWidget {
                         (context, index) {
                           return LayoutBuilder(
                             builder: (context, constraints) => HouseListTile(
-                              house: House(Location(), HouseDetails(), User()),
+                              house: House(Location(), HouseDetails(), User(), []),
                             ),
                           );
                         },

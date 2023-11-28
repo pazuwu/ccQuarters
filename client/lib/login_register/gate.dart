@@ -15,6 +15,8 @@ class AuthGate extends StatelessWidget {
       create: (_) => AuthCubit(
         authService: context.read(),
         userService: context.read(),
+        houseService: context.read(),
+        alertService: context.read(),
       ),
       child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
         if (state is SignedInState) {
@@ -22,7 +24,11 @@ class AuthGate extends StatelessWidget {
         } else if (state is NeedsSigningInState) {
           return const ChooseLoginOrRegisterView();
         } else if (state is SigningInState) {
-          return const Center(child: CircularProgressIndicator());
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         } else if (state is LoginState) {
           return LoginRegisterView(
               key: const Key("LoginPage"),

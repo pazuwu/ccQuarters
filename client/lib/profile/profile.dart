@@ -124,7 +124,9 @@ class ProfileDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Wyloguj się'),
+            title: Text(context.read<AuthCubit>().user == null
+                ? "Zaloguj się lub zarejestruj"
+                : 'Wyloguj się'),
             onTap: () {
               context.read<AuthCubit>().signOut();
             },
@@ -247,14 +249,14 @@ class PhotosGrid extends StatelessWidget {
   PhotosGrid({super.key});
 
   final houses = [
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
-    House(Location(), HouseDetails(), User()),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User(), []),
   ];
 
   @override
@@ -276,11 +278,7 @@ class PhotosGrid extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DetailsView(
-                  house: House(
-                    Location(),
-                    HouseDetails(),
-                    User(),
-                  ),
+                  house: House(Location(), HouseDetails(), User(), []),
                 ),
               ),
             );
