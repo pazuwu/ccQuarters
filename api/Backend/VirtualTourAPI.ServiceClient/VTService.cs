@@ -46,10 +46,10 @@ namespace VirtualTourAPI.ServiceClient
 
             using var content = new MultipartFormDataContent
             {
-                { new StreamContent(stream), "file", string.Empty }
+                { new StreamContent(stream), "file", "file" }
             };
 
-            var response = await _http.PostAsync($"tours/{parameters.TourId}/scenes/{parameters.SceneId}", content);
+            var response = await _http.PostAsync($"tours/{parameters.TourId}/scenes/{parameters.SceneId}/photo", content);
 
             response.EnsureSuccessStatusCode();
 
@@ -201,6 +201,16 @@ namespace VirtualTourAPI.ServiceClient
 
             response.EnsureSuccessStatusCode();
             return new();
+        }
+
+        public async Task<GetAreaPhotosResult> GetAreaPhotos(GetAreaPhotosParameters parameters)
+        {
+            var response = await _http.GetFromJsonAsync<string[]>($"tours/{parameters.TourId}/areas/{parameters.AreaId}/photos");
+
+            return new()
+            {
+                PhotoUrls = response
+            };
         }
     }
 }

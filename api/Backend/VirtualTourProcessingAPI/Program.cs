@@ -1,9 +1,10 @@
 using AuthLibrary;
-using CloudStorageLibrary;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Net.Http.Headers;
 using System.Reflection;
+using VirtualTourAPI.ServiceClient;
 using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 using VirtualTourProcessingServer.OperationExecutors.Render;
@@ -14,7 +15,20 @@ using VirtualTourProcessingServer.Services;
 
 var builder = Host.CreateApplicationBuilder();
 
+builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ITokenProvider, TokenProvider>();
+
+builder.Services.AddTransient<VTClient>();
+builder.Services.AddHttpClient<VTClient>((sp, http) => 
+{
+    var tokenProvider = sp.GetService<ITokenProvider>();
+    var token = tokenProvider!.GetServerToken().GetAwaiter().GetResult();
+
+    http.BaseAddress = new Uri(builder.Configuration["VTApiOptions:Url"]!);
+    http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+});
 
 builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
@@ -33,6 +47,9 @@ builder.Services.AddSingleton<IDownloadExecutor, DownloadExecutor>();
 builder.Services.Configure<RenderOptions>(options =>
     builder.Configuration.GetSection(nameof(RenderOptions)).Bind(options));
 builder.Services.AddSingleton<IRenderSettingsGenerator, RenderSettingsGenerator>();
+
+builder.Services.AddSingleton<IUploadExecutor, UploadExecutor>();
+builder.Services.AddSingleton<ICleanExecutor, CleanExecutor>();
 
 builder.Services.Configure<NerfStudioOptions>(options =>
     builder.Configuration.GetSection(nameof(NerfStudioOptions)).Bind(options));

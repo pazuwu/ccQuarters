@@ -96,10 +96,11 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Running training for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var areaDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
+            var tourDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId);
             var trainParameters = new TrainParameters()
             {
-                DataDirectoryPath = areaDirectory,
+                DataDirectoryPath = Path.Combine(tourDirectory, operation.AreaId),
+                OutputDirectoryPath = tourDirectory,
             };
             var response = await _trainExecutor.Train(trainParameters);
 
@@ -112,12 +113,29 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Running render for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var renderParameters = new RenderParameters();
+            var workingDirectory = GetWorkingDirectory(operation);
+            var nerfactoDirectory = Path.Combine(workingDirectory, "nerfacto");
+            var configDirectory = Directory.GetDirectories(nerfactoDirectory).FirstOrDefault();
+
+            if(configDirectory == null)
+            await FinishOperation(operation, ExecutorResponse.Problem("Training directory not found"));
+
+            var renderParameters = new RenderParameters()
+            {
+                CameraConfigPath = Path.Combine(workingDirectory, "render_settings.json"),
+                OutputPath = Path.Combine(workingDirectory, "renders"),
+                ConfigPath = Path.Combine(configDirectory!, "config.yml")
+            };
             var response = await _renderExecutor.Render(renderParameters);
 
             _logger.LogInformation($"Render has been finished for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
             await FinishOperation(operation, response);
+        }
+
+        private string GetWorkingDirectory(VTOperation operation)
+        {
+            return Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
         }
     }
 }

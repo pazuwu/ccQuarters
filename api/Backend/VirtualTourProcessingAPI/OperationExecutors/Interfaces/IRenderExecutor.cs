@@ -2,8 +2,9 @@
 {
     public class RenderParameters
     {
-        public string? CameraConfigPath { get; set; }
-        public string? OutputPath { get; set; }
+        public required string ConfigPath { get; set; }
+        public required string CameraConfigPath { get; set; }
+        public required string OutputPath { get; set; }
     }
 
     public interface IRenderExecutor

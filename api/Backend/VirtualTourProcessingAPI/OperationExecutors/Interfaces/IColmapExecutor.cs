@@ -2,9 +2,8 @@
 {
     public class ColmapParameters
     {
-        public string? WorkingDirectory { get; set; } = @"P:\\python_matrix_scripts";
-        public string? InputDataPath { get; set; } = @"P:\python_matrix_scripts\data\inputs\test_server";
-        public string? OutputDirectoryPath { get; set; } = @"P:\python_matrix_scripts\data\outputs\server-output";
+        public required string InputDataPath { get; set; }
+        public required string OutputDirectoryPath { get; set; }
     }
 
     public interface IColmapExecutor

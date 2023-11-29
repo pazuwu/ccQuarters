@@ -18,9 +18,11 @@ namespace VirtualTourProcessingServer.Processing
 
         private readonly IDownloadExecutor _downloader;
         private readonly IRenderSettingsGenerator _renderSettingsGenerator;
+        private readonly IUploadExecutor _uploader;
+        private readonly ICleanExecutor _cleaner;
 
         public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator,
-            IDownloadExecutor downloader, IRenderSettingsGenerator renderSettingsGenerator)
+            IDownloadExecutor downloader, IRenderSettingsGenerator renderSettingsGenerator, IUploadExecutor uploader, ICleanExecutor cleaner)
         {
             if (string.IsNullOrWhiteSpace(options.Value.StorageDirectory))
                 throw new Exception("StorageDirectory is empty. Check your configuration file");
@@ -30,6 +32,8 @@ namespace VirtualTourProcessingServer.Processing
             _mediator = mediator;
             _downloader = downloader;
             _renderSettingsGenerator = renderSettingsGenerator;
+            _uploader = uploader;
+            _cleaner = cleaner;
         }
 
         public bool TryRegister(VTOperation operation)
@@ -91,8 +95,8 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Downloading data for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var areaLocalDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId, "images");
-            await _downloader.DownloadPhotos(operation.TourId, operation.AreaId, areaLocalDirectory);
+            var imagesDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId, "images");
+            await _downloader.DownloadPhotos(operation.TourId, operation.AreaId, imagesDirectory);
 
             await FinishOperation(operation, new ExecutorResponse());
         }
@@ -113,7 +117,7 @@ namespace VirtualTourProcessingServer.Processing
         {
             _logger.LogInformation($"Preparing render settings for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
-            var workingDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
+            var workingDirectory = GetWorkingDirectory(operation);
 
             var parameters = new GenerateRenderSettingsParameters()
             {
@@ -127,14 +131,29 @@ namespace VirtualTourProcessingServer.Processing
 
         private async Task SaveRender(VTOperation operation)
         {
-            _logger.LogInformation($"Saving COLMAP transforms for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-            await FinishOperation(operation, new ExecutorResponse());
+            _logger.LogInformation($"Saving renders for operation: {operation.OperationId}, areaId: {operation.AreaId}");
+
+            var workingDirectory = GetWorkingDirectory(operation);
+
+            var parameters = new UploadExecutorParameters()
+            {
+                AreaId = operation.AreaId,
+                TourId = operation.TourId,
+                DirectoryPath = Path.Combine(workingDirectory, "renders")
+            };
+
+            var response = await _uploader.SaveScenes(parameters);
+            await FinishOperation(operation, response);
         }
 
         private async Task CleanAll(VTOperation operation)
         {
             _logger.LogInformation($"Cleaning directory after completed operation: {operation.OperationId}, areaId: {operation.AreaId}");
-            await FinishOperation(operation, new ExecutorResponse());
+
+            var workingDirectory = GetWorkingDirectory(operation);
+            var result = await _cleaner.CleanWorkingDirectory(workingDirectory);
+
+            await FinishOperation(operation, result);
         }
 
         private async Task FinishOperation(VTOperation operation, ExecutorResponse response)
@@ -165,6 +184,11 @@ namespace VirtualTourProcessingServer.Processing
             {
                 _operations.Remove(operationToRemove, out _);
             }
+        }
+
+        private string GetWorkingDirectory(VTOperation operation)
+        {
+            return Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
         }
     }
 }

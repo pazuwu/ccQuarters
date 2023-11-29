@@ -10,7 +10,7 @@ namespace VirtualTourApi.IntegrationTests.Mocks
 
         public Task<string?> CreateArea(string tourId, AreaDTO area)
         {
-            if(_tours.TryGetValue(tourId, out var tour))
+            if (_tours.TryGetValue(tourId, out var tour))
             {
                 area.Id = Guid.NewGuid().ToString();
                 tour.Areas ??= new();
@@ -62,6 +62,23 @@ namespace VirtualTourApi.IntegrationTests.Mocks
 
             _tours.TryAdd(tour.Id, tour);
             return Task.FromResult<string?>(tour.Id);
+        }
+
+        public Task AddPhotoToArea(string tourId, string areaId, string photoId)
+        {
+            if (_tours.TryGetValue(tourId, out var tour))
+            {
+                var areaToChange = tour.Areas?.FirstOrDefault(a => a.Id == areaId);
+
+                if (areaToChange == null)
+                    return Task.CompletedTask;
+
+                areaToChange.PhotoIds = areaToChange.PhotoIds != null
+                    ? areaToChange.PhotoIds.Append(photoId).ToArray()
+                    : new[] { photoId };
+            }
+
+            return Task.CompletedTask;
         }
 
         public Task DeleteArea(string tourId, string areaId)
@@ -123,6 +140,17 @@ namespace VirtualTourApi.IntegrationTests.Mocks
             }
 
             return Task.CompletedTask;
+        }
+
+        public Task<AreaDTO?> GetArea(string tourId, string areaId)
+        {
+            if (_tours.TryGetValue(tourId, out var tour))
+            {
+                var area = tour.Areas?.FirstOrDefault(a => a.Id == areaId);
+                return Task.FromResult(area);
+            }
+
+            return Task.FromResult<AreaDTO?>(null);
         }
     }
 }
