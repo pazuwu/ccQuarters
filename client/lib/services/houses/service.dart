@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
@@ -190,10 +191,10 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> deleteHouse(House house) async {
+  Future<ServiceResponse<bool>> deleteHouse(String houseId) async {
     try {
       var response = await _dio.put(
-        "$_url/${house.id}/delete",
+        "$_url/$houseId/delete",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
@@ -212,10 +213,10 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> likeHouse(House house) async {
+  Future<ServiceResponse<bool>> likeHouse(String houseId) async {
     try {
       var response = await _dio.put(
-        "$_url/${house.id}/like",
+        "$_url/$houseId/like",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
@@ -234,13 +235,40 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> unlikeHouse(House house) async {
+  Future<ServiceResponse<bool>> unlikeHouse(String houseId) async {
     try {
       var response = await _dio.put(
-        "$_url/${house.id}/unlike",
+        "$_url/$houseId/unlike",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      return response.statusCode == StatusCode.OK
+          ? ServiceResponse(data: true)
+          : ServiceResponse(data: false, error: ErrorType.unknown);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+      }
+
+      return ServiceResponse(data: false, error: ErrorType.unknown);
+    }
+  }
+
+  Future<ServiceResponse<bool>> addPhoto(
+      Uint8List photo, String houseId) async {
+    try {
+      FormData photoData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(photo, filename: houseId),
+      });
+
+      var response = await _dio.post(
+        "$_url/$houseId/photo",
+        data: photoData,
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: _token,
         }),
       );
 

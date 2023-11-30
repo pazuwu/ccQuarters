@@ -22,7 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
       user = null;
       authService.signInAnnonymously().then((value) => setTokens());
     } else {
-      user = User();
+      user = User.empty();
     }
   }
 
@@ -45,7 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(SigningInState());
     if (user == null) {
-      user = User();
+      user = User.empty();
       emit(InputDataState(user: user!));
       return;
     }
@@ -79,7 +79,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(SigningInState());
     if (user == null) {
-      user = User();
+      user = User.empty();
       emit(InputDataState(user: user!));
       return;
     }
@@ -106,7 +106,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void savePersonalInfo(
       String company, String name, String surname, String phoneNumber) {
-    user ??= User();
+    user ??= User.empty();
     user!.company = company;
     user!.name = name;
     user!.surname = surname;
@@ -114,13 +114,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void saveEmail(String email) {
-    user ??= User();
+    user ??= User.empty();
     user!.email = email;
   }
 
   Future<void> signOut() async {
     await authService.signOut();
-    user = User();
+    user = User.empty();
     emit(NeedsSigningInState());
   }
 

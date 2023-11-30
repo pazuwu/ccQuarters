@@ -88,7 +88,7 @@ class _NavigationGateState extends State<NavigationGate> {
           Expanded(
             child: _selectedIndex == 2
                 ? ProfileGate(
-                    user: User(),
+                    user: User.empty(),
                   )
                 : _pages.elementAt(_selectedIndex),
           )

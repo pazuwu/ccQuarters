@@ -249,14 +249,14 @@ class PhotosGrid extends StatelessWidget {
   PhotosGrid({super.key});
 
   final houses = [
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
-    House(Location(), HouseDetails(), User(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
+    House(Location(), HouseDetails(), User.empty(), []),
   ];
 
   @override
@@ -278,7 +278,7 @@ class PhotosGrid extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DetailsView(
-                  house: House(Location(), HouseDetails(), User(), []),
+                  house: House(Location(), HouseDetails(), User.empty(), []),
                 ),
               ),
             );

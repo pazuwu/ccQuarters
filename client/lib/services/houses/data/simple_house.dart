@@ -65,16 +65,10 @@ class SimpleHouse {
         floor: floor,
         buildingType: buildingType,
       ),
-      User(),
+      User.empty(),
       [photoUrl],
       offerType: offerType,
       isLiked: isLiked,
     );
   }
 }
-
-// class Photo {
-//   String houseId;
-//   String photoId;
-// }
-
