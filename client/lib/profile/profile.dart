@@ -9,9 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key, required this.user});
+  const Profile({
+    super.key,
+    required this.user,
+    required this.myHouses,
+    required this.likedHouses,
+  });
 
   final User user;
+  final List<House> myHouses;
+  final List<House> likedHouses;
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -62,8 +69,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    PhotosGrid(),
-                    PhotosGrid(),
+                    PhotosGrid(
+                      houses: widget.myHouses,
+                    ),
+                    PhotosGrid(
+                      houses: widget.likedHouses,
+                    ),
                   ],
                 ),
               )
@@ -246,19 +257,9 @@ class HousesAndLikedHousesTabBar extends StatelessWidget {
 }
 
 class PhotosGrid extends StatelessWidget {
-  PhotosGrid({super.key});
+  const PhotosGrid({super.key, required this.houses});
 
-  final houses = [
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-    House(Location(), HouseDetails(), User.empty(), []),
-  ];
-
+  final List<House> houses;
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -278,7 +279,7 @@ class PhotosGrid extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DetailsView(
-                  house: House(Location(), HouseDetails(), User.empty(), []),
+                  house: houses[index],
                 ),
               ),
             );

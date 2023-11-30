@@ -145,7 +145,7 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> createHouse(NewHouse newHouse) async {
+  Future<ServiceResponse<String?>> createHouse(NewHouse newHouse) async {
     try {
       var response = await _dio.post(
         _url,
@@ -157,14 +157,14 @@ class HouseService {
       );
 
       return response.statusCode == StatusCode.OK
-          ? ServiceResponse(data: true)
-          : ServiceResponse(data: false, error: ErrorType.unknown);
+          ? ServiceResponse(data: response.data.toString())
+          : ServiceResponse(data: null, error: ErrorType.unknown);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+        return ServiceResponse(data: null, error: ErrorType.unauthorized);
       }
 
-      return ServiceResponse(data: false, error: ErrorType.unknown);
+      return ServiceResponse(data: null, error: ErrorType.unknown);
     }
   }
 
@@ -258,7 +258,7 @@ class HouseService {
   }
 
   Future<ServiceResponse<bool>> addPhoto(
-      Uint8List photo, String houseId) async {
+      String houseId, Uint8List photo) async {
     try {
       FormData photoData = FormData.fromMap({
         "file": MultipartFile.fromBytes(photo, filename: houseId),

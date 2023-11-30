@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/services/houses/service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/model/building_type.dart';
@@ -43,13 +44,17 @@ class PhotosFormState extends HouseFormState {
 }
 
 class SummaryState extends HouseFormState {
-  SummaryState(this.house);
-  NewHouse house;
+  SummaryState(this.message);
+  String message;
 }
 
-class AddHouseFormCubit extends Cubit<HouseFormState> {
-  AddHouseFormCubit() : super(ChooseTypeFormState(NewHouseDetails()));
+class SendingData extends HouseFormState {}
 
+class AddHouseFormCubit extends Cubit<HouseFormState> {
+  AddHouseFormCubit({required this.houseService})
+      : super(ChooseTypeFormState(NewHouseDetails()));
+
+  HouseService houseService;
   NewHouse house = NewHouse(
     NewLocation(),
     NewHouseDetails(),
@@ -79,8 +84,25 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     emit(PhotosFormState(house.photos));
   }
 
-  void goToSummary() {
-    emit(SummaryState(house));
+  Future<void> sendData() async {
+    emit(SendingData());
+
+    var result = await houseService.createHouse(house);
+    if (result.data != null) {
+      var houseId = result.data!;
+      for (var photo in house.photos) {
+        var res = await houseService.addPhoto(houseId, photo);
+        if (!res.data) {
+          emit(SummaryState("Błąd!"));
+          return;
+        }
+      }
+    } else {
+      emit(SummaryState("Błąd!"));
+      return;
+    }
+
+    emit(SummaryState("Wysłano!"));
   }
 
   void saveDetails(NewHouseDetails details) {

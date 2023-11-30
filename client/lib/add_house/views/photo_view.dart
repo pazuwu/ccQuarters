@@ -40,7 +40,7 @@ class _PhotoViewState extends State<PhotoView> {
         },
         nextOnPressed: () {
           context.read<AddHouseFormCubit>().savePhotos(widget.photos);
-          context.read<AddHouseFormCubit>().goToSummary();
+          context.read<AddHouseFormCubit>().sendData();
         },
         hasScrollBody: true,
       ),

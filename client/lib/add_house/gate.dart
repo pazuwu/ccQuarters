@@ -13,7 +13,9 @@ class AddHouseGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AddHouseFormCubit(),
+      create: (_) => AddHouseFormCubit(
+        houseService: context.read(),
+      ),
       child: BlocBuilder<AddHouseFormCubit, HouseFormState>(
         builder: (context, state) {
           if (state is ChooseTypeFormState) {
@@ -38,8 +40,13 @@ class AddHouseGate extends StatelessWidget {
           } else if (state is PhotosFormState) {
             return PhotoView(photos: state.photos);
           } else if (state is SummaryState) {
-            return Container();
+            return Center(
+              child: Text(state.message),
+            );
+          } else if (state is SendingData) {
+            return const CircularProgressIndicator();
           }
+
           return Container();
         },
       ),
