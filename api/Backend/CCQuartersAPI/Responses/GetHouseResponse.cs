@@ -20,6 +20,7 @@ namespace CCQuartersAPI.Responses
         public Guid? NerfId { get; set; }
         public string UserId { get; set; }
         public string City { get; set; }
+        public string Voivodeship { get; set; }
         public string ZipCode { get; set; }
         public string? District { get; set; }
         public string? StreetName { get; set; }
@@ -42,6 +43,7 @@ namespace CCQuartersAPI.Responses
         public string? Description { get; set; }
         public Dictionary<string, object> Details { get; set; }
         public string City { get; set; }
+        public string Voivodeship { get; set; }
         public string ZipCode { get; set; }
         public string? District { get; set; }
         public string? StreetName { get; set; }

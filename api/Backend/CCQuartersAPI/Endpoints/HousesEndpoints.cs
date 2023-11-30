@@ -36,7 +36,7 @@ namespace CCQuartersAPI.Endpoints
 
             var queryBuilder = new StringBuilder();
 
-            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, PhotoId AS PhotoUrl
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
@@ -77,7 +77,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
@@ -113,7 +113,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
@@ -161,9 +161,9 @@ namespace CCQuartersAPI.Endpoints
                         {"description", houseRequest.Description ?? "" }
                     }, SetOptions.MergeAll);
 
-                var locationQuery = @$"INSERT INTO Locations (Id, City, ZipCode, District, StreetName, StreetNumber, FlatNumber, GeoX, GeoY)
+                var locationQuery = @$"INSERT INTO Locations (Id, City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, GeoX, GeoY)
                                     OUTPUT INSERTED.Id
-                                    VALUES (NEWID(), '{houseRequest.City}', '{houseRequest.ZipCode}', '{houseRequest.District}', '{houseRequest.StreetName}', '{houseRequest.StreetNumber}', '{houseRequest.FlatNumber}', '{houseRequest.GeoX}', '{houseRequest.GeoY}')";
+                                    VALUES (NEWID(), '{houseRequest.City}', '{houseRequest.Voivodeship}', '{houseRequest.ZipCode}', '{houseRequest.District}', '{houseRequest.StreetName}', '{houseRequest.StreetNumber}', '{houseRequest.FlatNumber}', '{houseRequest.GeoX}', '{houseRequest.GeoY}')";
 
                 var locationId = await connection.QueryFirstAsync<Guid>(locationQuery, transaction: trans);
 
@@ -174,18 +174,19 @@ namespace CCQuartersAPI.Endpoints
                 var detailsId = await connection.QueryFirstAsync<Guid>(detailsQuery, transaction: trans);
 
                 var houseQuery = @$"INSERT INTO Houses (Id, UserId, LocationId, DetailsId, CreationDate, UpdateDate, OfferType)
+                                    OUTPUT INSERTED.Id
                                     VALUES (NEWID(), '{userId}', '{locationId}', '{detailsId}', GETDATE(), GETDATE(), {(int)houseRequest!.OfferType!})";
 
-                await connection.ExecuteAsync(houseQuery, transaction: trans);
+                var createdHouseId = await connection.QueryFirstAsync<Guid>(houseQuery, transaction: trans);
 
                 trans.Commit();
+
+                return Results.Created(createdHouseId.ToString(), null);
             }
             finally
             {
                 connection.Close();
             }
-
-            return Results.Ok();
         }
         public static async Task<IResult> GetHouse(Guid houseId, HttpContext context, IStorage storage)
         {
@@ -194,7 +195,7 @@ namespace CCQuartersAPI.Endpoints
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
+            var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = '{userId}')>0, 1, 0) AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
                                 FROM Houses h
                                 JOIN Details d ON h.DetailsId = d.Id
                                 JOIN Locations l ON h.LocationId = l.Id
@@ -288,7 +289,7 @@ namespace CCQuartersAPI.Endpoints
                 }
 
                 var locationQuery = @$"UPDATE Locations
-                                    SET  City = '{houseRequest.City ?? houseQueried.City}', ZipCode = '{houseRequest.ZipCode ?? houseQueried.ZipCode}', District = '{houseRequest.District ?? houseQueried.District}', StreetName = '{houseRequest.StreetName ?? houseQueried.StreetName}', StreetNumber = '{houseRequest.StreetNumber ?? houseQueried.StreetNumber}', FlatNumber = '{houseRequest.FlatNumber ?? houseQueried.FlatNumber}', GeoX = {houseRequest.GeoX ?? houseQueried.GeoX}, GeoY = {houseRequest.GeoY ?? houseQueried.GeoY}
+                                    SET  City = '{houseRequest.City ?? houseQueried.City}', Voivodeship = '{houseRequest.Voivodeship ?? houseQueried.Voivodeship}', ZipCode = '{houseRequest.ZipCode ?? houseQueried.ZipCode}', District = '{houseRequest.District ?? houseQueried.District}', StreetName = '{houseRequest.StreetName ?? houseQueried.StreetName}', StreetNumber = '{houseRequest.StreetNumber ?? houseQueried.StreetNumber}', FlatNumber = '{houseRequest.FlatNumber ?? houseQueried.FlatNumber}', GeoX = {houseRequest.GeoX ?? houseQueried.GeoX}, GeoY = {houseRequest.GeoY ?? houseQueried.GeoY}
                                     WHERE Id IN (SELECT LocationId FROM Houses WHERE Id = '{houseId}')";
 
                 await connection.ExecuteAsync(locationQuery, transaction: trans);

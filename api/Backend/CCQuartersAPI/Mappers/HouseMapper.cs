@@ -15,6 +15,7 @@ namespace CCQuartersAPI.Mappers
                 Area = detailedHouseQueried.Area,
                 Floor = detailedHouseQueried.Floor,
                 City = detailedHouseQueried.City,
+                Voivodeship = detailedHouseQueried.Voivodeship,
                 ZipCode = detailedHouseQueried.ZipCode,
                 District = detailedHouseQueried.District,
                 StreetName = detailedHouseQueried.StreetName,
