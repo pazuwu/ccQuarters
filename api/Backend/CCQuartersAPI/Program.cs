@@ -54,7 +54,7 @@ namespace CCQuartersAPI
             app.MapPut("/houses/{houseId}/delete", HousesEndpoints.DeleteHouse).WithOpenApi().RequireFBAuthorization();
             app.MapPut("/houses/{houseId}/like", HousesEndpoints.LikeHouse).WithOpenApi().RequireFBAuthorization();
             app.MapPut("/houses/{houseId}/unlike", HousesEndpoints.UnlikeHouse).WithOpenApi().RequireFBAuthorization();
-            app.MapPost("/houses/{houseId}/photos", HousesEndpoints.AddPhoto).WithOpenApi().RequireFBAuthorization();
+            app.MapPost("/houses/{houseId}/photo", HousesEndpoints.AddPhoto).WithOpenApi().RequireFBAuthorization();
 
             app.MapGet("/alerts", AlertsEndpoints.GetAlerts).WithOpenApi().RequireFBAuthorization();
             app.MapPost("/alerts", AlertsEndpoints.CreateAlert).WithOpenApi().RequireFBAuthorization();
