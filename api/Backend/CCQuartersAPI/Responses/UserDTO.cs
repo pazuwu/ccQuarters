@@ -5,6 +5,7 @@ namespace CCQuartersAPI.Responses
     public class UserDTO
     {
         public string Id { get; set; }
+        public DateTime? RegisterTime { get; set; }
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public string? Company { get; set; }
