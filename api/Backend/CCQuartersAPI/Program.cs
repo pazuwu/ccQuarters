@@ -59,7 +59,7 @@ namespace CCQuartersAPI
             app.MapGet("/alerts", AlertsEndpoints.GetAlerts).WithOpenApi().RequireFBAuthorization();
             app.MapPost("/alerts", AlertsEndpoints.CreateAlert).WithOpenApi().RequireFBAuthorization();
             app.MapPut("/alerts/{alertId}", AlertsEndpoints.UpdateAlert).WithOpenApi().RequireFBAuthorization();
-            app.MapDelete("/alerts/{alertId}/delete", AlertsEndpoints.DeleteAlert).WithOpenApi().RequireFBAuthorization();
+            app.MapDelete("/alerts/{alertId}", AlertsEndpoints.DeleteAlert).WithOpenApi().RequireFBAuthorization();
 
             app.MapGet("/users/{userId}", UsersEndpoints.GetUser);
             app.MapPut("/users/{userId}", UsersEndpoints.UpdateUser);
