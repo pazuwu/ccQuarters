@@ -10,17 +10,6 @@ class ProfilePageState {}
 
 class ProfilePageInitialState extends ProfilePageState {}
 
-class LoadingState extends ProfilePageState {}
-
-class DataState extends ProfilePageState {
-  DataState({
-    required this.myHouses,
-    required this.likedHouses,
-  });
-  List<House> myHouses;
-  List<House> likedHouses;
-}
-
 class ProfilePageCubit extends Cubit<ProfilePageState> {
   ProfilePageCubit({
     required this.userService,
@@ -32,28 +21,6 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
   AlertService alertService;
   HouseService houseService;
 
-  int _myHousesCurrentPage = 1;
-  int _likedHousesCurrentPage = 1;
-  List<House> _myHouses = [];
-  List<House> _likedHouses = [];
-
-  void goBack() {
-    emit(ProfilePageInitialState());
-  }
-
-  Future<void> loadData() async {
-    emit(LoadingState());
-    await Future.wait([
-      getMyHouses(),
-      getLikedHouses(),
-    ]);
-
-    emit(DataState(
-      myHouses: _myHouses,
-      likedHouses: _likedHouses,
-    ));
-  }
-
   Future<User?> getUser(String userId) async {
     final response = await userService.getUser(userId);
     if (response.error != ErrorType.none) {
@@ -62,52 +29,29 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
     return response.data;
   }
 
-  Future getMyHouses() async {
-    final response = await houseService.getMyHouses();
-    if (response.error != ErrorType.none) {
-      return [];
-    }
-
-    _myHouses = response.data;
-    _myHousesCurrentPage = 1;
-  }
-
-  Future getLikedHouses() async {
-    final response = await houseService.getLikedHouses();
-    if (response.error != ErrorType.none) {
-      return [];
-    }
-
-    _likedHouses = response.data;
-    _likedHousesCurrentPage = 1;
-  }
-
-  Future getMyHousesNextPage() async {
-    _myHousesCurrentPage++;
+  Future<List<House>> getMyHouses(int pageNumber, int pageCount) async {
     final response = await houseService.getMyHouses(
-      pageNumber: _myHousesCurrentPage,
+      pageNumber: pageNumber,
+      pageCount: pageCount,
     );
 
     if (response.error != ErrorType.none) {
-      _myHouses += response.data;
-      emit(DataState(myHouses: _myHouses, likedHouses: _likedHouses));
+      return [];
     }
+
+    return response.data;
   }
 
-  Future getLikedHousesNextPage() async {
-    _likedHousesCurrentPage++;
+  Future<List<House>> getLikedHouses(int pageNumber, int pageCount) async {
     final response = await houseService.getLikedHouses(
-      pageNumber: _likedHousesCurrentPage,
+      pageNumber: pageNumber,
+      pageCount: pageCount,
     );
-
+    
     if (response.error != ErrorType.none) {
-      _likedHouses += response.data;
-      emit(DataState(myHouses: _myHouses, likedHouses: _likedHouses));
+      return [];
     }
-  }
 
-  Future refresh() async {
-    getMyHouses();
-    getLikedHouses();
+    return response.data;
   }
 }

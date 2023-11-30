@@ -1,14 +1,55 @@
 import 'package:ccquarters/list_of_houses/view.dart';
+import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/common_widgets/shadow.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'list.dart';
 
-class AnnouncementsContainer extends StatelessWidget {
-  const AnnouncementsContainer({super.key, required this.title});
+class AnnouncementsContainer extends StatefulWidget {
+  const AnnouncementsContainer({
+    super.key,
+    required this.title,
+    required this.pagingController,
+    required this.getHouses,
+  });
 
   final String title;
+  final PagingController<int, House> pagingController;
+  final Future<List<House>> Function(int, int) getHouses;
+
+  @override
+  State<AnnouncementsContainer> createState() => _AnnouncementsContainerState();
+}
+
+class _AnnouncementsContainerState extends State<AnnouncementsContainer> {
+  final _numberOfPostsPerRequest = 10;
+
+  @override
+  void initState() {
+    widget.pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      List<House> houses =
+          await widget.getHouses(pageKey, _numberOfPostsPerRequest);
+      final isLastPage = houses.length < _numberOfPostsPerRequest;
+      if (isLastPage) {
+        widget.pagingController.appendLastPage(houses);
+      } else {
+        var nextPageKey = pageKey + 1;
+        widget.pagingController.appendPage(houses, nextPageKey);
+      }
+    } catch (e) {
+      widget.pagingController.error = e;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -23,7 +64,7 @@ class AnnouncementsContainer extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ListLabel(title: title),
+                ListLabel(title: widget.title),
                 const AnnouncementList(),
                 SeeMoreButton(
                   onPressed: () {

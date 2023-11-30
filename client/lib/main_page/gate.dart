@@ -15,14 +15,14 @@ class _MainPageGateState extends State<MainPageGate> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => MainPageCubit(),
+      create: (_) => MainPageCubit(context.read()),
       child: BlocBuilder<MainPageCubit, MainPageState>(
         builder: (context, state) {
           if (state is MainPageInitialState) {
             return const MainPage();
           } else if (state is SearchState) {
             return const SearchGate();
-          } 
+          }
           return Container();
         },
       ),
