@@ -204,11 +204,12 @@ namespace CCQuartersAPI.Endpoints
             var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(houseQuery);
             var house = houseQueried.Map();
 
-            var photosQuery = @$"SELECT PhotoId FROM HousePhotos WHERE HouseId = '{houseId}' ORDER BY [Order]";
+            var photosQuery = @$"SELECT PhotoId AS Filename, [Order] FROM HousePhotos WHERE HouseId = '{houseId}' ORDER BY [Order]";
 
-            var photoIds = await connection.QueryAsync<string>(photosQuery);
+            var photos = await connection.QueryAsync<PhotoDTO>(photosQuery);
 
-            var photosUrls = await storage.GetDownloadUrls("housePhotos", photoIds.Where(photoId => !string.IsNullOrWhiteSpace(photoId)).ToArray());
+            foreach (var photo in photos)
+                photo.Url = await storage.GetDownloadUrl("housePhotos", photo.Filename);
 
             FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
             DocumentReference descriptionDoc = firestoreDb.Collection("descriptions").Document($"{houseQueried.DescriptionId}");
@@ -240,7 +241,7 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok(new GetHouseResponse()
             {
                 House = house,
-                PhotoUrls = photosUrls.ToArray()
+                Photos = photos.ToArray()
             });
         }
 
@@ -401,9 +402,9 @@ namespace CCQuartersAPI.Endpoints
             if (houseQueried?.UserId != userId)
                 return Results.Unauthorized();
 
-            var selectQuery = $@"SELECT COUNT(*) FROM HousePhotos WHERE HouseId = '{houseId}'";
+            var selectQuery = $@"SELECT [Order] FROM HousePhotos WHERE HouseId = '{houseId} ORDER BY [Order] DESC'";
 
-            int count = connection.ExecuteScalar<int>(selectQuery);
+            int count = await connection.QueryFirstAsync<int>(selectQuery);
 
             string filename = $@"{houseId}_{count + 1}";
 
@@ -412,6 +413,69 @@ namespace CCQuartersAPI.Endpoints
             await connection.ExecuteAsync(insertQuery);
 
             await storage.UploadFileAsync("housePhotos", file.OpenReadStream(), filename);
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> DeleteAllPhotos([FromServices] IStorage storage, Guid houseId, HttpContext context)
+        {
+            using var connection = new SqlConnection(connectionString);
+
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
+
+            var getQuery = @$"SELECT HouseId, UserId, PhotoId AS Filename, [Order]
+                        FROM Houses h
+                        LEFT JOIN HousePhotos p ON h.Id = p.HouseId
+                        WHERE h.Id = '{houseId}'";
+
+            var housePhotoQueried = await connection.QueryAsync<HousePhotoQueried>(getQuery);
+
+            if (!housePhotoQueried.Any())
+                return Results.Ok();
+
+            if (housePhotoQueried.First().UserId != userId)
+                return Results.Unauthorized();
+
+            var deleteQuery = $@"DELETE FROM HousePhotos WHERE HouseId = '{houseId}'";
+
+            await connection.ExecuteAsync(deleteQuery);
+
+            foreach (var photo in housePhotoQueried)
+                await storage.DeleteFileAsync("housePhotos", photo.Filename);
+
+            return Results.Ok();
+        }
+
+        public static async Task<IResult> DeletePhoto([FromServices] IStorage storage, Guid houseId, HttpContext context, string filename)
+        {
+            using var connection = new SqlConnection(connectionString);
+
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Results.Unauthorized();
+
+            var getQuery = @$"SELECT HouseId, UserId, PhotoId AS Filename, [Order]
+                        FROM Houses h
+                        LEFT JOIN HousePhotos p ON h.Id = p.HouseId
+                        WHERE h.Id = '{houseId}'";
+
+            var housePhotoQueried = await connection.QueryAsync<HousePhotoQueried>(getQuery);
+
+            if (!housePhotoQueried.Any())
+                return Results.Ok();
+
+            if (housePhotoQueried.First().UserId != userId)
+                return Results.Unauthorized();
+
+            var deleteQuery = $@"DELETE FROM HousePhotos WHERE PhotoId = '{filename}'";
+
+            await connection.ExecuteAsync(deleteQuery);
+
+            await storage.DeleteFileAsync("housePhotos", filename);
+
             return Results.Ok();
         }
     }

@@ -26,10 +26,4 @@ namespace CCQuartersAPI.Responses
         public bool IsLiked { get; set; }
         public string PhotoUrl { get; set; }
     }
-
-    public class PhotoDTO
-    {
-        public Guid HouseId { get; set; }
-        public string PhotoId { get; set; }
-    }
 }
