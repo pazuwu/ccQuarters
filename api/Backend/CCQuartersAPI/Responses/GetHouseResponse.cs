@@ -5,7 +5,7 @@ namespace CCQuartersAPI.Responses
     public class GetHouseResponse
     {
         public DetailedHouseDTO House { get; set; }
-        public string[]? PhotoUrls { get; set; }
+        public PhotoDTO[]? Photos { get; set; }
     }
 
     public class DetailedHouseQueried
@@ -60,5 +60,12 @@ namespace CCQuartersAPI.Responses
         public string? UserEmail { get; set; }
         public string? UserPhoneNumber { get; set; }
         public string? UserPhotoUrl { get; set; }
+    }
+
+    public class PhotoDTO
+    {
+        public string Filename { get; set; }
+        public string Url { get; set; }
+        public int Order { get; set; }
     }
 }
