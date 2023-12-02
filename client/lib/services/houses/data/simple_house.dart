@@ -15,15 +15,18 @@ class SimpleHouse {
   double area;
   int? floor;
   String city;
+  String voivodeship;
   String zipCode;
   String? district;
   String? streetName;
   String? streetNumber;
   String? flatNumber;
+  @OfferTypeConverter()
   OfferType offerType;
+  @BuildingTypeConverter()
   BuildingType buildingType;
   bool isLiked;
-  String photoUrl;
+  String? photoUrl;
 
   SimpleHouse(
       this.id,
@@ -33,6 +36,7 @@ class SimpleHouse {
       this.area,
       this.floor,
       this.city,
+      this.voivodeship,
       this.zipCode,
       this.district,
       this.streetName,
@@ -51,6 +55,7 @@ class SimpleHouse {
     return House(
       Location(
         city: city,
+        voivodeship: voivodeship,
         district: district,
         streetName: streetName,
         zipCode: zipCode,
@@ -66,7 +71,11 @@ class SimpleHouse {
         buildingType: buildingType,
       ),
       User.empty(),
-      [photoUrl],
+      [
+        photoUrl != null
+            ? photoUrl!
+            : "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}"
+      ],
       offerType: offerType,
       isLiked: isLiked,
     );

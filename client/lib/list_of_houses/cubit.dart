@@ -24,7 +24,7 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
     final response = await houseService.getHouses(
       pageNumber: pageNumber,
       pageCount: pageCount,
-      filter: HouseFilter(),
+      filter: filter,
     );
 
     if (response.error != ErrorType.none) {

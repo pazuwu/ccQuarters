@@ -17,12 +17,21 @@ class AuthCubit extends Cubit<AuthState> {
     required this.userService,
     required this.houseService,
     required this.alertService,
-  }) : super(kIsWeb ? SignedInState() : NeedsSigningInState()) {
-    if (kIsWeb) {
-      user = null;
-      authService.signInAnnonymously().then((value) => setTokens());
+  }) : super(kIsWeb || authService.isSignedIn
+            ? SigningInState()
+            : NeedsSigningInState()) {
+    if (authService.isSignedIn) {
+      setTokens().then((value) => emit(SignedInState()));
     } else {
-      user = User.empty();
+      if (kIsWeb) {
+        user = null;
+        authService
+            .signInAnnonymously()
+            .then((value) => setTokens())
+            .then((value) => emit(SignedInState()));
+      } else {
+        user = User.empty();
+      }
     }
   }
 
@@ -93,6 +102,7 @@ class AuthCubit extends Cubit<AuthState> {
       final result = await authService.signInWithEmail(user!.email, password);
       switch (result) {
         case SignInResult.success:
+          await setTokens();
           emit(SignedInState());
           break;
         default:

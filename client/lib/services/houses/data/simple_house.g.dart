@@ -14,15 +14,16 @@ SimpleHouse _$SimpleHouseFromJson(Map<String, dynamic> json) => SimpleHouse(
       (json['area'] as num).toDouble(),
       json['floor'] as int?,
       json['city'] as String,
+      json['voivodeship'] as String,
       json['zipCode'] as String,
       json['district'] as String?,
       json['streetName'] as String?,
       json['streetNumber'] as String?,
       json['flatNumber'] as String?,
-      $enumDecode(_$OfferTypeEnumMap, json['offerType']),
-      $enumDecode(_$BuildingTypeEnumMap, json['buildingType']),
+      const OfferTypeConverter().fromJson(json['offerType'] as int),
+      const BuildingTypeConverter().fromJson(json['buildingType'] as int),
       json['isLiked'] as bool,
-      json['photoUrl'] as String,
+      json['photoUrl'] as String?,
     );
 
 Map<String, dynamic> _$SimpleHouseToJson(SimpleHouse instance) =>
@@ -34,24 +35,15 @@ Map<String, dynamic> _$SimpleHouseToJson(SimpleHouse instance) =>
       'area': instance.area,
       'floor': instance.floor,
       'city': instance.city,
+      'voivodeship': instance.voivodeship,
       'zipCode': instance.zipCode,
       'district': instance.district,
       'streetName': instance.streetName,
       'streetNumber': instance.streetNumber,
       'flatNumber': instance.flatNumber,
-      'offerType': _$OfferTypeEnumMap[instance.offerType]!,
-      'buildingType': _$BuildingTypeEnumMap[instance.buildingType]!,
+      'offerType': const OfferTypeConverter().toJson(instance.offerType),
+      'buildingType':
+          const BuildingTypeConverter().toJson(instance.buildingType),
       'isLiked': instance.isLiked,
       'photoUrl': instance.photoUrl,
     };
-
-const _$OfferTypeEnumMap = {
-  OfferType.rent: 'rent',
-  OfferType.sale: 'sale',
-};
-
-const _$BuildingTypeEnumMap = {
-  BuildingType.house: 'house',
-  BuildingType.apartment: 'apartment',
-  BuildingType.room: 'room',
-};

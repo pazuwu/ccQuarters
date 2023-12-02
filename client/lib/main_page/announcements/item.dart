@@ -6,8 +6,8 @@ import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
-class AnnouncementItem extends StatelessWidget {
-  const AnnouncementItem({
+class HouseItem extends StatelessWidget {
+  const HouseItem({
     super.key,
     required this.house,
   });
@@ -37,7 +37,9 @@ class AnnouncementItem extends StatelessWidget {
                                 ? 0.4
                                 : 0.2)),
                     child: ImageWidget(
-                      imageUrl: house.photos.first,
+                      imageUrl: house.photos.isNotEmpty
+                          ? house.photos.first
+                          : "https://picsum.photos/512",
                       fit: BoxFit.cover,
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(borderRadius),

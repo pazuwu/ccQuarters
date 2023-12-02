@@ -23,7 +23,9 @@ class DetailedHouse {
   String? flatNumber;
   double? geoX;
   double? geoY;
+  @OfferTypeConverter()
   OfferType offerType;
+  @BuildingTypeConverter()
   BuildingType buildingType;
   bool isLiked;
   String? userName;

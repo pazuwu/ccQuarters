@@ -9,7 +9,8 @@ part of 'get_houses_request_body.dart';
 GetHousesRequestBody _$GetHousesRequestBodyFromJson(
         Map<String, dynamic> json) =>
     GetHousesRequestBody(
-      $enumDecodeNullable(_$SortingMethodEnumMap, json['sortMethod']),
+      _$JsonConverterFromJson<int, SortingMethod>(
+          json['sortMethod'], const SortingMethodConverter().fromJson),
       json['filter'] == null
           ? null
           : HousesFilter.fromJson(json['filter'] as Map<String, dynamic>),
@@ -18,14 +19,19 @@ GetHousesRequestBody _$GetHousesRequestBodyFromJson(
 Map<String, dynamic> _$GetHousesRequestBodyToJson(
         GetHousesRequestBody instance) =>
     <String, dynamic>{
-      'sortMethod': _$SortingMethodEnumMap[instance.sortMethod],
+      'sortMethod': _$JsonConverterToJson<int, SortingMethod>(
+          instance.sortMethod, const SortingMethodConverter().toJson),
       'filter': instance.filter,
     };
 
-const _$SortingMethodEnumMap = {
-  SortingMethod.newest: 'newest',
-  SortingMethod.lowestPrice: 'lowestPrice',
-  SortingMethod.highestPrice: 'highestPrice',
-  SortingMethod.lowestPricePerMeter: 'lowestPricePerMeter',
-  SortingMethod.highestPricePerMeter: 'highestPricePerMeter',
-};
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

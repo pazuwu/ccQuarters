@@ -18,10 +18,11 @@ class HousesFilter {
   List<int>? floors;
   int? minFloor;
   int? maxFloor;
+  @OfferTypeConverter()
   List<OfferType>? offerTypes;
+  @BuildingTypeConverter()
   List<BuildingType>? buildingTypes;
-  List<String>? cities;
-  List<String>? voivodeships;
+  List<CityFilter>? cities;
   List<String>? districts;
 
   HousesFilter(
@@ -39,9 +40,10 @@ class HousesFilter {
     this.offerTypes,
     this.buildingTypes,
     this.cities,
-    this.voivodeships,
     this.districts,
   );
+
+  HousesFilter.empty();
 
   HousesFilter.fromHouseFilter(HouseFilter filter)
       : minPrice = filter.minPrice,
@@ -57,13 +59,27 @@ class HousesFilter {
         offerTypes = filter.offerType != null ? [filter.offerType!] : null,
         buildingTypes =
             filter.buildingType != null ? [filter.buildingType!] : null,
-        cities = filter.voivodeshipsAndCities.map((e) => e.city).toList(),
-        voivodeships = filter.voivodeshipsAndCities
-            .map((e) => e.voivodeship.toString())
+        cities = filter.voivodeshipsAndCities
+            .map((e) => CityFilter(
+                  e.voivodeship.name,
+                  e.city,
+                ))
             .toList(),
         districts = filter.districts;
 
   Map<String, dynamic> toJson() => _$HousesFilterToJson(this);
   factory HousesFilter.fromJson(Map<String, dynamic> json) =>
       _$HousesFilterFromJson(json);
+}
+
+@JsonSerializable()
+class CityFilter {
+  String voivodeship;
+  String city;
+
+  CityFilter(this.voivodeship, this.city);
+
+  Map<String, dynamic> toJson() => _$CityFilterToJson(this);
+  factory CityFilter.fromJson(Map<String, dynamic> json) =>
+      _$CityFilterFromJson(json);
 }

@@ -15,7 +15,8 @@ class CreateHouseRequest {
   int? floor;
   String? description;
   Map<String, String>? additionalInfo;
-  String? city;
+  String voivodeship;
+  String city;
   String? zipCode;
   String? district;
   String? streetName;
@@ -23,7 +24,9 @@ class CreateHouseRequest {
   String? flatNumber;
   double? geoX;
   double? geoY;
+  @OfferTypeConverter()
   OfferType offerType;
+  @BuildingTypeConverter()
   BuildingType buildingType;
 
   CreateHouseRequest(
@@ -34,6 +37,7 @@ class CreateHouseRequest {
       this.floor,
       this.description,
       this.additionalInfo,
+      this.voivodeship,
       this.city,
       this.zipCode,
       this.district,
@@ -54,14 +58,15 @@ class CreateHouseRequest {
         area = newHouse.houseDetails.area,
         floor = newHouse.houseDetails.floor,
         description = newHouse.houseDetails.description,
+        voivodeship = newHouse.location.voivodeship.toString(),
         city = newHouse.location.city,
         zipCode = newHouse.location.zipCode,
         district = newHouse.location.district,
         streetName = newHouse.location.streetName,
         streetNumber = newHouse.location.streetNumber,
         flatNumber = newHouse.location.flatNumber,
-        geoX = newHouse.location.geoX,
-        geoY = newHouse.location.geoY;
+        geoX = newHouse.location.geoX ?? 0,
+        geoY = newHouse.location.geoY ?? 0;
 
   CreateHouseRequest.fromHouse(House house)
       : buildingType = house.details.buildingType,
@@ -72,6 +77,7 @@ class CreateHouseRequest {
         area = house.details.area,
         floor = house.details.floor,
         description = house.details.description,
+        voivodeship = house.location.voivodeship,
         city = house.location.city,
         zipCode = house.location.zipCode,
         district = house.location.district,

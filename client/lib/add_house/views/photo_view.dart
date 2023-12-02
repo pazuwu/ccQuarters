@@ -112,6 +112,7 @@ class _PhotoViewState extends State<PhotoView> {
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png', 'jpeg'],
+      withData: true,
     );
 
     return res?.files ?? [];

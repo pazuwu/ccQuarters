@@ -33,6 +33,7 @@ class House {
 class Location {
   Location(
       {this.city = 'Warszawa',
+      this.voivodeship = "Mazowieckie",
       this.district = "Wilanów",
       this.streetName = "Klimczaka",
       this.zipCode = '14-121',
@@ -42,6 +43,7 @@ class Location {
       this.geoY = 21.006980596300632});
 
   String city;
+  String voivodeship;
   String? district;
   String? streetName;
   String zipCode;

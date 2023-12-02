@@ -1,6 +1,7 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/voivodeship.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 class HouseFilter {
   HouseFilter(
@@ -46,6 +47,24 @@ enum SortingMethod {
 
   @override
   toString() => name;
+}
+
+class SortingMethodConverter implements JsonConverter<SortingMethod, int> {
+  const SortingMethodConverter();
+
+  @override
+  SortingMethod fromJson(int json) {
+    return SortingMethod.values[json];
+  }
+
+  @override
+  int toJson(SortingMethod? object) {
+    if (object == null) {
+      return 0;
+    }
+
+    return object.index;
+  }
 }
 
 extension SortByTypeEx on SortingMethod {

@@ -19,14 +19,13 @@ HousesFilter _$HousesFilterFromJson(Map<String, dynamic> json) => HousesFilter(
       json['minFloor'] as int?,
       json['maxFloor'] as int?,
       (json['offerTypes'] as List<dynamic>?)
-          ?.map((e) => $enumDecode(_$OfferTypeEnumMap, e))
+          ?.map((e) => const OfferTypeConverter().fromJson(e as int))
           .toList(),
       (json['buildingTypes'] as List<dynamic>?)
-          ?.map((e) => $enumDecode(_$BuildingTypeEnumMap, e))
+          ?.map((e) => const BuildingTypeConverter().fromJson(e as int))
           .toList(),
-      (json['cities'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      (json['voivodeships'] as List<dynamic>?)
-          ?.map((e) => e as String)
+      (json['cities'] as List<dynamic>?)
+          ?.map((e) => CityFilter.fromJson(e as Map<String, dynamic>))
           .toList(),
       (json['districts'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
@@ -45,22 +44,21 @@ Map<String, dynamic> _$HousesFilterToJson(HousesFilter instance) =>
       'minFloor': instance.minFloor,
       'maxFloor': instance.maxFloor,
       'offerTypes':
-          instance.offerTypes?.map((e) => _$OfferTypeEnumMap[e]!).toList(),
+          instance.offerTypes?.map(const OfferTypeConverter().toJson).toList(),
       'buildingTypes': instance.buildingTypes
-          ?.map((e) => _$BuildingTypeEnumMap[e]!)
+          ?.map(const BuildingTypeConverter().toJson)
           .toList(),
       'cities': instance.cities,
-      'voivodeships': instance.voivodeships,
       'districts': instance.districts,
     };
 
-const _$OfferTypeEnumMap = {
-  OfferType.rent: 'rent',
-  OfferType.sale: 'sale',
-};
+CityFilter _$CityFilterFromJson(Map<String, dynamic> json) => CityFilter(
+      json['voivodeship'] as String,
+      json['city'] as String,
+    );
 
-const _$BuildingTypeEnumMap = {
-  BuildingType.house: 'house',
-  BuildingType.apartment: 'apartment',
-  BuildingType.room: 'room',
-};
+Map<String, dynamic> _$CityFilterToJson(CityFilter instance) =>
+    <String, dynamic>{
+      'voivodeship': instance.voivodeship,
+      'city': instance.city,
+    };

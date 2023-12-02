@@ -7,6 +7,7 @@ part 'get_houses_request_body.g.dart';
 
 @JsonSerializable()
 class GetHousesRequestBody {
+  @SortingMethodConverter()
   final SortingMethod? sortMethod;
   final HousesFilter? filter;
 

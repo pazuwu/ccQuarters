@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/voivodeship.dart';
 import 'package:ccquarters/model/offer_type.dart';
 
 class NewHouse {
@@ -19,6 +20,7 @@ class NewHouse {
 
 class NewLocation {
   NewLocation({
+    this.voivodeship,
     this.city = '',
     this.district,
     this.streetName,
@@ -29,6 +31,7 @@ class NewLocation {
     this.geoY,
   });
 
+  Voivodeship? voivodeship;
   String city;
   String? district;
   String? streetName;

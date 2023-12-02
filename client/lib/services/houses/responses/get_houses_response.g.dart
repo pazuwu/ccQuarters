@@ -9,15 +9,15 @@ part of 'get_houses_response.dart';
 GetHousesResponse _$GetHousesResponseFromJson(Map<String, dynamic> json) =>
     GetHousesResponse(
       json['pageNumber'] as int,
-      json['count'] as int,
-      (json['houses'] as List<dynamic>)
+      json['pageSize'] as int,
+      (json['data'] as List<dynamic>)
           .map((e) => SimpleHouse.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$GetHousesResponseToJson(GetHousesResponse instance) =>
     <String, dynamic>{
-      'houses': instance.houses,
+      'data': instance.data,
       'pageNumber': instance.pageNumber,
-      'count': instance.count,
+      'pageSize': instance.pageSize,
     };

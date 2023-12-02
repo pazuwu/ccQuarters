@@ -5,15 +5,13 @@ part 'get_houses_response.g.dart';
 
 @JsonSerializable()
 class GetHousesResponse {
-  final List<SimpleHouse> houses;
+  final List<SimpleHouse> data;
   final int pageNumber;
-  final int count;
+  final int pageSize;
 
-  GetHousesResponse(this.pageNumber, this.count, this.houses);
+  GetHousesResponse(this.pageNumber, this.pageSize, this.data);
 
   Map<String, dynamic> toJson() => _$GetHousesResponseToJson(this);
   factory GetHousesResponse.fromJson(Map<String, dynamic> json) =>
       _$GetHousesResponseFromJson(json);
 }
-
-

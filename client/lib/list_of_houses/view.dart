@@ -54,27 +54,38 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ogłoszenia na wynajem"),
-      ),
-      body: BlocProvider(
-        create: (_) => ListOfHousesCubit(
-          houseService: context.read(),
-        ),
-        child: BlocBuilder<ListOfHousesCubit, ListOfHousesState>(
-          builder: (context, state) {
-            return RefreshIndicator(
-              onRefresh: () async => _pagingController.refresh(),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (getDeviceType(context) == DeviceType.web)
-                    Container(
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.25,
-                      ),
-                      child: FilterForm(
+    return RefreshIndicator(
+      onRefresh: () async => _pagingController.refresh(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (getDeviceType(context) == DeviceType.web)
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.25,
+              ),
+              child: FilterForm(
+                filters: context.read<ListOfHousesCubit>().filter,
+                onSave: (HouseFilter filter) {
+                  context.read<ListOfHousesCubit>().saveFilter(filter);
+                  _pagingController.refresh();
+                },
+              ),
+            ),
+          Container(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width *
+                    (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: largePaddingSize,
+                right: largePaddingSize,
+              ),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      child: Filters(
                         filters: context.read<ListOfHousesCubit>().filter,
                         onSave: (HouseFilter filter) {
                           context.read<ListOfHousesCubit>().saveFilter(filter);
@@ -82,54 +93,24 @@ class _ListOfHousesState extends State<ListOfHouses> {
                         },
                       ),
                     ),
-                  Container(
-                    constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width *
-                            (getDeviceType(context) == DeviceType.web
-                                ? 0.5
-                                : 1)),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: largePaddingSize,
-                        right: largePaddingSize,
-                      ),
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverToBoxAdapter(
-                            child: SizedBox(
-                              child: Filters(
-                                filters:
-                                    context.read<ListOfHousesCubit>().filter,
-                                onSave: (HouseFilter filter) {
-                                  context
-                                      .read<ListOfHousesCubit>()
-                                      .saveFilter(filter);
-                                  _pagingController.refresh();
-                                },
-                              ),
-                            ),
+                  ),
+                  SliverFillRemaining(
+                    child: PagedListView<int, House>(
+                      pagingController: _pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<House>(
+                        itemBuilder: (context, item, index) => LayoutBuilder(
+                          builder: (context, constraints) => HouseListTile(
+                            house: item,
                           ),
-                          PagedListView<int, House>(
-                            pagingController: _pagingController,
-                            builderDelegate: PagedChildBuilderDelegate<House>(
-                              itemBuilder: (context, item, index) =>
-                                  LayoutBuilder(
-                                builder: (context, constraints) =>
-                                    HouseListTile(
-                                  house: item,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

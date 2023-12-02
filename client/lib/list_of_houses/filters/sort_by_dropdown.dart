@@ -2,9 +2,10 @@ import 'package:ccquarters/model/filter.dart';
 import 'package:flutter/material.dart';
 
 class SortBy extends StatelessWidget {
-  const SortBy({super.key, required this.onChanged});
+  const SortBy({super.key, required this.onChanged, required this.value});
 
   final Function(SortingMethod?) onChanged;
+  final SortingMethod value;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -12,7 +13,7 @@ class SortBy extends StatelessWidget {
         const Text('Sortuj po:'),
         const SizedBox(width: 10),
         DropdownButton<SortingMethod>(
-          value: SortingMethod.newest,
+          value: value,
           onChanged: onChanged,
           items: SortingMethod.values
               .map<DropdownMenuItem<SortingMethod>>((SortingMethod value) {

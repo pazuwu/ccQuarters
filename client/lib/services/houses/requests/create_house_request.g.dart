@@ -17,7 +17,8 @@ CreateHouseRequest _$CreateHouseRequestFromJson(Map<String, dynamic> json) =>
       (json['additionalInfo'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
-      json['city'] as String?,
+      json['voivodeship'] as String,
+      json['city'] as String,
       json['zipCode'] as String?,
       json['district'] as String?,
       json['streetName'] as String?,
@@ -25,8 +26,8 @@ CreateHouseRequest _$CreateHouseRequestFromJson(Map<String, dynamic> json) =>
       json['flatNumber'] as String?,
       (json['geoX'] as num?)?.toDouble(),
       (json['geoY'] as num?)?.toDouble(),
-      $enumDecode(_$OfferTypeEnumMap, json['offerType']),
-      $enumDecode(_$BuildingTypeEnumMap, json['buildingType']),
+      const OfferTypeConverter().fromJson(json['offerType'] as int),
+      const BuildingTypeConverter().fromJson(json['buildingType'] as int),
     );
 
 Map<String, dynamic> _$CreateHouseRequestToJson(CreateHouseRequest instance) =>
@@ -38,6 +39,7 @@ Map<String, dynamic> _$CreateHouseRequestToJson(CreateHouseRequest instance) =>
       'floor': instance.floor,
       'description': instance.description,
       'additionalInfo': instance.additionalInfo,
+      'voivodeship': instance.voivodeship,
       'city': instance.city,
       'zipCode': instance.zipCode,
       'district': instance.district,
@@ -46,17 +48,7 @@ Map<String, dynamic> _$CreateHouseRequestToJson(CreateHouseRequest instance) =>
       'flatNumber': instance.flatNumber,
       'geoX': instance.geoX,
       'geoY': instance.geoY,
-      'offerType': _$OfferTypeEnumMap[instance.offerType]!,
-      'buildingType': _$BuildingTypeEnumMap[instance.buildingType]!,
+      'offerType': const OfferTypeConverter().toJson(instance.offerType),
+      'buildingType':
+          const BuildingTypeConverter().toJson(instance.buildingType),
     };
-
-const _$OfferTypeEnumMap = {
-  OfferType.rent: 'rent',
-  OfferType.sale: 'sale',
-};
-
-const _$BuildingTypeEnumMap = {
-  BuildingType.house: 'house',
-  BuildingType.apartment: 'apartment',
-  BuildingType.room: 'room',
-};

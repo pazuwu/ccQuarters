@@ -42,8 +42,12 @@ class _FiltersState extends State<Filters> {
             : Container(),
         SortBy(
           onChanged: (newValue) {
-            widget.filters.sortBy = newValue!;
+            setState(() {
+              widget.filters.sortBy = newValue!;
+            });
+            widget.onSave(widget.filters);
           },
+          value: widget.filters.sortBy,
         ),
       ],
     );

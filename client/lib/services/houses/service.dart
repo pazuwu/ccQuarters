@@ -34,19 +34,22 @@ class HouseService {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
-        data: GetHousesRequestBody(filter?.sortBy,
-                filter != null ? HousesFilter.fromHouseFilter(filter) : null)
-            .toJson(),
+        data: GetHousesRequestBody(
+          filter?.sortBy,
+          filter != null
+              ? HousesFilter.fromHouseFilter(filter)
+              : HousesFilter.empty(),
+        ).toJson(),
         queryParameters: {
           "pageNumber": pageNumber,
-          "pageCount": pageCount,
+          "pageSize": pageCount,
         },
       );
 
       return response.statusCode == StatusCode.OK
           ? ServiceResponse(
               data: GetHousesResponse.fromJson(response.data)
-                  .houses
+                  .data
                   .map((x) => x.toHouse())
                   .toList())
           : ServiceResponse(data: [], error: ErrorType.unknown);
@@ -70,14 +73,14 @@ class HouseService {
         }),
         queryParameters: {
           "pageNumber": pageNumber,
-          "pageCount": pageCount,
+          "pageSize": pageCount,
         },
       );
 
       return response.statusCode == StatusCode.OK
           ? ServiceResponse(
               data: GetHousesResponse.fromJson(response.data)
-                  .houses
+                  .data
                   .map((x) => x.toHouse())
                   .toList())
           : ServiceResponse(data: [], error: ErrorType.unknown);
@@ -101,14 +104,14 @@ class HouseService {
         }),
         queryParameters: {
           "pageNumber": pageNumber,
-          "pageCount": pageCount,
+          "pageSize": pageCount,
         },
       );
 
       return response.statusCode == StatusCode.OK
           ? ServiceResponse(
               data: GetHousesResponse.fromJson(response.data)
-                  .houses
+                  .data
                   .map((x) => x.toHouse())
                   .toList())
           : ServiceResponse(data: [], error: ErrorType.unknown);
@@ -156,8 +159,9 @@ class HouseService {
         data: CreateHouseRequest.fromNewHouse(newHouse).toJson(),
       );
 
-      return response.statusCode == StatusCode.OK
-          ? ServiceResponse(data: response.data.toString())
+      var id = response.headers.value("location");
+      return response.statusCode == StatusCode.CREATED && id != null
+          ? ServiceResponse(data: id)
           : ServiceResponse(data: null, error: ErrorType.unknown);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {

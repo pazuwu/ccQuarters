@@ -41,10 +41,21 @@ class AddHouseGate extends StatelessWidget {
             return PhotoView(photos: state.photos);
           } else if (state is SummaryState) {
             return Center(
-              child: Text(state.message),
+              child: Column(
+                children: [
+                  Text(state.message),
+                  TextButton(
+                    child: const Text("Powtórz wysyłanie"),
+                    onPressed: () =>
+                        context.read<AddHouseFormCubit>().sendData(),
+                  )
+                ],
+              ),
             );
           } else if (state is SendingData) {
-            return const CircularProgressIndicator();
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           return Container();
