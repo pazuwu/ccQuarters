@@ -19,7 +19,6 @@ class _MainPageState extends State<MainPage> {
   final PagingController<int, House> _pagingControllerForHousesToBuy =
       PagingController(firstPageKey: 0);
 
-
   @override
   void dispose() {
     super.dispose();
@@ -31,8 +30,9 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(const Duration(seconds: 1));
+      onRefresh: () async {
+        _pagingControllerForHousesToRent.refresh();
+        _pagingControllerForHousesToBuy.refresh();
       },
       child: LayoutBuilder(builder: (context, constraints) {
         return SingleChildScrollView(
@@ -49,18 +49,16 @@ class _MainPageState extends State<MainPage> {
                 AnnouncementsContainer(
                   title: "Do wynajęcia",
                   pagingController: _pagingControllerForHousesToRent,
-                  getHouses: (pageNumber, pageCount) async =>
-                              await context
-                                  .read<MainPageCubit>()
-                                  .getHousesToRent(pageNumber, pageCount),
+                  getHouses: (pageNumber, pageCount) async => await context
+                      .read<MainPageCubit>()
+                      .getHousesToRent(pageNumber, pageCount),
                 ),
                 AnnouncementsContainer(
                   title: "Do kupienia",
                   pagingController: _pagingControllerForHousesToBuy,
-                  getHouses: (pageNumber, pageCount) async =>
-                              await context
-                                  .read<MainPageCubit>()
-                                  .getHousesToBuy(pageNumber, pageCount),
+                  getHouses: (pageNumber, pageCount) async => await context
+                      .read<MainPageCubit>()
+                      .getHousesToBuy(pageNumber, pageCount),
                 ),
               ],
             ),

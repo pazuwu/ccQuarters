@@ -65,9 +65,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
         child: BlocBuilder<ListOfHousesCubit, ListOfHousesState>(
           builder: (context, state) {
             return RefreshIndicator(
-              onRefresh: () => Future.sync(
-                () => _pagingController.refresh(),
-              ),
+              onRefresh: () async => _pagingController.refresh(),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -76,7 +74,13 @@ class _ListOfHousesState extends State<ListOfHouses> {
                       constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width * 0.25,
                       ),
-                      child: FilterForm(filters: HouseFilter()),
+                      child: FilterForm(
+                        filters: context.read<ListOfHousesCubit>().filter,
+                        onSave: (HouseFilter filter) {
+                          context.read<ListOfHousesCubit>().saveFilter(filter);
+                          _pagingController.refresh();
+                        },
+                      ),
                     ),
                   Container(
                     constraints: BoxConstraints(
@@ -93,7 +97,16 @@ class _ListOfHousesState extends State<ListOfHouses> {
                         slivers: [
                           SliverToBoxAdapter(
                             child: SizedBox(
-                              child: Filters(filters: HouseFilter()),
+                              child: Filters(
+                                filters:
+                                    context.read<ListOfHousesCubit>().filter,
+                                onSave: (HouseFilter filter) {
+                                  context
+                                      .read<ListOfHousesCubit>()
+                                      .saveFilter(filter);
+                                  _pagingController.refresh();
+                                },
+                              ),
                             ),
                           ),
                           PagedListView<int, House>(

@@ -6,9 +6,10 @@ import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
 class Filters extends StatefulWidget {
-  const Filters({super.key, required this.filters});
+  const Filters({super.key, required this.filters, required this.onSave});
 
   final HouseFilter filters;
+  final Function(HouseFilter) onSave;
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -31,8 +32,10 @@ class _FiltersState extends State<Filters> {
                     enableDrag: true,
                     showDragHandle: true,
                     context: context,
-                    builder: (BuildContext context) =>
-                        FilterForm(filters: widget.filters),
+                    builder: (BuildContext context) => FilterForm(
+                      filters: widget.filters,
+                      onSave: widget.onSave,
+                    ),
                   );
                 },
               )
@@ -48,9 +51,10 @@ class _FiltersState extends State<Filters> {
 }
 
 class FilterForm extends StatelessWidget {
-  const FilterForm({super.key, required this.filters});
+  const FilterForm({super.key, required this.filters, required this.onSave});
 
   final HouseFilter filters;
+  final Function(HouseFilter) onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -88,18 +92,18 @@ class FilterForm extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(BuildContext context, String text, bool doesDelete) {
+  Widget _buildButton(BuildContext context, String text, bool doesSave) {
     return Padding(
       padding: const EdgeInsets.all(largePaddingSize),
       child: TextButton(
         style: ButtonStyle(
-          foregroundColor: !doesDelete
-              ? MaterialStateProperty.all<Color>(Colors.grey)
-              : null,
+          foregroundColor:
+              !doesSave ? MaterialStateProperty.all<Color>(Colors.grey) : null,
         ),
         onPressed: () => {
+          if (doesSave) onSave(filters),
           if (getDeviceType(context) == DeviceType.mobile)
-            Navigator.pop(context, doesDelete)
+            Navigator.pop(context)
         },
         child: Text(
           text,

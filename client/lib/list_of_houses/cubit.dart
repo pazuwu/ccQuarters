@@ -1,3 +1,4 @@
+import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
@@ -13,11 +14,17 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   }) : super(ListOfHousesInitialState());
 
   HouseService houseService;
+  HouseFilter filter = HouseFilter();
+
+  void saveFilter(HouseFilter filter) {
+    this.filter = filter;
+  }
 
   Future<List<House>> getHouses(int pageNumber, int pageCount) async {
     final response = await houseService.getHouses(
       pageNumber: pageNumber,
       pageCount: pageCount,
+      filter: HouseFilter(),
     );
 
     if (response.error != ErrorType.none) {
