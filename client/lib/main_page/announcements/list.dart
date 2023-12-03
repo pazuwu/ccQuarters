@@ -30,7 +30,7 @@ class _AnnouncementListState extends State<AnnouncementList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      List<House> houses =
+      var houses =
           await widget.getHouses(pageKey, _numberOfPostsPerRequest);
       final isLastPage = houses.length < _numberOfPostsPerRequest;
       if (isLastPage) {

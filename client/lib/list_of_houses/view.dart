@@ -31,7 +31,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      List<House> houses = await context
+      var houses = await context
           .read<ListOfHousesCubit>()
           .getHouses(pageKey, _numberOfPostsPerRequest);
       final isLastPage = houses.length < _numberOfPostsPerRequest;

@@ -1,5 +1,5 @@
 import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/house_details/views/view.dart';
+import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
@@ -38,7 +38,7 @@ class HouseItem extends StatelessWidget {
                                 : 0.2)),
                     child: ImageWidget(
                       imageUrl: house.photos.isNotEmpty
-                          ? house.photos.first
+                          ? house.photos.first.url
                           : "https://picsum.photos/512",
                       fit: BoxFit.cover,
                       borderRadius: const BorderRadius.only(
@@ -55,7 +55,9 @@ class HouseItem extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DetailsView(house: house)));
+                        builder: (context) => HouseDetailsGate(
+                    houseId: house.id,
+                  ),));
               },
             ),
           ),

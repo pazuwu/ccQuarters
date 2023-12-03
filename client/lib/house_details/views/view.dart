@@ -64,7 +64,7 @@ class Inside extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Photos(
-                      photos: house.photos,
+                      photos: house.photos.map((e) => e.url).toList(),
                     ),
                     if (getDeviceType(context) == DeviceType.mobile)
                       ButtonContactWidget(user: house.user),

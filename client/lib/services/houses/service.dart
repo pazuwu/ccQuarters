@@ -136,7 +136,7 @@ class HouseService {
 
       if (response.statusCode == StatusCode.OK) {
         var data = GetHouseResponse.fromJson(response.data);
-        return ServiceResponse(data: data.house.toHouse(data.photoUrls));
+        return ServiceResponse(data: data.house.toHouse(data.photos, houseId));
       }
       return ServiceResponse(data: null, error: ErrorType.unknown);
     } on DioException catch (e) {

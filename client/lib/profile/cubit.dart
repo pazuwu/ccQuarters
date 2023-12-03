@@ -47,7 +47,7 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
       pageNumber: pageNumber,
       pageCount: pageCount,
     );
-    
+
     if (response.error != ErrorType.none) {
       return [];
     }

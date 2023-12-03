@@ -1,6 +1,6 @@
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/house_details/views/view.dart';
+import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -52,13 +52,13 @@ class _PhotosGridState extends State<PhotosGrid> {
           padding: const EdgeInsets.all(1.5),
           child: InkWellWithPhoto(
             imageWidget: ImageWidget(
-                imageUrl: house.photos.first,
+                imageUrl: house.photos.first.url,
                 borderRadius: const BorderRadius.all(Radius.zero)),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => DetailsView(
-                    house: house,
+                  builder: (context) => HouseDetailsGate(
+                    houseId: house.id,
                   ),
                 ),
               );

@@ -1,6 +1,7 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -15,6 +16,7 @@ class DetailedHouse {
   int roomCount;
   double area;
   int? floor;
+  String voivodeship;
   String city;
   String zipCode;
   String? district;
@@ -43,6 +45,7 @@ class DetailedHouse {
     this.roomCount,
     this.area,
     this.floor,
+    this.voivodeship,
     this.city,
     this.zipCode,
     this.district,
@@ -66,9 +69,10 @@ class DetailedHouse {
   factory DetailedHouse.fromJson(Map<String, dynamic> json) =>
       _$DetailedHouseFromJson(json);
 
-  House toHouse(List<String>? photos) {
+  House toHouse(List<Photo>? photos, String id) {
     return House(
       Location(
+        voivodeship: voivodeship,
         city: city,
         district: district,
         streetName: streetName,
@@ -92,6 +96,7 @@ class DetailedHouse {
         userPhoneNumber,
         userPhotoUrl,
       ),
+      id: id,
       photos ?? [],
       offerType: offerType,
       isLiked: isLiked,
