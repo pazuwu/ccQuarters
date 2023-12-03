@@ -86,6 +86,7 @@ class SearchBox extends StatelessWidget {
             icon: const Icon(Icons.clear, size: iconSize),
             onPressed: () {
               controller.clear();
+              if (onSubmitted != null) onSubmitted!("");
             },
           ),
           enabledBorder: const OutlineInputBorder(

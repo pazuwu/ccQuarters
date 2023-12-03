@@ -20,6 +20,10 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
     this.filter = filter;
   }
 
+  void saveSearch(String search) {
+    filter.title = search;
+  }
+
   Future<List<House>> getHouses(int pageNumber, int pageCount) async {
     final response = await houseService.getHouses(
       pageNumber: pageNumber,

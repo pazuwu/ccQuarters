@@ -4,23 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListOfHousesGate extends StatelessWidget {
-  const ListOfHousesGate({super.key});
+  const ListOfHousesGate({
+    super.key,
+    this.isSearch = false,
+  });
+
+  final bool isSearch;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Ogłoszenia na wynajem"),
+    return BlocProvider(
+      create: (_) => ListOfHousesCubit(
+        houseService: context.read(),
       ),
-      body: BlocProvider(
-        create: (_) => ListOfHousesCubit(
-          houseService: context.read(),
-        ),
-        child: BlocBuilder<ListOfHousesCubit, ListOfHousesState>(
-          builder: (context, state) {
-            return const ListOfHouses();
-          },
-        ),
+      child: BlocBuilder<ListOfHousesCubit, ListOfHousesState>(
+        builder: (context, state) {
+          return ListOfHouses(
+            isSearch: isSearch,
+          );
+        },
       ),
     );
   }
