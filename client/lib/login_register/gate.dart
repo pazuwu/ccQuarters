@@ -17,6 +17,7 @@ class AuthGate extends StatelessWidget {
         userService: context.read(),
         houseService: context.read(),
         alertService: context.read(),
+        vtService: context.read(),
       ),
       child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
         if (state is SignedInState) {

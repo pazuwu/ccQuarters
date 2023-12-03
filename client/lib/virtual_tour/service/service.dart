@@ -21,16 +21,14 @@ class VTService {
 
   final Dio _dio;
   final String _url;
-  String _token =
-      "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ0OWU0N2ZiZGQ0ZWUyNDE0Nzk2ZDhlMDhjZWY2YjU1ZDA3MDRlNGQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2NxdWFydGVyc21pbmkiLCJhdWQiOiJjY3F1YXJ0ZXJzbWluaSIsImF1dGhfdGltZSI6MTY5OTA2NzQ0NCwidXNlcl9pZCI6IjI0RXNmWEJYc0hjc2pMOHJCcHhlS2dQOFRNWjIiLCJzdWIiOiIyNEVzZlhCWHNIY3NqTDhyQnB4ZUtnUDhUTVoyIiwiaWF0IjoxNjk5MDY3NDQ0LCJleHAiOjE2OTkwNzEwNDQsImVtYWlsIjoidnRAdGVzdC5wbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ2dEB0ZXN0LnBsIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.ZVjLDqF9WNcNZfhWwyMbsrX9auttw8hasPvLFlTR3oTubJFeM2pBgV0yh8LmxCnmbWp3CXg1auqzR-FtjSg8JZhONUFECI-hoFTIGzTMVJ4G-cd_i7Wd7zeCbnQOCh4n96Anwo_pL7CKCgbOfH8BdxNjmj1ayr-QP8ET5PSpcG5q0fce-bkT_ecJcMirMqXzOuFGbmh8EFXRce-tkBd510uhWdcEblSxpZJjy8GNdn4LO2RCPwMHYAM3p7oKPoo7FjZVlJUUVRiDR7A1XIImPAVKdBmP1IVip9u0b1WspiVxpTGMzxnZYmQ6UF1q2YnHnRE3ir28rOknV0JMx3hMpw";
-  VTService({
-    required dio,
-    required url,
-  })  : _url = url,
+  String _token = "";
+
+  VTService(Dio dio, String url)
+      : _url = url,
         _dio = dio;
 
   void setToken(String token) {
-    _token = "Bearer $token";
+    _token = token;
   }
 
   Future<VTServiceResponse<Tour>> getTour(String tourId) async {
@@ -254,6 +252,30 @@ class VTService {
         return VTServiceResponse(error: ErrorType.alreadyExists);
       }
 
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future<VTServiceResponse<String>> postTour() async {
+    try {
+      var response = await _dio.post(
+        "$_url/$_tours",
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: _token,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      var id = response.headers.value("location");
+
+      if ((response.statusCode == StatusCode.OK ||
+              response.statusCode == StatusCode.CREATED) &&
+          id != null) {
+        return VTServiceResponse(data: id);
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
       return _catchCommonErrors(e);
     }
   }

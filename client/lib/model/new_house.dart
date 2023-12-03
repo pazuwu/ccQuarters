@@ -50,6 +50,7 @@ class NewHouseDetails {
     this.roomCount = 0,
     this.area = 0,
     this.floor,
+    this.virtualTourId,
   });
 
   String description;
@@ -58,4 +59,5 @@ class NewHouseDetails {
   int roomCount;
   double area;
   int? floor;
+  String? virtualTourId;
 }

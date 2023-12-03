@@ -15,6 +15,7 @@ class AddHouseGate extends StatelessWidget {
     return BlocProvider(
       create: (_) => AddHouseFormCubit(
         houseService: context.read(),
+        vtService: context.read(),
       ),
       child: BlocBuilder<AddHouseFormCubit, HouseFormState>(
         builder: (context, state) {
@@ -38,7 +39,9 @@ class AddHouseGate extends StatelessWidget {
           } else if (state is MapState) {
             return const MapView();
           } else if (state is PhotosFormState) {
-            return PhotoView(photos: state.photos);
+            return PhotoView(
+                photos: state.photos,
+                createVirtualTour: state.createVirtualTour);
           } else if (state is SummaryState) {
             return Center(
               child: Column(

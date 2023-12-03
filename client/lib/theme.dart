@@ -11,6 +11,17 @@ class AppTheme {
       errorColor: Colors.red,
       brightness: Brightness.light,
     ),
+    switchTheme: SwitchThemeData(
+      trackOutlineColor: MaterialStateProperty.all(Colors.blueGrey[200]!),
+      thumbColor: MaterialStateProperty.all(Colors.white),
+      trackColor: MaterialStateProperty.resolveWith((states) {
+        if (states.contains(MaterialState.selected)) {
+          return Colors.blueGrey.shade500;
+        }
+
+        return Colors.grey.shade500;
+      }),
+    ),
     inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.blueGrey[50],

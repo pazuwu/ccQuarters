@@ -28,6 +28,7 @@ class CreateHouseRequest {
   OfferType offerType;
   @BuildingTypeConverter()
   BuildingType buildingType;
+  String? virtualTourId;
 
   CreateHouseRequest(
       this.title,
@@ -58,6 +59,7 @@ class CreateHouseRequest {
         area = newHouse.houseDetails.area,
         floor = newHouse.houseDetails.floor,
         description = newHouse.houseDetails.description,
+        virtualTourId = newHouse.houseDetails.virtualTourId,
         voivodeship = newHouse.location.voivodeship.toString(),
         city = newHouse.location.city,
         zipCode = newHouse.location.zipCode,
@@ -76,6 +78,7 @@ class CreateHouseRequest {
         roomCount = house.details.roomCount,
         area = house.details.area,
         floor = house.details.floor,
+        virtualTourId = house.details.virtualTourId,
         description = house.details.description,
         voivodeship = house.location.voivodeship,
         city = house.location.city,

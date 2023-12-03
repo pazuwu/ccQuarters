@@ -7,6 +7,7 @@ import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key, required this.house});
@@ -24,12 +25,13 @@ class DetailsView extends StatelessWidget {
         ),
         title: Text(house.details.title),
         actions: [
-          if (house.virtualTourId != null)
+          if (house.details.virtualTourId != null)
             Icon360(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => VirtualTourGate(
-                          tourId: house.virtualTourId!,
+                          authService: context.read(),
+                          tourId: house.details.virtualTourId!,
                           readOnly: true,
                         )));
               },

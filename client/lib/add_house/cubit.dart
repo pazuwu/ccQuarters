@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/services/houses/service.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/model/building_type.dart';
@@ -38,9 +39,10 @@ class LocationFormState extends HouseFormState {
 class MapState extends HouseFormState {}
 
 class PhotosFormState extends HouseFormState {
-  PhotosFormState(this.photos);
+  PhotosFormState(this.photos, this.createVirtualTour);
 
   List<Uint8List> photos;
+  bool createVirtualTour;
 }
 
 class SummaryState extends HouseFormState {
@@ -51,7 +53,7 @@ class SummaryState extends HouseFormState {
 class SendingData extends HouseFormState {}
 
 class AddHouseFormCubit extends Cubit<HouseFormState> {
-  AddHouseFormCubit({required this.houseService})
+  AddHouseFormCubit({required this.houseService, required this.vtService})
       : super(ChooseTypeFormState(NewHouseDetails()));
 
   HouseService houseService;
@@ -59,6 +61,9 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     NewLocation(),
     NewHouseDetails(),
   );
+
+  VTService vtService;
+  bool _createVirtualTour = false;
 
   void goToLocationForm() {
     emit(LocationFormState(house.location, house.buildingType));
@@ -81,11 +86,18 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void goToPhotosForm() {
-    emit(PhotosFormState(house.photos));
+    emit(PhotosFormState(house.photos, _createVirtualTour));
   }
 
   Future<void> sendData() async {
     emit(SendingData());
+
+    if (_createVirtualTour) {
+      var result = await vtService.postTour();
+      if (result.data != null) {
+        house.houseDetails.virtualTourId = result.data!;
+      }
+    }
 
     var result = await houseService.createHouse(house);
     if (result.data != null) {
@@ -130,5 +142,9 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
 
   void savePhotos(List<Uint8List> photos) {
     house.photos = photos;
+  }
+
+  void saveCreateVirtualTour(bool createVirtualTour) {
+    _createVirtualTour = createVirtualTour;
   }
 }

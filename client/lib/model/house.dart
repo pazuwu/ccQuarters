@@ -12,11 +12,9 @@ class House {
     required this.id,
     required this.offerType,
     required this.isLiked,
-    this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",
   });
 
   String id;
-  String? virtualTourId;
   Location location;
   HouseDetails details;
   OfferType offerType;
@@ -58,6 +56,7 @@ class HouseDetails {
     this.roomCount,
     this.floor,
     required this.buildingType,
+    this.virtualTourId,
   });
 
   String? description;
@@ -67,4 +66,5 @@ class HouseDetails {
   double area;
   int? floor;
   BuildingType buildingType;
+  String? virtualTourId;
 }

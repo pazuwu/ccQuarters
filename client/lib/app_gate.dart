@@ -5,6 +5,7 @@ import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/users/service.dart';
 import 'package:ccquarters/theme.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,9 @@ class AppMainGate extends StatelessWidget {
         Provider(
           create: (context) =>
               AlertService(Dio(), "${Environment.apiUrl}/alerts"),
+        ),
+        Provider(
+          create: (context) => VTService(Dio(), Environment.vtApiUrl),
         ),
         Provider(
           create: (context) {

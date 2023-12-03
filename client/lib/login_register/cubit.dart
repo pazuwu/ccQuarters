@@ -5,6 +5,7 @@ import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/users/service.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -17,6 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
     required this.userService,
     required this.houseService,
     required this.alertService,
+    required this.vtService,
   }) : super(kIsWeb || authService.isSignedIn
             ? SigningInState()
             : NeedsSigningInState()) {
@@ -39,6 +41,7 @@ class AuthCubit extends Cubit<AuthState> {
   UserService userService;
   HouseService houseService;
   AlertService alertService;
+  VTService vtService;
   User? user;
 
   Future<void> skipRegisterAndLogin() async {
@@ -156,6 +159,7 @@ class AuthCubit extends Cubit<AuthState> {
       userService.setToken(token);
       houseService.setToken(token);
       alertService.setToken(token);
+      vtService.setToken(token);
     }
   }
 }
