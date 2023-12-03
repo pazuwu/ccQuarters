@@ -1,11 +1,11 @@
 ﻿using CloudStorageLibrary;
-using VirtualTourAPI.Repository;
+using VirtualTourAPI.Service;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class TourEndpoints
     {
-        public static async Task<IResult> Get(string tourId, IVTRepository repository, IStorage storage)
+        public static async Task<IResult> Get(string tourId, IVTService repository, IStorage storage)
         {
             var tour = await repository.GetTour(tourId);
 
@@ -24,7 +24,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(tour);
         }
 
-        public static async Task<IResult> Post(IVTRepository repository)
+        public static async Task<IResult> Post(IVTService repository)
         {
             var tourId = await repository.CreateTour();
 
@@ -34,7 +34,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, IVTRepository repository)
+        public static async Task<IResult> Delete(string tourId, IVTService repository)
         {
             await repository.DeleteTour(tourId);
             return Results.Ok();

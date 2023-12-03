@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CloudStorageLibrary\CloudStorageLibrary.csproj" />
+    <ProjectReference Include="..\RepositoryLibrary\RepositoryLibrary.csproj" />
   </ItemGroup>
 
 </Project>

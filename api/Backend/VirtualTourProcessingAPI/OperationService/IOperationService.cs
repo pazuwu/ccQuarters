@@ -1,8 +1,8 @@
 ﻿using VirtualTourProcessingServer.Model;
 
-namespace VirtualTourProcessingServer.OperationRepository
+namespace VirtualTourProcessingServer.OperationService
 {
-    public interface IOperationRepository
+    public interface IOperationService
     {
         Task UpdateOperation(VTOperation operation);
         Task DeleteOperation(VTOperation operation);

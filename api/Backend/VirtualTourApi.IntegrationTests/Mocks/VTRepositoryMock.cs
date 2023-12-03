@@ -1,10 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using VirtualTourAPI.Model;
-using VirtualTourAPI.Repository;
+using VirtualTourAPI.Service;
 
 namespace VirtualTourApi.IntegrationTests.Mocks
 {
-    internal class VTRepositoryMock : IVTRepository
+    internal class VTRepositoryMock : IVTService
     {
         private ConcurrentDictionary<string, TourDTO> _tours = new();
 
