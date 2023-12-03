@@ -16,10 +16,10 @@ class AuthService {
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 
   Future<String?> getToken() async {
-    return await _firebaseAuth.currentUser?.getIdToken();
+    return "Bearer ${await _firebaseAuth.currentUser?.getIdToken()}";
   }
 
-   Future<SignInResult> signInAnnonymously() async {
+  Future<SignInResult> signInAnnonymously() async {
     await _firebaseAuth.signInAnonymously();
     return SignInResult.success;
   }

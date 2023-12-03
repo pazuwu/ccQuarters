@@ -19,10 +19,10 @@ class HouseService {
 
   final Dio _dio;
   final String _url;
-  String _token = "Bearer ";
+  String _token = "";
 
   void setToken(String token) {
-    _token = "Bearer $token";
+    _token = token;
   }
 
   Future<ServiceResponse<List<House>>> getHouses(
