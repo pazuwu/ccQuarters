@@ -1,12 +1,14 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
-import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/services/houses/service.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/services/houses/service.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 
 class HouseFormState {}
 
@@ -45,8 +47,15 @@ class PhotosFormState extends HouseFormState {
   bool createVirtualTour;
 }
 
-class SummaryState extends HouseFormState {
-  SummaryState(this.message);
+class SendingFinishedState extends HouseFormState {
+  String houseId;
+  SendingFinishedState({
+    required this.houseId,
+  });
+}
+
+class ErrorState extends HouseFormState {
+  ErrorState(this.message);
   String message;
 }
 
@@ -105,16 +114,16 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       for (var photo in house.photos) {
         var res = await houseService.addPhoto(houseId, photo);
         if (!res.data) {
-          emit(SummaryState("Błąd!"));
+          emit(ErrorState("Błąd!"));
           return;
         }
       }
     } else {
-      emit(SummaryState("Błąd!"));
+      emit(ErrorState("Błąd!"));
       return;
     }
 
-    emit(SummaryState("Wysłano!"));
+    emit(SendingFinishedState(houseId: result.data!));
   }
 
   void saveDetails(NewHouseDetails details) {
@@ -146,5 +155,14 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
 
   void saveCreateVirtualTour(bool createVirtualTour) {
     _createVirtualTour = createVirtualTour;
+  }
+
+  void clear() {
+    house = NewHouse(
+      NewLocation(),
+      NewHouseDetails(),
+    );
+
+    emit(ChooseTypeFormState(NewHouseDetails()));
   }
 }
