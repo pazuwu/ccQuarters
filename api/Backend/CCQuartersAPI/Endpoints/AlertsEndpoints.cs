@@ -1,27 +1,16 @@
-﻿using System.Data.SqlClient;
-using Dapper;
-using CCQuartersAPI.Responses;
+﻿using CCQuartersAPI.Responses;
 using System.Text;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using AuthLibrary;
-using Google.Api;
+using Microsoft.AspNetCore.Mvc;
+using RepositoryLibrary;
 
 namespace CCQuartersAPI.Endpoints
 {
     public class AlertsEndpoints
     {
-        private static string connectionString = "";
-
-        public static void Init(string connectionString)
+        public static async Task<IResult> GetAlerts([FromServices] IRelationalDBRepository repository, HttpContext context)
         {
-            AlertsEndpoints.connectionString = connectionString;
-        }
-
-        public static async Task<IResult> GetAlerts(HttpContext context)
-        {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -29,17 +18,15 @@ namespace CCQuartersAPI.Endpoints
 
             var query = @$"SELECT * FROM Alerts WHERE UserId = '{userId}'";
 
-            var alerts = await connection.QueryAsync<AlertDTO>(query);
+            var alerts = await repository.QueryAsync<AlertDTO>(query);
 
             return Results.Ok(new GetAlertsResponse
             {
                 Alerts = alerts.ToArray()
             });
         }
-        public static async Task<IResult> CreateAlert(AlertDTO alert, HttpContext context)
+        public static async Task<IResult> CreateAlert([FromServices] IRelationalDBRepository repository, AlertDTO alert, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -126,14 +113,12 @@ namespace CCQuartersAPI.Endpoints
 
             var insertQuery = $"{queryBuilder.ToString().TrimEnd(',', ' ')})";
 
-            await connection.ExecuteAsync(insertQuery);
+            await repository.ExecuteAsync(insertQuery);
 
             return Results.Ok();
         }
-        public static async Task<IResult> UpdateAlert(Guid alertId, AlertDTO alert, HttpContext context)
+        public static async Task<IResult> UpdateAlert([FromServices] IRelationalDBRepository repository, Guid alertId, AlertDTO alert, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -141,7 +126,7 @@ namespace CCQuartersAPI.Endpoints
 
             var query = @$"SELECT * FROM Alerts WHERE Id = '{alertId}'";
 
-            var alertQueried = await connection.QueryFirstAsync<AlertDTO>(query);
+            var alertQueried = await repository.QueryFirstAsync<AlertDTO>(query);
 
             if (alertQueried.UserId != userId)
                 return Results.Unauthorized();
@@ -196,14 +181,12 @@ namespace CCQuartersAPI.Endpoints
 
             var updateQuery = $"{queryBuilder.ToString().TrimEnd(',', ' ')} WHERE Id = '{alertId}'";
 
-            await connection.ExecuteAsync(updateQuery);
+            await repository.ExecuteAsync(updateQuery);
 
             return Results.Ok();
         }
-        public static async Task<IResult> DeleteAlert(Guid alertId, HttpContext context)
+        public static async Task<IResult> DeleteAlert([FromServices] IRelationalDBRepository repository, Guid alertId, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -211,14 +194,14 @@ namespace CCQuartersAPI.Endpoints
 
             var getQuery = @$"SELECT * FROM Alerts WHERE Id = '{alertId}'";
 
-            var alertQueried = await connection.QueryFirstAsync<AlertDTO>(getQuery);
+            var alertQueried = await repository.QueryFirstAsync<AlertDTO>(getQuery);
 
             if (alertQueried.UserId != userId)
                 return Results.Unauthorized();
 
             var deleteQuery = @$"DELETE FROM Alerts WHERE Id = '{alertId}'";
 
-            await connection.ExecuteAsync(deleteQuery);
+            await repository.ExecuteAsync(deleteQuery);
 
             return Results.Ok();
         }

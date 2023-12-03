@@ -1,7 +1,7 @@
 using AuthLibrary;
 using CCQuartersAPI.Endpoints;
 using CloudStorageLibrary;
-using Microsoft.AspNetCore.Builder;
+using RepositoryLibrary;
 
 namespace CCQuartersAPI
 {
@@ -21,6 +21,8 @@ namespace CCQuartersAPI
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddTransient<ITokenProvider, TokenProvider>();
             builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
+            builder.Services.AddScoped<IRelationalDBRepository, RelationalDBRepository>();
+            builder.Services.AddScoped<IDocumentDBRepository, DocumentDBRepository>();
 
             var app = builder.Build();
 
@@ -41,9 +43,6 @@ namespace CCQuartersAPI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
-            HousesEndpoints.Init(builder.Configuration["db"]!);
-            AlertsEndpoints.Init(builder.Configuration["db"]!);
 
             app.MapGet("/houses", HousesEndpoints.GetHouses).WithOpenApi().RequireFBAuthorization();
             app.MapGet("/houses/liked", HousesEndpoints.GetLikedHouses).WithOpenApi().RequireFBAuthorization();
