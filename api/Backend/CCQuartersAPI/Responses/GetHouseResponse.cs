@@ -41,7 +41,7 @@ namespace CCQuartersAPI.Responses
         public double Area { get; set; }
         public int? Floor { get; set; }
         public string? Description { get; set; }
-        public Dictionary<string, object> Details { get; set; }
+        public Dictionary<string, object>? Details { get; set; }
         public string City { get; set; }
         public string Voivodeship { get; set; }
         public string ZipCode { get; set; }

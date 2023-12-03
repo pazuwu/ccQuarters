@@ -1,20 +1,21 @@
 ﻿using CCQuartersAPI.Mappers;
 using CCQuartersAPI.Responses;
 using CloudStorageLibrary;
-using Google.Cloud.Firestore;
+using RepositoryLibrary;
 
 namespace CCQuartersAPI.CommonClasses
 {
     public static class CommonGetters
     {
-        public static async Task<UserDTO?> GetUser(this FirestoreDb firestoreDb, string userId, IStorage storage)
+#warning TODO: move to UserService (once it will be created)
+        public static async Task<UserDTO?> GetUser(this IDocumentDBRepository documentRepository, string userId, IStorage storage)
         {
-            DocumentReference userRef = firestoreDb.Collection("users").Document(userId);
-            DocumentSnapshot userSnapshot = await userRef.GetSnapshotAsync();
-            if (!userSnapshot.Exists)
+            var userDocument = await documentRepository.GetAsync("users", userId);
+
+            if (userDocument is null)
                 return null;
 
-            var user = userSnapshot.MapToUserDTO();
+            var user = userDocument.MapToUserDTO();
 
             try
             {

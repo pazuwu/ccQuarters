@@ -1,5 +1,4 @@
-﻿using System.Data.SqlClient;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using AuthLibrary;
 using CCQuartersAPI.CommonClasses;
@@ -7,29 +6,20 @@ using CCQuartersAPI.Mappers;
 using CCQuartersAPI.Requests;
 using CCQuartersAPI.Responses;
 using CloudStorageLibrary;
-using Dapper;
-using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryLibrary;
 
 namespace CCQuartersAPI.Endpoints
 {
     public class HousesEndpoints
     {
-        private static string connectionString = "";
         private const int DEFAULT_PAGE_NUMBER = 0;
         private const int DEFAULT_PAGE_SIZE = 50;
 
-        public static void Init(string connectionString)
-        {
-            HousesEndpoints.connectionString = connectionString;
-        }
-
-        public static async Task<IResult> GetHouses(HttpContext context, [FromServices]IStorage storage, [FromBody]GetHousesBody body, int? pageNumber, int? pageSize)
+        public static async Task<IResult> GetHouses(HttpContext context, [FromServices] IRelationalDBRepository relationalRepository, [FromServices]IStorage storage, [FromBody]GetHousesBody body, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
         {
             int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
             int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
-
-            using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -51,7 +41,7 @@ namespace CCQuartersAPI.Endpoints
             queryBuilder.Append($@"OFFSET {pageNumberValue * pageSizeValue} ROWS
                                 FETCH NEXT {pageSizeValue} ROWS ONLY");
 
-            var houses = await connection.QueryAsync<SimpleHouseDTO>(queryBuilder.ToString());
+            var houses = await relationalRepository.QueryAsync<SimpleHouseDTO>(queryBuilder.ToString());
 
             foreach (var house in houses)
                 if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
@@ -65,12 +55,10 @@ namespace CCQuartersAPI.Endpoints
             });
         }
 
-        public static async Task<IResult> GetLikedHouses(HttpContext context, IStorage storage, int? pageNumber, int? pageSize)
+        public static async Task<IResult> GetLikedHouses(HttpContext context, [FromServices] IRelationalDBRepository repository, IStorage storage, int? pageNumber, int? pageSize)
         {
             int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
             int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
-
-            using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -87,7 +75,7 @@ namespace CCQuartersAPI.Endpoints
                         OFFSET {pageNumberValue * pageSizeValue} ROWS
                         FETCH NEXT {pageSizeValue} ROWS ONLY";
 
-            var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
+            var houses = await repository.QueryAsync<SimpleHouseDTO>(query);
 
             foreach (var house in houses)
                 if(!string.IsNullOrWhiteSpace(house.PhotoUrl))
@@ -101,12 +89,10 @@ namespace CCQuartersAPI.Endpoints
             });
         }
 
-        public static async Task<IResult> GetMyHouses(HttpContext context, IStorage storage, int? pageNumber, int? pageSize)
+        public static async Task<IResult> GetMyHouses(HttpContext context, [FromServices] IRelationalDBRepository repository, IStorage storage, int? pageNumber, int? pageSize)
         {
             int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
             int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
-
-            using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -123,7 +109,7 @@ namespace CCQuartersAPI.Endpoints
                         OFFSET {pageNumberValue * pageSizeValue} ROWS
                         FETCH NEXT {pageSizeValue} ROWS ONLY";
 
-            var houses = await connection.QueryAsync<SimpleHouseDTO>(query);
+            var houses = await repository.QueryAsync<SimpleHouseDTO>(query);
 
             foreach (var house in houses)
                 if (!string.IsNullOrWhiteSpace(house.PhotoUrl))
@@ -137,61 +123,54 @@ namespace CCQuartersAPI.Endpoints
             });
         }
 
-        public static async Task<IResult> CreateHouse(CreateHouseRequest houseRequest, HttpContext context)
+        public static async Task<IResult> CreateHouse([FromServices] IRelationalDBRepository relationalRepository, [FromServices] IDocumentDBRepository documentRepository, CreateHouseRequest houseRequest, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
 
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            connection.Open();
+            using var trans = relationalRepository.BeginTransaction();
             try
             {
-                using var trans = connection.BeginTransaction();
-                FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
+                string additionalInfoId = await documentRepository.SetAsync("additionalInfos", Guid.NewGuid().ToString(), houseRequest.AdditionalInfo ?? new Dictionary<string, string>());
 
-                DocumentReference additionalInfoRef = firestoreDb.Collection("additionalInfos").Document(Guid.NewGuid().ToString());
-                await additionalInfoRef.SetAsync(houseRequest.AdditionalInfo ?? new Dictionary<string, string>(), SetOptions.MergeAll);
-
-                DocumentReference descriptionRef = firestoreDb.Collection("descriptions").Document(Guid.NewGuid().ToString());
-                await descriptionRef.SetAsync(new Dictionary<string, object>()
+                string descriptionId = await documentRepository.SetAsync("descriptions", Guid.NewGuid().ToString(), new Dictionary<string, object>()
                     {
                         {"description", houseRequest.Description ?? "" }
-                    }, SetOptions.MergeAll);
+                    });
 
                 var locationQuery = @$"INSERT INTO Locations (Id, City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, GeoX, GeoY)
                                     OUTPUT INSERTED.Id
                                     VALUES (NEWID(), '{houseRequest.City}', '{houseRequest.Voivodeship}', '{houseRequest.ZipCode}', '{houseRequest.District}', '{houseRequest.StreetName}', '{houseRequest.StreetNumber}', '{houseRequest.FlatNumber}', '{houseRequest.GeoX}', '{houseRequest.GeoY}')";
 
-                var locationId = await connection.QueryFirstAsync<Guid>(locationQuery, transaction: trans);
+                var locationId = await relationalRepository.QueryFirstAsync<Guid>(locationQuery, transaction: trans);
 
                 var detailsQuery = @$"INSERT INTO Details (Id, DescriptionId, Price, RoomCount, Area, Floor, BuildingType, AdditionalInfoId, NerfId, Title)
                                     OUTPUT INSERTED.Id
-                                    VALUES (NEWID(), '{descriptionRef.Id}', {houseRequest.Price}, {houseRequest.RoomCount}, {houseRequest.Area}, {houseRequest.Floor}, {(int)houseRequest.BuildingType!}, '{additionalInfoRef.Id}', NULL, '{houseRequest.Title}')";
+                                    VALUES (NEWID(), '{descriptionId}', {houseRequest.Price}, {houseRequest.RoomCount}, {houseRequest.Area}, {houseRequest.Floor}, {(int)houseRequest.BuildingType!}, '{additionalInfoId}', NULL, '{houseRequest.Title}')";
 
-                var detailsId = await connection.QueryFirstAsync<Guid>(detailsQuery, transaction: trans);
+                var detailsId = await relationalRepository.QueryFirstAsync<Guid>(detailsQuery, transaction: trans);
 
                 var houseQuery = @$"INSERT INTO Houses (Id, UserId, LocationId, DetailsId, CreationDate, UpdateDate, OfferType)
                                     OUTPUT INSERTED.Id
                                     VALUES (NEWID(), '{userId}', '{locationId}', '{detailsId}', GETDATE(), GETDATE(), {(int)houseRequest!.OfferType!})";
 
-                var createdHouseId = await connection.QueryFirstAsync<Guid>(houseQuery, transaction: trans);
+                var createdHouseId = await relationalRepository.QueryFirstAsync<Guid>(houseQuery, transaction: trans);
 
-                trans.Commit();
+                relationalRepository.CommitTransaction(transaction: trans);
 
                 return Results.Created(createdHouseId.ToString(), null);
             }
-            finally
+            catch
             {
-                connection.Close();
+                relationalRepository.RollbackTransaction(transaction: trans);
+                throw;
             }
         }
-        public static async Task<IResult> GetHouse(Guid houseId, HttpContext context, IStorage storage)
+        public static async Task<IResult> GetHouse([FromServices] IRelationalDBRepository relationaRepository, [FromServices] IDocumentDBRepository documentRepository, Guid houseId, HttpContext context, IStorage storage)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
@@ -201,33 +180,25 @@ namespace CCQuartersAPI.Endpoints
                                 JOIN Locations l ON h.LocationId = l.Id
                                 WHERE h.Id = '{houseId}' AND h.DeleteDate IS NULL";
 
-            var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(houseQuery);
+            var houseQueried = await relationaRepository.QueryFirstOrDefaultAsync<DetailedHouseQueried>(houseQuery);
+
+            if (houseQueried is null)
+                return Results.NotFound();
+
             var house = houseQueried.Map();
 
             var photosQuery = @$"SELECT PhotoId AS Filename, [Order] FROM HousePhotos WHERE HouseId = '{houseId}' ORDER BY [Order]";
 
-            var photos = await connection.QueryAsync<PhotoDTO>(photosQuery);
+            var photos = await relationaRepository.QueryAsync<PhotoDTO>(photosQuery);
 
             foreach (var photo in photos)
                 photo.Url = await storage.GetDownloadUrl("housePhotos", photo.Filename);
 
-            FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
-            DocumentReference descriptionDoc = firestoreDb.Collection("descriptions").Document($"{houseQueried.DescriptionId}");
-            DocumentSnapshot descriptionSnapshot = await descriptionDoc.GetSnapshotAsync();
-            if (descriptionSnapshot.Exists)
-            {
-                Dictionary<string, object> values = descriptionSnapshot.ToDictionary();
-                house.Description = values.FirstOrDefault().Value.ToString();
-            }
+            house.Description = (await documentRepository.GetAsync("descriptions", houseQueried.DescriptionId.ToString()))?.ToDictionary().FirstOrDefault().Value?.ToString() ?? string.Empty;
 
-            DocumentReference detailsDoc = firestoreDb.Collection("additionalInfos").Document($"{houseQueried.AdditionalInfoId}");
-            DocumentSnapshot detailsSnapshot = await detailsDoc.GetSnapshotAsync();
-            if (detailsSnapshot.Exists)
-            {
-                house.Details = detailsSnapshot.ToDictionary();
-            }
+            house.Details = (await documentRepository.GetAsync("additionalInfos", houseQueried.AdditionalInfoId.ToString()))?.ToDictionary();
 
-            var user = await firestoreDb.GetUser(houseQueried.UserId, storage);
+            var user = await documentRepository.GetUser(houseQueried.UserId, storage);
 
             if(user != null) 
             {
@@ -245,16 +216,14 @@ namespace CCQuartersAPI.Endpoints
             });
         }
 
-        public static async Task<IResult> UpdateHouse(Guid houseId, CreateHouseRequest houseRequest, HttpContext context)
+        public static async Task<IResult> UpdateHouse([FromServices] IRelationalDBRepository repository, [FromServices] IDocumentDBRepository documentRepository, Guid houseId, CreateHouseRequest houseRequest, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            connection.Open();
+            using var trans = repository.BeginTransaction();
             try
             {
                 var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 0 AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
@@ -263,7 +232,7 @@ namespace CCQuartersAPI.Endpoints
                         JOIN Locations l ON h.LocationId = l.Id
                         WHERE h.Id = '{houseId}' AND h.DeleteDate IS NULL";
 
-                var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(houseQuery);
+                var houseQueried = await repository.QueryFirstAsync<DetailedHouseQueried>(houseQuery, transaction: trans);
 
                 if (houseQueried is null)
                     return Results.NotFound("House not found");
@@ -271,56 +240,46 @@ namespace CCQuartersAPI.Endpoints
                 if (houseQueried.UserId != userId)
                     return Results.Unauthorized();
 
-                using var trans = connection.BeginTransaction();
-                FirestoreDb firestoreDb = FirestoreDb.Create("ccquartersmini");
-
                 if (houseRequest.AdditionalInfo is not null)
-                {
-                    DocumentReference additionalInfoRef = firestoreDb.Collection("additionalInfos").Document(houseQueried.AdditionalInfoId.ToString());
-                    await additionalInfoRef.SetAsync(houseRequest.AdditionalInfo, SetOptions.MergeAll);
-                }
+                    await documentRepository.SetAsync("additionalInfo", houseQueried.AdditionalInfoId.ToString(), houseRequest.AdditionalInfo);
 
                 if (houseRequest.Description is not null)
-                {
-                    DocumentReference descriptionRef = firestoreDb.Collection("descriptions").Document(houseQueried.DescriptionId.ToString());
-                    await descriptionRef.SetAsync(new Dictionary<string, object>()
+                    await documentRepository.SetAsync("descriptions", houseQueried.DescriptionId.ToString(), new Dictionary<string, object>()
                         {
                             {"description", houseRequest.Description ?? "" }
-                        }, SetOptions.MergeAll);
-                }
+                        });
 
                 var locationQuery = @$"UPDATE Locations
                                     SET  City = '{houseRequest.City ?? houseQueried.City}', Voivodeship = '{houseRequest.Voivodeship ?? houseQueried.Voivodeship}', ZipCode = '{houseRequest.ZipCode ?? houseQueried.ZipCode}', District = '{houseRequest.District ?? houseQueried.District}', StreetName = '{houseRequest.StreetName ?? houseQueried.StreetName}', StreetNumber = '{houseRequest.StreetNumber ?? houseQueried.StreetNumber}', FlatNumber = '{houseRequest.FlatNumber ?? houseQueried.FlatNumber}', GeoX = {houseRequest.GeoX ?? houseQueried.GeoX}, GeoY = {houseRequest.GeoY ?? houseQueried.GeoY}
                                     WHERE Id IN (SELECT LocationId FROM Houses WHERE Id = '{houseId}')";
 
-                await connection.ExecuteAsync(locationQuery, transaction: trans);
+                await repository.ExecuteAsync(locationQuery, transaction: trans);
 
                 var detailsQuery = @$"UPDATE Details
                                     SET Price = {houseRequest.Price ?? houseQueried.Price}, RoomCount = {houseRequest.RoomCount ?? houseQueried.RoomCount}, Area = {houseRequest.Area ?? houseQueried.Area}, Floor = {houseRequest.Floor ?? houseQueried.Floor}, BuildingType = {(int)(houseRequest.BuildingType ?? houseQueried.BuildingType)}, Title = '{houseRequest.Title ?? houseQueried.Title}'
                                     WHERE Id IN (SELECT DetailsId FROM Houses WHERE Id = '{houseId}')";
 
-                await connection.ExecuteAsync(detailsQuery, transaction: trans);
+                await repository.ExecuteAsync(detailsQuery, transaction: trans);
 
                 var houseUpdateQuery = @$"UPDATE Houses 
                                         SET UpdateDate = GETDATE(), OfferType = {(int)(houseRequest.OfferType ?? houseQueried.OfferType)}
                                         WHERE Id = '{houseId}'";
 
-                await connection.ExecuteAsync(houseUpdateQuery, transaction: trans);
+                await repository.ExecuteAsync(houseUpdateQuery, transaction: trans);
 
-                trans.Commit();
+                repository.CommitTransaction(transaction: trans);
             }
-            finally
+            catch
             {
-                connection.Close();
-            }
+                repository.RollbackTransaction(transaction: trans);
+                throw;
+            }   
 
             return Results.Ok();
         }
 
-        public static async Task<IResult> DeleteHouse(Guid houseId, HttpContext context)
+        public static async Task<IResult> DeleteHouse([FromServices] IRelationalDBRepository repository, Guid houseId, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -332,7 +291,7 @@ namespace CCQuartersAPI.Endpoints
                         JOIN Locations l ON h.LocationId = l.Id
                         WHERE h.Id = '{houseId}' AND h.DeleteDate IS NULL";
 
-            var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(getQuery);
+            var houseQueried = await repository.QueryFirstAsync<DetailedHouseQueried>(getQuery);
 
             if (houseQueried.UserId != userId)
                 return Results.Unauthorized();
@@ -341,15 +300,13 @@ namespace CCQuartersAPI.Endpoints
                         SET DeleteDate = GETDATE()
                         WHERE Id = '{houseId}'";
 
-            await connection.ExecuteAsync(deleteQuery);
+            await repository.ExecuteAsync(deleteQuery);
 
             return Results.Ok();
         }
 
-        public static async Task<IResult> LikeHouse(Guid houseId, HttpContext context)
+        public static async Task<IResult> LikeHouse([FromServices] IRelationalDBRepository repository, Guid houseId, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -361,15 +318,13 @@ namespace CCQuartersAPI.Endpoints
                            VALUES ('{userId}', '{houseId}')
                        END";
 
-            await connection.ExecuteAsync(query);
+            await repository.ExecuteAsync(query);
 
             return Results.Ok();
         }
 
-        public static async Task<IResult> UnlikeHouse(Guid houseId, HttpContext context)
+        public static async Task<IResult> UnlikeHouse([FromServices] IRelationalDBRepository repository, Guid houseId, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -377,15 +332,13 @@ namespace CCQuartersAPI.Endpoints
 
             var query = @$"DELETE FROM LikedHouses WHERE UserId = '{userId}' AND HouseId = '{houseId}'";
 
-            await connection.ExecuteAsync(query);
+            await repository.ExecuteAsync(query);
 
             return Results.Ok();
         }
 
-        public static async Task<IResult> AddPhoto([FromServices]IStorage storage, Guid houseId, IFormFile file, HttpContext context)
+        public static async Task<IResult> AddPhoto([FromServices] IRelationalDBRepository repository, [FromServices]IStorage storage, Guid houseId, IFormFile file, HttpContext context)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -397,29 +350,27 @@ namespace CCQuartersAPI.Endpoints
                         JOIN Locations l ON h.LocationId = l.Id
                         WHERE h.Id = '{houseId}' AND h.DeleteDate IS NULL";
 
-            var houseQueried = await connection.QueryFirstAsync<DetailedHouseQueried>(getQuery);
+            var houseQueried = await repository.QueryFirstAsync<DetailedHouseQueried>(getQuery);
 
             if (houseQueried?.UserId != userId)
                 return Results.Unauthorized();
 
             var selectQuery = $@"SELECT [Order] FROM HousePhotos WHERE HouseId = '{houseId}' ORDER BY [Order] DESC";
 
-            int count = await connection.QueryFirstOrDefaultAsync<int?>(selectQuery) ?? 0;
+            int count = await repository.QueryFirstOrDefaultAsync<int?>(selectQuery) ?? 0;
 
             string filename = $@"{houseId}_{count + 1}";
 
             var insertQuery = $@"INSERT INTO HousePhotos VALUES ('{houseId}', '{filename}', {count + 1})";
 
-            await connection.ExecuteAsync(insertQuery);
+            await repository.ExecuteAsync(insertQuery);
 
             await storage.UploadFileAsync("housePhotos", file.OpenReadStream(), filename);
             return Results.Ok();
         }
 
-        public static async Task<IResult> DeletePhotos([FromServices] IStorage storage, HttpContext context, [FromBody] DeletePhotosRequest request)
+        public static async Task<IResult> DeletePhotos([FromServices] IRelationalDBRepository repository, [FromServices] IStorage storage, HttpContext context, [FromBody] DeletePhotosRequest request)
         {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
@@ -430,7 +381,7 @@ namespace CCQuartersAPI.Endpoints
                         LEFT JOIN HousePhotos p ON h.Id = p.HouseId
                         WHERE PhotoId IN @filenames";
 
-            var housePhotoQueried = await connection.QueryAsync<HousePhotoQueried>(getQuery, new { filenames = request.Filenames });
+            var housePhotoQueried = await repository.QueryAsync<HousePhotoQueried>(getQuery, new { filenames = request.Filenames });
 
             if (!housePhotoQueried.Any())
                 return Results.NotFound();
@@ -440,7 +391,7 @@ namespace CCQuartersAPI.Endpoints
 
             var deleteQuery = $@"DELETE FROM HousePhotos WHERE PhotoId IN @filenames";
 
-            await connection.ExecuteAsync(deleteQuery, new { filenames = request.Filenames });
+            await repository.ExecuteAsync(deleteQuery, new { filenames = request.Filenames });
 
             foreach(string filename in request.Filenames)
                 await storage.DeleteFileAsync("housePhotos", filename);
