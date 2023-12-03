@@ -134,9 +134,9 @@ namespace CCQuartersAPI.Endpoints
             using var trans = relationalRepository.BeginTransaction();
             try
             {
-                string additionalInfoId = await documentRepository.SetAsync("additionalInfos", Guid.NewGuid().ToString(), houseRequest.AdditionalInfo ?? new Dictionary<string, string>());
+                string additionalInfoId = await documentRepository.AddAsync("additionalInfos", houseRequest.AdditionalInfo ?? new Dictionary<string, string>());
 
-                string descriptionId = await documentRepository.SetAsync("descriptions", Guid.NewGuid().ToString(), new Dictionary<string, object>()
+                string descriptionId = await documentRepository.AddAsync("descriptions", new Dictionary<string, object>()
                     {
                         {"description", houseRequest.Description ?? "" }
                     });
@@ -194,9 +194,9 @@ namespace CCQuartersAPI.Endpoints
             foreach (var photo in photos)
                 photo.Url = await storage.GetDownloadUrl("housePhotos", photo.Filename);
 
-            house.Description = (await documentRepository.GetAsync("descriptions", houseQueried.DescriptionId.ToString()))?.ToDictionary().FirstOrDefault().Value?.ToString() ?? string.Empty;
+            house.Description = (await documentRepository.GetAsync($"descriptions/{houseQueried.DescriptionId}"))?.ToDictionary().FirstOrDefault().Value?.ToString() ?? string.Empty;
 
-            house.Details = (await documentRepository.GetAsync("additionalInfos", houseQueried.AdditionalInfoId.ToString()))?.ToDictionary();
+            house.Details = (await documentRepository.GetAsync($"additionalInfos/{houseQueried.AdditionalInfoId}"))?.ToDictionary();
 
             var user = await documentRepository.GetUser(houseQueried.UserId, storage);
 
@@ -241,10 +241,10 @@ namespace CCQuartersAPI.Endpoints
                     return Results.Unauthorized();
 
                 if (houseRequest.AdditionalInfo is not null)
-                    await documentRepository.SetAsync("additionalInfo", houseQueried.AdditionalInfoId.ToString(), houseRequest.AdditionalInfo);
+                    await documentRepository.SetAsync($"additionalInfo/{houseQueried.AdditionalInfoId}", houseRequest.AdditionalInfo);
 
                 if (houseRequest.Description is not null)
-                    await documentRepository.SetAsync("descriptions", houseQueried.DescriptionId.ToString(), new Dictionary<string, object>()
+                    await documentRepository.SetAsync($"descriptions/{houseQueried.DescriptionId}", new Dictionary<string, object>()
                         {
                             {"description", houseRequest.Description ?? "" }
                         });

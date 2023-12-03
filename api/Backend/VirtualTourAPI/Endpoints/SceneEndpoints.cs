@@ -1,13 +1,13 @@
 ﻿using CloudStorageLibrary;
 using VirtualTourAPI.Model;
-using VirtualTourAPI.Repository;
 using VirtualTourAPI.Requests;
+using VirtualTourAPI.Service;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class SceneEndpoints
     {
-        public static async Task<IResult> Post(string tourId, PostSceneRequest request, IVTRepository repository)
+        public static async Task<IResult> Post(string tourId, PostSceneRequest request, IVTService repository)
         {
             var newScene = new SceneDTO()
             {
@@ -22,7 +22,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(createdSceneId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, string sceneId, IVTRepository repository)
+        public static async Task<IResult> Delete(string tourId, string sceneId, IVTService repository)
         {
             await repository.DeleteScene(tourId, sceneId);
             return Results.Ok();

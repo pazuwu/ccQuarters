@@ -2,6 +2,7 @@ using AuthLibrary;
 using CloudStorageLibrary;
 using VirtualTourAPI.Endpoints;
 using VirtualTourAPI.Repository;
+using VirtualTourAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,7 @@ builder.Services.Configure<DocumentDBOptions>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
-builder.Services.AddTransient<IVTRepository, VTRepository>();
+builder.Services.AddTransient<IVTService, VTService>();
 
 var app = builder.Build();
 

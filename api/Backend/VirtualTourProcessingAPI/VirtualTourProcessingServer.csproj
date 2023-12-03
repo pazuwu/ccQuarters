@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CloudStorageLibrary\CloudStorageLibrary.csproj" />
+    <ProjectReference Include="..\RepositoryLibrary\RepositoryLibrary.csproj" />
     <ProjectReference Include="..\VirtualTourAPI.ServiceClient\VirtualTourAPI.ServiceClient.csproj" />
   </ItemGroup>
 

@@ -10,7 +10,7 @@ namespace CCQuartersAPI.CommonClasses
 #warning TODO: move to UserService (once it will be created)
         public static async Task<UserDTO?> GetUser(this IDocumentDBRepository documentRepository, string userId, IStorage storage)
         {
-            var userDocument = await documentRepository.GetAsync("users", userId);
+            var userDocument = await documentRepository.GetAsync($"users/{userId}");
 
             if (userDocument is null)
                 return null;

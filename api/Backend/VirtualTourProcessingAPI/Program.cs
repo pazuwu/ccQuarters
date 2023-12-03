@@ -9,6 +9,7 @@ using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 using VirtualTourProcessingServer.OperationExecutors.Render;
 using VirtualTourProcessingServer.OperationRepository;
+using VirtualTourProcessingServer.OperationService;
 using VirtualTourProcessingServer.Processing;
 using VirtualTourProcessingServer.Processing.Interfaces;
 using VirtualTourProcessingServer.Services;
@@ -33,7 +34,7 @@ builder.Services.AddHttpClient<VTClient>((sp, http) =>
 builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
 
-builder.Services.AddSingleton<IOperationRepository, OperationRepository>();
+builder.Services.AddSingleton<IOperationService, OperationService>();
 
 builder.Services.Configure<ProcessingOptions>(options =>
     builder.Configuration.GetSection(nameof(ProcessingOptions)).Bind(options));

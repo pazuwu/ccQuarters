@@ -28,7 +28,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(tokenUserId) || tokenUserId != userId)
                 return Results.Unauthorized();
 
-            await documentRepository.SetAsync("users", userId, request.MapToDictionary());
+            await documentRepository.SetAsync($"users/{userId}", request.MapToDictionary());
 
             return Results.Ok();
         }
@@ -40,7 +40,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(tokenUserId) || userId != tokenUserId)
                 return Results.Unauthorized();
 
-            await documentRepository.DeleteAsync("users", userId);
+            await documentRepository.DeleteAsync($"users/{userId}");
 
             await storage.DeleteFileAsync("userPhotos", userId);
             return Results.Ok();
