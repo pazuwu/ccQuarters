@@ -79,6 +79,8 @@ class DetailedHouse {
         zipCode: zipCode,
         streetNumber: streetNumber,
         flatNumber: flatNumber,
+        geoX: geoX,
+        geoY: geoY,
       ),
       HouseDetails(
         title: title,

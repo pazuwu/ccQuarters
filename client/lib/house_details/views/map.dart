@@ -33,8 +33,8 @@ class MapCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(
                 largePaddingSize, 0, largePaddingSize, largePaddingSize),
             child: MapReadOnly(
-              latitude: location.geoX!,
-              longitude: location.geoY!,
+              latitude: location.geoY!,
+              longitude: location.geoX!,
             ),
           ),
         ),
