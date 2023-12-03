@@ -2,14 +2,14 @@
 using CloudStorageLibrary;
 using System.Collections;
 using VirtualTourAPI.Model;
-using VirtualTourAPI.Repository;
 using VirtualTourAPI.Requests;
+using VirtualTourAPI.Service;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class AreaEndpoints
     {
-        public static async Task<IResult> Post(string tourId, PostAreaRequest request, IVTRepository repository)
+        public static async Task<IResult> Post(string tourId, PostAreaRequest request, IVTService repository)
         {
             var createdAreaId = await repository.CreateArea(tourId, new AreaDTO() { Name = request.Name });
 
@@ -19,13 +19,13 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(createdAreaId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, string areaId, IVTRepository repository)
+        public static async Task<IResult> Delete(string tourId, string areaId, IVTService repository)
         {
             await repository.DeleteArea(tourId, areaId);
             return Results.Ok();
         }
 
-        public static async Task<IResult> PostPhotos(string tourId, string areaId, IFormFile file, IStorage storage, IVTRepository repository)
+        public static async Task<IResult> PostPhotos(string tourId, string areaId, IFormFile file, IStorage storage, IVTService repository)
         {
             using var fileStream = file.OpenReadStream();
             var collectionName = $"tours/{tourId}/{areaId}";
@@ -38,7 +38,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(url, null);
         }
 
-        public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IVTRepository repository)
+        public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IVTService repository)
         {
             var area = await repository.GetArea(tourId, areaId);
             var collectionName = $"tours/{tourId}/{areaId}";
@@ -55,7 +55,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(Array.Empty<string>());
         }
 
-        public static async Task<IResult> Process(string tourId, string areaId, IVTRepository repository)
+        public static async Task<IResult> Process(string tourId, string areaId, IVTService repository)
         {
             var operationId = await repository.CreateOperation(tourId, areaId);
 

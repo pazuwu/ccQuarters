@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
-using VirtualTourProcessingServer.OperationRepository;
+using VirtualTourProcessingServer.OperationService;
 using VirtualTourProcessingServer.Processing.Interfaces;
 using static Google.Rpc.Context.AttributeContext.Types;
 
@@ -13,9 +13,9 @@ namespace VirtualTourProcessingServer.Processing
     {
         private readonly ILogger _logger;
         private readonly IOperationManager _operationManager;
-        private readonly IOperationRepository _operationRepository;
+        private readonly IOperationService _operationRepository;
 
-        public OperationFinishedHandler(ILogger<OperationFinishedHandler> logger, IOperationManager operationHub, IOperationRepository repository)
+        public OperationFinishedHandler(ILogger<OperationFinishedHandler> logger, IOperationManager operationHub, IOperationService repository)
         {
             _logger = logger;
             _operationManager = operationHub;

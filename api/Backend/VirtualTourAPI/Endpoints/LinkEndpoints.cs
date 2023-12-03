@@ -1,13 +1,13 @@
 ﻿using Google.Cloud.Firestore;
 using VirtualTourAPI.Model;
-using VirtualTourAPI.Repository;
 using VirtualTourAPI.Requests;
+using VirtualTourAPI.Service;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class LinkEndpoints
     {
-        public static async Task<IResult> Post(string tourId, PostLinkRequest request, IVTRepository repository)
+        public static async Task<IResult> Post(string tourId, PostLinkRequest request, IVTService repository)
         {
             Dictionary<string, string[]> errors = new();
 
@@ -40,7 +40,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
-        public static async Task<IResult> Put(string tourId, string linkId, PutLinkRequest request, IVTRepository repository)
+        public static async Task<IResult> Put(string tourId, string linkId, PutLinkRequest request, IVTService repository)
         {
             var link = new LinkDTO()
             {
@@ -55,7 +55,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> Delete(string tourId, string linkId, IVTRepository repository)
+        public static async Task<IResult> Delete(string tourId, string linkId, IVTService repository)
         {
             await repository.DeleteLink(tourId, linkId);
             return Results.Ok();

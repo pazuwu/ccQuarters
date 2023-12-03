@@ -1,8 +1,8 @@
 ﻿using VirtualTourAPI.Model;
 
-namespace VirtualTourAPI.Repository
+namespace VirtualTourAPI.Service
 {
-    public interface IVTRepository
+    public interface IVTService
     {
         Task<TourDTO?> GetTour(string tourId);
         Task<string?> CreateTour();
