@@ -3,6 +3,7 @@ import 'package:ccquarters/house_details/views/contact.dart';
 import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/virtual_tour/gate.dart';
@@ -11,6 +12,18 @@ import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView({super.key, required this.house});
+
+  _showVirtualTour(BuildContext context) {
+    var hasAccessToEdit =
+        context.read<AuthService>().currentUserId == house.user.id;
+
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => VirtualTourGate(
+              authService: context.read(),
+              tourId: house.details.virtualTourId!,
+              readOnly: !hasAccessToEdit,
+            )));
+  }
 
   final House house;
   @override
@@ -27,14 +40,7 @@ class DetailsView extends StatelessWidget {
         actions: [
           if (house.details.virtualTourId != null)
             Icon360(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => VirtualTourGate(
-                          authService: context.read(),
-                          tourId: house.details.virtualTourId!,
-                          readOnly: true,
-                        )));
-              },
+              onPressed: () => _showVirtualTour(context),
             ),
         ],
       ),
