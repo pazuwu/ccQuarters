@@ -195,6 +195,7 @@ class CallUtils {
     try {
       await launchUrl(uri);
     } catch (e) {
+      // ignore: use_build_context_synchronously
       showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(

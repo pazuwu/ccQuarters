@@ -21,8 +21,8 @@ class _PhotosState extends State<Photos> {
     return Padding(
       padding: const EdgeInsets.all(largePaddingSize),
       child: LayoutBuilder(
-        builder: (context, constraints) =>
-            getDeviceType(context) == DeviceType.web
+        builder: (context, constraints) => widget.photos.isNotEmpty
+            ? getDeviceType(context) == DeviceType.web
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -36,7 +36,12 @@ class _PhotosState extends State<Photos> {
                       _buildMainPhoto(context, constraints, true),
                       _buildPhotoList(context, constraints, true),
                     ],
-                  ),
+                  )
+            : _buildMainPhoto(
+                context,
+                constraints,
+                !(getDeviceType(context) == DeviceType.web),
+              ),
       ),
     );
   }
@@ -111,12 +116,16 @@ class _PhotosState extends State<Photos> {
       decoration: BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: NetworkImage(widget.photos[_selectedIndex]),
+          image: NetworkImage(widget.photos.isNotEmpty
+              ? widget.photos[_selectedIndex]
+              : "https://picsum.photos/512"),
         ),
       ),
       child: MainPhoto(
         onTap: () {},
-        photo: widget.photos[_selectedIndex],
+        photo: widget.photos.isNotEmpty
+            ? widget.photos[_selectedIndex]
+            : "https://picsum.photos/512",
       ),
     );
   }

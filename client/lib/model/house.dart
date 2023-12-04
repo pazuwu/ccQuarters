@@ -1,45 +1,43 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/model/user.dart';
 
 class House {
   House(
     this.location,
     this.details,
-    this.user, {
-    this.offerType = OfferType.rent,
-    this.isLiked = false,
-    this.virtualTourId = "vu7TKNy0zkPj6jHy6lIq",
+    this.user,
+    this.photos, {
+    required this.id,
+    required this.offerType,
+    required this.isLiked,
   });
 
-  String? virtualTourId;
+  String id;
   Location location;
   HouseDetails details;
   OfferType offerType;
   User user;
   bool isLiked;
-  List<String> photos = <String>[
-    "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}",
-    "https://picsum.photos/1900/600",
-    "https://picsum.photos/512",
-    "https://picsum.photos/600/900",
-    "https://picsum.photos/900/600",
-    "https://picsum.photos/900",
-  ];
+  List<Photo> photos;
 }
 
 class Location {
-  Location(
-      {this.city = 'Warszawa',
-      this.district = "Wilanów",
-      this.streetName = "Klimczaka",
-      this.zipCode = '14-121',
-      this.streetNumber = "12",
-      this.flatNumber,
-      this.geoX = 52.22202584979946,
-      this.geoY = 21.006980596300632});
+  Location({
+    required this.city,
+    required this.voivodeship,
+    required this.zipCode,
+    this.district,
+    this.streetName,
+    this.streetNumber,
+    this.flatNumber,
+    this.geoX,
+    this.geoY,
+  });
 
   String city;
+  String voivodeship;
   String? district;
   String? streetName;
   String zipCode;
@@ -51,21 +49,22 @@ class Location {
 
 class HouseDetails {
   HouseDetails({
-    this.description =
-        '''Lorem ipsum is typically a corrupted version of 'De finibus bonorum et malorum', a 1st century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin.''',
-    this.title = "Title",
-    this.price = 10000,
-    this.roomCount = 3,
-    this.area = 100,
+    this.description,
+    required this.title,
+    required this.price,
+    required this.area,
+    this.roomCount,
     this.floor,
-    this.buildingType = BuildingType.house,
+    required this.buildingType,
+    this.virtualTourId,
   });
 
-  String description;
+  String? description;
   String title;
   double price;
   int? roomCount;
   double area;
   int? floor;
   BuildingType buildingType;
+  String? virtualTourId;
 }

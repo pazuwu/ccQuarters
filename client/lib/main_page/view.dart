@@ -1,6 +1,8 @@
 import 'package:ccquarters/main_page/cubit.dart';
+import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'announcements/container.dart';
 import 'search/search_box.dart';
 
@@ -12,12 +14,25 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final PagingController<int, House> _pagingControllerForHousesToRent =
+      PagingController(firstPageKey: 0);
+  final PagingController<int, House> _pagingControllerForHousesToBuy =
+      PagingController(firstPageKey: 0);
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pagingControllerForHousesToRent.dispose();
+    _pagingControllerForHousesToBuy.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(const Duration(seconds: 1));
+      onRefresh: () async {
+        _pagingControllerForHousesToRent.refresh();
+        _pagingControllerForHousesToBuy.refresh();
       },
       child: LayoutBuilder(builder: (context, constraints) {
         return SingleChildScrollView(
@@ -31,11 +46,19 @@ class _MainPageState extends State<MainPage> {
                   color: color,
                   onTap: () => context.read<MainPageCubit>().search(),
                 ),
-                const AnnouncementsContainer(
+                AnnouncementsContainer(
                   title: "Do wynajęcia",
+                  pagingController: _pagingControllerForHousesToRent,
+                  getHouses: (pageNumber, pageCount) async => await context
+                      .read<MainPageCubit>()
+                      .getHousesToRent(pageNumber, pageCount),
                 ),
-                const AnnouncementsContainer(
+                AnnouncementsContainer(
                   title: "Do kupienia",
+                  pagingController: _pagingControllerForHousesToBuy,
+                  getHouses: (pageNumber, pageCount) async => await context
+                      .read<MainPageCubit>()
+                      .getHousesToBuy(pageNumber, pageCount),
                 ),
               ],
             ),

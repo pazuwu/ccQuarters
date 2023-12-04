@@ -1,13 +1,13 @@
 import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/house_details/views/view.dart';
+import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
-class AnnouncementItem extends StatelessWidget {
-  const AnnouncementItem({
+class HouseItem extends StatelessWidget {
+  const HouseItem({
     super.key,
     required this.house,
   });
@@ -29,35 +29,53 @@ class AnnouncementItem extends StatelessWidget {
             child: InkWellWithPhoto(
               imageWidget: Column(
                 children: [
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                        maxHeight: constraints.maxHeight * 0.85,
-                        maxWidth: MediaQuery.of(context).size.width *
-                            (getDeviceType(context) == DeviceType.mobile
-                                ? 0.4
-                                : 0.2)),
-                    child: ImageWidget(
-                      imageUrl: house.photos.first,
-                      fit: BoxFit.cover,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(borderRadius),
-                          topRight: Radius.circular(borderRadius)),
-                    ),
-                  ),
-                  Text("${house.details.price.toStringAsFixed(0)} zł",
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w400)),
+                  _buildPhoto(constraints, context),
+                  _buildPrice(),
                 ],
               ),
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DetailsView(house: house)));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HouseDetailsGate(
+                      houseId: house.id,
+                    ),
+                  ),
+                );
               },
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPhoto(BoxConstraints constraints, BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: constraints.maxHeight * 0.85,
+        maxWidth: MediaQuery.of(context).size.width *
+            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
+      ),
+      child: ImageWidget(
+        imageUrl: house.photos.isNotEmpty
+            ? house.photos.first.url
+            : "https://picsum.photos/512",
+        fit: BoxFit.cover,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(borderRadius),
+          topRight: Radius.circular(borderRadius),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrice() {
+    return Text(
+      "${house.details.price.toStringAsFixed(0)} zł",
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
       ),
     );
   }

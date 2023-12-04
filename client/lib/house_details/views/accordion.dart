@@ -33,7 +33,8 @@ class AccordionPage extends StatelessWidget {
       sectionClosingHapticFeedback: SectionHapticFeedback.light,
       disableScrolling: true,
       children: [
-        _buildDescriptionAccordionSection(context),
+        if (house.details.description != null)
+          _buildDescriptionAccordionSection(context),
         _buildDetailsAccordionSection(context),
         _buildLocationAccordionSection(context),
       ],
@@ -46,35 +47,38 @@ class AccordionPage extends StatelessWidget {
       isOpen: _shouldBeOpen(context),
       leftIcon: const Icon(Icons.description_outlined, color: Colors.white),
       header: const Text('Opis', style: headerStyle),
-      content: Text(house.details.description,
-          style: const TextStyle(
-            color: Color(0xff999999),
-            fontSize: 14,
-          )),
+      content: Text(
+        house.details.description!,
+        style: const TextStyle(
+          color: Color(0xff999999),
+          fontSize: 14,
+        ),
+      ),
     );
   }
 
   AccordionSection _buildDetailsAccordionSection(BuildContext context) {
     return AccordionSection(
-        isOpen: _shouldBeOpen(context),
-        leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
-        header: const Text('Szczegóły ogłoszenia', style: headerStyle),
-        content: Column(
-          children: [
-            HouseDetailsRow(title: "Cena", value: '${house.details.price} zł'),
+      isOpen: _shouldBeOpen(context),
+      leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
+      header: const Text('Szczegóły ogłoszenia', style: headerStyle),
+      content: Column(
+        children: [
+          HouseDetailsRow(title: "Cena", value: '${house.details.price} zł'),
+          HouseDetailsRow(
+              title: "Powierzchnia", value: '${house.details.area} m2'),
+          if (house.details.roomCount != null && house.details.roomCount! > 0)
             HouseDetailsRow(
-                title: "Powierzchnia", value: '${house.details.area} m2'),
-            if (house.details.roomCount != null)
-              HouseDetailsRow(
-                  title: "Liczba pokoi", value: '${house.details.roomCount}'),
-            if (house.details.floor != null)
-              HouseDetailsRow(
-                title: "Piętro",
-                value: '${house.details.floor}',
-                isLast: true,
-              ),
-          ],
-        ));
+                title: "Liczba pokoi", value: '${house.details.roomCount}'),
+          if (house.details.floor != null && house.details.floor! > 0)
+            HouseDetailsRow(
+              title: "Piętro",
+              value: '${house.details.floor}',
+              isLast: true,
+            ),
+        ],
+      ),
+    );
   }
 
   AccordionSection _buildLocationAccordionSection(BuildContext context) {
@@ -84,16 +88,22 @@ class AccordionPage extends StatelessWidget {
       header: const Text('Adres', style: headerStyle),
       content: Column(
         children: [
+          HouseDetailsRow(
+              title: "Województwo", value: house.location.voivodeship),
           HouseDetailsRow(title: "Miasto", value: house.location.city),
-          if (house.location.district != null)
+          if (house.location.district != null &&
+              house.location.district!.isNotEmpty)
             HouseDetailsRow(
                 title: "Dzielnica", value: house.location.district!),
-          if (house.location.streetName != null)
+          if (house.location.streetName != null &&
+              house.location.streetName!.isNotEmpty)
             HouseDetailsRow(title: "Ulica", value: house.location.streetName!),
-          if (house.location.streetNumber != null)
+          if (house.location.streetNumber != null &&
+              house.location.streetNumber!.isNotEmpty)
             HouseDetailsRow(
                 title: "Numer domu", value: house.location.streetNumber!),
-          if (house.location.flatNumber != null)
+          if (house.location.flatNumber != null &&
+              house.location.flatNumber!.isNotEmpty)
             HouseDetailsRow(
                 title: "Numer mieszkania", value: house.location.flatNumber!),
           HouseDetailsRow(
@@ -130,10 +140,14 @@ class HouseDetailsRow extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(fontSize: 14)),
-            Text(value,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 14),
+            ),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         if (!isLast)
