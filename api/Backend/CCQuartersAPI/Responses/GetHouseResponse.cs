@@ -15,9 +15,9 @@ namespace CCQuartersAPI.Responses
         public int RoomCount { get; set; }
         public double Area { get; set; }
         public int? Floor { get; set; }
-        public Guid DescriptionId { get; set; }
-        public Guid AdditionalInfoId { get; set; }
-        public Guid? NerfId { get; set; }
+        public string DescriptionId { get; set; }
+        public string AdditionalInfoId { get; set; }
+        public string? NerfId { get; set; }
         public string UserId { get; set; }
         public string City { get; set; }
         public string Voivodeship { get; set; }
@@ -35,13 +35,16 @@ namespace CCQuartersAPI.Responses
 
     public class DetailedHouseDTO
     {
+        public string UserId { get; set; }
         public string Title { get; set; }
         public double Price { get; set; }
         public int RoomCount { get; set; }
         public double Area { get; set; }
         public int? Floor { get; set; }
+        public string DescriptionId { get; set; }
         public string? Description { get; set; }
-        public Dictionary<string, object>? Details { get; set; }
+        public string AdditionalInfoId { get; set; }
+        public Dictionary<string, object>? AdditionalInfo { get; set; }
         public string City { get; set; }
         public string Voivodeship { get; set; }
         public string ZipCode { get; set; }

@@ -1,5 +1,6 @@
 using AuthLibrary;
 using CCQuartersAPI.Endpoints;
+using CCQuartersAPI.Services;
 using CloudStorageLibrary;
 using RepositoryLibrary;
 
@@ -23,6 +24,10 @@ namespace CCQuartersAPI
             builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
             builder.Services.AddScoped<IRelationalDBRepository, RelationalDBRepository>();
             builder.Services.AddScoped<IDocumentDBRepository, DocumentDBRepository>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
+            builder.Services.AddScoped<IAlertsService, AlertsService>();
+            builder.Services.AddScoped<IHousePhotosService, HousePhotosService>();
+            builder.Services.AddScoped<IHousesService, HousesService>();
 
             var app = builder.Build();
 

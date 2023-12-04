@@ -9,6 +9,7 @@ namespace CCQuartersAPI.Mappers
         {
             return new DetailedHouseDTO
             {
+                UserId = detailedHouseQueried.UserId,
                 Title = detailedHouseQueried.Title,
                 Price = detailedHouseQueried.Price,
                 RoomCount = detailedHouseQueried.RoomCount,
@@ -25,7 +26,9 @@ namespace CCQuartersAPI.Mappers
                 GeoY = detailedHouseQueried.GeoY,
                 OfferType = detailedHouseQueried.OfferType,
                 BuildingType = detailedHouseQueried.BuildingType,
-                IsLiked = detailedHouseQueried.IsLiked
+                IsLiked = detailedHouseQueried.IsLiked,
+                AdditionalInfoId = detailedHouseQueried.AdditionalInfoId,
+                DescriptionId = detailedHouseQueried.DescriptionId
             };
         }
     }
