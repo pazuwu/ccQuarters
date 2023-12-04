@@ -29,20 +29,7 @@ class FakeSearchBox extends StatelessWidget {
                 textAlignVertical: getDeviceType(context) == DeviceType.mobile
                     ? TextAlignVertical.bottom
                     : TextAlignVertical.center,
-                decoration: const InputDecoration(
-                  hintText: "Szukaj...",
-                  border: InputBorder.none,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(borderRadius),
-                    ),
-                  ),
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.all(largePaddingSize),
-                    child: Icon(Icons.search, size: iconSize),
-                  ),
-                ),
+                decoration: buildSearchBoxDecoration(),
               ),
             ),
           ),
@@ -74,33 +61,11 @@ class SearchBox extends StatelessWidget {
             ? TextAlignVertical.bottom
             : TextAlignVertical.center,
         controller: controller,
-        decoration: InputDecoration(
-          hintText: "Szukaj...",
-          border: InputBorder.none,
-          prefixIcon: const Padding(
-            padding: EdgeInsets.all(largePaddingSize),
-            child: Icon(Icons.search, size: iconSize),
-          ),
-          suffixIcon: IconButton(
-            padding: const EdgeInsets.all(largePaddingSize),
-            icon: const Icon(Icons.clear, size: iconSize),
-            onPressed: () {
-              controller.clear();
-              if (onSubmitted != null) onSubmitted!("");
-            },
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.all(
-              Radius.circular(borderRadius),
-            ),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.all(
-              Radius.circular(borderRadius),
-            ),
-          ),
+        decoration: buildSearchBoxDecoration(
+          onPressed: () {
+            controller.clear();
+            if (onSubmitted != null) onSubmitted!("");
+          },
         ),
         onChanged: (value) => {},
         onSubmitted: onSubmitted,
@@ -133,4 +98,32 @@ class SearchBoxTheme extends StatelessWidget {
       child: Shadow(color: color, child: child),
     );
   }
+}
+
+InputDecoration buildSearchBoxDecoration({Function()? onPressed}) {
+  return InputDecoration(
+    hintText: "Szukaj...",
+    border: InputBorder.none,
+    prefixIcon: const Padding(
+      padding: EdgeInsets.all(largePaddingSize),
+      child: Icon(Icons.search, size: iconSize),
+    ),
+    suffixIcon: IconButton(
+      padding: const EdgeInsets.all(largePaddingSize),
+      icon: const Icon(Icons.clear, size: iconSize),
+      onPressed: onPressed,
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.all(
+        Radius.circular(borderRadius),
+      ),
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.all(
+        Radius.circular(borderRadius),
+      ),
+    ),
+  );
 }

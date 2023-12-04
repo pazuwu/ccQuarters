@@ -17,51 +17,59 @@ class ProfileInfo extends StatelessWidget {
           children: [
             TableRow(
               children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SizedBox(
-                      height: constraints.maxWidth * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.all(largePaddingSize),
-                        child: user.photoUrl != null
-                            ? ImageWidget(
-                                imageUrl: user.photoUrl!,
-                                shape: BoxShape.circle,
-                              )
-                            : const Icon(Icons.person),
-                      ),
-                    );
-                  },
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (user.name != null && user.surname != null)
-                      Text(
-                        "${user.name!} ${user.surname!}",
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    if (user.company != null)
-                      Text(
-                        user.company!,
-                        style: user.name != null && user.surname != null
-                            ? TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600)
-                            : Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    Text(
-                      "Jesteś z nami od ${_getTimeSinceRegistration(user)}!",
-                      textScaler: const TextScaler.linear(1.2),
-                    ),
-                  ],
-                )
+                _buildPhoto(),
+                _buildUserNameAndTimeSinceRegistration(context)
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  LayoutBuilder _buildPhoto() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: constraints.maxWidth * 0.8,
+          child: Padding(
+            padding: const EdgeInsets.all(largePaddingSize),
+            child: user.photoUrl != null
+                ? ImageWidget(
+                    imageUrl: user.photoUrl!,
+                    shape: BoxShape.circle,
+                  )
+                : const Icon(Icons.person),
+          ),
+        );
+      },
+    );
+  }
+
+  Column _buildUserNameAndTimeSinceRegistration(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (user.name != null && user.surname != null)
+          Text(
+            "${user.name!} ${user.surname!}",
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        if (user.company != null)
+          Text(
+            user.company!,
+            style: user.name != null && user.surname != null
+                ? TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600)
+                : Theme.of(context).textTheme.headlineSmall,
+          ),
+        Text(
+          "Jesteś z nami od ${_getTimeSinceRegistration(user)}!",
+          textScaler: const TextScaler.linear(1.2),
+        ),
+      ],
     );
   }
 

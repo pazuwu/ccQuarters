@@ -47,35 +47,38 @@ class AccordionPage extends StatelessWidget {
       isOpen: _shouldBeOpen(context),
       leftIcon: const Icon(Icons.description_outlined, color: Colors.white),
       header: const Text('Opis', style: headerStyle),
-      content: Text(house.details.description!,
-          style: const TextStyle(
-            color: Color(0xff999999),
-            fontSize: 14,
-          )),
+      content: Text(
+        house.details.description!,
+        style: const TextStyle(
+          color: Color(0xff999999),
+          fontSize: 14,
+        ),
+      ),
     );
   }
 
   AccordionSection _buildDetailsAccordionSection(BuildContext context) {
     return AccordionSection(
-        isOpen: _shouldBeOpen(context),
-        leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
-        header: const Text('Szczegóły ogłoszenia', style: headerStyle),
-        content: Column(
-          children: [
-            HouseDetailsRow(title: "Cena", value: '${house.details.price} zł'),
+      isOpen: _shouldBeOpen(context),
+      leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
+      header: const Text('Szczegóły ogłoszenia', style: headerStyle),
+      content: Column(
+        children: [
+          HouseDetailsRow(title: "Cena", value: '${house.details.price} zł'),
+          HouseDetailsRow(
+              title: "Powierzchnia", value: '${house.details.area} m2'),
+          if (house.details.roomCount != null && house.details.roomCount! > 0)
             HouseDetailsRow(
-                title: "Powierzchnia", value: '${house.details.area} m2'),
-            if (house.details.roomCount != null && house.details.roomCount! > 0)
-              HouseDetailsRow(
-                  title: "Liczba pokoi", value: '${house.details.roomCount}'),
-            if (house.details.floor != null && house.details.floor! > 0)
-              HouseDetailsRow(
-                title: "Piętro",
-                value: '${house.details.floor}',
-                isLast: true,
-              ),
-          ],
-        ));
+                title: "Liczba pokoi", value: '${house.details.roomCount}'),
+          if (house.details.floor != null && house.details.floor! > 0)
+            HouseDetailsRow(
+              title: "Piętro",
+              value: '${house.details.floor}',
+              isLast: true,
+            ),
+        ],
+      ),
+    );
   }
 
   AccordionSection _buildLocationAccordionSection(BuildContext context) {
@@ -137,10 +140,14 @@ class HouseDetailsRow extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: const TextStyle(fontSize: 14)),
-            Text(value,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 14),
+            ),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         if (!isLast)

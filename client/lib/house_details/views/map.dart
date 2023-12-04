@@ -14,24 +14,34 @@ class MapCard extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(
-              largePaddingSize, 0, largePaddingSize, largePaddingSize),
+            largePaddingSize,
+            0,
+            largePaddingSize,
+            largePaddingSize,
+          ),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
               "Lokalizacja",
               style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
         Container(
           constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.5),
+            maxHeight: MediaQuery.of(context).size.height * 0.5,
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
-                largePaddingSize, 0, largePaddingSize, largePaddingSize),
+              largePaddingSize,
+              0,
+              largePaddingSize,
+              largePaddingSize,
+            ),
             child: MapReadOnly(
               latitude: location.geoY!,
               longitude: location.geoX!,

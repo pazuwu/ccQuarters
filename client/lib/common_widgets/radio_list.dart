@@ -72,21 +72,22 @@ class _RadioListFormState<T> extends State<RadioListForm<T>> {
       textAlignVertical: TextAlignVertical.center,
       style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          suffixIcon: _isSearching
-              ? IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                  },
-                  icon: const Icon(Icons.close),
-                )
-              : const Icon(Icons.search),
-          fillColor: Theme.of(context).scaffoldBackgroundColor,
-          filled: true,
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          hintText: widget.searchBoxHintText),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+        suffixIcon: _isSearching
+            ? IconButton(
+                onPressed: () {
+                  _searchController.clear();
+                },
+                icon: const Icon(Icons.close),
+              )
+            : const Icon(Icons.search),
+        fillColor: Theme.of(context).scaffoldBackgroundColor,
+        filled: true,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+        hintText: widget.searchBoxHintText,
+      ),
     );
   }
 
@@ -109,44 +110,45 @@ class _RadioListFormState<T> extends State<RadioListForm<T>> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _filteredValues.length,
-                        itemBuilder: (context, index) {
-                          return RadioListTile(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            selected: _chosenValue == _filteredValues[index],
-                            selectedTileColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.65),
-                            fillColor: MaterialStateColor.resolveWith((states) {
-                              if (formFieldState.hasError) {
-                                return Theme.of(context).colorScheme.error;
-                              }
+                      shrinkWrap: true,
+                      itemCount: _filteredValues.length,
+                      itemBuilder: (context, index) {
+                        return RadioListTile(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(8.0)),
+                          ),
+                          selected: _chosenValue == _filteredValues[index],
+                          selectedTileColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.65),
+                          fillColor: MaterialStateColor.resolveWith((states) {
+                            if (formFieldState.hasError) {
+                              return Theme.of(context).colorScheme.error;
+                            }
 
-                              return Theme.of(context).colorScheme.primary;
-                            }),
-                            value: _filteredValues[index],
-                            groupValue: _chosenValue,
-                            onChanged: (newValue) {
-                              formFieldState.didChange(newValue);
-                              setState(() {
-                                _searchFocusNode.unfocus();
-                                _chosenValue = newValue;
-                                if (newValue != null) {
-                                  widget.valueChanged?.call(newValue);
-                                }
-                              });
-                            },
-                            title: widget.titleBuilder
-                                ?.call(_filteredValues[index]),
-                            secondary: widget.secondaryBuilder
-                                ?.call(_filteredValues[index]),
-                          );
-                        }),
+                            return Theme.of(context).colorScheme.primary;
+                          }),
+                          value: _filteredValues[index],
+                          groupValue: _chosenValue,
+                          onChanged: (newValue) {
+                            formFieldState.didChange(newValue);
+                            setState(() {
+                              _searchFocusNode.unfocus();
+                              _chosenValue = newValue;
+                              if (newValue != null) {
+                                widget.valueChanged?.call(newValue);
+                              }
+                            });
+                          },
+                          title:
+                              widget.titleBuilder?.call(_filteredValues[index]),
+                          secondary: widget.secondaryBuilder
+                              ?.call(_filteredValues[index]),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

@@ -37,8 +37,11 @@ class _PhotosState extends State<Photos> {
                       _buildPhotoList(context, constraints, true),
                     ],
                   )
-            : _buildMainPhoto(context, constraints,
-                !(getDeviceType(context) == DeviceType.web)),
+            : _buildMainPhoto(
+                context,
+                constraints,
+                !(getDeviceType(context) == DeviceType.web),
+              ),
       ),
     );
   }

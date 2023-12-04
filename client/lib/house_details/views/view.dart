@@ -61,34 +61,35 @@ class Inside extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 2,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Photos(
-                      photos: house.photos.map((e) => e.url).toList(),
-                    ),
-                    if (getDeviceType(context) == DeviceType.mobile)
-                      ButtonContactWidget(user: house.user),
-                    AccordionPage(
-                      house: house,
-                    ),
-                    if (house.location.geoX != null &&
-                        house.location.geoY != null)
-                      MapCard(location: house.location),
-                  ],
-                ),
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Photos(
+                    photos: house.photos.map((e) => e.url).toList(),
+                  ),
+                  if (getDeviceType(context) == DeviceType.mobile)
+                    ButtonContactWidget(user: house.user),
+                  AccordionPage(
+                    house: house,
+                  ),
+                  if (house.location.geoX != null &&
+                      house.location.geoY != null)
+                    MapCard(location: house.location),
+                ],
               ),
             ),
-            if (getDeviceType(context) == DeviceType.web)
-              ContactWidget(user: house.user),
-          ]),
+          ),
+          if (getDeviceType(context) == DeviceType.web)
+            ContactWidget(user: house.user),
+        ],
+      ),
     );
   }
 }

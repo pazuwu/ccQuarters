@@ -55,39 +55,43 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         },
         child: Center(
           child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width *
-                    (MediaQuery.of(context).orientation == Orientation.landscape
-                        ? 0.5
-                        : 1),
-              ),
-              child: NestedScrollView(
-                headerSliverBuilder: (context, value) {
-                  return [
-                    SliverToBoxAdapter(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ProfileInfo(user: widget.user),
-                          _buildButtons(context),
-                        ],
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: HousesAndLikedHousesTabBar(
-                        tabController: _tabController,
-                      ),
-                    ),
-                  ];
-                },
-                body: HousesTabBarViewWithGrids(
-                  pagingControllerForLikedHouses:
-                      _pagingControllerForLikedHouses,
-                  pagingControllerForMyHouses: _pagingControllerForMyHouses,
-                  tabController: _tabController,
-                ),
-              )),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width *
+                  (MediaQuery.of(context).orientation == Orientation.landscape
+                      ? 0.5
+                      : 1),
+            ),
+            child: _buildScrollView(),
+          ),
         ),
+      ),
+    );
+  }
+
+  NestedScrollView _buildScrollView() {
+    return NestedScrollView(
+      headerSliverBuilder: (context, value) {
+        return [
+          SliverToBoxAdapter(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ProfileInfo(user: widget.user),
+                _buildButtons(context),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: HousesAndLikedHousesTabBar(
+              tabController: _tabController,
+            ),
+          ),
+        ];
+      },
+      body: HousesTabBarViewWithGrids(
+        pagingControllerForLikedHouses: _pagingControllerForLikedHouses,
+        pagingControllerForMyHouses: _pagingControllerForMyHouses,
+        tabController: _tabController,
       ),
     );
   }

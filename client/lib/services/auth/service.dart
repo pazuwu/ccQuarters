@@ -10,8 +10,9 @@ class AuthService {
   final FirebaseAuth _firebaseAuth;
 
   bool get isSignedIn => _firebaseAuth.currentUser != null;
-  Stream<bool> get isSignedInStream =>
-      _firebaseAuth.userChanges().map((user) => user != null);
+  Stream<bool> get isSignedInStream => _firebaseAuth.userChanges().map(
+        (user) => user != null,
+      );
   String get userEmail => _firebaseAuth.currentUser!.email!;
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 

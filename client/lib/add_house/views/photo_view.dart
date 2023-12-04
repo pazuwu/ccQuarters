@@ -53,6 +53,7 @@ class _PhotoViewState extends State<PhotoView> {
           context.read<AddHouseFormCubit>().sendData();
         },
         hasScrollBody: true,
+        isLastPage: true,
       ),
     );
   }

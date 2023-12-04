@@ -5,10 +5,12 @@ class GoBackNextButtons extends StatelessWidget {
     super.key,
     required this.goBackOnPressed,
     required this.nextOnPressed,
+    this.isLastPage = false,
   });
 
   final Function()? goBackOnPressed;
   final Function() nextOnPressed;
+  final bool isLastPage;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class GoBackNextButtons extends StatelessWidget {
           child: ElevatedButton(
             key: const Key('next'),
             onPressed: nextOnPressed,
-            child: const Text("Dalej"),
+            child:  Text(isLastPage ? "Wyślij" :"Dalej"),
           ),
         ),
       ],

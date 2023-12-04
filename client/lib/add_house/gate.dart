@@ -76,22 +76,29 @@ class AddHouseGate extends StatelessWidget {
       const Duration(seconds: 2),
       () {
         context.read<AddHouseFormCubit>().clear();
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).push(
+          MaterialPageRoute(
             builder: (context) => HouseDetailsGate(
-                  houseId: state.houseId,
-                )));
+              houseId: state.houseId,
+            ),
+          ),
+        );
       },
     );
 
     return const Scaffold(
       body: Center(
-          child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text("Ogłoszenie zostało dodane", textScaler: TextScaler.linear(1.5)),
-          Icon(Icons.done)
-        ],
-      )),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Ogłoszenie zostało dodane",
+              textScaler: TextScaler.linear(1.5),
+            ),
+            Icon(Icons.done)
+          ],
+        ),
+      ),
     );
   }
 }

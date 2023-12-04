@@ -64,36 +64,38 @@ class _ChipKeyboardInputState extends State<ChipKeyboardInput> {
             padding: const EdgeInsets.all(8.0),
             child: widget.additionalWidget!,
           ),
-        Row(children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: widget.textEditingController,
-                decoration: InputDecoration(
-                  label: widget.label.isNotEmpty ? Text(widget.label) : null,
-                  suffixIcon: _showClearButton
-                      ? IconButton(
-                          padding: const EdgeInsets.all(largePaddingSize),
-                          icon: const Icon(Icons.clear, size: iconSize),
-                          onPressed: () {
-                            widget.textEditingController.clear();
-                          },
-                        )
-                      : null,
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: widget.textEditingController,
+                  decoration: InputDecoration(
+                    label: widget.label.isNotEmpty ? Text(widget.label) : null,
+                    suffixIcon: _showClearButton
+                        ? IconButton(
+                            padding: const EdgeInsets.all(largePaddingSize),
+                            icon: const Icon(Icons.clear, size: iconSize),
+                            onPressed: () {
+                              widget.textEditingController.clear();
+                            },
+                          )
+                        : null,
+                  ),
+                  onSubmitted: (newValue) {
+                    widget.onAdded();
+                  },
                 ),
-                onSubmitted: (newValue) {
-                  widget.onAdded();
-                },
               ),
             ),
-          ),
-          IconButton(
-            enableFeedback: false,
-            icon: const Icon(Icons.add),
-            onPressed: widget.onAdded,
-          ),
-        ]),
+            IconButton(
+              enableFeedback: false,
+              icon: const Icon(Icons.add),
+              onPressed: widget.onAdded,
+            ),
+          ],
+        ),
         if (widget.validation != null)
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),

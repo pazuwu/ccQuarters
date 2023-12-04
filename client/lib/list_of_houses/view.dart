@@ -61,84 +61,105 @@ class _ListOfHousesState extends State<ListOfHouses> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.isSearch
-          ? AppBar(
-              toolbarHeight: 68,
-              leading: IconButton(
-                onPressed: () => context.read<MainPageCubit>().goBack(),
-                icon: const Icon(Icons.arrow_back),
-              ),
-              title: SearchBox(
-                color: Theme.of(context).colorScheme,
-                controller: _controller,
-                onSubmitted: (value) {
-                  context.read<ListOfHousesCubit>().saveSearch(value);
-                  _pagingController.refresh();
-                },
-              ),
-            )
-          : AppBar(
-              title: const Text("Ogłoszenia na wynajem"),
-            ),
+      appBar:
+          widget.isSearch ? _buildSearchAppBar(context) : _buildTitleAppBar(),
       body: RefreshIndicator(
         onRefresh: () async => _pagingController.refresh(),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (getDeviceType(context) == DeviceType.web)
-              Container(
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.25,
-                ),
-                child: FilterForm(
-                  filters: context.read<ListOfHousesCubit>().filter,
-                  onSave: (HouseFilter filter) {
-                    context.read<ListOfHousesCubit>().saveFilter(filter);
-                    _pagingController.refresh();
-                  },
-                ),
-              ),
-            Container(
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width *
-                      (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: largePaddingSize,
-                  right: largePaddingSize,
-                ),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        child: Filters(
-                          filters: context.read<ListOfHousesCubit>().filter,
-                          onSave: (HouseFilter filter) {
-                            context
-                                .read<ListOfHousesCubit>()
-                                .saveFilter(filter);
-                            _pagingController.refresh();
-                          },
-                        ),
-                      ),
-                    ),
-                    SliverFillRemaining(
-                      child: PagedListView<int, House>(
-                        pagingController: _pagingController,
-                        builderDelegate: PagedChildBuilderDelegate<House>(
-                          itemBuilder: (context, item, index) => LayoutBuilder(
-                            builder: (context, constraints) => HouseListTile(
-                              house: item,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+              _buildFiltersColumn(context),
+            _buildList(context),
           ],
+        ),
+      ),
+    );
+  }
+
+  AppBar _buildSearchAppBar(BuildContext context) {
+    return AppBar(
+      toolbarHeight: 68,
+      leading: IconButton(
+        onPressed: () => context.read<MainPageCubit>().goBack(),
+        icon: const Icon(Icons.arrow_back),
+      ),
+      title: SearchBox(
+        color: Theme.of(context).colorScheme,
+        controller: _controller,
+        onSubmitted: (value) {
+          context.read<ListOfHousesCubit>().saveSearch(value);
+          _pagingController.refresh();
+        },
+      ),
+    );
+  }
+
+  AppBar _buildTitleAppBar() {
+    return AppBar(
+      title: const Text("Ogłoszenia na wynajem"),
+    );
+  }
+
+  Widget _buildFiltersColumn(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.25,
+      ),
+      child: FilterForm(
+        filters: context.read<ListOfHousesCubit>().filter,
+        onSave: (HouseFilter filter) {
+          context.read<ListOfHousesCubit>().saveFilter(filter);
+          _pagingController.refresh();
+        },
+      ),
+    );
+  }
+
+  Widget _buildList(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width *
+              (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: largePaddingSize,
+          right: largePaddingSize,
+        ),
+        child: CustomScrollView(
+          slivers: [
+            _buildFiltersSliver(context),
+            _buildListSliver(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _buildFiltersSliver(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        child: Filters(
+          filters: context.read<ListOfHousesCubit>().filter,
+          onSave: (HouseFilter filter) {
+            context.read<ListOfHousesCubit>().saveFilter(filter);
+            _pagingController.refresh();
+          },
+        ),
+      ),
+    );
+  }
+
+  SliverFillRemaining _buildListSliver() {
+    return SliverFillRemaining(
+      child: PagedListView<int, House>(
+        pagingController: _pagingController,
+        builderDelegate: PagedChildBuilderDelegate<House>(
+          itemBuilder: (context, item, index) => LayoutBuilder(
+            builder: (context, constraints) => HouseListTile(
+              house: item,
+            ),
+          ),
         ),
       ),
     );
