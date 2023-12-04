@@ -1,4 +1,3 @@
-
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/consts.dart';
@@ -68,7 +67,7 @@ class ProfileInfo extends StatelessWidget {
 
   String _getTimeSinceRegistration(User user) {
     var daysSinceRegistration =
-        DateTime.now().difference(user.registrationDate).inDays;
+        DateTime.now().difference(user.registerTime).inDays;
 
     if (daysSinceRegistration == 0) {
       return "dzisiaj";

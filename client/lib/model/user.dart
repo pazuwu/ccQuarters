@@ -11,10 +11,10 @@ class User {
   String email;
   String? phoneNumber;
   String? photoUrl;
-  DateTime registrationDate = DateTime(2021, 1, 1);
+  DateTime registerTime = DateTime(2021, 1, 1);
 
   User(this.id, this.name, this.surname, this.company, this.email,
-      this.phoneNumber, this.photoUrl, this.registrationDate);
+      this.phoneNumber, this.photoUrl, this.registerTime);
 
   User.fromGetHouses(this.name, this.surname, this.company, this.email,
       this.phoneNumber, this.photoUrl)

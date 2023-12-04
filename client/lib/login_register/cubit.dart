@@ -4,6 +4,7 @@ import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
 import 'package:ccquarters/services/houses/service.dart';
+import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:flutter/foundation.dart';
@@ -23,14 +24,10 @@ class AuthCubit extends Cubit<AuthState> {
             ? SigningInState()
             : NeedsSigningInState()) {
     if (authService.isSignedIn) {
-      setTokens().then((value) => emit(SignedInState()));
+      setUserAndTokens();
     } else {
       if (kIsWeb) {
-        user = null;
-        authService
-            .signInAnnonymously()
-            .then((value) => setTokens())
-            .then((value) => emit(SignedInState()));
+        skipRegisterAndLogin();
       } else {
         user = User.empty();
       }
@@ -105,8 +102,7 @@ class AuthCubit extends Cubit<AuthState> {
       final result = await authService.signInWithEmail(user!.email, password);
       switch (result) {
         case SignInResult.success:
-          await setTokens();
-          emit(SignedInState());
+          await setUserAndTokens();
           break;
         default:
           emit(loginState..error = result.toString());
@@ -114,6 +110,30 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } catch (e) {
       emit(loginState..error = 'Nieoczekiwany błąd');
+    }
+  }
+
+  Future<void> setUserAndTokens() async {
+    user = await getUser(authService.currentUserId!);
+    await setTokens();
+    emit(SignedInState());
+  }
+
+  Future<User?> getUser(String userId) async {
+    final response = await userService.getUser(userId);
+    if (response.error != ErrorType.none) {
+      return null;
+    }
+    return response.data;
+  }
+
+  Future<void> setTokens() async {
+    var token = await authService.getToken();
+    if (token != null) {
+      userService.setToken(token);
+      houseService.setToken(token);
+      alertService.setToken(token);
+      vtService.setToken(token);
     }
   }
 
@@ -151,15 +171,5 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> goToStartPage() async {
     emit(NeedsSigningInState());
-  }
-
-  Future<void> setTokens() async {
-    var token = await authService.getToken();
-    if (token != null) {
-      userService.setToken(token);
-      houseService.setToken(token);
-      alertService.setToken(token);
-      vtService.setToken(token);
-    }
   }
 }

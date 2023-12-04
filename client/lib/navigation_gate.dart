@@ -1,6 +1,5 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/main_page/gate.dart';
-import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +87,7 @@ class _NavigationGateState extends State<NavigationGate> {
           Expanded(
             child: _selectedIndex == 2
                 ? ProfileGate(
-                    user: User.empty(),
+                    user: context.read<AuthCubit>().user,
                   )
                 : _pages.elementAt(_selectedIndex),
           )

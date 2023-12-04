@@ -53,34 +53,40 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           _pagingControllerForLikedHouses.refresh();
           _pagingControllerForMyHouses.refresh();
         },
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
+        child: Center(
+          child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width *
                     (MediaQuery.of(context).orientation == Orientation.landscape
                         ? 0.5
                         : 1),
               ),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProfileInfo(user: widget.user),
-                      _buildButtons(context),
-                    ],
-                  ),
-                  HousesTabBarWithGrids(
-                    tabController: _tabController,
-                    pagingControllerForMyHouses: _pagingControllerForMyHouses,
-                    pagingControllerForLikedHouses:
-                        _pagingControllerForLikedHouses,
-                  ),
-                ],
-              ),
-            ),
-          ),
+              child: NestedScrollView(
+                headerSliverBuilder: (context, value) {
+                  return [
+                    SliverToBoxAdapter(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileInfo(user: widget.user),
+                          _buildButtons(context),
+                        ],
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: HousesAndLikedHousesTabBar(
+                        tabController: _tabController,
+                      ),
+                    ),
+                  ];
+                },
+                body: HousesTabBarViewWithGrids(
+                  pagingControllerForLikedHouses:
+                      _pagingControllerForLikedHouses,
+                  pagingControllerForMyHouses: _pagingControllerForMyHouses,
+                  tabController: _tabController,
+                ),
+              )),
         ),
       ),
     );

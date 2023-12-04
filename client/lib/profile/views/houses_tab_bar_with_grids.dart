@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class HousesTabBarWithGrids extends StatelessWidget {
-  const HousesTabBarWithGrids({
+class HousesTabBarViewWithGrids extends StatelessWidget {
+  const HousesTabBarViewWithGrids({
     super.key,
     required this.tabController,
     required this.pagingControllerForMyHouses,
@@ -19,30 +19,21 @@ class HousesTabBarWithGrids extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return TabBarView(
+      controller: tabController,
       children: [
-        HousesAndLikedHousesTabBar(
-          tabController: tabController,
+        PhotosGrid(
+          getHouses: (pageNumber, pageCount) async => await context
+              .read<ProfilePageCubit>()
+              .getMyHouses(pageNumber, pageCount),
+          pagingController: pagingControllerForMyHouses,
         ),
-        Expanded(
-          child: TabBarView(
-            controller: tabController,
-            children: [
-              PhotosGrid(
-                getHouses: (pageNumber, pageCount) async => await context
-                    .read<ProfilePageCubit>()
-                    .getMyHouses(pageNumber, pageCount),
-                pagingController: pagingControllerForMyHouses,
-              ),
-              PhotosGrid(
-                getHouses: (pageNumber, pageCount) async => await context
-                    .read<ProfilePageCubit>()
-                    .getLikedHouses(pageNumber, pageCount),
-                pagingController: pagingControllerForLikedHouses,
-              ),
-            ],
-          ),
-        )
+        PhotosGrid(
+          getHouses: (pageNumber, pageCount) async => await context
+              .read<ProfilePageCubit>()
+              .getLikedHouses(pageNumber, pageCount),
+          pagingController: pagingControllerForLikedHouses,
+        ),
       ],
     );
   }
