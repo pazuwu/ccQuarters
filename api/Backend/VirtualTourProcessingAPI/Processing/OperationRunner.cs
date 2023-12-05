@@ -114,17 +114,12 @@ namespace VirtualTourProcessingServer.Processing
             _logger.LogInformation($"Running render for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
             var workingDirectory = GetWorkingDirectory(operation);
-            var nerfactoDirectory = Path.Combine(workingDirectory, "nerfacto");
-            var configDirectory = Directory.GetDirectories(nerfactoDirectory).FirstOrDefault();
-
-            if(configDirectory == null)
-            await FinishOperation(operation, ExecutorResponse.Problem("Training directory not found"));
 
             var renderParameters = new RenderParameters()
             {
                 CameraConfigPath = Path.Combine(workingDirectory, "render_settings.json"),
                 OutputPath = Path.Combine(workingDirectory, "renders"),
-                ConfigPath = Path.Combine(configDirectory!, "config.yml")
+                WorkingDirectory = workingDirectory,
             };
             var response = await _renderExecutor.Render(renderParameters);
 
