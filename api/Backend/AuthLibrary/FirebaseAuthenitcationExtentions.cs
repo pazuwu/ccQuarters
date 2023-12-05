@@ -64,11 +64,5 @@ namespace AuthLibrary
             builder.RequireAuthorization("Auth");
             return builder;
         }
-        
-        public static RouteHandlerBuilder RequireFBAuthorization(this RouteHandlerBuilder builder)
-        {
-            builder.RequireAuthorization("Auth");
-            return builder;
-        }
     }
 }
