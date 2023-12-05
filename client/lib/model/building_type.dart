@@ -1,3 +1,5 @@
+import 'package:json_annotation/json_annotation.dart';
+
 enum BuildingType {
   house,
   apartment,
@@ -17,5 +19,23 @@ extension BuildingTypeEx on BuildingType {
       case BuildingType.room:
         return "Pokój";
     }
+  }
+}
+
+class BuildingTypeConverter implements JsonConverter<BuildingType, int> {
+  const BuildingTypeConverter();
+
+  @override
+  BuildingType fromJson(int json) {
+    return BuildingType.values[json];
+  }
+
+  @override
+  int toJson(BuildingType? object) {
+    if (object == null) {
+      return 0;
+    }
+
+    return object.index;
   }
 }

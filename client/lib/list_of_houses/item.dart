@@ -1,4 +1,4 @@
-import 'package:ccquarters/house_details/views/view.dart';
+import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/utils/consts.dart';
@@ -34,7 +34,9 @@ class _HouseListTileState extends State<HouseListTile> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailsView(house: widget.house),
+                  builder: (context) => HouseDetailsGate(
+                    houseId: widget.house.id,
+                  ),
                 ),
               );
             },
@@ -68,7 +70,7 @@ class _HouseListTileState extends State<HouseListTile> {
       constraints:
           BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
       child: ImageWidget(
-        imageUrl: widget.house.photos.first,
+        imageUrl: widget.house.photos.first.url,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(borderRadius),
           topRight: Radius.circular(borderRadius),

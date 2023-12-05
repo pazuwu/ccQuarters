@@ -12,26 +12,7 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(paddingSize),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: () {
-                context.read<AuthCubit>().skipRegisterAndLogin();
-              },
-              child: Text(
-                "Przejdź dalej bez logowania",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: _buildSkipRegisterAndLoginBottomBar(context),
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -45,71 +26,106 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "CCQuarters",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ),
+                _buildCompanyName(),
                 FaIcon(
                   FontAwesomeIcons.house,
                   size: 150,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 35, right: 35),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Cześć!",
-                        style: TextStyle(
-                            fontSize: 34,
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        "Najlepsze miejsce, aby znaleźć wymarzony dom lub mieszkanie",
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    WideTextButton(
-                      onPressed: () {
-                        context.read<AuthCubit>().goToLoginPage();
-                      },
-                      text: "Zaloguj się",
-                    ),
-                    WideTextButton(
-                      onPressed: () {
-                        context
-                            .read<AuthCubit>()
-                            .goToPersonalInfoRegisterPage();
-                      },
-                      text: "Zarejestruj się",
-                      isLightTheme: true,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                    )
-                  ],
-                ),
+                _buildWelcome(context),
+                _buildLoginOrRegisterButtons(context),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Padding _buildSkipRegisterAndLoginBottomBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(paddingSize),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+            onPressed: () {
+              context.read<AuthCubit>().skipRegisterAndLogin();
+            },
+            child: Text(
+              "Przejdź dalej bez logowania",
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding _buildCompanyName() {
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          "CCQuarters",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      ),
+    );
+  }
+
+  Padding _buildWelcome(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 35, right: 35),
+      child: Column(
+        children: [
+          Text(
+            "Cześć!",
+            style: TextStyle(
+              fontSize: 34,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Text(
+            "Najlepsze miejsce, aby znaleźć wymarzony dom lub mieszkanie",
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Column _buildLoginOrRegisterButtons(BuildContext context) {
+    return Column(
+      children: [
+        WideTextButton(
+          onPressed: () {
+            context.read<AuthCubit>().goToLoginPage();
+          },
+          text: "Zaloguj się",
+        ),
+        WideTextButton(
+          onPressed: () {
+            context.read<AuthCubit>().goToPersonalInfoRegisterPage();
+          },
+          text: "Zarejestruj się",
+          isLightTheme: true,
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.1,
+        )
+      ],
     );
   }
 }

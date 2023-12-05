@@ -13,6 +13,7 @@ class ViewWithHeader extends StatelessWidget {
     this.hasScrollBody = false,
     required this.goBackOnPressed,
     required this.nextOnPressed,
+    this.isLastPage = false,
   }) : super(key: key);
 
   final String title;
@@ -21,6 +22,7 @@ class ViewWithHeader extends StatelessWidget {
   final bool hasScrollBody;
   final Function()? goBackOnPressed;
   final Function() nextOnPressed;
+  final bool isLastPage;
 
   Widget _buildMainColumn(BuildContext context) {
     return Column(
@@ -30,6 +32,7 @@ class ViewWithHeader extends StatelessWidget {
         GoBackNextButtons(
           goBackOnPressed: goBackOnPressed,
           nextOnPressed: nextOnPressed,
+          isLastPage: isLastPage,
         )
       ],
     );
@@ -41,7 +44,9 @@ class ViewWithHeader extends StatelessWidget {
         ? CustomScrollView(
             slivers: [
               SliverFillRemaining(
-                  hasScrollBody: hasScrollBody, child: _buildMainColumn(context)),
+                hasScrollBody: hasScrollBody,
+                child: _buildMainColumn(context),
+              ),
             ],
           )
         : _buildMainColumn(context);

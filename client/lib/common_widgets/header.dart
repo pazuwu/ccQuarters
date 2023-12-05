@@ -22,8 +22,9 @@ class Header extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-                fontSize: min(MediaQuery.of(context).size.width * 0.1, 40),
-                color: Colors.white),
+              fontSize: min(MediaQuery.of(context).size.width * 0.1, 40),
+              color: Colors.white,
+            ),
           ),
         ),
       ),

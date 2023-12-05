@@ -13,6 +13,9 @@ class Environment {
   static String get apiUrl =>
       dotenv.env["API_URL"] ?? "ANNOUNCEMENTS_API_URL not found!";
 
+  static String get vtApiUrl =>
+      dotenv.env["VT_API_URL"] ?? "VT_API_URL not found!";
+
   static String get projectId =>
       dotenv.env["PROJECT_ID"] ?? "PROJECT_ID not found!";
 

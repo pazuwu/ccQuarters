@@ -1,8 +1,12 @@
 import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
+import 'package:ccquarters/services/houses/service.dart';
+import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -10,18 +14,31 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'states.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit({required this.authService, required this.userService})
-      : super(kIsWeb ? SignedInState() : NeedsSigningInState()) {
-    if (kIsWeb) {
-      user = null;
-      authService.signInAnnonymously().then((value) => setTokens());
+  AuthCubit({
+    required this.authService,
+    required this.userService,
+    required this.houseService,
+    required this.alertService,
+    required this.vtService,
+  }) : super(kIsWeb || authService.isSignedIn
+            ? SigningInState()
+            : NeedsSigningInState()) {
+    if (authService.isSignedIn) {
+      setUserAndTokens();
     } else {
-      user = User();
+      if (kIsWeb) {
+        skipRegisterAndLogin();
+      } else {
+        user = User.empty();
+      }
     }
   }
 
   AuthService authService;
   UserService userService;
+  HouseService houseService;
+  AlertService alertService;
+  VTService vtService;
   User? user;
 
   Future<void> skipRegisterAndLogin() async {
@@ -37,7 +54,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(SigningInState());
     if (user == null) {
-      user = User();
+      user = User.empty();
       emit(InputDataState(user: user!));
       return;
     }
@@ -71,7 +88,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(SigningInState());
     if (user == null) {
-      user = User();
+      user = User.empty();
       emit(InputDataState(user: user!));
       return;
     }
@@ -85,7 +102,7 @@ class AuthCubit extends Cubit<AuthState> {
       final result = await authService.signInWithEmail(user!.email, password);
       switch (result) {
         case SignInResult.success:
-          emit(SignedInState());
+          await setUserAndTokens();
           break;
         default:
           emit(loginState..error = result.toString());
@@ -96,9 +113,33 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  Future<void> setUserAndTokens() async {
+    user = await getUser(authService.currentUserId!);
+    await setTokens();
+    emit(SignedInState());
+  }
+
+  Future<User?> getUser(String userId) async {
+    final response = await userService.getUser(userId);
+    if (response.error != ErrorType.none) {
+      return null;
+    }
+    return response.data;
+  }
+
+  Future<void> setTokens() async {
+    var token = await authService.getToken();
+    if (token != null) {
+      userService.setToken(token);
+      houseService.setToken(token);
+      alertService.setToken(token);
+      vtService.setToken(token);
+    }
+  }
+
   void savePersonalInfo(
       String company, String name, String surname, String phoneNumber) {
-    user ??= User();
+    user ??= User.empty();
     user!.company = company;
     user!.name = name;
     user!.surname = surname;
@@ -106,13 +147,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void saveEmail(String email) {
-    user ??= User();
+    user ??= User.empty();
     user!.email = email;
   }
 
   Future<void> signOut() async {
     await authService.signOut();
-    user = User();
+    user = User.empty();
     emit(NeedsSigningInState());
   }
 
@@ -130,12 +171,5 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> goToStartPage() async {
     emit(NeedsSigningInState());
-  }
-
-  Future<void> setTokens() async {
-    var token = await authService.getToken();
-    if (token != null) {
-      userService.setToken(token);
-    }
   }
 }

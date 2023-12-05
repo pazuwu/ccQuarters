@@ -22,6 +22,7 @@ namespace VirtualTourProcessingServer.UnitTests
             var options = new ProcessingOptions()
             {
                 MaxProcessingAttempts = 1,
+                StorageDirectory = "",
             };
 
             var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
@@ -31,13 +32,13 @@ namespace VirtualTourProcessingServer.UnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(Stages), DynamicDataSourceType.Property)]
+        [DynamicData(nameof(OperationsFactory.ProduceRunnerStages), typeof(OperationsFactory), DynamicDataSourceType.Method)]
         public void RegisterOperationExecutesCorrectRunner(OperationStage stage)
         {
-            var operation = CreateOperation(stage);
+            var operation = OperationsFactory.CreateOperation(stage);
             _manager.RegisterNewOperations(new List<VTOperation>() { operation });
 
-            if(_runnerStages.Contains(stage))
+            if(OperationsFactory.RunnerStages.Contains(stage))
                 _runner.RunningOperation.Should().NotBeNull()
                     .And.Subject.Should().BeSameAs(operation);
             else
@@ -45,11 +46,11 @@ namespace VirtualTourProcessingServer.UnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(RunnerStages), DynamicDataSourceType.Property)]
+        [DynamicData(nameof(OperationsFactory.ProduceRunnerStages), typeof(OperationsFactory), DynamicDataSourceType.Method)]
         public void RunNextRunsNextOperationInRunner(OperationStage stage)
         {
-            var firstOperation = CreateOperation(stage);
-            var secondOperation = CreateOperation(stage);
+            var firstOperation = OperationsFactory.CreateOperation(stage);
+            var secondOperation = OperationsFactory.CreateOperation(stage);
 
             _manager.RegisterNewOperations(new List<VTOperation>() { firstOperation, secondOperation });
 
@@ -68,14 +69,14 @@ namespace VirtualTourProcessingServer.UnitTests
         }
 
         [TestMethod]
-        [DynamicData(nameof(MultiRunnerStages), DynamicDataSourceType.Property)]
+        [DynamicData(nameof(OperationsFactory.ProduceMultiRunnerStages), typeof(OperationsFactory), DynamicDataSourceType.Method)]
         public void RunNextRunsNextOperationInMultiRunner(OperationStage stage)
         {
             _multiRunner.MaxMultiprocessingThreadsMock = 2;
 
-            var firstOperation = CreateOperation(stage);
-            var secondOperation = CreateOperation(stage);
-            var thirdOperation = CreateOperation(stage);
+            var firstOperation = OperationsFactory.CreateOperation(stage);
+            var secondOperation = OperationsFactory.CreateOperation(stage);
+            var thirdOperation = OperationsFactory.CreateOperation(stage);
 
             _manager.RegisterNewOperations(new List<VTOperation>() { firstOperation, secondOperation, thirdOperation });
 
@@ -91,22 +92,5 @@ namespace VirtualTourProcessingServer.UnitTests
 
             _multiRunner.RunningOperations.Should().Contain(thirdOperation);
         }
-
-        private static VTOperation CreateOperation(OperationStage stage)
-        {
-            return new VTOperation()
-            {
-                AreaId = Guid.NewGuid().ToString(),
-                OperationId = Guid.NewGuid().ToString(),
-                TourId = Guid.NewGuid().ToString(),
-                Stage = stage,
-            };
-        }
-
-        private static readonly OperationStage[] _runnerStages = { OperationStage.Colmap, OperationStage.Train, OperationStage.Render };
-
-        public static IEnumerable<object[]> RunnerStages => _runnerStages.Select(stage => new object[] { stage });
-        public static IEnumerable<object[]> MultiRunnerStages => Enum.GetValues<OperationStage>().Except(_runnerStages).Select(stage => new object[] { stage });
-        public static IEnumerable<object[]> Stages => Enum.GetValues<OperationStage>().Select(stage => new object[] { stage });
     }
 }

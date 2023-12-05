@@ -19,57 +19,68 @@ class EmailAndPasswordFields extends StatelessWidget {
         RegExp("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+\$)");
     return Column(
       children: [
-        ThemedFormField(
-          controller: email,
-          labelText: 'E-mail',
-          validator: (text) {
-            if (text == null || text.isEmpty) {
-              return "Wprowadź adres e-mail";
-            }
-            if (!emailRegExp.hasMatch(text)) {
-              return "Niepoprawny adres email";
-            }
-            return null;
-          },
+        _buildEmailField(emailRegExp),
+        const SizedBox(
+          height: 20,
         ),
+        _buildPasswordField(),
+        if (repeatPassword != null) _buildRepeatPasswordField()
+      ],
+    );
+  }
+
+  ThemedFormField _buildEmailField(RegExp emailRegExp) {
+    return ThemedFormField(
+      controller: email,
+      labelText: 'E-mail',
+      validator: (text) {
+        if (text == null || text.isEmpty) {
+          return "Wprowadź adres e-mail";
+        }
+        if (!emailRegExp.hasMatch(text)) {
+          return "Niepoprawny adres email";
+        }
+        return null;
+      },
+    );
+  }
+
+  ThemedFormField _buildPasswordField() {
+    return ThemedFormField(
+      controller: password,
+      obscureText: true,
+      labelText: 'Hasło',
+      validator: (text) {
+        if (text == null || text.isEmpty) {
+          return "Wprowadź hasło";
+        }
+        return null;
+      },
+    );
+  }
+
+  Column _buildRepeatPasswordField() {
+    return Column(
+      children: [
         const SizedBox(
           height: 20,
         ),
         ThemedFormField(
-          controller: password,
+          controller: repeatPassword,
           obscureText: true,
-          labelText: 'Hasło',
+          labelText: 'Powtórz hasło',
           validator: (text) {
             if (text == null || text.isEmpty) {
-              return "Wprowadź hasło";
+              return "Powtórz hasło";
             }
+
+            if (repeatPassword!.text != password.text) {
+              return "Hasła nie są takie same";
+            }
+
             return null;
           },
         ),
-        if (repeatPassword != null)
-          Column(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              ThemedFormField(
-                controller: repeatPassword,
-                obscureText: true,
-                labelText: 'Powtórz hasło',
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return "Powtórz hasło";
-                  }
-
-                  if (repeatPassword!.text != password.text) {
-                    return "Hasła nie są takie same";
-                  }
-
-                  return null;
-                },
-              ),
-            ],
-          )
       ],
     );
   }

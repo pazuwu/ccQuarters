@@ -15,15 +15,16 @@ class Icon360 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-        style: style,
-        label: Text(
-          "360°",
-          style: TextStyle(color: color),
-        ),
-        onPressed: onPressed,
-        icon: Icon(
-          Icons.visibility,
-          color: color,
-        ));
+      style: style,
+      label: Text(
+        "360°",
+        style: TextStyle(color: color),
+      ),
+      onPressed: onPressed,
+      icon: Icon(
+        Icons.visibility,
+        color: color,
+      ),
+    );
   }
 }
