@@ -25,5 +25,7 @@ namespace CCQuartersAPI.Responses
         public BuildingType BuildingType { get; set; }
         public bool IsLiked { get; set; }
         public string PhotoUrl { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime UpdateDate { get; set; }
     }
 }

@@ -129,7 +129,7 @@ namespace CCQuartersAPI.Services
                 });
 
                 var detailsQuery = @$"UPDATE Details
-                                    SET Price = @price, RoomCount = @roomCount, Area = @area, Floor = @floor, BuildingType = @buildingType, Title = @title'
+                                    SET Price = @price, RoomCount = @roomCount, Area = @area, Floor = @floor, BuildingType = @buildingType, Title = @title
                                     WHERE Id IN (SELECT DetailsId FROM Houses WHERE Id = @houseId)";
 
                 await _rdbRepository.ExecuteAsync(detailsQuery, transaction: trans, param: new
@@ -162,16 +162,16 @@ namespace CCQuartersAPI.Services
             }
         }
 
-        public async Task DeleteHouse(Guid houseId)
+        public async Task DeleteHouse(Guid houseId, IDbTransaction? trans = null)
         {
             var deleteQuery = @$"UPDATE Houses
                         SET DeleteDate = GETDATE()
                         WHERE Id = @houseId";
 
-            await _rdbRepository.ExecuteAsync(deleteQuery, new { houseId });
+            await _rdbRepository.ExecuteAsync(deleteQuery, new { houseId }, trans);
         }
 
-        public async Task LikeHouse(string userId, Guid houseId)
+        public async Task LikeHouse(string userId, Guid houseId, IDbTransaction? trans = null)
         {
             var query = @$"IF NOT EXISTS (SELECT * FROM LikedHouses WHERE HouseId = @houseId AND UserId = @userId)
                        BEGIN
@@ -179,14 +179,14 @@ namespace CCQuartersAPI.Services
                            VALUES (@userId, @houseId)
                        END";
 
-            await _rdbRepository.ExecuteAsync(query, new { userId, houseId });
+            await _rdbRepository.ExecuteAsync(query, new { userId, houseId }, trans);
         }
 
-        public async Task UnlikeHouse(string userId, Guid houseId)
+        public async Task UnlikeHouse(string userId, Guid houseId, IDbTransaction? trans = null)
         {
             var query = @$"DELETE FROM LikedHouses WHERE UserId = @userId AND HouseId = @houseId";
 
-            await _rdbRepository.ExecuteAsync(query, new { userId, houseId });
+            await _rdbRepository.ExecuteAsync(query, new { userId, houseId }, trans);
         }
 
         public async Task<BasicHouseInfoDTO?> GetBasicHouseInfo(Guid houseId)
@@ -198,11 +198,11 @@ namespace CCQuartersAPI.Services
             return await _rdbRepository.QueryFirstOrDefaultAsync<BasicHouseInfoDTO>(query, new { houseId });
         }
 
-        public async Task<IEnumerable<SimpleHouseDTO>?> GetSimpleHousesInfo(GetHousesQuery housesQuery, string userId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<SimpleHouseDTO>?> GetSimpleHousesInfo(GetHousesQuery housesQuery, string userId, int pageNumber, int pageSize, IDbTransaction? trans = null)
         {
             var queryBuilder = new StringBuilder();
 
-            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId)>0, 1, 0) AS IsLiked, PhotoId AS PhotoUrl
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, CreationDate, UpdateDate, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId)>0, 1, 0) AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
@@ -238,7 +238,7 @@ namespace CCQuartersAPI.Services
                 districts = housesQuery.Districts,
                 pageNumber,
                 pageSize
-            });
+            }, trans);
         }
 
         private string ParseGetHousesQuery(GetHousesQuery query)
@@ -305,7 +305,7 @@ namespace CCQuartersAPI.Services
 
         public async Task<IEnumerable<SimpleHouseDTO>?> GetSimpleHousesInfoCreatedByUser(string userId, int pageNumber, int pageSize)
         {
-            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, CreationDate, UpdateDate, 1 AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
@@ -325,7 +325,7 @@ namespace CCQuartersAPI.Services
 
         public async Task<IEnumerable<SimpleHouseDTO>?> GetSimpleHousesInfoLikedByUser(string userId, int pageNumber, int pageSize)
         {
-            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, 1 AS IsLiked, PhotoId AS PhotoUrl
+            var query = @$"SELECT h.Id AS Id, Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, CreationDate, UpdateDate, 1 AS IsLiked, PhotoId AS PhotoUrl
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
@@ -343,9 +343,9 @@ namespace CCQuartersAPI.Services
             });
         }
 
-        private async Task<IEnumerable<SimpleHouseDTO>?> GetSimpleHousesInfoInternal(string query, object param)
+        private async Task<IEnumerable<SimpleHouseDTO>?> GetSimpleHousesInfoInternal(string query, object param, IDbTransaction? trans = null)
         {
-            var houses = await _rdbRepository.QueryAsync<SimpleHouseDTO>(query, param);
+            var houses = await _rdbRepository.QueryAsync<SimpleHouseDTO>(query, param, trans);
 
             foreach (var house in houses)
                 if (!string.IsNullOrWhiteSpace(house.PhotoUrl))

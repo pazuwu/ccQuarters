@@ -2,17 +2,23 @@
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace RepositoryLibrary
 {
     public class RelationalDBRepository : IRelationalDBRepository, IDisposable
     {
         private readonly string connectionString;
-        private IDbConnection? _connection;
+        private List<IDbConnection> _connections = new();
 
         public RelationalDBRepository(IConfiguration config)
         {
             this.connectionString = config["db"] ?? "";
+        }
+
+        public RelationalDBRepository(string connectionString) 
+        {
+            this.connectionString = connectionString;
         }
 
         public async Task<int> ExecuteAsync(string sql, object? param = null, IDbTransaction? trans = null)
@@ -20,10 +26,13 @@ namespace RepositoryLibrary
             IDbConnection connection;
             if (trans?.Connection is not null)
                 connection = trans!.Connection!;
-            else if (_connection is not null)
-                connection = _connection;
+            else if (_connections.Any())
+                connection = _connections.First();
             else
-                _connection = connection = new SqlConnection(connectionString);
+            {
+                connection = new SqlConnection(connectionString);
+                _connections.Add(connection);
+            }
 
             return await connection.ExecuteAsync(sql, param, trans);
         }
@@ -33,10 +42,13 @@ namespace RepositoryLibrary
             IDbConnection connection;
             if (trans?.Connection is not null)
                 connection = trans!.Connection!;
-            else if (_connection is not null)
-                connection = _connection;
+            else if (_connections.Any())
+                connection = _connections.First();
             else
-                _connection = connection = new SqlConnection(connectionString);
+            {
+                connection = new SqlConnection(connectionString);
+                _connections.Add(connection);
+            }
 
             return await connection.QueryAsync<T>(sql, param, trans);
         }
@@ -46,10 +58,13 @@ namespace RepositoryLibrary
             IDbConnection connection;
             if (trans?.Connection is not null)
                 connection = trans!.Connection!;
-            else if (_connection is not null)
-                connection = _connection;
+            else if (_connections.Any())
+                connection = _connections.First();
             else
-                _connection = connection = new SqlConnection(connectionString);
+            {
+                connection = new SqlConnection(connectionString);
+                _connections.Add(connection);
+            }
 
             return await connection.QueryFirstAsync<T>(sql, param, trans);
         }
@@ -59,21 +74,22 @@ namespace RepositoryLibrary
             IDbConnection connection;
             if (trans?.Connection is not null)
                 connection = trans!.Connection!;
-            else if (_connection is not null)
-                connection = _connection;
+            else if (_connections.Any())
+                connection = _connections.First();
             else
-                _connection = connection = new SqlConnection(connectionString);
+            {
+                connection = new SqlConnection(connectionString);
+                _connections.Add(connection);
+            }
 
             return await connection.QueryFirstOrDefaultAsync<T>(sql, param, trans);
         }
 
         public IDbTransaction BeginTransaction()
         {
-            IDbConnection connection;
-            if (_connection is not null)
-                connection = _connection;
-            else
-                _connection = connection = new SqlConnection(connectionString);
+            IDbConnection connection = new SqlConnection(connectionString);
+            _connections.Add(connection);
+           
             connection.Open();
             return connection.BeginTransaction();
         }
@@ -92,7 +108,8 @@ namespace RepositoryLibrary
 
         public void Dispose()
         {
-            _connection?.Dispose();
+            foreach(var conn in _connections)
+                conn?.Dispose();
             GC.SuppressFinalize(this);
         }
     }
