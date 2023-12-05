@@ -88,7 +88,6 @@ namespace VirtualTourProcessingServer.UnitTests
         }
 
         [TestMethod]
-        [Ignore]
         public void OperationRunnerRunsRender()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Render);
