@@ -61,10 +61,17 @@ namespace CloudStorageLibrary
                 AuthTokenAsyncFactory = GetToken
             });
 
-            return await storage
-                 .Child(collectionName)
-                 .Child(filename)
-                 .GetDownloadUrlAsync();
+            try
+            {
+                return await storage
+                     .Child(collectionName)
+                     .Child(filename)
+                     .GetDownloadUrlAsync();
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         public async Task<IEnumerable<string>> GetDownloadUrls(string collectionName, params string[] filenames)

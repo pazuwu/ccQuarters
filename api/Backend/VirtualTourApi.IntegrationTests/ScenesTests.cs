@@ -52,7 +52,7 @@ namespace VirtualTourApi.IntegrationTests
             getTourResult.Tour.Should().NotBeNull();
             getTourResult.Tour.Scenes
                 .Should().NotBeNull()
-                .And.Subject.Should().Contain(result.Scene);
+                .And.Subject.Should().Contain(s => s.Id == result.Scene.Id);
 
             var deleteSceneParameters = new DeleteSceneParameters() 
             { 
