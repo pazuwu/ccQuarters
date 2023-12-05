@@ -32,12 +32,12 @@ namespace VirtualTourAPI.Endpoints
                 NextOrientation = request.NextOrientation,
             };
 
-            var createdAreaId = await repository.CreateLink(tourId, newLink);
+            var createdLinkId = await repository.CreateLink(tourId, newLink);
 
-            if (string.IsNullOrWhiteSpace(createdAreaId))
+            if (string.IsNullOrWhiteSpace(createdLinkId))
                 return Results.Problem("DB error occured while creating object.");
 
-            return Results.Created(tourId, null);
+            return Results.Created(createdLinkId, null);
         }
 
         public static async Task<IResult> Put(string tourId, string linkId, PutLinkRequest request, IVTService repository)

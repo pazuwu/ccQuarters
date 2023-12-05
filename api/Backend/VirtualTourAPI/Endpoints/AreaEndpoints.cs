@@ -34,8 +34,7 @@ namespace VirtualTourAPI.Endpoints
             await storage.UploadFileAsync(collectionName, fileStream, filename);
             await repository.AddPhotoToArea(tourId, areaId, filename);
 
-            var url = await storage.GetDownloadUrl(collectionName, filename);
-            return Results.Created(url, null);
+            return Results.Created(filename, null);
         }
 
         public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IVTService repository)

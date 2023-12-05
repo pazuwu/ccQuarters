@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using RepositoryLibrary;
 using VirtualTourAPI.Model;
+using static Google.Rpc.Help.Types;
 
 namespace VirtualTourAPI.Service
 {
@@ -130,6 +131,8 @@ namespace VirtualTourAPI.Service
 
             var snapshot = await _documentRepository.GetByFieldAsync(getPath, nameof(LinkDTO.ParentId), sceneId);
 
+            if(snapshot == null) return;
+
             _logger.LogInformation("Scene deleted in tour: {tourId}, id: {sceneId}", tourId, sceneId);
 
             foreach (var link in snapshot)
@@ -150,6 +153,8 @@ namespace VirtualTourAPI.Service
             string path = $"{ToursCollection}/{tourId}/{LinksCollection}/{link.Id}";
 
             await _documentRepository.SetAsync(path, link);
+
+            _logger.LogInformation("Link updated in tour: {tourId}, id: {linkId}", tourId, link.Id);
         }
 
         public async Task<TourDTO?> GetTour(string tourId)
@@ -165,10 +170,10 @@ namespace VirtualTourAPI.Service
 
             await Task.WhenAll(tourTask, areasTask, scenesTask, linksTask);
 
-            var links = ConvertCollection<LinkDTO>(linksTask).ToList();
-            var scenes = ConvertCollection<SceneDTO>(scenesTask).ToList();
-            var areas = ConvertCollection<AreaDTO>(areasTask).ToList();
-            var tour = tourTask.GetAwaiter().GetResult().ConvertTo<TourDTO?>();
+            var links = ConvertCollection<LinkDTO>(linksTask)?.ToList();
+            var scenes = ConvertCollection<SceneDTO>(scenesTask)?.ToList();
+            var areas = ConvertCollection<AreaDTO>(areasTask)?.ToList();
+            var tour = tourTask.GetAwaiter().GetResult()?.ConvertTo<TourDTO?>();
 
             if (tour == null)
                 return null;
@@ -180,12 +185,12 @@ namespace VirtualTourAPI.Service
             return tour;
         }
 
-        private IEnumerable<T> ConvertCollection<T>(Task<IEnumerable<DocumentSnapshot>> queryTask)
+        private IEnumerable<T>? ConvertCollection<T>(Task<IEnumerable<DocumentSnapshot>?> queryTask)
         {
             return queryTask
                 .GetAwaiter()
                 .GetResult()
-                .Select(d => d.ConvertTo<T>());
+                ?.Select(d => d.ConvertTo<T>());
         }
 
         public async Task<string?> CreateTour()
