@@ -2,6 +2,7 @@
 using CloudStorageLibrary;
 using Firebase.Auth;
 using RepositoryLibrary;
+using System.Data;
 using System.Text;
 
 namespace CCQuartersAPI.Services
@@ -15,29 +16,30 @@ namespace CCQuartersAPI.Services
             _rdbRepository = rdbRepository;
         }
 
-        public async Task<AlertDTO[]> GetAlerts(string userId)
+        public async Task<AlertDTO[]> GetAlerts(string userId, IDbTransaction? trans = null)
         {
             var query = @$"SELECT * FROM Alerts WHERE UserId = @userId";
 
-            var alerts = await _rdbRepository.QueryAsync<AlertDTO>(query, new { userId });
+            var alerts = await _rdbRepository.QueryAsync<AlertDTO>(query, new { userId }, trans);
 
             return alerts?.ToArray() ?? Array.Empty<AlertDTO>();
         }
 
-        public async Task<AlertDTO?> GetAlertById(string alertId)
+        public async Task<AlertDTO?> GetAlertById(Guid alertId, IDbTransaction? trans = null)
         {
             var query = @$"SELECT * FROM Alerts WHERE Id = @alertId";
 
-            return await _rdbRepository.QueryFirstAsync<AlertDTO>(query, new { alertId });
+            return await _rdbRepository.QueryFirstOrDefaultAsync<AlertDTO>(query, new { alertId }, trans);
         }
 
-        public async Task CreateAlert(AlertDTO alert, string userId)
+        public async Task<Guid?> CreateAlert(AlertDTO alert, string userId, IDbTransaction? trans = null)
         {
             string query = $@"INSERT INTO Alerts (Id, UserId, MaxPrice, MaxPricePerM2, MinArea, MaxArea, MinRoomCount, MaxRoomCount, Floor, OfferType, BuildingType, City, ZipCode, District, StreetName, StreetNumber, FlatNumber)
+                              OUTPUT INSERTED.Id
                               VALUES (NEWID(), @userId, @maxPrice, @maxPricePerM2, @minArea, @maxArea, @minRoomCount, @maxRoomCount, @floor, @offerType, @buildingType, @city, @zipCode, @district, @streetName, @streetNumber, @flatNumber)";
 
 
-            await _rdbRepository.ExecuteAsync(query, new
+            return await _rdbRepository.QueryFirstAsync<Guid?>(query, new
             {
                 userId,
                 maxPrice = alert.MaxPrice,
@@ -55,10 +57,10 @@ namespace CCQuartersAPI.Services
                 streetName = alert.StreetName,
                 streetNumber = alert.StreetNumber,
                 flatNumber = alert.FlatNumber
-            });
+            }, trans);
         } 
         
-        public async Task UpdateAlert(AlertDTO alert, string alertId)
+        public async Task UpdateAlert(AlertDTO alert, Guid alertId, IDbTransaction? trans = null)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("UPDATE Alerts SET ");
@@ -128,14 +130,14 @@ namespace CCQuartersAPI.Services
                 streetNumber = alert.StreetNumber,
                 flatNumber = alert.FlatNumber,
                 alertId
-            });
+            }, trans);
         }
 
-        public async Task DeleteAlertById(string alertId)
+        public async Task DeleteAlertById(Guid alertId, IDbTransaction? trans = null)
         {
             var deleteQuery = @$"DELETE FROM Alerts WHERE Id = @alertId";
 
-            await _rdbRepository.ExecuteAsync(deleteQuery, new { alertId });
+            await _rdbRepository.ExecuteAsync(deleteQuery, new { alertId }, trans);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using CCQuartersAPI.Responses;
+using System.Data;
 
 namespace CCQuartersAPI.Services
 {
     public interface IAlertsService
     {
-        Task<AlertDTO[]> GetAlerts(string userId);
-        Task<AlertDTO?> GetAlertById(string alertId);
-        Task CreateAlert(AlertDTO alert, string userId);
-        Task DeleteAlertById(string alertId);
-        Task UpdateAlert(AlertDTO alert, string alertId);
+        Task<AlertDTO[]> GetAlerts(string userId, IDbTransaction? trans = null);
+        Task<AlertDTO?> GetAlertById(Guid alertId, IDbTransaction? trans = null);
+        Task<Guid?> CreateAlert(AlertDTO alert, string userId, IDbTransaction? trans = null);
+        Task DeleteAlertById(Guid alertId, IDbTransaction? trans = null);
+        Task UpdateAlert(AlertDTO alert, Guid alertId, IDbTransaction? trans = null);
     }
 }

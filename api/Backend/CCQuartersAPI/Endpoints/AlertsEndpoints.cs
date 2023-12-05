@@ -42,7 +42,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var alertQueried = await alertsService.GetAlertById(alertId.ToString());
+            var alertQueried = await alertsService.GetAlertById(alertId);
 
             if (alertQueried is null)
                 return Results.NotFound("Alert does not exist");
@@ -50,7 +50,7 @@ namespace CCQuartersAPI.Endpoints
             if(userId != alertQueried.UserId) 
                 return Results.Unauthorized();
 
-            await alertsService.UpdateAlert(alert, alertId.ToString());
+            await alertsService.UpdateAlert(alert, alertId);
 
             return Results.Ok();
         }
@@ -62,7 +62,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var alertQueried = await alertsService.GetAlertById(alertId.ToString());
+            var alertQueried = await alertsService.GetAlertById(alertId);
 
             if (alertQueried is null)
                 return Results.NotFound("Alert does not exist");
@@ -70,7 +70,7 @@ namespace CCQuartersAPI.Endpoints
             if (userId != alertQueried.UserId)
                 return Results.Unauthorized();
 
-            await alertsService.DeleteAlertById(alertId.ToString());
+            await alertsService.DeleteAlertById(alertId);
 
             return Results.Ok();
         }
