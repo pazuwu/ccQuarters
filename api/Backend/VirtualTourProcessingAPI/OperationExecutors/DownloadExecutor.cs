@@ -15,19 +15,19 @@ namespace VirtualTourProcessingServer.OperationExecutors
             _httpFactory = httpFactory;
         }
 
-        public async Task<ExecutorResponse> DownloadPhotos(string tourId, string areaId, string outputDirectory)
+        public async Task<ExecutorResponse> DownloadPhotos(DownloadParameters parameters)
         {
             try
             {
-                if (!Directory.Exists(outputDirectory))
-                    Directory.CreateDirectory(outputDirectory);
+                if (!Directory.Exists(parameters.OutputDirectory))
+                    Directory.CreateDirectory(parameters.OutputDirectory);
 
-                var parameters = new GetAreaPhotosParameters()
+                var getAreaPhotosparameters = new GetAreaPhotosParameters()
                 {
-                    TourId = tourId,
-                    AreaId = areaId,
+                    TourId = parameters.TourId,
+                    AreaId = parameters.AreaId,
                 };
-                var res = await _vtClient.Service.GetAreaPhotos(parameters);
+                var res = await _vtClient.Service.GetAreaPhotos(getAreaPhotosparameters);
 
                 if (res.PhotoUrls == null)
                     return ExecutorResponse.Problem("Get area photos returned empty collection of urls");
@@ -35,7 +35,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
                 var downloadTasks = new List<Task<DownloadStatus>>();
                 foreach (var photoUrl in res.PhotoUrls)
                 {
-                    downloadTasks.Add(DownloadAndSavePhoto(photoUrl, outputDirectory));
+                    downloadTasks.Add(DownloadAndSavePhoto(photoUrl, parameters.OutputDirectory));
                 }
 
                 await Task.WhenAll(downloadTasks);

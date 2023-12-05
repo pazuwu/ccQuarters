@@ -24,9 +24,6 @@ namespace VirtualTourProcessingServer.Processing
         public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator,
             IDownloadExecutor downloader, IRenderSettingsGenerator renderSettingsGenerator, IUploadExecutor uploader, ICleanExecutor cleaner)
         {
-            if (string.IsNullOrWhiteSpace(options.Value.StorageDirectory))
-                throw new Exception("StorageDirectory is empty. Check your configuration file");
-
             _logger = logger;
             _options = options.Value;
             _mediator = mediator;
@@ -96,9 +93,16 @@ namespace VirtualTourProcessingServer.Processing
             _logger.LogInformation($"Downloading data for operation: {operation.OperationId}, areaId: {operation.AreaId}");
 
             var imagesDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId, "images");
-            await _downloader.DownloadPhotos(operation.TourId, operation.AreaId, imagesDirectory);
 
-            await FinishOperation(operation, new ExecutorResponse());
+            var downlaodParameters = new DownloadParameters()
+            {
+                TourId = operation.TourId,
+                AreaId = operation.AreaId,
+                OutputDirectory = imagesDirectory,
+            };
+            var executorResponse = await _downloader.DownloadPhotos(downlaodParameters);
+
+            await FinishOperation(operation, executorResponse);
         }
 
         private async Task SaveColmap(VTOperation operation)
