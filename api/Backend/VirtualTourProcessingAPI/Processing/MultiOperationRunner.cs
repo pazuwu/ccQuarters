@@ -9,7 +9,7 @@ using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
 {
-    internal class MultiOperationRunner : IMultiOperationRunner
+    public class MultiOperationRunner : IMultiOperationRunner
     {
         private readonly ConcurrentDictionary<VTOperation, Task?> _operations = new();
         private readonly ProcessingOptions _options;
