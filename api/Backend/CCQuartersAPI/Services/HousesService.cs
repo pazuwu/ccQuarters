@@ -354,7 +354,7 @@ namespace CCQuartersAPI.Services
             return houses;
         }
 
-        public async Task<DetailedHouseDTO?> GetDetailedHouseInfo(Guid houseId, string userId)
+        public async Task<DetailedHouseDTO?> GetDetailedHouseInfo(Guid houseId, string userId, IDbTransaction? trans = null)
         {
             var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId)>0, 1, 0) AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
                                 FROM Houses h
@@ -362,7 +362,7 @@ namespace CCQuartersAPI.Services
                                 JOIN Locations l ON h.LocationId = l.Id
                                 WHERE h.Id = @houseId AND h.DeleteDate IS NULL";
 
-            var houseQueried = await _rdbRepository.QueryFirstOrDefaultAsync<DetailedHouseQueried>(houseQuery, param: new { userId, houseId });
+            var houseQueried = await _rdbRepository.QueryFirstOrDefaultAsync<DetailedHouseQueried>(houseQuery, param: new { userId, houseId }, transaction: trans);
 
             if (houseQueried is null)
                 return null;

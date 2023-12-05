@@ -5,9 +5,9 @@ namespace CCQuartersAPI.Requests
     public class CreateHouseRequest
     {
         public string? Title { get; set; }
-        public double? Price { get; set; }
+        public decimal? Price { get; set; }
         public int? RoomCount { get; set; }
-        public double? Area { get; set; }
+        public decimal? Area { get; set; }
         public int? Floor { get; set; }
         public string? Description { get; set; }
         public Dictionary<string, string>? AdditionalInfo { get; set; }
@@ -18,8 +18,8 @@ namespace CCQuartersAPI.Requests
         public string? StreetName { get; set; }
         public string? StreetNumber { get; set; }
         public string? FlatNumber { get; set; }
-        public double? GeoX { get; set; }
-        public double? GeoY { get; set; }
+        public decimal? GeoX { get; set; }
+        public decimal? GeoY { get; set; }
         public OfferType? OfferType { get; set; }
         public BuildingType? BuildingType { get; set; }
     }

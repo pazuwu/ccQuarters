@@ -11,9 +11,9 @@ namespace CCQuartersAPI.Responses
     public class DetailedHouseQueried
     {
         public string Title { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int RoomCount { get; set; }
-        public double Area { get; set; }
+        public decimal Area { get; set; }
         public int? Floor { get; set; }
         public string DescriptionId { get; set; }
         public string AdditionalInfoId { get; set; }
@@ -26,8 +26,8 @@ namespace CCQuartersAPI.Responses
         public string? StreetName { get; set; }
         public string? StreetNumber { get; set; }
         public string? FlatNumber { get; set; }
-        public double? GeoX { get; set; }
-        public double? GeoY { get; set; }
+        public decimal? GeoX { get; set; }
+        public decimal? GeoY { get; set; }
         public OfferType OfferType { get; set; }
         public BuildingType BuildingType { get; set; }
         public bool IsLiked { get; set; }
@@ -37,9 +37,9 @@ namespace CCQuartersAPI.Responses
     {
         public string UserId { get; set; }
         public string Title { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int RoomCount { get; set; }
-        public double Area { get; set; }
+        public decimal Area { get; set; }
         public int? Floor { get; set; }
         public string DescriptionId { get; set; }
         public string? Description { get; set; }
@@ -52,8 +52,8 @@ namespace CCQuartersAPI.Responses
         public string? StreetName { get; set; }
         public string? StreetNumber { get; set; }
         public string? FlatNumber { get; set; }
-        public double? GeoX { get; set; }
-        public double? GeoY { get; set; }
+        public decimal? GeoX { get; set; }
+        public decimal? GeoY { get; set; }
         public OfferType OfferType { get; set; }
         public BuildingType BuildingType { get; set; }
         public bool IsLiked { get; set; }
