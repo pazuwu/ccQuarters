@@ -4,14 +4,13 @@ import 'dart:typed_data';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/services/houses/data/houses_filter.dart';
 import 'package:ccquarters/services/houses/requests/create_house_request.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
 import 'package:http_status_code/http_status_code.dart';
 
-import 'requests/get_houses_request_body.dart';
+import 'requests/get_houses_query.dart';
 import 'responses/get_houses_response.dart';
 
 class HouseService {
@@ -34,16 +33,11 @@ class HouseService {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
-        data: GetHousesRequestBody(
-          filter?.sortBy,
-          filter != null
-              ? HousesFilter.fromHouseFilter(filter)
-              : HousesFilter.empty(),
+        queryParameters: GetHousesQuery.fromHouseFilter(
+          filter,
+          pageCount,
+          pageNumber,
         ).toJson(),
-        queryParameters: {
-          "pageNumber": pageNumber,
-          "pageSize": pageCount,
-        },
       );
 
       return response.statusCode == StatusCode.OK
