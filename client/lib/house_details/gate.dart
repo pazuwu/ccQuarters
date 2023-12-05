@@ -10,7 +10,11 @@ class HouseDetailsGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HouseDetailsCubit(houseId, context.read()),
+      create: (_) => HouseDetailsCubit(
+        houseId,
+        context.read(),
+        LoadingState(),
+      ),
       child: BlocBuilder<HouseDetailsCubit, HouseDetailsState>(
         builder: (context, state) {
           if (state is LoadingState) {

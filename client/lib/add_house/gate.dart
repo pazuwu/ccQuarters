@@ -58,7 +58,7 @@ class AddHouseGate extends StatelessWidget {
                 ],
               ),
             );
-          } else if (state is SendingData) {
+          } else if (state is SendingDataState) {
             return const Center(
               child: CircularProgressIndicator(),
             );
