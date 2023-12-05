@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCQuartersAPI.UnitTests", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLibrary", "RepositoryLibrary\RepositoryLibrary.csproj", "{83A156AD-D202-4E2C-AEAA-2EAE86A4BD8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCQuartersAPI.IntegrationTests", "CCQuartersAPI.IntegrationTests\CCQuartersAPI.IntegrationTests.csproj", "{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCQuartersAPI.IntegrationTests", "CCQuartersAPI.IntegrationTests\CCQuartersAPI.IntegrationTests.csproj", "{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

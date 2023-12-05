@@ -1,4 +1,5 @@
-﻿using CCQuartersAPI.Requests;
+﻿using CCQuartersAPI.CommonClasses;
+using CCQuartersAPI.Requests;
 using CloudStorageLibrary;
 using Google.Cloud.Firestore;
 using RepositoryLibrary;
@@ -65,6 +66,65 @@ namespace CCQuartersAPI.IntegrationTests.Mocks
                     Voivodeship = "Łódzkie",
                     ZipCode = "00-000"
                 }
+        };
+
+        public static GetHousesQuery[] GetHousesQueries { get; } = new[]
+        {
+            new GetHousesQuery()
+            {
+                Voivodeship = "Mazowieckie"
+            },
+            new GetHousesQuery()
+            {
+                MaxArea = 50
+            },
+            new GetHousesQuery()
+            {
+                MaxPrice = 10000
+            },
+            new GetHousesQuery()
+            {
+                MinFloor = 2
+            },
+            new GetHousesQuery()
+            {
+                MaxPricePerM2 = 200
+            },
+            new GetHousesQuery()
+            {
+                Cities = new[] { "Warszawa" }
+            },
+            new GetHousesQuery()
+            {
+                Cities = new[] { "Warszawa", "Łódź" }
+            },
+            new GetHousesQuery()
+            {
+                Districts = new[] { "Rembertów", "Mokotów", "Bielany" }
+            },
+            new GetHousesQuery()
+            {
+                OfferTypes = new[] { OfferType.Rent },
+                BuildingTypes = new[] { BuildingType.Room },
+                Cities = new[] { "Łódź" }
+            },
+            new GetHousesQuery()
+            {
+                OfferTypes = new[] { OfferType.Sale },
+                Cities = new[] { "Warszawa" },
+                MinPrice = 100000
+            },
+            new GetHousesQuery()
+            {
+                Floors = new[] { 1, 2, 3 },
+                Cities = new[] { "Warszawa", "Białystok" },
+                MinFloor = 1
+            },
+            new GetHousesQuery()
+            {
+                MaxPricePerM2 = 100,
+                Cities = new[] { "Łódź", "Gostynin", "Warszawa" }
+            },
         };
     }
 }
