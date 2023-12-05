@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Google.LongRunning;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Text;
@@ -62,8 +63,16 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Render(RenderParameters parameters)
         {
+            var nerfactoDirectory = Path.Combine(parameters.WorkingDirectory, "nerfacto");
+            var configDirectory = Directory.GetDirectories(nerfactoDirectory).FirstOrDefault();
+
+            if (configDirectory == null)
+                return ExecutorResponse.Problem("Training directory not found");
+
+            var configPath = Path.Combine(configDirectory!, "config.yml");
+
             var nsCommand = "ns-render";
-            var arguments = $"camera-path --load-config {parameters.ConfigPath} --camera-path-filename {parameters.CameraConfigPath} --output-format images --image-format png --output-path {parameters.OutputPath}";
+            var arguments = $"camera-path --load-config {configPath} --camera-path-filename {parameters.CameraConfigPath} --output-format images --image-format png --output-path {parameters.OutputPath}";
 
             var nsProcess = StartExecutorProcess(nsCommand, arguments);
             ReadAllLogs(nsProcess);

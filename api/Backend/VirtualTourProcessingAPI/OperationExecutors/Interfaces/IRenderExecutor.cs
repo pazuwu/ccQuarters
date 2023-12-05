@@ -2,7 +2,7 @@
 {
     public class RenderParameters
     {
-        public required string ConfigPath { get; set; }
+        public required string WorkingDirectory { get; set; }
         public required string CameraConfigPath { get; set; }
         public required string OutputPath { get; set; }
     }
