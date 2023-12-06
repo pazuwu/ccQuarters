@@ -35,9 +35,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits MobileDetailsFormState when goToDetailsForm is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.goToDetailsForm(),
       expect: () => [isA<MobileDetailsFormState>()],
     );
@@ -45,9 +48,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits LocationFormState when goToLocationForm is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.goToLocationForm(),
       expect: () => [isA<LocationFormState>()],
     );
@@ -55,9 +61,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits MapState when goToMap is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.goToMap(),
       expect: () => [isA<MapState>()],
     );
@@ -65,9 +74,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits PhotosFormState when goToPhotosForm is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.goToPhotosForm(),
       expect: () => [isA<PhotosFormState>()],
     );
@@ -75,9 +87,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits SendingDataState and SendingFinishedState when sendData is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.sendData(),
       expect: () => [isA<SendingDataState>(), isA<SendingFinishedState>()],
     );
@@ -85,9 +100,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits ChooseTypeFormState when clear is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.clear(),
       expect: () => [isA<ChooseTypeFormState>()],
     );
@@ -95,9 +113,12 @@ void addHouseFormCubit() {
     blocTest<AddHouseFormCubit, HouseFormState>(
       'emits ChooseTypeFormState when saveBuildingType is called',
       build: () => AddHouseFormCubit(
-          houseService: HouseService(
-              HousesAPIMock.createHousesApiMock("$url/houses"), "$url/houses"),
-          vtService: VTService(VTAPIMock.createVTApiMock(url), url)),
+        houseService: HouseService(
+          HousesAPIMock.createHousesApiMock("$url/houses"),
+          "$url/houses",
+        ),
+        vtService: VTService(VTAPIMock.createVTApiMock(url), url),
+      ),
       act: (cubit) => cubit.saveBuildingType(BuildingType.apartment),
       expect: () => [isA<ChooseTypeFormState>()],
     );
