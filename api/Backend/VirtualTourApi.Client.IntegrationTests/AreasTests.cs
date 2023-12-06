@@ -13,7 +13,7 @@ namespace VirtualTourAPI.Client.IntegrationTests
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
-            var parameters = new CreateTourParameters();
+            CreateTourParameters parameters = new();
             var result = await _service.CreateTour(parameters);
 
             result.Tour.Should().NotBeNull();
@@ -25,36 +25,46 @@ namespace VirtualTourAPI.Client.IntegrationTests
         [ClassCleanup]
         public static async Task Cleanup()
         {
-            var deleteParameters = new DeleteTourParameters()
-            {
-                TourId = _tour!.Id!
-            };
+            DeleteTourParameters deleteParameters = new() { TourId = _tour!.Id! };
             await _service.DeleteTour(deleteParameters);
         }
 
         [TestMethod]
-        public async Task AddAreaThenDelete()
+        public async Task CreateAreaShouldCreateArea()
         {
-            var createSceneParameters = new CreateAreaParameters()
-            {
-                TourId = _tour.Id,
-            };
+            CreateAreaParameters createSceneParameters = new() { TourId = _tour.Id };
             var result = await _service.CreateArea(createSceneParameters);
 
             result.Area.Should().NotBeNull();
             result.Area.Id.Should().NotBeNull();
 
-            var getTourParameters = new GetTourParameters()
-            {
-                TourId = _tour.Id,
-            };
+            GetTourParameters getTourParameters = new() { TourId = _tour.Id };
             var getTourResult = await _service.GetTourById(getTourParameters);
+
+            getTourResult.Tour.Should().NotBeNull();
+            getTourResult.Tour.Areas
+                .Should().NotBeNull()
+                .And.Subject.Should().Contain(a => a.Id == result.Area.Id);
+        }
+
+        [TestMethod]
+        public async Task DeleteAreaShouldDeleteArea()
+        {
+            CreateAreaParameters createSceneParameters = new() { TourId = _tour.Id };
+            var result = await _service.CreateArea(createSceneParameters);
+
+            result.Area.Should().NotBeNull();
+            result.Area.Id.Should().NotBeNull();
+
+            GetTourParameters getTourParameters = new() { TourId = _tour.Id };
+            var getTourResult = await _service.GetTourById(getTourParameters);
+
             getTourResult.Tour.Should().NotBeNull();
             getTourResult.Tour.Areas
                 .Should().NotBeNull()
                 .And.Subject.Should().Contain(a => a.Id == result.Area.Id);
 
-            var deleteSceneParameters = new DeleteAreaParameters()
+            DeleteAreaParameters deleteSceneParameters = new()
             {
                 TourId = _tour.Id,
                 AreaId = result.Area.Id

@@ -62,7 +62,7 @@ namespace VirtualTourAPI.Client
                 Name = parameters.Name
             };
 
-            var response = await _http.PostAsync($"tours/{parameters.TourId}/areas", JsonContent.Create(request));
+            var response = await _http.PostAsJsonAsync($"tours/{parameters.TourId}/areas", request);
 
             response.EnsureSuccessStatusCode();
             var sceneId = response.Headers?.Location?.OriginalString;
@@ -83,13 +83,13 @@ namespace VirtualTourAPI.Client
             {
                 DestinationId = parameters.DestinationId,
                 Latitude = parameters.Position?.Latitude,
-                Longitude = parameters.Position?.Latitude,
+                Longitude = parameters.Position?.Longitude,
                 NextOrientation = parameters.NextOrientation,
                 ParentId = parameters.ParentId,
                 Text = parameters.Text
             };
 
-            var response = await _http.PostAsync($"tours/{parameters.TourId}/links", JsonContent.Create(request));
+            var response = await _http.PostAsJsonAsync($"tours/{parameters.TourId}/links", request);
 
             response.EnsureSuccessStatusCode();
             var sceneId = response.Headers?.Location?.OriginalString;
@@ -115,7 +115,7 @@ namespace VirtualTourAPI.Client
                 ParentId = parameters.ParentId,
             };
 
-            var response = await _http.PostAsync($"tours/{parameters.TourId}/scenes", JsonContent.Create(request));
+            var response = await _http.PostAsJsonAsync($"tours/{parameters.TourId}/scenes", request);
 
             response.EnsureSuccessStatusCode();
             var sceneId = response.Headers?.Location?.OriginalString;
@@ -179,12 +179,18 @@ namespace VirtualTourAPI.Client
 
         public async Task<GetTourResult> GetTourById(GetTourParameters parameters)
         {
-            var response = await _http.GetFromJsonAsync<TourDTO>($"tours/{parameters.TourId}");
-
-            return new()
+            try
             {
-                Tour = response
-            };
+                var response = await _http.GetFromJsonAsync<TourDTO>($"tours/{parameters.TourId}");
+                return new() { Tour = response };
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    return new();
+
+                throw;
+            }
         }
 
         public async Task<UpdateLinkResult> UpdateLink(UpdateLinkParameters parameters)
@@ -193,10 +199,11 @@ namespace VirtualTourAPI.Client
             {
                 DestinationId = parameters.DestinationId,
                 NextOrientation = parameters.NextOrientation,
-                Text = parameters.Text
+                Text = parameters.Text,
+                Position = parameters.Position,
             };
 
-            var response = await _http.PostAsync($"tours/{parameters.TourId}/links/{parameters.LinkId}", JsonContent.Create(request));
+            var response = await _http.PutAsJsonAsync($"tours/{parameters.TourId}/links/{parameters.LinkId}", request);
 
             response.EnsureSuccessStatusCode();
             return new();

@@ -29,7 +29,7 @@ namespace VirtualTourAPI.Endpoints
                 DestinationId = request.DestinationId,
                 Position = new GeoPoint(request.Latitude!.Value, request.Longitude!.Value),
                 Text = request.Text,
-                NextOrientation = request.NextOrientation,
+                NextOrientation = request.NextOrientation.MapToDBGeoPoint(),
             };
 
             var createdLinkId = await service.CreateLink(tourId, newLink);
@@ -46,8 +46,8 @@ namespace VirtualTourAPI.Endpoints
             {
                 Id = linkId,
                 DestinationId = request.DestinationId,
-                NextOrientation = request.NextOrientation,
-                Position = request.Position,
+                NextOrientation = request.NextOrientation.MapToDBGeoPoint(),
+                Position = request.Position.MapToDBGeoPoint(),
                 Text = request.Text,
             };
 

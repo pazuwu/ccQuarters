@@ -81,7 +81,7 @@ namespace VirtualTourAPI.IntegrationTests
         }
 
         [TestMethod]
-        public async Task UpdateLinkShouldDeleteLink()
+        public async Task UpdateLinkShouldUpdateLink()
         {
             var link = new LinkDTO()
             {

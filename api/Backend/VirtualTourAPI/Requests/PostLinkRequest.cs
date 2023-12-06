@@ -9,6 +9,6 @@ namespace VirtualTourAPI.Requests
         public string? DestinationId { get; set; }
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
-        public GeoPoint? NextOrientation { get; set; }
+        public GeoPointDTO? NextOrientation { get; set; }
     }
 }
