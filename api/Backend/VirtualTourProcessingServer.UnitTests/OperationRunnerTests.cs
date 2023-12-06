@@ -43,7 +43,9 @@ namespace VirtualTourProcessingServer.UnitTests
             var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
             mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
 
-            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, 
+                mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
@@ -80,8 +82,10 @@ namespace VirtualTourProcessingServer.UnitTests
             var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
             mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
 
-            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, 
+                mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
+
             operationRunner.Run(colmapStageOperation);
 
             Mock.Verify(mockedColmapExecutor, mockedTrainExecutor, mockedRenderExecutor, mockedMadiator);
@@ -117,7 +121,9 @@ namespace VirtualTourProcessingServer.UnitTests
             var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
             mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
 
-            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, 
+                mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
