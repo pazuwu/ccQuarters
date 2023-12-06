@@ -59,7 +59,7 @@ class ErrorState extends HouseFormState {
   String message;
 }
 
-class SendingData extends HouseFormState {}
+class SendingDataState extends HouseFormState {}
 
 class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit({required this.houseService, required this.vtService})
@@ -99,7 +99,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   Future<void> sendData() async {
-    emit(SendingData());
+    emit(SendingDataState());
 
     if (_createVirtualTour) {
       var result = await vtService.postTour();

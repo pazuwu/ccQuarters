@@ -18,8 +18,11 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
   HouseDetailsCubit(
     this.houseId,
     this.houseService,
-  ) : super(LoadingState()) {
-    loadHouseDetails();
+    initialState
+  ) : super(initialState) {
+    if (initialState is LoadingState) {
+      loadHouseDetails();
+    }
   }
 
   String houseId;

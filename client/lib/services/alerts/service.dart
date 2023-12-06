@@ -20,7 +20,7 @@ class AlertService {
   Future<ServiceResponse<List<Alert>>> getAlerts() async {
     try {
       var response = await _dio.get(
-        "$_url/alerts",
+        _url,
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
@@ -43,7 +43,7 @@ class AlertService {
   Future<ServiceResponse<bool>> createAlert(Alert alert) async {
     try {
       var response = await _dio.post(
-        "$_url/alerts",
+        _url,
         data: alert.toJson(),
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
@@ -66,7 +66,7 @@ class AlertService {
   Future<ServiceResponse<bool>> updateAlert(Alert alert) async {
     try {
       var response = await _dio.put(
-        "$_url/alerts/${alert.id}",
+        "$_url/${alert.id}",
         data: alert.toJson(),
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
@@ -89,7 +89,7 @@ class AlertService {
   Future<ServiceResponse<bool>> deleteAlert(String alertId) async {
     try {
       var response = await _dio.delete(
-        "$_url/alerts/$alertId",
+        "$_url/$alertId",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
