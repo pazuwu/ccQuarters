@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLibrary", "Reposi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCQuartersAPI.IntegrationTests", "CCQuartersAPI.IntegrationTests\CCQuartersAPI.IntegrationTests.csproj", "{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourAPI.IntegrationTests", "VirtualTourAPI.IntegrationTests\VirtualTourAPI.IntegrationTests.csproj", "{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{2054CE08-EB30-46DC-A2E3-219B4E85A342} = {F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}
 		{C884D42C-3BC9-4462-ABF9-B61A15FFA895} = {F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}
 		{A4835A4F-D2BC-45FC-B56D-A120CBAF6308} = {F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}
+		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8} = {F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E86A203A-98BB-4BA9-B95B-A3396E4DC11C}
