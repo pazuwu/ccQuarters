@@ -48,13 +48,7 @@ namespace VirtualTourAPI.IntegrationTests
 
             var tour = await _service.GetTour(_tourId);
 
-            tour.Links.Should().Contain(
-                l => l.Id == linkId 
-                && l.DestinationId == link.DestinationId 
-                && l.NextOrientation == link.NextOrientation
-                && l.Text == link.Text
-                && l.ParentId == link.ParentId
-                && l.NextOrientation == link.NextOrientation);
+            tour.Links.Should().Contain(l => SameLinkAs(l, link));
         }
 
         [TestMethod]
@@ -77,7 +71,7 @@ namespace VirtualTourAPI.IntegrationTests
 
             await _service.DeleteLink(_tourId, linkId);
             var tourAfterLinkDelete = await _service.GetTour(_tourId);
-            tourAfterLinkDelete.Links.Should().NotContain(l => l.Id == linkId);
+            tourAfterLinkDelete.Links.Should().NotContain(l => SameLinkAs(l, link));
         }
 
         [TestMethod]
@@ -97,13 +91,7 @@ namespace VirtualTourAPI.IntegrationTests
 
             var tour = await _service.GetTour(_tourId);
             
-            tour.Links.Should().Contain(
-                l => l.Id == linkId
-                && l.DestinationId == link.DestinationId
-                && l.NextOrientation == link.NextOrientation
-                && l.Text == link.Text
-                && l.ParentId == link.ParentId
-                && l.NextOrientation == link.NextOrientation);
+            tour.Links.Should().Contain(l => SameLinkAs(l, link));
 
             var linkAfterModification = new LinkDTO()
             {
@@ -118,21 +106,19 @@ namespace VirtualTourAPI.IntegrationTests
             await _service.UpdateLink(_tourId, linkAfterModification);
             var tourAfterLinkUpdate = await _service.GetTour(_tourId);
 
-            tourAfterLinkUpdate.Links.Should().NotContain(
-                l => l.Id == linkId
-                && l.DestinationId == link.DestinationId
-                && l.NextOrientation == link.NextOrientation
-                && l.Text == link.Text
-                && l.ParentId == link.ParentId
-                && l.NextOrientation == link.NextOrientation);
+            tourAfterLinkUpdate.Links.Should().NotContain(l => SameLinkAs(l, link));
+            tourAfterLinkUpdate.Links.Should().Contain(l => SameLinkAs(l, linkAfterModification));
+        }
 
-            tourAfterLinkUpdate.Links.Should().Contain(
-                l => l.Id == linkId
-                && l.DestinationId == linkAfterModification.DestinationId
-                && l.NextOrientation == linkAfterModification.NextOrientation
-                && l.Text == linkAfterModification.Text
-                && l.ParentId == linkAfterModification.ParentId
-                && l.NextOrientation == linkAfterModification.NextOrientation);
+
+        private bool SameLinkAs(LinkDTO firstLink, LinkDTO secondLink)
+        {
+            return firstLink.Id == secondLink.Id
+                && firstLink.DestinationId == secondLink.DestinationId
+                && firstLink.NextOrientation == secondLink.NextOrientation
+                && firstLink.Text == secondLink.Text
+                && firstLink.ParentId == secondLink.ParentId
+                && firstLink.NextOrientation == secondLink.NextOrientation;
         }
     }
 }
