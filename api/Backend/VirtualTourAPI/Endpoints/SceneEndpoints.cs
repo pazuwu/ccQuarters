@@ -7,14 +7,14 @@ namespace VirtualTourAPI.Endpoints
 {
     public static class SceneEndpoints
     {
-        public static async Task<IResult> Post(string tourId, PostSceneRequest request, IVTService repository)
+        public static async Task<IResult> Post(string tourId, PostSceneRequest request, IVTService service)
         {
             var newScene = new SceneDTO()
             {
                 ParentId = request.ParentId,
             };
 
-            var createdSceneId = await repository.CreateScene(tourId, newScene);
+            var createdSceneId = await service.CreateScene(tourId, newScene);
 
             if (string.IsNullOrWhiteSpace(createdSceneId))
                 return Results.Problem("DB error occured while creating object.");
@@ -22,9 +22,9 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(createdSceneId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, string sceneId, IVTService repository)
+        public static async Task<IResult> Delete(string tourId, string sceneId, IVTService service)
         {
-            await repository.DeleteScene(tourId, sceneId);
+            await service.DeleteScene(tourId, sceneId);
             return Results.Ok();
         }
 

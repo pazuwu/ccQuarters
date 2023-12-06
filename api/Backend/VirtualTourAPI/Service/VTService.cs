@@ -1,7 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 using RepositoryLibrary;
 using VirtualTourAPI.Model;
-using static Google.Rpc.Help.Types;
 
 namespace VirtualTourAPI.Service
 {
