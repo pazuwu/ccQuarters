@@ -1,29 +1,27 @@
 ﻿using CloudStorageLibrary;
-using Google.Cloud.Firestore;
-using RepositoryLibrary;
 
 namespace CCQuartersAPI.IntegrationTests.Mocks
 {
     internal class StorageMock : IStorage
     {
-        public async Task DeleteFileAsync(string collectionName, string fileName)
+        public Task DeleteFileAsync(string collectionName, string fileName)
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        public async Task<string> GetDownloadUrl(string collectionName, string filename)
+        public Task<string> GetDownloadUrl(string collectionName, string filename)
         {
-            return string.Empty;
+            return Task.FromResult(string.Empty);
         }
 
-        public async Task<IEnumerable<string>> GetDownloadUrls(string collectionName, params string[] filenames)
+        public Task<IEnumerable<string>> GetDownloadUrls(string collectionName, params string[] filenames)
         {
-            return Enumerable.Empty<string>();
+            return Task.FromResult(Enumerable.Empty<string>());
         }
 
-        public async Task UploadFileAsync(string collectionName, Stream stream, string fileName)
+        public Task UploadFileAsync(string collectionName, Stream stream, string fileName)
         {
-            return;
+            return Task.CompletedTask;
         }
     }
 }
