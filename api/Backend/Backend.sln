@@ -9,15 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudStorageLibrary", "Clou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI", "VirtualTourAPI\VirtualTourAPI.csproj", "{E05CD50F-C56A-414C-8FF5-342997CED57F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourProcessingServer", "VirtualTourProcessingAPI\VirtualTourProcessingServer.csproj", "{1DA4A255-EC26-448F-9630-2505A8E73E5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourProcessingServer", "VirtualTourProcessingServer\VirtualTourProcessingServer.csproj", "{1DA4A255-EC26-448F-9630-2505A8E73E5D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthLibrary", "AuthLibrary\AuthLibrary.csproj", "{909E3FC3-682C-418C-9C5E-7FCE1AF269AB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F5AF3AA7-0C09-4120-8BAB-385A1FC8A7FB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI.ServiceClient", "VirtualTourAPI.ServiceClient\VirtualTourAPI.ServiceClient.csproj", "{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI.Client", "VirtualTourAPI.Client\VirtualTourAPI.Client.csproj", "{8CF4D532-5752-4D97-B5A1-DD39EEAD31D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourApi.IntegrationTests", "VirtualTourApi.IntegrationTests\VirtualTourApi.IntegrationTests.csproj", "{E60DBFD1-AA56-4574-A6E3-94A815746429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI.Client.IntegrationTests", "VirtualTourApi.Client.IntegrationTests\VirtualTourAPI.Client.IntegrationTests.csproj", "{E60DBFD1-AA56-4574-A6E3-94A815746429}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourProcessingServer.UnitTests", "VirtualTourProcessingServer.UnitTests\VirtualTourProcessingServer.UnitTests.csproj", "{2054CE08-EB30-46DC-A2E3-219B4E85A342}"
 EndProject
