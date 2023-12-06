@@ -34,7 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  AuthService authService;
+  BaseAuthService authService;
   UserService userService;
   HouseService houseService;
   AlertService alertService;

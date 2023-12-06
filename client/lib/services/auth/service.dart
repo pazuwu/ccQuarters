@@ -3,28 +3,45 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'sign_in_result.dart';
 import 'sign_up_result.dart';
 
-class AuthService {
-  const AuthService({required FirebaseAuth firebaseAuth})
+abstract class BaseAuthService {
+  bool get isSignedIn;
+  String? get currentUserId;
+  Future<String?> getToken();
+  Future<SignInResult> signInAnnonymously();
+  Future<SignInResult> signInWithEmail(
+    String email,
+    String password,
+  );
+  Future<SignUpResult> signUp(
+    String email,
+    String password,
+  );
+  Future<void> signOut();
+}
+
+class AuthService extends BaseAuthService {
+  AuthService({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth;
 
   final FirebaseAuth _firebaseAuth;
 
+  @override
   bool get isSignedIn => _firebaseAuth.currentUser != null;
-  Stream<bool> get isSignedInStream => _firebaseAuth.userChanges().map(
-        (user) => user != null,
-      );
-  String get userEmail => _firebaseAuth.currentUser!.email!;
+  @override
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 
+  @override
   Future<String?> getToken() async {
     return "Bearer ${await _firebaseAuth.currentUser?.getIdToken()}";
   }
 
+  @override
   Future<SignInResult> signInAnnonymously() async {
     await _firebaseAuth.signInAnonymously();
     return SignInResult.success;
   }
 
+  @override
   Future<SignInResult> signInWithEmail(
     String email,
     String password,
@@ -60,6 +77,7 @@ class AuthService {
     }
   }
 
+  @override
   Future<SignUpResult> signUp(
     String email,
     String password,
@@ -85,5 +103,6 @@ class AuthService {
     }
   }
 
+  @override
   Future<void> signOut() => _firebaseAuth.signOut();
 }
