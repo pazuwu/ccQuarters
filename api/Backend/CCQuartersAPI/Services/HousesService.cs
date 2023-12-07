@@ -310,7 +310,7 @@ namespace CCQuartersAPI.Services
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId) > 0 AND h.DeleteDate IS NULL
+                        WHERE UserId = @userId AND h.DeleteDate IS NULL
                         ORDER BY h.UpdateDate
                         OFFSET @pageNumber * @pageSize ROWS
                         FETCH NEXT @pageSize ROWS ONLY";
@@ -330,7 +330,7 @@ namespace CCQuartersAPI.Services
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE UserId = @userId AND h.DeleteDate IS NULL
+                        WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId) > 0 AND h.DeleteDate IS NULL
                         ORDER BY h.UpdateDate
                         OFFSET @pageNumber * @pageSize ROWS
                         FETCH NEXT @pageSize ROWS ONLY";
