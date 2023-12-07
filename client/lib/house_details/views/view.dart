@@ -2,7 +2,7 @@ import 'package:ccquarters/house_details/views/accordion.dart';
 import 'package:ccquarters/house_details/views/contact.dart';
 import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
@@ -25,7 +25,7 @@ class DetailsView extends StatelessWidget {
             )));
   }
 
-  final House house;
+  final DetailedHouse house;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +55,7 @@ class Inside extends StatelessWidget {
     required this.house,
   });
 
-  final House house;
+  final DetailedHouse house;
 
   @override
   Widget build(BuildContext context) {

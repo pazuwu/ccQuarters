@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,14 +11,14 @@ class ErrorState extends HouseDetailsState {}
 class DetailsState extends HouseDetailsState {
   DetailsState(this.house);
 
-  final House house;
+  final DetailedHouse house;
 }
 
 class HouseDetailsCubit extends Cubit<HouseDetailsState> {
   HouseDetailsCubit(
     this.houseId,
     this.houseService,
-    initialState
+    initialState,
   ) : super(initialState) {
     if (initialState is LoadingState) {
       loadHouseDetails();
@@ -27,7 +27,7 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
 
   String houseId;
   HouseService houseService;
-  late House house;
+  late DetailedHouse house;
 
   Future<void> loadHouseDetails() async {
     emit(LoadingState());

@@ -8,7 +8,7 @@ part of 'get_house_response.dart';
 
 GetHouseResponse _$GetHouseResponseFromJson(Map<String, dynamic> json) =>
     GetHouseResponse(
-      DetailedHouse.fromJson(json['house'] as Map<String, dynamic>),
+      HouseWithDetails.fromJson(json['house'] as Map<String, dynamic>),
       (json['photos'] as List<dynamic>?)
           ?.map((e) => Photo.fromJson(e as Map<String, dynamic>))
           .toList(),

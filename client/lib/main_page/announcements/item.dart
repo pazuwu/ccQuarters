@@ -58,8 +58,8 @@ class HouseItem extends StatelessWidget {
             (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
       ),
       child: ImageWidget(
-        imageUrl: house.photos.isNotEmpty
-            ? house.photos.first.url
+        imageUrl: house.photo.url.isNotEmpty
+            ? house.photo.url
             : "https://picsum.photos/512",
         fit: BoxFit.cover,
         borderRadius: const BorderRadius.only(

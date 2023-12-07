@@ -8,8 +8,8 @@ part of 'update_user_request.dart';
 
 UpdateUserRequest _$UpdateUserRequestFromJson(Map<String, dynamic> json) =>
     UpdateUserRequest(
-      name: json['name'] as String,
-      surname: json['surname'] as String,
+      name: json['name'] as String?,
+      surname: json['surname'] as String?,
       company: json['company'] as String?,
       email: json['email'] as String,
       phoneNumber: json['phoneNumber'] as String?,

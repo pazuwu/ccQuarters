@@ -55,7 +55,7 @@ extension HousesAPIMock on Dio {
     }, data: Matchers.any);
 
     dioAdapter.onGet("$url/$id", (request) {
-      var res = DetailedHouse(
+      var res = HouseWithDetails(
           "title",
           "description",
           <String, dynamic>{},

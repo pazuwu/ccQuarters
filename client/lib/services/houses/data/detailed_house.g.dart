@@ -6,8 +6,8 @@ part of 'detailed_house.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DetailedHouse _$DetailedHouseFromJson(Map<String, dynamic> json) =>
-    DetailedHouse(
+HouseWithDetails _$HouseWithDetailsFromJson(Map<String, dynamic> json) =>
+    HouseWithDetails(
       json['title'] as String,
       json['description'] as String?,
       json['additionalInfo'] as Map<String, dynamic>,
@@ -35,7 +35,7 @@ DetailedHouse _$DetailedHouseFromJson(Map<String, dynamic> json) =>
       json['userPhotoUrl'] as String?,
     );
 
-Map<String, dynamic> _$DetailedHouseToJson(DetailedHouse instance) =>
+Map<String, dynamic> _$HouseWithDetailsToJson(HouseWithDetails instance) =>
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
