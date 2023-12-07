@@ -33,7 +33,7 @@ class AppMainGate extends StatelessWidget {
         Provider(
           create: (context) => VTService(Dio(), Environment.vtApiUrl),
         ),
-        Provider(
+        Provider<BaseAuthService>(
           create: (context) {
             return AuthService(firebaseAuth: FirebaseAuth.instance);
           },
