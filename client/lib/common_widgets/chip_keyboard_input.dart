@@ -6,7 +6,6 @@ class ChipKeyboardInput<T> extends StatefulWidget {
     super.key,
     this.label = "",
     this.choices = const [],
-    this.additionalWidget,
     required this.onAdded,
     required this.textEditingController,
     this.validation,
@@ -14,7 +13,6 @@ class ChipKeyboardInput<T> extends StatefulWidget {
 
   final String label;
   final List<T> choices;
-  final Widget? additionalWidget;
   final Function() onAdded;
   final TextEditingController textEditingController;
   final String? validation;
@@ -59,16 +57,12 @@ class _ChipKeyboardInputState extends State<ChipKeyboardInput> {
         const SizedBox(
           height: 4,
         ),
-        if (widget.additionalWidget != null)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: widget.additionalWidget!,
-          ),
         Row(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(
+                    paddingSize, 0, paddingSize, paddingSize),
                 child: TextField(
                   controller: widget.textEditingController,
                   decoration: InputDecoration(

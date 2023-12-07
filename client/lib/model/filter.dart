@@ -33,7 +33,8 @@ class HouseFilter {
   int? minFloor;
   BuildingType? buildingType;
   OfferType? offerType;
-  List<CityWithVoivodeship> voivodeshipsAndCities = [];
+  Voivodeship? voivodeship;
+  List<String> cities = [];
   List<String> districts = [];
   SortingMethod sortBy;
 }

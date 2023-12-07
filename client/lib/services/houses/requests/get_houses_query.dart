@@ -71,10 +71,10 @@ class GetHousesQuery {
         buildingTypes = filter != null && filter.buildingType != null
             ? [filter.buildingType!]
             : null,
-        voivodeship = filter?.voivodeshipsAndCities.isNotEmpty ?? false
-            ? filter!.voivodeshipsAndCities.first.voivodeship.toString()
+        voivodeship = filter?.cities.isNotEmpty ?? false
+            ? filter!.voivodeship.toString()
             : null,
-        cities = filter?.voivodeshipsAndCities.map((e) => e.city).toList(),
+        cities = filter?.cities,
         districts = filter?.districts;
 
   Map<String, dynamic> toJson() => _$GetHousesQueryToJson(this);
