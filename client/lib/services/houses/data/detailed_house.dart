@@ -11,7 +11,7 @@ part 'detailed_house.g.dart';
 class DetailedHouse {
   String title;
   String? description;
-  Map<String, dynamic> details;
+  Map<String, dynamic> additionalInfo;
   double price;
   int roomCount;
   double area;
@@ -40,7 +40,7 @@ class DetailedHouse {
   DetailedHouse(
     this.title,
     this.description,
-    this.details,
+    this.additionalInfo,
     this.price,
     this.roomCount,
     this.area,

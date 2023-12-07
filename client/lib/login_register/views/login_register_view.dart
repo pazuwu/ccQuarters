@@ -42,8 +42,8 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
         break;
       case LoginRegisterPageType.registerPersonalInfo:
         firstTextField.text = widget.user.company ?? "";
-        secondTextField.text = widget.user.name;
-        thirdTextField.text = widget.user.surname;
+        secondTextField.text = widget.user.name ?? "";
+        thirdTextField.text = widget.user.surname ?? "";
         fourthTextField.text = widget.user.phoneNumber ?? "";
         break;
       case LoginRegisterPageType.registerEmailAndPassword:

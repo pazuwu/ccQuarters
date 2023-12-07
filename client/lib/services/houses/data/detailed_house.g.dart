@@ -10,7 +10,7 @@ DetailedHouse _$DetailedHouseFromJson(Map<String, dynamic> json) =>
     DetailedHouse(
       json['title'] as String,
       json['description'] as String?,
-      json['details'] as Map<String, dynamic>,
+      json['additionalInfo'] as Map<String, dynamic>,
       (json['price'] as num).toDouble(),
       json['roomCount'] as int,
       (json['area'] as num).toDouble(),
@@ -39,7 +39,7 @@ Map<String, dynamic> _$DetailedHouseToJson(DetailedHouse instance) =>
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
-      'details': instance.details,
+      'additionalInfo': instance.additionalInfo,
       'price': instance.price,
       'roomCount': instance.roomCount,
       'area': instance.area,
