@@ -34,7 +34,7 @@ class ProfileInfo extends StatelessWidget {
           height: constraints.maxWidth * 0.8,
           child: Padding(
             padding: const EdgeInsets.all(largePaddingSize),
-            child: user.photoUrl != null
+            child: user.photoUrl != null && user.photoUrl!.isNotEmpty
                 ? ImageWidget(
                     imageUrl: user.photoUrl!,
                     shape: BoxShape.circle,
