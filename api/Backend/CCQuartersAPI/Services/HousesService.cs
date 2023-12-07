@@ -311,7 +311,7 @@ namespace CCQuartersAPI.Services
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
                         WHERE UserId = @userId AND h.DeleteDate IS NULL
-                        ORDER BY h.UpdateDate
+                        ORDER BY h.UpdateDate DESC
                         OFFSET @pageNumber * @pageSize ROWS
                         FETCH NEXT @pageSize ROWS ONLY";
 
