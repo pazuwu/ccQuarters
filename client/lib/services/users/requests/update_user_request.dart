@@ -12,8 +12,8 @@ class UpdateUserRequest {
       required this.email,
       this.phoneNumber});
 
-  String name;
-  String surname;
+  String? name;
+  String? surname;
   String? company;
   String email;
   String? phoneNumber;
