@@ -52,7 +52,7 @@ class _PhotosGridState extends State<PhotosGrid> {
           padding: const EdgeInsets.all(1.5),
           child: InkWellWithPhoto(
             imageWidget: ImageWidget(
-              imageUrl: house.photos.first.url,
+              imageUrl: house.photo.url,
               borderRadius: const BorderRadius.all(Radius.zero),
             ),
             onTap: () {

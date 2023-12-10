@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/new_house.dart';
@@ -118,7 +119,7 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<House?>> getHouse(String houseId) async {
+  Future<ServiceResponse<DetailedHouse?>> getHouse(String houseId) async {
     try {
       var response = await _dio.get(
         "$_url/$houseId",
@@ -130,7 +131,8 @@ class HouseService {
 
       if (response.statusCode == StatusCode.OK) {
         var data = GetHouseResponse.fromJson(response.data);
-        return ServiceResponse(data: data.house.toHouse(data.photos, houseId));
+        return ServiceResponse(
+            data: data.house.toDetailedHouse(data.photos, houseId));
       }
       return ServiceResponse(data: null, error: ErrorType.unknown);
     } on DioException catch (e) {

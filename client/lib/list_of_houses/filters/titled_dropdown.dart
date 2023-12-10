@@ -1,8 +1,8 @@
 import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
 
-class ChooseTypeDropdown<T> extends StatelessWidget {
-  const ChooseTypeDropdown(
+class TitledDropdown<T> extends StatelessWidget {
+  const TitledDropdown(
       {super.key,
       required this.title,
       this.value,
@@ -25,18 +25,27 @@ class ChooseTypeDropdown<T> extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title),
-          const SizedBox(width: 10),
-          DropdownButton<T?>(
-            value: value,
-            onChanged: onChanged,
-            items: values.map<DropdownMenuItem<T>>((T value) {
-              return DropdownMenuItem<T>(
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  paddingSize, 0, paddingSize, paddingSize),
+              child: DropdownButtonFormField<T?>(
                 value: value,
-                child: Text(value.toString(),
-                    style: const TextStyle(fontSize: 14)),
-              );
-            }).toList(),
+                onChanged: onChanged,
+                items: values.map<DropdownMenuItem<T>>((T value) {
+                  return DropdownMenuItem<T>(
+                    value: value,
+                    child: Text(
+                      value.toString(),
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  label: Text(title),
+                ),
+              ),
+            ),
           ),
           IconButton(
             onPressed: onClear,

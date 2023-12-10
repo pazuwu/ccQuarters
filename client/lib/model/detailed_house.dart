@@ -2,12 +2,14 @@ import 'package:ccquarters/model/house_details.dart';
 import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/model/user.dart';
 
-class House {
-  House(
+class DetailedHouse {
+  DetailedHouse(
     this.location,
     this.details,
-    this.photo, {
+    this.user,
+    this.photos, {
     required this.id,
     required this.offerType,
     required this.isLiked,
@@ -17,6 +19,7 @@ class House {
   Location location;
   HouseDetails details;
   OfferType offerType;
+  User user;
   bool isLiked;
-  Photo photo;
+  List<Photo> photos;
 }

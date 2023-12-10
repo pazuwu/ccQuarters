@@ -1,8 +1,9 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/house_details.dart';
+import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/photo.dart';
-import 'package:ccquarters/model/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'simple_house.g.dart';
@@ -72,16 +73,13 @@ class SimpleHouse {
         floor: floor,
         buildingType: buildingType,
       ),
-      User.empty(),
-      [
-        Photo(
-          filename: "",
-          url: photoUrl != null
-              ? photoUrl!
-              : "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}",
-          order: 0,
-        ),
-      ],
+      Photo(
+        filename: "",
+        url: photoUrl != null
+            ? photoUrl!
+            : "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}",
+        order: 0,
+      ),
       offerType: offerType,
       isLiked: isLiked,
     );

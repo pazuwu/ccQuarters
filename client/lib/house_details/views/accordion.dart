@@ -1,6 +1,6 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ const headerStyle = TextStyle(
 class AccordionPage extends StatelessWidget {
   const AccordionPage({super.key, required this.house});
 
-  final House house;
+  final DetailedHouse house;
 
   @override
   Widget build(BuildContext context) {

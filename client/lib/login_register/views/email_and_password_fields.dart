@@ -1,4 +1,5 @@
 import 'package:ccquarters/common_widgets/themed_form_field.dart';
+import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
 class EmailAndPasswordFields extends StatelessWidget {
@@ -17,15 +18,21 @@ class EmailAndPasswordFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final RegExp emailRegExp =
         RegExp("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+\$)");
-    return Column(
-      children: [
-        _buildEmailField(emailRegExp),
-        const SizedBox(
-          height: 20,
-        ),
-        _buildPasswordField(),
-        if (repeatPassword != null) _buildRepeatPasswordField()
-      ],
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width *
+            (getDeviceType(context) == DeviceType.web ? 0.4 : 1),
+      ),
+      child: Column(
+        children: [
+          _buildEmailField(emailRegExp),
+          const SizedBox(
+            height: 20,
+          ),
+          _buildPasswordField(),
+          if (repeatPassword != null) _buildRepeatPasswordField()
+        ],
+      ),
     );
   }
 

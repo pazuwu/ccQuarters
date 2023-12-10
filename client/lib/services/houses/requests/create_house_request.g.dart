@@ -28,7 +28,7 @@ CreateHouseRequest _$CreateHouseRequestFromJson(Map<String, dynamic> json) =>
       (json['geoY'] as num?)?.toDouble(),
       const OfferTypeConverter().fromJson(json['offerType'] as int),
       const BuildingTypeConverter().fromJson(json['buildingType'] as int),
-    );
+    )..virtualTourId = json['virtualTourId'] as String?;
 
 Map<String, dynamic> _$CreateHouseRequestToJson(CreateHouseRequest instance) =>
     <String, dynamic>{
@@ -51,4 +51,5 @@ Map<String, dynamic> _$CreateHouseRequestToJson(CreateHouseRequest instance) =>
       'offerType': const OfferTypeConverter().toJson(instance.offerType),
       'buildingType':
           const BuildingTypeConverter().toJson(instance.buildingType),
+      'virtualTourId': instance.virtualTourId,
     };

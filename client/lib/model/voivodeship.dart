@@ -1,13 +1,3 @@
-class CityWithVoivodeship {
-  CityWithVoivodeship({required this.city, required this.voivodeship});
-
-  String city;
-  Voivodeship voivodeship;
-
-  @override
-  String toString() => "$city, $voivodeship";
-}
-
 enum Voivodeship {
   dolnoslaskie,
   kujawskoPomorskie,

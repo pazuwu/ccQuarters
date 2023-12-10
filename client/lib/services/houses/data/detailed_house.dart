@@ -1,5 +1,7 @@
 import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/detailed_house.dart';
+import 'package:ccquarters/model/house_details.dart';
+import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/model/user.dart';
@@ -8,10 +10,10 @@ import 'package:json_annotation/json_annotation.dart';
 part 'detailed_house.g.dart';
 
 @JsonSerializable()
-class DetailedHouse {
+class HouseWithDetails {
   String title;
   String? description;
-  Map<String, dynamic> details;
+  Map<String, dynamic> additionalInfo;
   double price;
   int roomCount;
   double area;
@@ -37,10 +39,10 @@ class DetailedHouse {
   String? userPhoneNumber;
   String? userPhotoUrl;
 
-  DetailedHouse(
+  HouseWithDetails(
     this.title,
     this.description,
-    this.details,
+    this.additionalInfo,
     this.price,
     this.roomCount,
     this.area,
@@ -65,12 +67,12 @@ class DetailedHouse {
     this.userPhotoUrl,
   );
 
-  Map<String, dynamic> toJson() => _$DetailedHouseToJson(this);
-  factory DetailedHouse.fromJson(Map<String, dynamic> json) =>
-      _$DetailedHouseFromJson(json);
+  Map<String, dynamic> toJson() => _$HouseWithDetailsToJson(this);
+  factory HouseWithDetails.fromJson(Map<String, dynamic> json) =>
+      _$HouseWithDetailsFromJson(json);
 
-  House toHouse(List<Photo>? photos, String id) {
-    return House(
+  DetailedHouse toDetailedHouse(List<Photo>? photos, String id) {
+    return DetailedHouse(
       Location(
         voivodeship: voivodeship,
         city: city,
@@ -98,8 +100,8 @@ class DetailedHouse {
         userPhoneNumber,
         userPhotoUrl,
       ),
-      id: id,
       photos ?? [],
+      id: id,
       offerType: offerType,
       isLiked: isLiked,
     );

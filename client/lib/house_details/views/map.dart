@@ -1,5 +1,5 @@
 import 'package:ccquarters/map/map.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
 

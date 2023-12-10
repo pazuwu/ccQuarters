@@ -39,7 +39,7 @@ class FakeSearchBox extends StatelessWidget {
   }
 }
 
-class SearchBox extends StatelessWidget {
+class SearchBox extends StatefulWidget {
   const SearchBox({
     super.key,
     required this.color,
@@ -52,23 +52,40 @@ class SearchBox extends StatelessWidget {
   final Function(String)? onSubmitted;
 
   @override
+  State<SearchBox> createState() => _SearchBoxState();
+}
+
+class _SearchBoxState extends State<SearchBox> {
+  bool _showClearButton = false;
+  @override
+  void initState() {
+    widget.controller.addListener(() {
+      setState(() {
+        _showClearButton = widget.controller.text.isNotEmpty;
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SearchBoxTheme(
-      color: color,
+      color: widget.color,
       child: TextField(
         autofocus: true,
         textAlignVertical: getDeviceType(context) == DeviceType.mobile
             ? TextAlignVertical.bottom
             : TextAlignVertical.center,
-        controller: controller,
+        controller: widget.controller,
         decoration: buildSearchBoxDecoration(
           onPressed: () {
-            controller.clear();
-            if (onSubmitted != null) onSubmitted!("");
+            widget.controller.clear();
+            if (widget.onSubmitted != null) widget.onSubmitted!("");
           },
+          showClearButton: _showClearButton,
         ),
         onChanged: (value) => {},
-        onSubmitted: onSubmitted,
+        onSubmitted: widget.onSubmitted,
         textInputAction: TextInputAction.search,
       ),
     );
@@ -100,7 +117,8 @@ class SearchBoxTheme extends StatelessWidget {
   }
 }
 
-InputDecoration buildSearchBoxDecoration({Function()? onPressed}) {
+InputDecoration buildSearchBoxDecoration(
+    {Function()? onPressed, bool showClearButton = false}) {
   return InputDecoration(
     hintText: "Szukaj...",
     border: InputBorder.none,
@@ -108,11 +126,13 @@ InputDecoration buildSearchBoxDecoration({Function()? onPressed}) {
       padding: EdgeInsets.all(largePaddingSize),
       child: Icon(Icons.search, size: iconSize),
     ),
-    suffixIcon: IconButton(
-      padding: const EdgeInsets.all(largePaddingSize),
-      icon: const Icon(Icons.clear, size: iconSize),
-      onPressed: onPressed,
-    ),
+    suffixIcon: showClearButton
+        ? IconButton(
+            padding: const EdgeInsets.all(largePaddingSize),
+            icon: const Icon(Icons.clear, size: iconSize),
+            onPressed: onPressed,
+          )
+        : null,
     enabledBorder: const OutlineInputBorder(
       borderSide: BorderSide.none,
       borderRadius: BorderRadius.all(

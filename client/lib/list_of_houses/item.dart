@@ -1,10 +1,14 @@
 import 'package:ccquarters/house_details/gate.dart';
+import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common_widgets/always_visible_label.dart';
+import 'package:ccquarters/model/house_details.dart';
+import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:like_button/like_button.dart';
 
 class HouseListTile extends StatefulWidget {
@@ -70,7 +74,7 @@ class _HouseListTileState extends State<HouseListTile> {
       constraints:
           BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
       child: ImageWidget(
-        imageUrl: widget.house.photos.first.url,
+        imageUrl: widget.house.photo.url,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(borderRadius),
           topRight: Radius.circular(borderRadius),
@@ -132,9 +136,13 @@ class _HouseListTileState extends State<HouseListTile> {
           size: 40,
         );
       },
-      onTap: (isLiked) {
-        widget.house.isLiked = !isLiked;
-        return Future.value(!isLiked);
+      onTap: (isLiked) async {
+        var newValue = await context
+            .read<ListOfHousesCubit>()
+            .likeHouse(widget.house.id, widget.house.isLiked);
+        widget.house.isLiked = newValue;
+
+        return Future.value(newValue);
       },
     );
   }

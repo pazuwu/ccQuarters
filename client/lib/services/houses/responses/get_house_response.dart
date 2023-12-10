@@ -7,7 +7,7 @@ part 'get_house_response.g.dart';
 
 @JsonSerializable()
 class GetHouseResponse {
-  DetailedHouse house;
+  HouseWithDetails house;
   List<Photo>? photos;
 
   GetHouseResponse(this.house, this.photos);

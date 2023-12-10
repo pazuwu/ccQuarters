@@ -37,4 +37,19 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
 
     return response.data;
   }
+
+  Future<bool> likeHouse(String houseId, bool isLiked) async {
+    ServiceResponse<bool> response;
+    if (isLiked) {
+      response = await houseService.unlikeHouse(houseId);
+    } else {
+      response = await houseService.likeHouse(houseId);
+    }
+
+    if (response.error != ErrorType.none) {
+      return isLiked;
+    }
+
+    return !isLiked;
+  }
 }
