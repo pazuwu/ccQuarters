@@ -9,19 +9,29 @@ class PersonalInfoFields extends StatefulWidget {
     required this.name,
     required this.surname,
     required this.phoneNumber,
+    required this.isBusinessAccount,
+    this.saveIsBusinessAcount,
   });
 
   final TextEditingController company;
   final TextEditingController name;
   final TextEditingController surname;
   final TextEditingController phoneNumber;
+  final bool isBusinessAccount;
+  final Function? saveIsBusinessAcount;
 
   @override
   State<PersonalInfoFields> createState() => _PersonalInfoFieldsState();
 }
 
 class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
-  bool _isBusinessAccount = false;
+  late bool _isBusinessAccount;
+
+  @override
+  void initState() {
+    _isBusinessAccount = widget.isBusinessAccount;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +76,9 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
       trailing: Switch(
         value: _isBusinessAccount,
         onChanged: (value) {
+          if (widget.saveIsBusinessAcount != null) {
+            widget.saveIsBusinessAcount!(value);
+          }
           setState(() {
             _isBusinessAccount = value;
           });

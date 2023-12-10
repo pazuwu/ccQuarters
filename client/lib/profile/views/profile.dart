@@ -1,6 +1,7 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/houses_tab_bar_with_grids.dart';
 import 'package:ccquarters/profile/views/profile_drawer.dart';
 import 'package:ccquarters/profile/views/profile_info.dart';
@@ -105,7 +106,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               icon: const Icon(Icons.menu_rounded)),
         if (MediaQuery.of(context).orientation == Orientation.landscape)
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<ProfilePageCubit>().goToEditUserPage();
+            },
             icon: const Icon(Icons.edit),
             tooltip: "Edytuj profil",
           ),

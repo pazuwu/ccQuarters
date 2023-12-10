@@ -40,6 +40,7 @@ class AuthCubit extends Cubit<AuthState> {
   AlertService alertService;
   VTService vtService;
   User? user;
+  bool isBusinessAccount = false;
 
   Future<void> skipRegisterAndLogin() async {
     emit(SigningInState());

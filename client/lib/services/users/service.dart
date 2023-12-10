@@ -94,9 +94,31 @@ class UserService {
         "file": MultipartFile.fromBytes(photo, filename: userId),
       });
 
-      var response = await _dio.put(
+      var response = await _dio.post(
         "$_url/$userId/photo",
         data: photoData,
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: _token,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      return response.statusCode == StatusCode.OK
+          ? ServiceResponse(data: true)
+          : ServiceResponse(data: false, error: ErrorType.unknown);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+      }
+
+      return ServiceResponse(data: false, error: ErrorType.unknown);
+    }
+  }
+
+  Future<ServiceResponse<bool>> deletePhoto(String userId) async {
+    try {
+      var response = await _dio.put(
+        "$_url/$userId/photo/delete",
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,

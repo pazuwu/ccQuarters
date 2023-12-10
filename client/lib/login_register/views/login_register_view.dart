@@ -204,6 +204,10 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
           name: secondTextField,
           surname: thirdTextField,
           phoneNumber: fourthTextField,
+          isBusinessAccount: context.read<AuthCubit>().isBusinessAccount,
+          saveIsBusinessAcount: (value) {
+            context.read<AuthCubit>().isBusinessAccount = value;
+          },
         );
       case LoginRegisterPageType.registerEmailAndPassword:
         return EmailAndPasswordFields(
