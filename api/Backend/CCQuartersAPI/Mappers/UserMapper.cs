@@ -29,7 +29,7 @@ namespace CCQuartersAPI.Mappers
             var response = new UserDTO()
             {
                 Id = userDocument.Id,
-                RegisterTime = userDocument.CreateTime?.ToDateTime()
+                RegisterTime = userDocument.CreateTime?.ToDateTime() ?? DateTime.Now
             };
 
             if (userDocument.TryGetValue("name", out string name))

@@ -176,7 +176,7 @@ namespace CCQuartersAPI.Services
             var query = @$"IF NOT EXISTS (SELECT * FROM LikedHouses WHERE HouseId = @houseId AND UserId = @userId)
                        BEGIN
                            INSERT INTO LikedHouses 
-                           VALUES (@userId, @houseId)
+                           VALUES (@userId, @houseId, GETDATE())
                        END";
 
             await _rdbRepository.ExecuteAsync(query, new { userId, houseId }, trans);
@@ -310,8 +310,8 @@ namespace CCQuartersAPI.Services
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId) > 0 AND h.DeleteDate IS NULL
-                        ORDER BY h.UpdateDate
+                        WHERE UserId = @userId AND h.DeleteDate IS NULL
+                        ORDER BY h.UpdateDate DESC
                         OFFSET @pageNumber * @pageSize ROWS
                         FETCH NEXT @pageSize ROWS ONLY";
 
@@ -330,8 +330,8 @@ namespace CCQuartersAPI.Services
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
                         LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
-                        WHERE UserId = @userId AND h.DeleteDate IS NULL
-                        ORDER BY h.UpdateDate
+                        WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId) > 0 AND h.DeleteDate IS NULL
+                        ORDER BY (SELECT TOP 1 LikeDate FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId ORDER BY LikeDate DESC) DESC
                         OFFSET @pageNumber * @pageSize ROWS
                         FETCH NEXT @pageSize ROWS ONLY";
 
