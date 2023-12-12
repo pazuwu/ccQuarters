@@ -168,7 +168,7 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> updateHouse(House house) async {
+  Future<ServiceResponse<bool>> updateHouse(DetailedHouse house) async {
     try {
       var response = await _dio.put(
         "$_url/${house.id}",
@@ -176,7 +176,7 @@ class HouseService {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
-        data: CreateHouseRequest.fromHouse(house).toJson(),
+        data: CreateHouseRequest.fromDetailedHouse(house).toJson(),
       );
 
       return response.statusCode == StatusCode.OK

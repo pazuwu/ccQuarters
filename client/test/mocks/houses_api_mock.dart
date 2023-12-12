@@ -75,6 +75,7 @@ extension HousesAPIMock on Dio {
           OfferType.rent,
           BuildingType.apartment,
           true,
+          id,
           "Jan",
           "Kowalski",
           null,
