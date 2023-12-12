@@ -28,7 +28,8 @@ namespace CCQuartersAPI.Mappers
                 BuildingType = detailedHouseQueried.BuildingType,
                 IsLiked = detailedHouseQueried.IsLiked,
                 AdditionalInfoId = detailedHouseQueried.AdditionalInfoId,
-                DescriptionId = detailedHouseQueried.DescriptionId
+                DescriptionId = detailedHouseQueried.DescriptionId,
+                VirtualTourId = detailedHouseQueried.VirtualTourId,
             };
         }
     }
