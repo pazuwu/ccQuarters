@@ -14,6 +14,9 @@ namespace RepositoryLibrary
         public RelationalDBRepository(IConfiguration config)
         {
             this.connectionString = config["db"] ?? "";
+
+            if (string.IsNullOrEmpty(connectionString))
+                connectionString = Environment.GetEnvironmentVariable("APPSETTING_RDB_CONNECTION_STRING") ?? "";
         }
 
         public RelationalDBRepository(string connectionString) 
