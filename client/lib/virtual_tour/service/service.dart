@@ -2,9 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
+import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_area_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_scene_request.dart';
+import 'package:ccquarters/virtual_tour/service/requests/post_tour_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/put_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:dio/dio.dart';
@@ -43,6 +45,29 @@ class VTService {
 
       if (response.statusCode == StatusCode.OK) {
         return VTServiceResponse(data: Tour.fromMap(response.data));
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future<VTServiceResponse<List<TourInfo>>> getMyTours() async {
+    try {
+      var response = await _dio.get(
+        "$_url/$_tours/my",
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: _token,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return VTServiceResponse(
+            data: (response.data as List)
+                .map<TourInfo>((e) => TourInfo.fromMap(e))
+                .toList());
       } else {
         return VTServiceResponse(error: ErrorType.unknown);
       }
@@ -256,10 +281,13 @@ class VTService {
     }
   }
 
-  Future<VTServiceResponse<String>> postTour() async {
+  Future<VTServiceResponse<String>> postTour({required String name}) async {
     try {
+      var request = PostTourRequest(name: name);
+
       var response = await _dio.post(
         "$_url/$_tours",
+        data: request.toJson(),
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,

@@ -19,7 +19,6 @@ class DetailsView extends StatelessWidget {
 
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => VirtualTourGate(
-              authService: context.read(),
               tourId: house.details.virtualTourId!,
               readOnly: !hasAccessToEdit,
             )));

@@ -58,7 +58,8 @@ class VirtualTourCubit extends Cubit<VTState> {
   Future loadVirtualTour(String tourId, bool readOnly) async {
     var serviceResponse = await _service.getTour(tourId);
 
-    if (serviceResponse.error == null && serviceResponse.data != null) {
+    if (serviceResponse.error == ErrorType.none &&
+        serviceResponse.data != null) {
       _tour = serviceResponse.data;
 
       var currentSceneIndx = 0;
@@ -107,7 +108,6 @@ class VirtualTourCubit extends Cubit<VTState> {
         case ErrorType.notFound:
           emit(VTErrorState(text: "Spacer nie został odnaleziony"));
         case ErrorType.badRequest:
-        case null:
         case ErrorType.unknown:
         default:
           emit(VTErrorState(
