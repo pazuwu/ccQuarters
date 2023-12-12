@@ -1,7 +1,9 @@
 using AuthLibrary;
 using CloudStorageLibrary;
+using RepositoryLibrary;
 using VirtualTourAPI.Endpoints;
 using VirtualTourAPI.Repository;
+using VirtualTourAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,10 @@ builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
-builder.Services.AddTransient<IVTRepository, VTRepository>();
+builder.Services.AddTransient<IDocumentDBRepository, DocumentDBRepository>();
+builder.Services.AddTransient<IVTService, VTService>();
 
 var app = builder.Build();
 
@@ -45,6 +49,7 @@ app.MapPost("/tours/{tourId}/areas", AreaEndpoints.Post).WithOpenApi().RequireFB
 app.MapDelete("/tours/{tourId}/areas/{areaId}", AreaEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
 app.MapPost("/tours/{tourId}/areas/{areaId}/process", AreaEndpoints.Process).WithOpenApi().RequireFBAuthorization();
 app.MapPost("/tours/{tourId}/areas/{areaId}/photos", AreaEndpoints.PostPhotos).WithOpenApi().RequireFBAuthorization();
+app.MapGet("/tours/{tourId}/areas/{areaId}/photos", AreaEndpoints.GetPhotos).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/scenes", SceneEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("/tours/{tourId}/scenes/{sceneId}", SceneEndpoints.Delete).WithOpenApi().RequireFBAuthorization();

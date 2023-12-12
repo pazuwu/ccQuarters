@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.15" />
+    <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
     <PackageReference Include="Google.Cloud.Firestore" Version="3.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AuthLibrary\AuthLibrary.csproj" />
     <ProjectReference Include="..\CloudStorageLibrary\CloudStorageLibrary.csproj" />
+    <ProjectReference Include="..\RepositoryLibrary\RepositoryLibrary.csproj" />
   </ItemGroup>
 
 </Project>

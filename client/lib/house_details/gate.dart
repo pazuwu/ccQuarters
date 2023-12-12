@@ -1,20 +1,35 @@
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/house_details/view.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/house_details/views/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HouseDetailsGate extends StatelessWidget {
-  const HouseDetailsGate({super.key, required this.house});
+  const HouseDetailsGate({super.key, required this.houseId});
 
-  final House house;
+  final String houseId;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => HouseDetailsCubit(house),
+      create: (_) => HouseDetailsCubit(
+        houseId,
+        context.read(),
+        LoadingState(),
+      ),
       child: BlocBuilder<HouseDetailsCubit, HouseDetailsState>(
         builder: (context, state) {
-          if (state is DetailsState) {
+          if (state is LoadingState) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (state is ErrorState) {
+            return const Scaffold(
+              body: Center(
+                child: Text('Error'),
+              ),
+            );
+          } else if (state is DetailsState) {
             return DetailsView(house: state.house);
           }
           return Container();

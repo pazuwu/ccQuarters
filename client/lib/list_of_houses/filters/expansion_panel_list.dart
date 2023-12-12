@@ -1,10 +1,11 @@
 import 'package:ccquarters/list_of_houses/filters/chips.dart';
-import 'package:ccquarters/list_of_houses/filters/choose_type_dropdown.dart';
+import 'package:ccquarters/list_of_houses/filters/titled_dropdown.dart';
 import 'package:ccquarters/list_of_houses/filters/floor_multiselect_dropdown.dart';
 import 'package:ccquarters/list_of_houses/filters/from_to_number_fields.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/voivodeship.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
       0,
       "Typ ogłoszenia",
       [
-        ChooseTypeDropdown(
+        TitledDropdown(
           title: 'Typ budynku',
           value: widget.filters.buildingType,
           values: BuildingType.values,
@@ -59,7 +60,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
             widget.filters.buildingType = null;
           }),
         ),
-        ChooseTypeDropdown(
+        TitledDropdown(
           title: 'Typ oferty',
           value: widget.filters.offerType,
           values: OfferType.values,
@@ -150,7 +151,20 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
       2,
       "Lokalizacja",
       [
-        CityAndVoivodeshipChipKeyboardInput(
+        TitledDropdown(
+          title: 'Województwo',
+          value: widget.filters.voivodeship,
+          values: Voivodeship.values,
+          onChanged: (val) {
+            setState(() {
+              widget.filters.voivodeship = val;
+            });
+          },
+          onClear: () => setState(() {
+            widget.filters.voivodeship = null;
+          }),
+        ),
+        CityChipKeyboardInput(
           filters: widget.filters,
         ),
         Divider(thickness: 1, color: Colors.grey.shade400),
@@ -166,7 +180,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
     return ExpansionPanel(
       isExpanded: _isExpanded[index] ?? false,
       headerBuilder: (context, isOpen) => Padding(
-        padding: const EdgeInsets.all(paddingSize),
+        padding: const EdgeInsets.all(mediumPaddingSize),
         child: Text(
           title,
           style: const TextStyle(
@@ -177,8 +191,8 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         ),
       ),
       body: Padding(
-        padding:
-            const EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, paddingSize),
+        padding: const EdgeInsets.fromLTRB(
+            mediumPaddingSize, 0, mediumPaddingSize, mediumPaddingSize),
         child: Column(
           children: children,
         ),

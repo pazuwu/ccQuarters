@@ -1,6 +1,7 @@
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/voivodeship.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 class HouseFilter {
   HouseFilter(
@@ -17,7 +18,7 @@ class HouseFilter {
       this.minFloor,
       this.buildingType,
       this.offerType,
-      this.sortBy = SortByType.newest});
+      this.sortBy = SortingMethod.newest});
 
   String? title;
   double? minPrice;
@@ -32,12 +33,13 @@ class HouseFilter {
   int? minFloor;
   BuildingType? buildingType;
   OfferType? offerType;
-  List<CityWithVoivodeship> voivodeshipsAndCities = [];
+  Voivodeship? voivodeship;
+  List<String> cities = [];
   List<String> districts = [];
-  SortByType sortBy;
+  SortingMethod sortBy;
 }
 
-enum SortByType {
+enum SortingMethod {
   newest,
   lowestPrice,
   highestPrice,
@@ -48,18 +50,36 @@ enum SortByType {
   toString() => name;
 }
 
-extension SortByTypeEx on SortByType {
+class SortingMethodConverter implements JsonConverter<SortingMethod, int> {
+  const SortingMethodConverter();
+
+  @override
+  SortingMethod fromJson(int json) {
+    return SortingMethod.values[json];
+  }
+
+  @override
+  int toJson(SortingMethod? object) {
+    if (object == null) {
+      return 0;
+    }
+
+    return object.index;
+  }
+}
+
+extension SortByTypeEx on SortingMethod {
   String get name {
     switch (this) {
-      case SortByType.newest:
+      case SortingMethod.newest:
         return "Najnowsze";
-      case SortByType.lowestPrice:
+      case SortingMethod.lowestPrice:
         return "Najtańsze";
-      case SortByType.highestPrice:
+      case SortingMethod.highestPrice:
         return "Najdroższe";
-      case SortByType.lowestPricePerMeter:
+      case SortingMethod.lowestPricePerMeter:
         return "Najtańsze za m2";
-      case SortByType.highestPricePerMeter:
+      case SortingMethod.highestPricePerMeter:
         return "Najdroższe za m2";
     }
   }

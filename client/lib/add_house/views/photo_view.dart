@@ -1,16 +1,19 @@
 import 'package:ccquarters/add_house/cubit.dart';
+import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/utils/inkwell_with_photo.dart';
-import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/view_with_header_and_buttons.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
 class PhotoView extends StatefulWidget {
-  const PhotoView({super.key, required this.photos});
+  const PhotoView(
+      {super.key, required this.photos, required this.createVirtualTour});
 
   final List<Uint8List> photos;
+  final bool createVirtualTour;
 
   @override
   State<PhotoView> createState() => _PhotoViewState();
@@ -18,6 +21,13 @@ class PhotoView extends StatefulWidget {
 
 class _PhotoViewState extends State<PhotoView> {
   int? _selectedIndex;
+  bool _virtualTourIsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _virtualTourIsEnabled = widget.createVirtualTour;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +39,7 @@ class _PhotoViewState extends State<PhotoView> {
       },
       child: ViewWithHeader(
         title: "Dodaj zdjęcia",
-        inBetweenWidget: _buildPhotosGrid(context),
+        inBetweenWidget: _buildPageContent(context),
         goBackOnPressed: () {
           context.read<AddHouseFormCubit>().savePhotos(widget.photos);
           if (getDeviceType(context) == DeviceType.web) {
@@ -40,10 +50,57 @@ class _PhotoViewState extends State<PhotoView> {
         },
         nextOnPressed: () {
           context.read<AddHouseFormCubit>().savePhotos(widget.photos);
-          context.read<AddHouseFormCubit>().goToSummary();
+          context.read<AddHouseFormCubit>().sendData();
         },
         hasScrollBody: true,
+        isLastPage: true,
       ),
+    );
+  }
+
+  Widget _buildPageContent(BuildContext context) {
+    return Expanded(
+      child: Column(
+        children: [
+          _buildPhotosGrid(context),
+          const SizedBox(height: 16),
+          _buildDivider(context),
+          _buildVirtualTourSwitch(context),
+          _buildDivider(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVirtualTourSwitch(BuildContext context) {
+    return ListTile(
+      leading: Icon360(
+        color: _virtualTourIsEnabled ? Colors.blueGrey : Colors.grey,
+      ),
+      title: Text(
+        "Wirtualny spacer",
+        style: TextStyle(
+          color: _virtualTourIsEnabled ? Colors.black : Colors.grey,
+        ),
+      ),
+      trailing: Switch(
+        value: _virtualTourIsEnabled,
+        onChanged: (value) {
+          setState(() {
+            context.read<AddHouseFormCubit>().saveCreateVirtualTour(value);
+            _virtualTourIsEnabled = value;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return const Divider(
+      endIndent: 10,
+      indent: 10,
+      color: Colors.black,
+      thickness: 1,
     );
   }
 
@@ -73,7 +130,7 @@ class _PhotoViewState extends State<PhotoView> {
         if (images.isNotEmpty) {
           var imagesInBytes = <Uint8List>[];
           for (var image in images) {
-            imagesInBytes.add(await image.readAsBytes());
+            if (image.bytes != null) imagesInBytes.add(image.bytes!);
           }
           setState(() => widget.photos.addAll(imagesInBytes));
         }
@@ -107,8 +164,15 @@ class _PhotoViewState extends State<PhotoView> {
     );
   }
 
-  Future<List<XFile>> _getFromGallery() async {
-    return ImagePicker().pickMultiImage();
+  Future<List<PlatformFile>> _getFromGallery() async {
+    var res = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'jpeg'],
+      withData: true,
+    );
+
+    return res?.files ?? [];
   }
 }
 

@@ -4,17 +4,17 @@ namespace CCQuartersAPI.Responses
 {
     public class GetAlertsResponse
     {
-        public AlertDTO[] Alerts { get; set; }
+        public required AlertDTO[] Alerts { get; set; }
     }
 
     public class AlertDTO
     {
         public Guid Id { get; set; }
-        public string UserId {  get; set; }
+        public string? UserId {  get; set; }
         public double? MaxPrice { get; set; }
         public double? MaxPricePerM2 { get; set; }
-        public double? MinArea { get; set; }
-        public double? MaxArea { get; set; }
+        public decimal? MinArea { get; set; }
+        public decimal? MaxArea { get; set; }
         public int? MinRoomCount { get; set; }
         public int? MaxRoomCount { get; set; }
         public int? Floor { get; set; }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
-import 'package:ccquarters/utils/always_visible_label.dart';
+import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/scene_list/scene_link_form.dart';

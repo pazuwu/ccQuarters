@@ -1,6 +1,8 @@
 import 'package:ccquarters/main_page/cubit.dart';
+import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'announcements/container.dart';
 import 'search/search_box.dart';
 
@@ -12,34 +14,57 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final PagingController<int, House> _pagingControllerForHousesToRent =
+      PagingController(firstPageKey: 0);
+  final PagingController<int, House> _pagingControllerForHousesToBuy =
+      PagingController(firstPageKey: 0);
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pagingControllerForHousesToRent.dispose();
+    _pagingControllerForHousesToBuy.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
     return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(const Duration(seconds: 1));
+      onRefresh: () async {
+        _pagingControllerForHousesToRent.refresh();
+        _pagingControllerForHousesToBuy.refresh();
       },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              FakeSearchBox(
-                color: color,
-                onTap: () => context.read<MainPageCubit>().search(),
-              ),
-              const AnnouncementsContainer(
-                title: "Do wynajęcia",
-              ),
-              const AnnouncementsContainer(
-                title: "Do kupienia",
-              ),
-            ],
+      child: LayoutBuilder(builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: constraints.maxHeight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FakeSearchBox(
+                  color: color,
+                  onTap: () => context.read<MainPageCubit>().search(),
+                ),
+                AnnouncementsContainer(
+                  title: "Do wynajęcia",
+                  pagingController: _pagingControllerForHousesToRent,
+                  getHouses: (pageNumber, pageCount) async => await context
+                      .read<MainPageCubit>()
+                      .getHousesToRent(pageNumber, pageCount),
+                ),
+                AnnouncementsContainer(
+                  title: "Do kupienia",
+                  pagingController: _pagingControllerForHousesToBuy,
+                  getHouses: (pageNumber, pageCount) async => await context
+                      .read<MainPageCubit>()
+                      .getHousesToBuy(pageNumber, pageCount),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

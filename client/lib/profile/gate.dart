@@ -1,7 +1,10 @@
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/profile/profile.dart';
+import 'package:ccquarters/profile/cubit.dart';
+import 'package:ccquarters/profile/views/edit_profile.dart';
+import 'package:ccquarters/profile/views/profile.dart';
 import 'package:ccquarters/profile/sign_in_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileGate extends StatelessWidget {
   const ProfileGate({super.key, this.user});
@@ -11,7 +14,37 @@ class ProfileGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return user != null
-        ? Profile(user: user!)
+        ? BlocProvider(
+            create: (_) => ProfilePageCubit(
+              userService: context.read(),
+              alertService: context.read(),
+              houseService: context.read(),
+              userId: user!.id,
+            ),
+            child: BlocBuilder<ProfilePageCubit, ProfilePageState>(
+              builder: (context, state) {
+                if (state is ProfilePageInitialState) {
+                  return Profile(
+                    user: state.user,
+                  );
+                } else if (state is EditProfileState) {
+                  return EditProfileView(
+                    user: state.user,
+                  );
+                } else if (state is LoadingOrSendingDataState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is ErrorState) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
+
+                return Container();
+              },
+            ),
+          )
         : const SignInWidget();
   }
 }

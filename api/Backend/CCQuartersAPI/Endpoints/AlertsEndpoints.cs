@@ -1,224 +1,76 @@
-﻿using System.Data.SqlClient;
-using Dapper;
-using CCQuartersAPI.Responses;
-using System.Text;
-using Microsoft.AspNetCore.Http;
+﻿using CCQuartersAPI.Responses;
 using System.Security.Claims;
 using AuthLibrary;
-using Google.Api;
+using Microsoft.AspNetCore.Mvc;
+using CCQuartersAPI.Services;
 
 namespace CCQuartersAPI.Endpoints
 {
     public class AlertsEndpoints
     {
-        private static string connectionString = "";
-
-        public static void Init(string connectionString)
+        public static async Task<IResult> GetAlerts([FromServices] IAlertsService service, HttpContext context)
         {
-            AlertsEndpoints.connectionString = connectionString;
-        }
-
-        public static async Task<IResult> GetAlerts(HttpContext context)
-        {
-            using var connection = new SqlConnection(connectionString);
-
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var query = @$"SELECT * FROM Alerts WHERE UserId = '{userId}'";
-
-            var alerts = await connection.QueryAsync<AlertDTO>(query);
+            var alerts = await service.GetAlerts(userId);
 
             return Results.Ok(new GetAlertsResponse
             {
-                Alerts = alerts.ToArray()
+                Alerts = alerts
             });
         }
-        public static async Task<IResult> CreateAlert(AlertDTO alert, HttpContext context)
-        {
-            using var connection = new SqlConnection(connectionString);
 
+        public static async Task<IResult> CreateAlert([FromServices] IAlertsService service, AlertDTO alert, HttpContext context)
+        {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var queryBuilder = new StringBuilder();
-
-            queryBuilder.Append(@$"INSERT INTO Alerts (Id, UserId, MaxPrice, MaxPricePerM2, MinArea, MaxArea, MinRoomCount, MaxRoomCount, Floor, OfferType, BuildingType, City, ZipCode, District, StreetName, StreetNumber, FlatNumber) VALUES (NEWID(), '{userId}',");
-
-            if (alert.MaxPrice is not null)
-                queryBuilder.Append($"{alert.MaxPrice}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.MaxPricePerM2 is not null)
-                queryBuilder.Append($"{alert.MaxPricePerM2}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.MinArea is not null)
-                queryBuilder.Append($"{alert.MinArea}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.MaxArea is not null)
-                queryBuilder.Append($"{alert.MaxArea}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.MinRoomCount is not null)
-                queryBuilder.Append($"{alert.MinRoomCount}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.MaxRoomCount is not null)
-                queryBuilder.Append($"{alert.MaxRoomCount}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.Floor is not null)
-                queryBuilder.Append($"{alert.Floor}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.OfferType is not null)
-                queryBuilder.Append($"{(int)alert.OfferType}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.BuildingType is not null)
-                queryBuilder.Append($"{(int)alert.BuildingType}, ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.City is not null)
-                queryBuilder.Append($"'{alert.City}', ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.ZipCode is not null)
-                queryBuilder.Append($"'{alert.ZipCode}', ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.District is not null)
-                queryBuilder.Append($"'{alert.District}', ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.StreetName is not null)
-                queryBuilder.Append($"'{alert.StreetName}', ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.StreetNumber is not null)
-                queryBuilder.Append($"'{alert.StreetNumber}', ");
-            else
-                queryBuilder.Append("NULL, ");
-
-            if (alert.FlatNumber is not null)
-                queryBuilder.Append($"'{alert.FlatNumber}'");
-            else
-                queryBuilder.Append("NULL");
-
-            var insertQuery = $"{queryBuilder.ToString().TrimEnd(',', ' ')})";
-
-            await connection.ExecuteAsync(insertQuery);
+            await service.CreateAlert(alert, userId);
 
             return Results.Ok();
         }
-        public static async Task<IResult> UpdateAlert(Guid alertId, AlertDTO alert, HttpContext context)
-        {
-            using var connection = new SqlConnection(connectionString);
 
+        public static async Task<IResult> UpdateAlert([FromServices] IAlertsService alertsService, Guid alertId, AlertDTO alert, HttpContext context)
+        {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var query = @$"SELECT * FROM Alerts WHERE Id = '{alertId}'";
+            var alertQueried = await alertsService.GetAlertById(alertId);
 
-            var alertQueried = await connection.QueryFirstAsync<AlertDTO>(query);
+            if (alertQueried is null)
+                return Results.NotFound("Alert does not exist");
 
-            if (alertQueried.UserId != userId)
+            if(userId != alertQueried.UserId) 
                 return Results.Unauthorized();
 
-            var queryBuilder = new StringBuilder();
-            queryBuilder.Append("UPDATE Alerts SET ");
-
-            if (alert.MaxPrice is not null)
-                queryBuilder.Append($"MaxPrice = {alert.MaxPrice}, ");
-
-            if (alert.MaxPricePerM2 is not null)
-                queryBuilder.Append($"MaxPricePerM2 = {alert.MaxPricePerM2}, ");
-
-            if (alert.MinArea is not null)
-                queryBuilder.Append($"MinArea = {alert.MinArea}, ");
-
-            if (alert.MaxArea is not null)
-                queryBuilder.Append($"MaxArea = {alert.MaxArea}, ");
-
-            if (alert.MinRoomCount is not null)
-                queryBuilder.Append($"MinRoomCount = {alert.MinRoomCount}, ");
-
-            if (alert.MaxRoomCount is not null)
-                queryBuilder.Append($"MaxRoomCount = {alert.MaxRoomCount}, ");
-
-            if (alert.Floor is not null)
-                queryBuilder.Append($"Floor = {alert.Floor}, ");
-
-            if (alert.OfferType is not null)
-                queryBuilder.Append($"OfferType = {(int)alert.OfferType}, ");
-
-            if (alert.BuildingType is not null)
-                queryBuilder.Append($"BuildingType = {(int)alert.BuildingType}, ");
-
-            if (alert.City is not null)
-                queryBuilder.Append($"City = '{alert.City}', ");
-
-            if (alert.ZipCode is not null)
-                queryBuilder.Append($"ZipCode = '{alert.ZipCode}', ");
-
-            if (alert.District is not null)
-                queryBuilder.Append($"District = '{alert.District}', ");
-
-            if (alert.StreetName is not null)
-                queryBuilder.Append($"StreetName = '{alert.StreetName}', ");
-
-            if (alert.StreetNumber is not null)
-                queryBuilder.Append($"StreetNumber = '{alert.StreetNumber}', ");
-
-            if (alert.FlatNumber is not null)
-                queryBuilder.Append($"FlatNumber = '{alert.FlatNumber}', ");
-
-            var updateQuery = $"{queryBuilder.ToString().TrimEnd(',', ' ')} WHERE Id = '{alertId}'";
-
-            await connection.ExecuteAsync(updateQuery);
+            await alertsService.UpdateAlert(alert, alertId);
 
             return Results.Ok();
         }
-        public static async Task<IResult> DeleteAlert(Guid alertId, HttpContext context)
-        {
-            using var connection = new SqlConnection(connectionString);
 
+        public static async Task<IResult> DeleteAlert([FromServices] IAlertsService alertsService, Guid alertId, HttpContext context)
+        {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var getQuery = @$"SELECT * FROM Alerts WHERE Id = '{alertId}'";
+            var alertQueried = await alertsService.GetAlertById(alertId);
 
-            var alertQueried = await connection.QueryFirstAsync<AlertDTO>(getQuery);
+            if (alertQueried is null)
+                return Results.NotFound("Alert does not exist");
 
-            if (alertQueried.UserId != userId)
+            if (userId != alertQueried.UserId)
                 return Results.Unauthorized();
 
-            var deleteQuery = @$"DELETE FROM Alerts WHERE Id = '{alertId}'";
-
-            await connection.ExecuteAsync(deleteQuery);
+            await alertsService.DeleteAlertById(alertId);
 
             return Results.Ok();
         }

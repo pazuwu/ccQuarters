@@ -15,6 +15,7 @@ namespace CCQuartersAPI.Responses
         public double Area { get; set; }
         public int? Floor { get; set; }
         public string City { get; set; }
+        public string Voivodeship { get; set; }
         public string ZipCode { get; set; }
         public string? District { get; set; }
         public string? StreetName { get; set; }
@@ -24,11 +25,7 @@ namespace CCQuartersAPI.Responses
         public BuildingType BuildingType { get; set; }
         public bool IsLiked { get; set; }
         public string PhotoUrl { get; set; }
-    }
-
-    public class PhotoDTO
-    {
-        public Guid HouseId { get; set; }
-        public string PhotoId { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime UpdateDate { get; set; }
     }
 }

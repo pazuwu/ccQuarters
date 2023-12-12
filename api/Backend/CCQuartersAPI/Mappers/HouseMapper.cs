@@ -9,12 +9,14 @@ namespace CCQuartersAPI.Mappers
         {
             return new DetailedHouseDTO
             {
+                UserId = detailedHouseQueried.UserId,
                 Title = detailedHouseQueried.Title,
                 Price = detailedHouseQueried.Price,
                 RoomCount = detailedHouseQueried.RoomCount,
                 Area = detailedHouseQueried.Area,
                 Floor = detailedHouseQueried.Floor,
                 City = detailedHouseQueried.City,
+                Voivodeship = detailedHouseQueried.Voivodeship,
                 ZipCode = detailedHouseQueried.ZipCode,
                 District = detailedHouseQueried.District,
                 StreetName = detailedHouseQueried.StreetName,
@@ -24,7 +26,10 @@ namespace CCQuartersAPI.Mappers
                 GeoY = detailedHouseQueried.GeoY,
                 OfferType = detailedHouseQueried.OfferType,
                 BuildingType = detailedHouseQueried.BuildingType,
-                IsLiked = detailedHouseQueried.IsLiked
+                IsLiked = detailedHouseQueried.IsLiked,
+                AdditionalInfoId = detailedHouseQueried.AdditionalInfoId,
+                DescriptionId = detailedHouseQueried.DescriptionId,
+                VirtualTourId = detailedHouseQueried.VirtualTourId,
             };
         }
     }

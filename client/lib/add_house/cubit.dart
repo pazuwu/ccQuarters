@@ -1,10 +1,14 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
-import 'package:ccquarters/model/new_house.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/services/houses/service.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
 
 class HouseFormState {}
 
@@ -37,23 +41,38 @@ class LocationFormState extends HouseFormState {
 class MapState extends HouseFormState {}
 
 class PhotosFormState extends HouseFormState {
-  PhotosFormState(this.photos);
+  PhotosFormState(this.photos, this.createVirtualTour);
 
   List<Uint8List> photos;
+  bool createVirtualTour;
 }
 
-class SummaryState extends HouseFormState {
-  SummaryState(this.house);
-  NewHouse house;
+class SendingFinishedState extends HouseFormState {
+  String houseId;
+  SendingFinishedState({
+    required this.houseId,
+  });
 }
+
+class ErrorState extends HouseFormState {
+  ErrorState(this.message);
+  String message;
+}
+
+class SendingDataState extends HouseFormState {}
 
 class AddHouseFormCubit extends Cubit<HouseFormState> {
-  AddHouseFormCubit() : super(ChooseTypeFormState(NewHouseDetails()));
+  AddHouseFormCubit({required this.houseService, required this.vtService})
+      : super(ChooseTypeFormState(NewHouseDetails()));
 
+  HouseService houseService;
   NewHouse house = NewHouse(
     NewLocation(),
     NewHouseDetails(),
   );
+
+  VTService vtService;
+  bool _createVirtualTour = false;
 
   void goToLocationForm() {
     emit(LocationFormState(house.location, house.buildingType));
@@ -76,11 +95,35 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void goToPhotosForm() {
-    emit(PhotosFormState(house.photos));
+    emit(PhotosFormState(house.photos, _createVirtualTour));
   }
 
-  void goToSummary() {
-    emit(SummaryState(house));
+  Future<void> sendData() async {
+    emit(SendingDataState());
+
+    if (_createVirtualTour) {
+      var result = await vtService.postTour();
+      if (result.data != null) {
+        house.houseDetails.virtualTourId = result.data!;
+      }
+    }
+
+    var result = await houseService.createHouse(house);
+    if (result.data != null) {
+      var houseId = result.data!;
+      for (var photo in house.photos) {
+        var res = await houseService.addPhoto(houseId, photo);
+        if (!res.data) {
+          emit(ErrorState("Błąd!"));
+          return;
+        }
+      }
+    } else {
+      emit(ErrorState("Błąd!"));
+      return;
+    }
+
+    emit(SendingFinishedState(houseId: result.data!));
   }
 
   void saveDetails(NewHouseDetails details) {
@@ -108,5 +151,18 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
 
   void savePhotos(List<Uint8List> photos) {
     house.photos = photos;
+  }
+
+  void saveCreateVirtualTour(bool createVirtualTour) {
+    _createVirtualTour = createVirtualTour;
+  }
+
+  void clear() {
+    house = NewHouse(
+      NewLocation(),
+      NewHouseDetails(),
+    );
+
+    emit(ChooseTypeFormState(NewHouseDetails()));
   }
 }

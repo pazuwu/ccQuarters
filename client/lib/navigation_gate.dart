@@ -1,8 +1,9 @@
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/main_page/gate.dart';
-import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/virtual_tour/gate.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'add_house/gate.dart';
@@ -18,10 +19,7 @@ class NavigationGate extends StatefulWidget {
 class _NavigationGateState extends State<NavigationGate> {
   int _selectedIndex = 0;
   final List<Widget> _pages = <Widget>[
-    const VirtualTourGate(
-      tourId: 'vu7TKNy0zkPj6jHy6lIq',
-      readOnly: false,
-    ),
+    const MainPageGate(),
     const AddHouseGate(),
     const ProfileGate(),
   ];
@@ -47,39 +45,16 @@ class _NavigationGateState extends State<NavigationGate> {
     final color = Theme.of(context).colorScheme;
     return Scaffold(
       bottomNavigationBar: typeOfDevice == DeviceType.mobile
-          ? BottomNavigationBar(
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              selectedItemColor: color.primary,
-              type: BottomNavigationBarType.fixed,
-              iconSize: 40,
-              items: _items.map(mapItemToBottomNavigationBarItem).toList(),
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            )
+          ? _buildBottomNavigationBar(color)
           : null,
       body: Row(
         children: [
           if (typeOfDevice == DeviceType.web)
-            SideNavigationBar(
-              selectedIndex: _selectedIndex,
-              items: _items,
-              theme: SideNavigationBarTheme(
-                backgroundColor: color.background,
-                togglerTheme: SideNavigationBarTogglerTheme.standard(),
-                itemTheme: SideNavigationBarItemTheme(
-                  unselectedItemColor: Colors.black,
-                  selectedItemColor: color.primary,
-                  iconSize: 32.5,
-                ),
-                dividerTheme: SideNavigationBarDividerTheme.standard(),
-              ),
-              onTap: _onItemTapped,
-            ),
+            _buildSideNavigationBar(context, color),
           Expanded(
             child: _selectedIndex == 2
                 ? ProfileGate(
-                    user: User(),
+                    user: context.read<AuthCubit>().user,
                   )
                 : _pages.elementAt(_selectedIndex),
           )
@@ -88,7 +63,54 @@ class _NavigationGateState extends State<NavigationGate> {
     );
   }
 
+  SizedBox _buildBottomNavigationBar(ColorScheme color) {
+    return SizedBox(
+      height: 70,
+      child: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: color.primary,
+        type: BottomNavigationBarType.fixed,
+        iconSize: 35,
+        items: _items.map(mapItemToBottomNavigationBarItem).toList(),
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  SideNavigationBar _buildSideNavigationBar(
+      BuildContext context, ColorScheme color) {
+    return SideNavigationBar(
+      selectedIndex: _selectedIndex,
+      items: _items +
+          (kIsWeb && context.read<AuthCubit>().user == null
+              ? [
+                  const SideNavigationBarItem(
+                    icon: Icons.logout,
+                    label: "Zaloguj się lub zarejestruj",
+                  )
+                ]
+              : []),
+      theme: SideNavigationBarTheme(
+        backgroundColor: color.background,
+        togglerTheme: SideNavigationBarTogglerTheme.standard(),
+        itemTheme: SideNavigationBarItemTheme(
+          unselectedItemColor: Colors.black,
+          selectedItemColor: color.primary,
+          iconSize: 32.5,
+        ),
+        dividerTheme: SideNavigationBarDividerTheme.standard(),
+      ),
+      onTap: _onItemTapped,
+    );
+  }
+
   void _onItemTapped(int index) {
+    if (index == 3) {
+      context.read<AuthCubit>().signOut();
+      return;
+    }
     setState(() {
       _selectedIndex = index;
     });

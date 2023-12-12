@@ -1,11 +1,12 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/model/voivodeship.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/utils/input_decorator_form.dart';
-import 'package:ccquarters/utils/view_with_header_and_buttons.dart';
-import 'package:ccquarters/utils/views_with_vertical_divider.dart';
+import 'package:ccquarters/common_widgets/input_decorator_form.dart';
+import 'package:ccquarters/common_widgets/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common_widgets/views_with_vertical_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/model/building_type.dart';
@@ -67,7 +68,7 @@ class _LocationFormViewState extends State<LocationFormView> {
   }
 }
 
-class LocationForm extends StatelessWidget {
+class LocationForm extends StatefulWidget {
   const LocationForm({
     super.key,
     required this.location,
@@ -80,14 +81,23 @@ class LocationForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
 
   @override
+  State<LocationForm> createState() => _LocationFormState();
+}
+
+class _LocationFormState extends State<LocationForm> {
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(paddingSize),
+        padding: const EdgeInsets.all(largePaddingSize),
         child: Form(
-          key: formKey,
+          key: widget.formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
+              _buildVoivodeshipDropdown(context),
+              const SizedBox(height: sizedBoxHeight),
               _buildCityField(context),
               const SizedBox(height: sizedBoxHeight),
               _buildPostalCodeField(context),
@@ -98,9 +108,9 @@ class LocationForm extends StatelessWidget {
               const SizedBox(height: sizedBoxHeight),
               _buildStreetNumberField(context),
               const SizedBox(height: sizedBoxHeight),
-              if (buildingType != BuildingType.house)
+              if (widget.buildingType != BuildingType.house)
                 _buildFlatNumberField(context),
-              if (buildingType != BuildingType.house)
+              if (widget.buildingType != BuildingType.house)
                 const SizedBox(height: sizedBoxHeight),
             ],
           ),
@@ -109,10 +119,36 @@ class LocationForm extends StatelessWidget {
     );
   }
 
+  Widget _buildVoivodeshipDropdown(BuildContext context) {
+    return DropdownButtonFormField<Voivodeship?>(
+      value: widget.location.voivodeship,
+      onChanged: (val) {
+        setState(() {
+          widget.location.voivodeship = val;
+        });
+      },
+      focusColor: Colors.grey.shade300,
+      items: Voivodeship.values.map<DropdownMenuItem<Voivodeship>>(
+        (Voivodeship value) {
+          return DropdownMenuItem<Voivodeship>(
+            value: value,
+            child: Text(value.toString(), style: const TextStyle(fontSize: 14)),
+          );
+        },
+      ).toList(),
+      decoration: createInputDecorationForForm(
+        context,
+        "Województwo",
+        isRequired: true,
+      ),
+      validator: (value) => value == null ? "Wpisz województwo" : null,
+    );
+  }
+
   TextFormField _buildCityField(BuildContext context) {
     return TextFormField(
-      initialValue: location.city,
-      onSaved: (newValue) => location.city = newValue?.trim() ?? '',
+      initialValue: widget.location.city,
+      onSaved: (newValue) => widget.location.city = newValue?.trim() ?? '',
       decoration: createInputDecorationForForm(
         context,
         "Miasto",
@@ -124,8 +160,8 @@ class LocationForm extends StatelessWidget {
 
   TextFormField _buildDistrictField(BuildContext context) {
     return TextFormField(
-      initialValue: location.district,
-      onSaved: (newValue) => location.district = newValue?.trim() ?? '',
+      initialValue: widget.location.district,
+      onSaved: (newValue) => widget.location.district = newValue?.trim() ?? '',
       decoration: createInputDecorationForForm(
         context,
         "Dzielnica",
@@ -135,8 +171,9 @@ class LocationForm extends StatelessWidget {
 
   TextFormField _buildStreetField(BuildContext context) {
     return TextFormField(
-      initialValue: location.streetName,
-      onSaved: (newValue) => location.streetName = newValue?.trim() ?? '',
+      initialValue: widget.location.streetName,
+      onSaved: (newValue) =>
+          widget.location.streetName = newValue?.trim() ?? '',
       decoration: createInputDecorationForForm(
         context,
         "Ulica",
@@ -146,8 +183,9 @@ class LocationForm extends StatelessWidget {
 
   TextFormField _buildStreetNumberField(BuildContext context) {
     return TextFormField(
-      initialValue: location.streetNumber,
-      onSaved: (newValue) => location.streetNumber = newValue?.trim() ?? '',
+      initialValue: widget.location.streetNumber,
+      onSaved: (newValue) =>
+          widget.location.streetNumber = newValue?.trim() ?? '',
       decoration: createInputDecorationForForm(
         context,
         "Numer budynku",
@@ -160,8 +198,9 @@ class LocationForm extends StatelessWidget {
 
   TextFormField _buildFlatNumberField(BuildContext context) {
     return TextFormField(
-      initialValue: location.flatNumber,
-      onSaved: (newValue) => location.flatNumber = newValue?.trim() ?? '',
+      initialValue: widget.location.flatNumber,
+      onSaved: (newValue) =>
+          widget.location.flatNumber = newValue?.trim() ?? '',
       decoration: createInputDecorationForForm(
         context,
         "Numer mieszkania",
@@ -171,8 +210,8 @@ class LocationForm extends StatelessWidget {
 
   Widget _buildPostalCodeField(BuildContext context) {
     return TextFormField(
-        initialValue: location.zipCode,
-        onSaved: (newValue) => location.zipCode = newValue?.trim() ?? '',
+        initialValue: widget.location.zipCode,
+        onSaved: (newValue) => widget.location.zipCode = newValue?.trim() ?? '',
         decoration: createInputDecorationForForm(
           context,
           "Kod pocztowy",

@@ -44,7 +44,6 @@ class LocationPickerController implements Listenable {
   Future _setLocationInner(SearchInfo location,
       {bool updateAutocomplete = true, bool goToLocation = true}) async {
     if (location.point != null) {
-      _location = location;
       if ((_isReadOnly && !kIsWeb) || !_isReadOnly) {
         await _mapController.addMarker(location.point!);
       }
@@ -57,6 +56,8 @@ class LocationPickerController implements Listenable {
       if (updateAutocomplete) {
         _autocompleteController.location = location.point;
       }
+
+      _publishNewLocation(location);
     }
   }
 

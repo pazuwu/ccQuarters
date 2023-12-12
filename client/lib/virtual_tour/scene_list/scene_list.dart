@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ccquarters/utils/always_visible_label.dart';
-import 'package:ccquarters/utils/icon_360.dart';
-import 'package:ccquarters/utils/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/always_visible_label.dart';
+import 'package:ccquarters/common_widgets/icon_360.dart';
+import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/import_type_dialog.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';

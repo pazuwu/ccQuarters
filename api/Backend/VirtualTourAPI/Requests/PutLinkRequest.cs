@@ -6,7 +6,7 @@ namespace VirtualTourAPI.Requests
     {
         public string? Text { get; set; }
         public string? DestinationId { get; set; }
-        public GeoPoint? Position { get; set; }
-        public GeoPoint? NextOrientation { get; set; }
+        public GeoPointDTO? Position { get; set; }
+        public GeoPointDTO? NextOrientation { get; set; }
     }
 }
