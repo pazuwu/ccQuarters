@@ -22,5 +22,6 @@ namespace CCQuartersAPI.Requests
         public decimal? GeoY { get; set; }
         public OfferType? OfferType { get; set; }
         public BuildingType? BuildingType { get; set; }
+        public string? VirtualTourId { get; set; }
     }
 }
