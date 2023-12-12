@@ -98,29 +98,35 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildButtons(BuildContext context) {
-    return Row(
-      children: [
-        if (MediaQuery.of(context).orientation == Orientation.portrait)
-          IconButton(
-              onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
-              icon: const Icon(Icons.menu_rounded)),
-        if (MediaQuery.of(context).orientation == Orientation.landscape)
-          IconButton(
-            onPressed: () {
-              context.read<ProfilePageCubit>().goToEditUserPage();
-            },
-            icon: const Icon(Icons.edit),
-            tooltip: "Edytuj profil",
-          ),
-        if (MediaQuery.of(context).orientation == Orientation.landscape)
-          IconButton(
-            onPressed: () {
-              context.read<AuthCubit>().signOut();
-            },
-            icon: const Icon(Icons.logout),
-            tooltip: "Wyloguj się",
-          ),
-      ],
-    );
+    return (MediaQuery.of(context).orientation == Orientation.portrait)
+        ? IconButton(
+            onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
+            icon: const Icon(Icons.menu_rounded),
+          )
+        : Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  context.read<ProfilePageCubit>().goToEditUserPage();
+                },
+                icon: const Icon(Icons.edit),
+                tooltip: "Edytuj profil",
+              ),
+              IconButton(
+                onPressed: () {
+                  context.read<ProfilePageCubit>().goToAlertsPage();
+                },
+                icon: const Icon(Icons.collections_bookmark),
+                tooltip: "Alerty",
+              ),
+              IconButton(
+                onPressed: () {
+                  context.read<AuthCubit>().signOut();
+                },
+                icon: const Icon(Icons.logout),
+                tooltip: "Wyloguj się",
+              ),
+            ],
+          );
   }
 }

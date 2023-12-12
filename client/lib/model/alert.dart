@@ -1,4 +1,5 @@
 import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -42,6 +43,26 @@ class Alert {
       this.streetName,
       this.streetNumber,
       this.flatNumber});
+
+  Alert.empty()
+      : id = "",
+        userId = "";
+
+  Alert.fromHouseFilter(HouseFilter filters)
+      : id = "",
+        userId = "",
+        maxPrice = filters.maxPrice,
+        maxPricePerM2 = filters.maxPricePerMeter,
+        minArea = filters.minArea,
+        maxArea = filters.maxArea,
+        minRoomCount = filters.minRoomCount,
+        maxRoomCount = filters.maxRoomCount,
+        floor = filters.floor?.first,
+        offerType = filters.offerType,
+        buildingType = filters.buildingType,
+        city = filters.cities.isNotEmpty ? filters.cities.first : null,
+        district =
+            filters.districts.isNotEmpty ? filters.districts.first : null;
 
   Map<String, dynamic> toJson() => _$AlertToJson(this);
   factory Alert.fromJson(Map<String, dynamic> json) => _$AlertFromJson(json);

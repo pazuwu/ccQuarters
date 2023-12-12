@@ -28,6 +28,13 @@ class ProfileDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.collections_bookmark),
+            title: const Text('Alerty'),
+            onTap: () {
+              context.read<ProfilePageCubit>().goToAlertsPage();
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.logout),
             title: Text(context.read<AuthCubit>().user == null
                 ? "Zaloguj się lub zarejestruj"

@@ -1,3 +1,4 @@
+import 'package:ccquarters/alerts/gate.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
@@ -17,7 +18,6 @@ class ProfileGate extends StatelessWidget {
         ? BlocProvider(
             create: (_) => ProfilePageCubit(
               userService: context.read(),
-              alertService: context.read(),
               houseService: context.read(),
               userId: user!.id,
             ),
@@ -38,6 +38,9 @@ class ProfileGate extends StatelessWidget {
                 } else if (state is ErrorState) {
                   return Center(
                     child: Text(state.message),
+                  );
+                } else if (state is AlertsState) {
+                  return const AlertsGate(
                   );
                 }
 

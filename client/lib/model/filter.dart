@@ -1,3 +1,4 @@
+import 'package:ccquarters/model/alert.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/voivodeship.dart';
@@ -37,6 +38,20 @@ class HouseFilter {
   List<String> cities = [];
   List<String> districts = [];
   SortingMethod sortBy;
+
+  HouseFilter.fromAlert(Alert alert)
+      : minPrice = alert.maxPrice,
+        maxPrice = alert.maxPrice,
+        minPricePerMeter = alert.maxPricePerM2,
+        maxPricePerMeter = alert.maxPricePerM2,
+        minArea = alert.minArea,
+        maxArea = alert.maxArea,
+        minRoomCount = alert.minRoomCount,
+        maxRoomCount = alert.maxRoomCount,
+        floor = alert.floor != null ? [alert.floor!] : null,
+        buildingType = alert.buildingType,
+        offerType = alert.offerType,
+        sortBy = SortingMethod.newest;
 }
 
 enum SortingMethod {
