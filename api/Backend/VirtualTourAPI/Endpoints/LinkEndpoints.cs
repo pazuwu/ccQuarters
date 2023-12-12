@@ -1,4 +1,6 @@
-﻿using Google.Cloud.Firestore;
+﻿using AuthLibrary;
+using Google.Cloud.Firestore;
+using System.Security.Claims;
 using VirtualTourAPI.Model;
 using VirtualTourAPI.Requests;
 using VirtualTourAPI.Service;
@@ -7,8 +9,14 @@ namespace VirtualTourAPI.Endpoints
 {
     public static class LinkEndpoints
     {
-        public static async Task<IResult> Post(string tourId, PostLinkRequest request, IVTService service)
+        public static async Task<IResult> Post(string tourId, HttpContext context, PostLinkRequest request, IVTService service)
         {
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+                Results.Unauthorized();
+
             Dictionary<string, string[]> errors = new();
 
             if (string.IsNullOrWhiteSpace(request.ParentId))
@@ -40,8 +48,14 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(createdLinkId, null);
         }
 
-        public static async Task<IResult> Put(string tourId, string linkId, PutLinkRequest request, IVTService service)
+        public static async Task<IResult> Put(string tourId, string linkId, HttpContext context, PutLinkRequest request, IVTService service)
         {
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+                Results.Unauthorized();
+
             var link = new LinkDTO()
             {
                 Id = linkId,
@@ -55,8 +69,14 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> Delete(string tourId, string linkId, IVTService service)
+        public static async Task<IResult> Delete(string tourId, string linkId, HttpContext context, IVTService service)
         {
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+                Results.Unauthorized();
+
             await service.DeleteLink(tourId, linkId);
             return Results.Ok();
         }

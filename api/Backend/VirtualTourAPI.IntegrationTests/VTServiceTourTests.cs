@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using VirtualTourAPI.Model;
 
 #nullable disable
 
@@ -10,12 +11,18 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task CreateTourShouldCreateTour()
         {
-            var tourId = await _service.CreateTour();
+            var tour = new TourDTO()
+            {
+                Name = "Name",
+                OwnerId = "UserId"
+            };
+
+            var tourId = await _service.CreateTour(tour);
             tourId.Should().NotBeNull();
 
-            var tour = await _service.GetTour(tourId);
-            tour.Should().NotBeNull();
-            tour.Id.Should().Be(tourId);
+            var createdTour = await _service.GetTour(tourId);
+            createdTour.Should().NotBeNull();
+            createdTour.Id.Should().Be(tourId);
 
             await _service.DeleteTour(tourId);
         }
@@ -23,17 +30,58 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task DeleteTourShouldDeleteTour()
         {
-            var tourId = await _service.CreateTour();
+            var tour = new TourDTO()
+            {
+                Name = "Name",
+                OwnerId = "UserId"
+            };
+
+            var tourId = await _service.CreateTour(tour);
             tourId.Should().NotBeNull();
 
-            var tour = await _service.GetTour(tourId);
-            tour.Should().NotBeNull();
-            tour.Id.Should().Be(tourId);
+            var createdTour = await _service.GetTour(tourId);
+            createdTour.Should().NotBeNull();
+            createdTour.Id.Should().Be(tourId);
 
             await _service.DeleteTour(tourId);
 
             var tourAfterDelete = await _service.GetTour(tourId);
             tourAfterDelete.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task GetUserToursShouldReturnOnlyUsersTours()
+        {
+            var firstTour = new TourDTO()
+            {
+                Name = "Name",
+                OwnerId = "First User"
+            };
+
+            var secondTour = new TourDTO()
+            {
+                Name = "Name",
+                OwnerId = "Second User"
+            };
+
+            var firstTourId = await _service.CreateTour(firstTour);
+            firstTourId.Should().NotBeNull();
+
+            var secondTourId = await _service.CreateTour(secondTour);
+            secondTourId.Should().NotBeNull();
+
+            var firstUserTours = await _service.GetAllUserTourInfos("First User");
+            firstUserTours.Should().NotBeNull();
+            firstUserTours.Should().Contain(i => i.Id == firstTourId);
+            firstUserTours.Should().NotContain(i => i.Id == secondTourId);
+
+            var secondUserTours = await _service.GetAllUserTourInfos("Second User");
+            secondUserTours.Should().NotBeNull();
+            secondUserTours.Should().Contain(i => i.Id == secondTourId);
+            secondUserTours.Should().NotContain(i => i.Id == firstTourId);
+
+            await _service.DeleteTour(firstTourId);
+            await _service.DeleteTour(secondTourId);
         }
     }
 }
