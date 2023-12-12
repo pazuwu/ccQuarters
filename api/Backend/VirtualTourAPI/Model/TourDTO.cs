@@ -7,6 +7,10 @@ namespace VirtualTourAPI.Model
     {
         [FirestoreDocumentId]
         public string? Id { get; set; }
+        [FirestoreProperty]
+        public required string Name { get; set; }
+        [FirestoreProperty]
+        public required string OwnerId { get; set; }
 
         public List<AreaDTO>? Areas { get; set; }
         public List<SceneDTO>? Scenes { get; set; }
