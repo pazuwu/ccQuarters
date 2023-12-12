@@ -20,11 +20,11 @@ class EditProfileView extends StatefulWidget {
 
 class _EditProfileViewState extends State<EditProfileView> {
   final _formKey = GlobalKey<FormState>();
-  final companyTextField = TextEditingController();
-  final nameTextField = TextEditingController();
-  final surnameTextField = TextEditingController();
-  final phoneNumberTextField = TextEditingController();
-  Uint8List? image;
+  final _companyTextField = TextEditingController();
+  final _nameTextField = TextEditingController();
+  final _surnameTextField = TextEditingController();
+  final _phoneNumberTextField = TextEditingController();
+  Uint8List? _image;
   bool _deleteImage = false;
   late bool _isBusinessAccount;
   late String? _photoUrl;
@@ -33,10 +33,10 @@ class _EditProfileViewState extends State<EditProfileView> {
   void initState() {
     _isBusinessAccount = widget.user.company != null;
     _photoUrl = widget.user.photoUrl;
-    companyTextField.text = widget.user.company ?? "";
-    nameTextField.text = widget.user.name ?? "";
-    surnameTextField.text = widget.user.surname ?? "";
-    phoneNumberTextField.text = widget.user.phoneNumber ?? "";
+    _companyTextField.text = widget.user.company ?? "";
+    _nameTextField.text = widget.user.name ?? "";
+    _surnameTextField.text = widget.user.surname ?? "";
+    _phoneNumberTextField.text = widget.user.phoneNumber ?? "";
     super.initState();
   }
 
@@ -94,14 +94,14 @@ class _EditProfileViewState extends State<EditProfileView> {
           if (!_isBusinessAccount) {
             widget.user.company = null;
           } else {
-            widget.user.company = companyTextField.text;
+            widget.user.company = _companyTextField.text;
           }
-          widget.user.name = nameTextField.text;
-          widget.user.surname = surnameTextField.text;
-          widget.user.phoneNumber = phoneNumberTextField.text;
+          widget.user.name = _nameTextField.text;
+          widget.user.surname = _surnameTextField.text;
+          widget.user.phoneNumber = _phoneNumberTextField.text;
 
           context.read<ProfilePageCubit>().updateUser(
-              widget.user, image, widget.user.photoUrl != _photoUrl);
+              widget.user, _image, widget.user.photoUrl != _photoUrl);
         }
       },
       icon: const Icon(Icons.check),
@@ -124,12 +124,12 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   Widget _getPhotoWidget(BoxConstraints constraints) {
-    if (image != null || (_photoUrl != null && _photoUrl!.isNotEmpty)) {
+    if (_image != null || (_photoUrl != null && _photoUrl!.isNotEmpty)) {
       return InkWellWithPhoto(
         onTap: () {
           setState(() {
             if (_deleteImage) {
-              image = null;
+              _image = null;
               _photoUrl = null;
               _deleteImage = false;
             } else {
@@ -137,10 +137,10 @@ class _EditProfileViewState extends State<EditProfileView> {
             }
           });
         },
-        imageWidget: image != null
+        imageWidget: _image != null
             ? CircleAvatar(
                 backgroundImage: MemoryImage(
-                  image!,
+                  _image!,
                 ),
                 radius: constraints.maxWidth * _getPhotoSizeMultiplier() / 2,
               )
@@ -175,7 +175,7 @@ class _EditProfileViewState extends State<EditProfileView> {
         _getFromGallery().then((value) {
           if (value != null) {
             setState(() {
-              image = value.bytes;
+              _image = value.bytes;
             });
           }
         });
@@ -192,10 +192,10 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   Widget _buildPersonalInfoFields() {
     return PersonalInfoFields(
-      company: companyTextField,
-      name: nameTextField,
-      surname: surnameTextField,
-      phoneNumber: phoneNumberTextField,
+      company: _companyTextField,
+      name: _nameTextField,
+      surname: _surnameTextField,
+      phoneNumber: _phoneNumberTextField,
       isBusinessAccount: _isBusinessAccount,
       saveIsBusinessAcount: (value) {
         setState(() {

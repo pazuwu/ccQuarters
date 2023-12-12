@@ -87,7 +87,7 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
       response = await userService.deletePhoto(user.id);
       if (response.error != ErrorType.none) {
         emit(ErrorState(
-            message: "Nie udało się usnąć zdjęcia. Spróbuj ponownie później."));
+            message: "Nie udało się usunąć zdjęcia. Spróbuj ponownie później."));
         return;
       }
       this.user.photoUrl = null;

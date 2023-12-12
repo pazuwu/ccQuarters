@@ -76,9 +76,7 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
       trailing: Switch(
         value: _isBusinessAccount,
         onChanged: (value) {
-          if (widget.saveIsBusinessAcount != null) {
-            widget.saveIsBusinessAcount!(value);
-          }
+          widget.saveIsBusinessAcount?.call(value);
           setState(() {
             _isBusinessAccount = value;
           });
