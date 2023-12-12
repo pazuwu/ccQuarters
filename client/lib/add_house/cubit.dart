@@ -102,7 +102,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     emit(SendingDataState());
 
     if (_createVirtualTour) {
-      var result = await vtService.postTour();
+      var result = await vtService.postTour(name: "");
       if (result.data != null) {
         house.houseDetails.virtualTourId = result.data!;
       }
