@@ -1,4 +1,5 @@
-  import 'package:ccquarters/login_register/cubit.dart';
+import 'package:ccquarters/login_register/cubit.dart';
+import 'package:ccquarters/profile/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +23,9 @@ class ProfileDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.edit),
             title: const Text('Edytuj profil'),
-            onTap: () {},
+            onTap: () {
+              context.read<ProfilePageCubit>().goToEditUserPage();
+            },
           ),
           ListTile(
             leading: const Icon(Icons.logout),
