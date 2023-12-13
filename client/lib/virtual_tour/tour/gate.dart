@@ -1,7 +1,7 @@
+import 'package:ccquarters/virtual_tour/tour/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/cubit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
 import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
 
