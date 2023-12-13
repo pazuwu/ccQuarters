@@ -1,6 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:ccquarters/virtual_tour/cubit.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/virtual_tour/tour/cubit.dart';
 import 'package:test/test.dart';
 
 import 'mocks/vt_api_mock.dart';
