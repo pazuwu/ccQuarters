@@ -6,7 +6,7 @@ import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/virtual_tour/gate.dart';
+import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,5 +1,5 @@
-import 'package:ccquarters/virtual_tour/gate.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
