@@ -104,13 +104,13 @@ namespace CCQuartersAPI.IntegrationTests.Mocks
             },
             new GetHousesQuery()
             {
-                OfferTypes = new[] { OfferType.Rent },
-                BuildingTypes = new[] { BuildingType.Room },
+                OfferType = OfferType.Rent,
+                BuildingType = BuildingType.Room,
                 Cities = new[] { "Łódź" }
             },
             new GetHousesQuery()
             {
-                OfferTypes = new[] { OfferType.Sale },
+                OfferType = OfferType.Sale,
                 Cities = new[] { "Warszawa" },
                 MinPrice = 100000
             },

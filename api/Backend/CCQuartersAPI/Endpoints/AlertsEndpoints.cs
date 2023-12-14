@@ -8,18 +8,26 @@ namespace CCQuartersAPI.Endpoints
 {
     public class AlertsEndpoints
     {
-        public static async Task<IResult> GetAlerts([FromServices] IAlertsService service, HttpContext context)
+        private const int DEFAULT_PAGE_NUMBER = 0;
+        private const int DEFAULT_PAGE_SIZE = 50;
+
+        public static async Task<IResult> GetAlerts([FromServices] IAlertsService service, HttpContext context, int? pageNumber, int? pageSize)
         {
+            int pageNumberValue = pageNumber ?? DEFAULT_PAGE_NUMBER;
+            int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
+
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var alerts = await service.GetAlerts(userId);
+            var alerts = await service.GetAlerts(userId, pageNumberValue, pageSizeValue);
 
             return Results.Ok(new GetAlertsResponse
             {
-                Alerts = alerts
+                Data = alerts,
+                PageNumber = pageNumberValue,
+                PageSize = pageSizeValue
             });
         }
 
@@ -30,9 +38,12 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            await service.CreateAlert(alert, userId);
+            var alertId = await service.CreateAlert(alert, userId);
 
-            return Results.Ok();
+            if (alertId is null)
+                return Results.StatusCode(500);
+
+            return Results.Created(alertId.Value.ToString(), null);
         }
 
         public static async Task<IResult> UpdateAlert([FromServices] IAlertsService alertsService, Guid alertId, AlertDTO alert, HttpContext context)
