@@ -1,9 +1,10 @@
-import 'package:ccquarters/virtual_tour/service/service.dart';
-import 'package:ccquarters/virtual_tour/service/service_response.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/virtual_tour/service/service_response.dart';
 
 class VTListState {}
 
@@ -23,8 +24,13 @@ class VTListErrorState extends VTListState {
   String message;
 }
 
-class VTTourCreatingState extends VTListLoadedState {
-  VTTourCreatingState({required super.tours});
+class VTTourProcessingState extends VTListLoadedState {
+  VTTourProcessingState({
+    required this.prcessingText,
+    required super.tours,
+  });
+
+  final String prcessingText;
 }
 
 class VTListCubit extends Cubit<VTListState> {
@@ -51,7 +57,8 @@ class VTListCubit extends Cubit<VTListState> {
   }
 
   Future createTour({required String name}) async {
-    emit(VTTourCreatingState(tours: _tours));
+    emit(VTTourProcessingState(
+        tours: _tours, prcessingText: "Tworzenie nowego wirtualnego spaceru"));
     await _service.postTour(name: name);
     await loadTours();
   }
@@ -64,5 +71,12 @@ class VTListCubit extends Cubit<VTListState> {
   Future setUserSeenShowcase() async {
     var prefs = await SharedPreferences.getInstance();
     await prefs.setBool("user_seen_vt_list_showcase", true);
+  }
+
+  Future deleteTours(List<TourInfo> tours) async {
+    emit(VTTourProcessingState(
+        tours: _tours, prcessingText: "Usuwanie wirtualnego spaceru"));
+    await _service.deleteTours(ids: tours.map((e) => e.id).toList());
+    await loadTours();
   }
 }

@@ -308,6 +308,28 @@ class VTService {
     }
   }
 
+  Future<VTServiceResponse<bool>> deleteTours({required List<String> ids}) async {
+    try {
+      var response = await _dio.delete(
+        "$_url/$_tours",
+        data: ids,
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: _token,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if ((response.statusCode == StatusCode.OK ||
+          response.statusCode == StatusCode.CREATED)) {
+        return VTServiceResponse(data: true);
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
   VTServiceResponse<T> _catchCommonErrors<T>(DioException e) {
     if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
       return VTServiceResponse(error: ErrorType.unauthorized);
