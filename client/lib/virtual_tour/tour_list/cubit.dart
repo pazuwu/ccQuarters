@@ -23,6 +23,10 @@ class VTListErrorState extends VTListState {
   String message;
 }
 
+class VTTourCreatingState extends VTListLoadedState {
+  VTTourCreatingState({required super.tours});
+}
+
 class VTListCubit extends Cubit<VTListState> {
   VTListCubit({required VTService vtService, required VTListState state})
       : _service = vtService,
@@ -33,17 +37,21 @@ class VTListCubit extends Cubit<VTListState> {
   }
 
   final VTService _service;
+  final List<TourInfo> _tours = [];
 
   Future loadTours() async {
     var serviceResponse = await _service.getMyTours();
     if (serviceResponse.error != ErrorType.none) {
-      emit(state);
+      emit(VTListErrorState(message: serviceResponse.error.toString()));
     }
 
+    _tours.clear();
+    _tours.addAll(serviceResponse.data ?? []);
     emit(VTListLoadedState(tours: serviceResponse.data!));
   }
 
   Future createTour({required String name}) async {
+    emit(VTTourCreatingState(tours: _tours));
     await _service.postTour(name: name);
     await loadTours();
   }

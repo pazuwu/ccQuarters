@@ -1,6 +1,7 @@
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
+import 'package:ccquarters/virtual_tour/tour_list/new_tour_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -92,7 +93,17 @@ class _TourListState extends State<TourList> {
               description: "Naciśnij, aby dodać wirtualny spcaer",
               child: FloatingActionButton(
                 onPressed: () {
-                  context.read<VTListCubit>().createTour(name: "");
+                  showModalBottomSheet<String>(
+                    context: context,
+                    enableDrag: true,
+                    showDragHandle: true,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return const NewTourDialog();
+                    },
+                  ).then((tourName) =>
+                      context.read<VTListCubit>().createTour(name: tourName!));
+                  ;
                 },
                 tooltip: "Dodaj wirtualny spacer",
                 child: const Icon(Icons.add),
