@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 class TourInfo {
-  String? id;
+  String id;
   String name;
 
-  TourInfo({this.id, required this.name});
+  TourInfo({required this.id, required this.name});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -15,7 +15,7 @@ class TourInfo {
 
   factory TourInfo.fromMap(Map<String, dynamic> map) {
     return TourInfo(
-      id: map['id'] != null ? map['id'] as String : null,
+      id: map['id'] as String,
       name: map['name'] as String,
     );
   }
