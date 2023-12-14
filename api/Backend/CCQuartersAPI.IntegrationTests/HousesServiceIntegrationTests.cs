@@ -333,10 +333,10 @@ namespace CCQuartersAPI.IntegrationTests
                         Assert.IsTrue(house.Floor >= query.MinFloor);
                     if (query.MaxFloor is not null)
                         Assert.IsTrue(house.Price <= query.MaxFloor);
-                    if (query.OfferTypes is not null && query.OfferTypes.Any())
-                        Assert.IsTrue(query.OfferTypes!.Any(type => type == house.OfferType!));
-                    if (query.BuildingTypes is not null && query.BuildingTypes.Any())
-                        Assert.IsTrue(query.BuildingTypes!.Any(type => type == house.BuildingType!));
+                    if (query.OfferType is not null)
+                        Assert.IsTrue(query.OfferType == house.OfferType);
+                    if (query.BuildingType is not null)
+                        Assert.IsTrue(query.BuildingType == house.BuildingType);
                     if (query.Voivodeship is not null)
                         Assert.IsTrue(house.Voivodeship == query.Voivodeship);
                     if (query.Cities is not null && query.Cities.Any())
