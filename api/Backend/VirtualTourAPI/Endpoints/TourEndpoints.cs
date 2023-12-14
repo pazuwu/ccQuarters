@@ -5,6 +5,7 @@ using VirtualTourAPI.Service;
 using Google.Api;
 using VirtualTourAPI.Model;
 using VirtualTourAPI.Requests;
+using Microsoft.AspNetCore.Mvc;
 
 namespace VirtualTourAPI.Endpoints
 {
@@ -63,15 +64,22 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, HttpContext context, IVTService service)
+        public static async Task<IResult> Delete([FromBody]string[] tourIds, HttpContext context, IVTService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if(userId == null)
                 Results.Unauthorized();
 
-            await service.DeleteTour(tourId);
+            foreach (var tourId in tourIds)
+            {
+                if (!await service.HasUserPermissionToModifyTour(tourId, userId!))
+                    continue;
+
+                await service.DeleteTour(tourId);
+            }
+
             return Results.Ok();
         }
     }
