@@ -21,6 +21,13 @@ class VTListGate extends StatelessWidget {
               return const Center(
                 child: CircularProgressIndicator(),
               );
+            } else if (state is VTTourCreatingState) {
+              return Stack(
+                children: [
+                  // const Center(child: CircularProgressIndicator()),
+                  TourList(tours: state.tours),
+                ],
+              );
             } else if (state is VTListLoadedState) {
               return TourList(tours: state.tours);
             } else if (state is VTListErrorState) {
