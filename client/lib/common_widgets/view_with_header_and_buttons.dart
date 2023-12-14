@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 import 'go_back_next_buttons.dart';
-import 'header.dart';
 
 class ViewWithHeader extends StatelessWidget {
   const ViewWithHeader({
@@ -27,7 +26,6 @@ class ViewWithHeader extends StatelessWidget {
   Widget _buildMainColumn(BuildContext context) {
     return Column(
       children: [
-        Header(title: title),
         inBetweenWidget,
         GoBackNextButtons(
           goBackOnPressed: goBackOnPressed,

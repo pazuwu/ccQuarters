@@ -64,6 +64,7 @@ dependencies:
   bloc_test: ^9.1.5
   test: ^1.24.9
   http_mock_adapter: ^0.6.1
+  easy_stepper: ^0.8.3
 
 dev_dependencies:
   flutter_test:

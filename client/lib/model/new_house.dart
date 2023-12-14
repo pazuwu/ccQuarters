@@ -1,6 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/detailed_house.dart';
+import 'package:ccquarters/model/house_details.dart';
+import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/model/voivodeship.dart';
 import 'package:ccquarters/model/offer_type.dart';
 
@@ -16,6 +19,12 @@ class NewHouse {
   OfferType offerType;
   BuildingType buildingType;
   List<Uint8List> photos = <Uint8List>[];
+
+  NewHouse.fromDetailedHouse(DetailedHouse house)
+      : this(NewLocation.fromLocation(house.location),
+            NewHouseDetails.fromHouseDetails(house.details),
+            offerType: house.offerType,
+            buildingType: house.details.buildingType);
 }
 
 class NewLocation {
@@ -40,6 +49,19 @@ class NewLocation {
   String? flatNumber;
   double? geoX;
   double? geoY;
+
+  NewLocation.fromLocation(Location location)
+      : this(
+          voivodeship: VoivodeshipEx.getFromName(location.voivodeship),
+          city: location.city,
+          district: location.district,
+          streetName: location.streetName,
+          zipCode: location.zipCode,
+          streetNumber: location.streetNumber ?? "",
+          flatNumber: location.flatNumber,
+          geoX: location.geoX,
+          geoY: location.geoY,
+        );
 }
 
 class NewHouseDetails {
@@ -60,4 +82,14 @@ class NewHouseDetails {
   double area;
   int? floor;
   String? virtualTourId;
+
+  NewHouseDetails.fromHouseDetails(HouseDetails details)
+      : this(
+            description: details.description ?? "",
+            title: details.title,
+            price: details.price,
+            roomCount: details.roomCount ?? 0,
+            area: details.area,
+            floor: details.floor,
+            virtualTourId: details.virtualTourId);
 }

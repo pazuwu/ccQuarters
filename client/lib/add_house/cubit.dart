@@ -12,7 +12,9 @@ import 'package:ccquarters/virtual_tour/service/service.dart';
 
 class HouseFormState {}
 
-class ChooseTypeFormState extends HouseFormState {
+class StepperPageState extends HouseFormState {}
+
+class ChooseTypeFormState extends StepperPageState {
   ChooseTypeFormState(
     this.houseDetails, {
     this.offerType = OfferType.rent,
@@ -24,23 +26,23 @@ class ChooseTypeFormState extends HouseFormState {
   final NewHouseDetails houseDetails;
 }
 
-class MobileDetailsFormState extends HouseFormState {
+class MobileDetailsFormState extends StepperPageState {
   MobileDetailsFormState(this.houseDetails, this.buildingType);
 
   final NewHouseDetails houseDetails;
   final BuildingType buildingType;
 }
 
-class LocationFormState extends HouseFormState {
+class LocationFormState extends StepperPageState {
   LocationFormState(this.location, this.buildingType);
 
   final NewLocation location;
   final BuildingType buildingType;
 }
 
-class MapState extends HouseFormState {}
+class MapState extends StepperPageState {}
 
-class PhotosFormState extends HouseFormState {
+class PhotosFormState extends StepperPageState {
   PhotosFormState(this.photos, this.createVirtualTour);
 
   List<Uint8List> photos;
@@ -62,14 +64,13 @@ class ErrorState extends HouseFormState {
 class SendingDataState extends HouseFormState {}
 
 class AddHouseFormCubit extends Cubit<HouseFormState> {
-  AddHouseFormCubit({required this.houseService, required this.vtService})
-      : super(ChooseTypeFormState(NewHouseDetails()));
+  AddHouseFormCubit(
+      {required this.houseService, required this.vtService, NewHouse? house})
+      : house = house ?? NewHouse(NewLocation(), NewHouseDetails()),
+        super(ChooseTypeFormState(NewHouseDetails()));
 
   HouseService houseService;
-  NewHouse house = NewHouse(
-    NewLocation(),
-    NewHouseDetails(),
-  );
+  late NewHouse house;
 
   VTService vtService;
   bool _createVirtualTour = false;
