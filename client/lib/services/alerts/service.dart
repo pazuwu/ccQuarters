@@ -11,18 +11,12 @@ class AlertService {
 
   final Dio _dio;
   final String _url;
-  String _token = "";
-
-  void setToken(String token) {
-    _token = token;
-  }
 
   Future<ServiceResponse<List<Alert>>> getAlerts() async {
     try {
       var response = await _dio.get(
         _url,
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -46,7 +40,6 @@ class AlertService {
         _url,
         data: alert.toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -69,7 +62,6 @@ class AlertService {
         "$_url/${alert.id}",
         data: alert.toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -91,7 +83,6 @@ class AlertService {
       var response = await _dio.delete(
         "$_url/$alertId",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );

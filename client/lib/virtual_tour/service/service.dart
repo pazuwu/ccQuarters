@@ -23,22 +23,16 @@ class VTService {
 
   final Dio _dio;
   final String _url;
-  String _token = "";
 
   VTService(Dio dio, String url)
       : _url = url,
         _dio = dio;
-
-  void setToken(String token) {
-    _token = token;
-  }
 
   Future<VTServiceResponse<Tour>> getTour(String tourId) async {
     try {
       var response = await _dio.get(
         "$_url/$_tours/$tourId",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -58,7 +52,6 @@ class VTService {
       var response = await _dio.get(
         "$_url/$_tours/my",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -87,7 +80,6 @@ class VTService {
           parentId: parentId,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -125,7 +117,6 @@ class VTService {
           text: link.text,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -159,7 +150,6 @@ class VTService {
           text: text,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -175,9 +165,7 @@ class VTService {
     try {
       var response = await _dio.delete(
         "$_url/$_tours/$tourId/$_links/$linkId",
-        options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
-        }),
+        options: Options(headers: {}),
       );
 
       return VTServiceResponse(data: response.statusCode == StatusCode.OK);
@@ -195,7 +183,6 @@ class VTService {
           name: name,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -233,9 +220,6 @@ class VTService {
       var response = await _dio.post(
         url,
         data: formData,
-        options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
-        }),
         onSendProgress: (int sent, int total) {
           progressCallback?.call(sent, total);
         },
@@ -289,7 +273,6 @@ class VTService {
         "$_url/$_tours",
         data: request.toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -308,13 +291,13 @@ class VTService {
     }
   }
 
-  Future<VTServiceResponse<bool>> deleteTours({required List<String> ids}) async {
+  Future<VTServiceResponse<bool>> deleteTours(
+      {required List<String> ids}) async {
     try {
       var response = await _dio.delete(
         "$_url/$_tours",
         data: ids,
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
