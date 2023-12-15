@@ -1,4 +1,8 @@
-﻿#nullable disable
+﻿#if TEST
+
+#else
+
+#nullable disable
 
 using FluentAssertions;
 using VirtualTourAPI.Model;
@@ -64,3 +68,5 @@ namespace VirtualTourAPI.IntegrationTests
         }
     }
 }
+
+#endif
