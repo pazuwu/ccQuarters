@@ -20,6 +20,7 @@ namespace VirtualTourAPI.Endpoints
 
             var newScene = new SceneDTO()
             {
+                Name = request.Name,
                 ParentId = request.ParentId,
             };
 
