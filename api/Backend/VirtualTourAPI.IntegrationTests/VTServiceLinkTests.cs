@@ -1,4 +1,8 @@
-﻿using FluentAssertions;
+﻿#if TEST
+
+#else
+
+using FluentAssertions;
 using Google.Cloud.Firestore;
 using VirtualTourAPI.Model;
 
@@ -128,3 +132,5 @@ namespace VirtualTourAPI.IntegrationTests
         }
     }
 }
+
+#endif
