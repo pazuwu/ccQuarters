@@ -19,7 +19,7 @@ abstract class BaseAuthService {
   Future<void> signOut();
 }
 
-class AuthService extends BaseAuthService {
+class AuthService implements BaseAuthService {
   AuthService({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth;
 

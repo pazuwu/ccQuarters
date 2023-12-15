@@ -13,18 +13,12 @@ class UserService {
 
   final Dio _dio;
   final String _url;
-  String _token = "";
-
-  void setToken(String token) {
-    _token = token;
-  }
 
   Future<ServiceResponse<User>> getUser(String userId) async {
     try {
       var response = await _dio.get(
         "$_url/$userId",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -42,13 +36,13 @@ class UserService {
     }
   }
 
-  Future<ServiceResponse<bool>> updateUser(String userId, User user) async {
+  Future<ServiceResponse<bool>> updateUser(String userId, User user,
+      {String? token}) async {
     try {
       var response = await _dio.put(
         "$_url/$userId",
         data: UpdateUserRequest.fromUser(user).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -70,7 +64,6 @@ class UserService {
       var response = await _dio.put(
         "$_url/$userId/delete",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -98,7 +91,6 @@ class UserService {
         "$_url/$userId/photo",
         data: photoData,
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -120,7 +112,6 @@ class UserService {
       var response = await _dio.put(
         "$_url/$userId/photo/delete",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
