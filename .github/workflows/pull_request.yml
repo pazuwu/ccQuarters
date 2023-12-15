@@ -9,7 +9,7 @@ jobs:
     uses: ./.github/workflows/test_flutter.yml
 
   try_build_proj:
-    uses: ./.github/workflows/try_build_flutter.yml
+    uses: ./.github/workflows/try_building_flutter.yml
 
   test_backend:
     uses: ./.github/workflows/test_backend.yml
