@@ -1,0 +1,16 @@
+name: Pull request workflow
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  test_flutter:
+    uses: ./.github/workflows/test_flutter.yml
+
+  try_build_proj:
+    uses: ./.github/workflows/try_build_flutter.yml
+
+  test_backend:
+    uses: ./.github/workflows/test_backend.yml
+    secrets: inherit
