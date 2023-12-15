@@ -1,0 +1,16 @@
+name: Create env file for flutter
+description: Action creates special file for secrets and environmental variables
+
+inputs:
+  target_dir:
+    description: Provide directory where env file should be created
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Make envfile
+    uses: SpicyPizza/create-envfile@v1.3
+    with:
+      directory: ${{ inputs.target_dir }}
+      file_name: .env.production
