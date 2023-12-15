@@ -19,11 +19,6 @@ class HouseService {
 
   final Dio _dio;
   final String _url;
-  String _token = "";
-
-  void setToken(String token) {
-    _token = token;
-  }
 
   Future<ServiceResponse<List<House>>> getHouses(
       {int pageNumber = 0, int pageCount = 10, HouseFilter? filter}) async {
@@ -31,7 +26,6 @@ class HouseService {
       var response = await _dio.get(
         _url,
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
         queryParameters: GetHousesQuery.fromHouseFilter(
@@ -63,7 +57,6 @@ class HouseService {
       var response = await _dio.get(
         "$_url/liked",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
         queryParameters: {
@@ -94,7 +87,6 @@ class HouseService {
       var response = await _dio.get(
         "$_url/my",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
         queryParameters: {
@@ -124,7 +116,6 @@ class HouseService {
       var response = await _dio.get(
         "$_url/$houseId",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -149,7 +140,6 @@ class HouseService {
       var response = await _dio.post(
         _url,
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
         data: CreateHouseRequest.fromNewHouse(newHouse).toJson(),
@@ -173,7 +163,6 @@ class HouseService {
       var response = await _dio.put(
         "$_url/${house.id}",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
         data: CreateHouseRequest.fromHouse(house).toJson(),
@@ -196,7 +185,6 @@ class HouseService {
       var response = await _dio.put(
         "$_url/$houseId/delete",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -218,7 +206,6 @@ class HouseService {
       var response = await _dio.put(
         "$_url/$houseId/like",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -240,7 +227,6 @@ class HouseService {
       var response = await _dio.put(
         "$_url/$houseId/unlike",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -268,7 +254,6 @@ class HouseService {
         "$_url/$houseId/photo",
         data: photoData,
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
         }),
       );
 

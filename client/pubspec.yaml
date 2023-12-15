@@ -66,6 +66,7 @@ dependencies:
   http_mock_adapter: ^0.6.1
   showcaseview: ^2.0.3
   shared_preferences: ^2.2.2
+  dio_cache_interceptor: ^3.5.0
 
 dev_dependencies:
   flutter_test:
