@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
@@ -18,7 +20,7 @@ class TourList extends StatefulWidget {
 class _TourListState extends State<TourList> {
   final GlobalKey _addHint = GlobalKey();
 
-  final List<TourInfo> _chosenTours = [];
+  final HashSet<String> _chosenTourIds = HashSet();
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
@@ -28,7 +30,7 @@ class _TourListState extends State<TourList> {
   }
 
   Widget? _buildBottomNavigationBar(BuildContext context) {
-    return _chosenTours.isEmpty
+    return _chosenTourIds.isEmpty
         ? null
         : BottomAppBar(
             shape: AutomaticNotchedShape(RoundedRectangleBorder(
@@ -60,15 +62,15 @@ class _TourListState extends State<TourList> {
   }
 
   void _handleTileTap(int index) {
-    if (_chosenTours.isNotEmpty) {
-      if (_chosenTours.contains(widget._tours[index])) {
+    if (_chosenTourIds.isNotEmpty) {
+      if (_chosenTourIds.contains(widget._tours[index].id)) {
         setState(() {
-          _chosenTours.remove(widget._tours[index]);
+          _chosenTourIds.remove(widget._tours[index].id);
         });
         return;
       }
       setState(() {
-        _chosenTours.add(widget._tours[index]);
+        _chosenTourIds.add(widget._tours[index].id);
       });
       return;
     }
@@ -81,9 +83,9 @@ class _TourListState extends State<TourList> {
   }
 
   void _handleTileLongPress(int index) {
-    if (_chosenTours.isEmpty) {
+    if (_chosenTourIds.isEmpty) {
       setState(() {
-        _chosenTours.add(widget._tours[index]);
+        _chosenTourIds.add(widget._tours[index].id);
       });
     }
   }
@@ -101,15 +103,15 @@ class _TourListState extends State<TourList> {
 
   Widget _buildTileCheckbox(BuildContext context, int index) {
     return Checkbox(
-      value: _chosenTours.contains(widget._tours[index]),
+      value: _chosenTourIds.contains(widget._tours[index].id),
       onChanged: (value) {
         if (value != null && value) {
           setState(() {
-            _chosenTours.add(widget._tours[index]);
+            _chosenTourIds.add(widget._tours[index].id);
           });
         } else {
           setState(() {
-            _chosenTours.remove(widget._tours[index]);
+            _chosenTourIds.remove(widget._tours[index].id);
           });
         }
       },
@@ -124,33 +126,36 @@ class _TourListState extends State<TourList> {
       child: ListView.builder(
         itemCount: widget._tours.length,
         itemBuilder: (context, index) {
-          return Column(
-            children: [
-              ListTile(
-                onLongPress: () => _handleTileLongPress(index),
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_chosenTours.isEmpty)
-                      _buildTileIndicator(context)
-                    else
-                      _buildTileCheckbox(context, index),
-                  ],
-                ),
-                title: Text(widget._tours[index].name),
-                onTap: () => _handleTileTap(index),
-                trailing: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: ListTile(
+              visualDensity: VisualDensity.compact,
+              selectedTileColor: Colors.blueGrey.shade50,
+              selected: _chosenTourIds.contains(widget._tours[index].id),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: Colors.blueGrey.shade600,
+                  width: 1,
                 ),
               ),
-              Divider(
-                indent: 8,
-                endIndent: 8,
-                height: 1,
-                color: Colors.blueGrey.shade50,
-              )
-            ],
+              onLongPress: () => _handleTileLongPress(index),
+              leading: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_chosenTourIds.isEmpty)
+                    _buildTileIndicator(context)
+                  else
+                    _buildTileCheckbox(context, index),
+                ],
+              ),
+              title: Text(widget._tours[index].name),
+              onTap: () => _handleTileTap(index),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 14,
+              ),
+            ),
           );
         },
       ),
@@ -175,7 +180,9 @@ class _TourListState extends State<TourList> {
             TextButton(
               onPressed: () {
                 Navigator.of(c).pop();
-                context.read<VTListCubit>().deleteTours(_chosenTours);
+                context
+                    .read<VTListCubit>()
+                    .deleteTours(_chosenTourIds.toList());
               },
               child: const Text("Usuń"),
             ),

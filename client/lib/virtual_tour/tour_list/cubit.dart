@@ -73,10 +73,10 @@ class VTListCubit extends Cubit<VTListState> {
     await prefs.setBool("user_seen_vt_list_showcase", true);
   }
 
-  Future deleteTours(List<TourInfo> tours) async {
+  Future deleteTours(List<String> tourIds) async {
     emit(VTTourProcessingState(
         tours: _tours, prcessingText: "Usuwanie wirtualnego spaceru"));
-    await _service.deleteTours(ids: tours.map((e) => e.id).toList());
+    await _service.deleteTours(ids: tourIds);
     await loadTours();
   }
 }
