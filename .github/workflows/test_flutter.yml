@@ -20,7 +20,7 @@ jobs:
       - name: Create env file
         uses: ./.github/actions/create_env_file
         with:
-          target_dir: ${{ inputs.path_to_project }}/env/
+          target_dir: ${{ inputs.path_to_project }}env/
       - name: Flutter setup
         uses: subosito/flutter-action@v2
         with:
