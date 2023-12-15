@@ -1,0 +1,38 @@
+name: Try building Flutter project
+
+on:
+  workflow_call:
+    inputs:
+      path_to_project:
+        default: client/
+        type: string
+
+jobs:
+  try_building_android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.path_to_project }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Create env file
+        uses: ./.github/actions/create_env_file
+        with:
+          target_dir: ${{ inputs.path_to_project }}/env/
+      - name: Java setup
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '12.x'
+          cache: 'gradle'
+      - name: Flutter setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          cache: true
+      - name: Flutter get dependencies
+        run: flutter pub get
+      - name: building_android_debug_apk
+        run: flutter build apk --debug
