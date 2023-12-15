@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿#if TEST
+
+#else
+
+using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryLibrary;
 using VirtualTourAPI.Service;
@@ -17,3 +21,5 @@ namespace VirtualTourAPI.IntegrationTests
         }
     }
 }
+
+#endif
