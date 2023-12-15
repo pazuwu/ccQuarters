@@ -8,9 +8,11 @@ on:
         type: string
 
 jobs:
-  build:
-
+  test_backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.path_to_project }}
 
     steps:
     - uses: actions/checkout@v3
@@ -21,6 +23,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore Backend.sln
     - name: Test
       run: dotnet test --no-build --verbosity normal
