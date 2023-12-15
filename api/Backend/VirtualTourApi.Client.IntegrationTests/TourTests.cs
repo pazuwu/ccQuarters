@@ -1,3 +1,7 @@
+#if TEST
+
+#else
+
 using VirtualTourAPI.Client.Parameters;
 
 namespace VirtualTourAPI.Client.IntegrationTests
@@ -45,3 +49,5 @@ namespace VirtualTourAPI.Client.IntegrationTests
         }
     }
 }
+
+#endif
