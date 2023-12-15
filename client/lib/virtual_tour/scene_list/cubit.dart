@@ -8,6 +8,7 @@ import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class VTScenesState extends Equatable {
   @override
@@ -32,21 +33,30 @@ class VTScenesCubit extends Cubit<VTScenesState> {
   final VTService _service;
   final Tour _tour;
 
-  Future createNewSceneFromPhoto(String path) async {
-    var serviceResponse = await _service.postScene(
-        tourId: _tour.id, parentId: "", name: "new scene");
+  Future createNewSceneFromPhoto(String path, {required String name}) async {
+    var serviceResponse =
+        await _service.postScene(tourId: _tour.id, parentId: "", name: name);
 
     if (serviceResponse.data != null) {
-      var url = await _uploadScenePhoto(serviceResponse.data!, path);
+      var result = await FlutterImageCompress.compressWithFile(
+        path,
+        minHeight: 1920,
+        minWidth: 1080,
+        quality: 98,
+        format: CompressFormat.png,
+      );
+
+      var url = await _uploadScenePhoto(serviceResponse.data!, result!);
 
       var newScene =
-          Scene(name: "", photo360Url: url, id: serviceResponse.data!);
+          Scene(name: name, photo360Url: url, id: serviceResponse.data!);
       _tour.scenes.add(newScene);
     }
   }
 
-  Future<Area?> createNewAreaFromPhotos(List<String?> paths) async {
-    var response = await _service.postArea(_tour.id);
+  Future<Area?> createNewAreaFromPhotos(List<String?> paths,
+      {required String name}) async {
+    var response = await _service.postArea(_tour.id, name: name);
 
     if (response.data != null) {
       var index = 0;
@@ -75,9 +85,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     );
   }
 
-  Future _uploadScenePhoto(String sceneId, String path) async {
-    var photoFile = File(path);
-    var photoBytes = await photoFile.readAsBytes();
+  Future _uploadScenePhoto(String sceneId, Uint8List photoBytes) async {
     await _service.uploadScenePhoto(_tour.id, sceneId, photoBytes);
   }
 

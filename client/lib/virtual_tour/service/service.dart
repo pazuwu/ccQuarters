@@ -78,6 +78,7 @@ class VTService {
         "$_url/$_tours/$tourId/$_scenes",
         data: PostSceneRequest(
           parentId: parentId,
+          name: name,
         ).toJson(),
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,

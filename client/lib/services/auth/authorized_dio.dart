@@ -71,7 +71,7 @@ class AuthorizedDio extends DioForNative {
 
   void _setToken(RequestOptions request, RequestInterceptorHandler handler) {
     if (_token.isNotEmpty) {
-      request.headers['Authorization'] = 'Bearer $_token';
+      request.headers[HttpHeaders.authorizationHeader] = _token;
     }
     return handler.next(request);
   }
