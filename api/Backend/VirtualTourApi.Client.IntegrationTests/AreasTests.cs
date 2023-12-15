@@ -1,4 +1,8 @@
-﻿using VirtualTourAPI.Client.Model;
+﻿#if TEST
+
+#else
+
+using VirtualTourAPI.Client.Model;
 using VirtualTourAPI.Client.Parameters;
 
 #nullable disable
@@ -79,3 +83,5 @@ namespace VirtualTourAPI.Client.IntegrationTests
         }
     }
 }
+
+#endif
