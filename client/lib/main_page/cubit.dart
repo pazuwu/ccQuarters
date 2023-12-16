@@ -44,6 +44,5 @@ class MainPageCubit extends Cubit<MainPageState> {
     }
 
     return [];
-    return response.data;
   }
 }
