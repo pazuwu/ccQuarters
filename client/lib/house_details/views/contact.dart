@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/utils/consts.dart';
@@ -196,7 +198,6 @@ class CallUtils {
       await launchUrl(uri);
     } catch (e) {
       showDialog<String>(
-        // ignore: use_build_context_synchronously
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Nie udała się próba połączenia z właścicielem'),
