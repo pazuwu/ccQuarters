@@ -67,6 +67,7 @@ dependencies:
   showcaseview: ^2.0.3
   shared_preferences: ^2.2.2
   dio_cache_interceptor: ^3.5.0
+  connectivity_plus: ^5.0.2
 
 dev_dependencies:
   flutter_test:

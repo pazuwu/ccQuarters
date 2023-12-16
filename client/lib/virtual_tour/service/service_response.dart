@@ -11,5 +11,6 @@ enum ErrorType {
   badRequest,
   alreadyExists,
   unknown,
-  none,
+  noInternet,
+  none
 }
