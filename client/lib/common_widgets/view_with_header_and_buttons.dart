@@ -20,7 +20,7 @@ class ViewWithHeader extends StatelessWidget {
   final bool scrollable;
   final bool hasScrollBody;
   final Function()? goBackOnPressed;
-  final Function() nextOnPressed;
+  final Function()? nextOnPressed;
   final bool isLastPage;
 
   Widget _buildMainColumn(BuildContext context) {

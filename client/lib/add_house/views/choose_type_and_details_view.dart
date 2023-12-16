@@ -16,19 +16,19 @@ class ChooseTypeMainView extends StatefulWidget {
     required this.details,
     required this.offerType,
     required this.buildingType,
+    required this.detailsFormKey,
   });
 
   final NewHouseDetails details;
   final OfferType offerType;
   final BuildingType buildingType;
+  final GlobalKey<FormState> detailsFormKey;
 
   @override
   State<ChooseTypeMainView> createState() => _ChooseTypeMainViewState();
 }
 
 class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
-  final formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return ViewWithHeader(
@@ -42,15 +42,15 @@ class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
               secondView: DetailsForm(
                 details: widget.details,
                 buildingType: widget.buildingType,
-                formKey: formKey,
+                formKey: widget.detailsFormKey,
               ))
           : ChooseTypeView(
               offerType: widget.offerType, buildingType: widget.buildingType),
       goBackOnPressed: null,
       nextOnPressed: () {
         if (getDeviceType(context) == DeviceType.web) {
-          if (formKey.currentState!.validate()) {
-            formKey.currentState!.save();
+          if (widget.detailsFormKey.currentState!.validate()) {
+            widget.detailsFormKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveDetails(widget.details);
             context.read<AddHouseFormCubit>().goToLocationForm();
           }

@@ -1,6 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
+import 'package:ccquarters/model/photo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,9 +43,16 @@ class LocationFormState extends StepperPageState {
 class MapState extends StepperPageState {}
 
 class PhotosFormState extends StepperPageState {
-  PhotosFormState(this.photos, this.createVirtualTour);
+  PhotosFormState(
+    this.oldPhotos,
+    this.newPhotos,
+    this.deletedPhotos,
+    this.createVirtualTour,
+  );
 
-  List<Uint8List> photos;
+  List<Photo> oldPhotos;
+  List<Uint8List> newPhotos;
+  List<Photo> deletedPhotos;
   bool createVirtualTour;
 }
 
@@ -66,11 +73,12 @@ class SendingDataState extends HouseFormState {}
 class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit(
       {required this.houseService, required this.vtService, NewHouse? house})
-      : house = house ?? NewHouse(NewLocation(), NewHouseDetails()),
+      : house = house ?? NewHouse(NewLocation(), NewHouseDetails(), []),
         super(ChooseTypeFormState(NewHouseDetails()));
 
   HouseService houseService;
   late NewHouse house;
+  List<Photo> deletedPhotos = [];
 
   VTService vtService;
   bool _createVirtualTour = false;
@@ -96,7 +104,12 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void goToPhotosForm() {
-    emit(PhotosFormState(house.photos, _createVirtualTour));
+    emit(PhotosFormState(
+      house.oldPhotos,
+      house.newPhotos,
+      deletedPhotos,
+      _createVirtualTour,
+    ));
   }
 
   Future<void> sendData() async {
@@ -112,10 +125,10 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     var result = await houseService.createHouse(house);
     if (result.data != null) {
       var houseId = result.data!;
-      for (var photo in house.photos) {
+      for (var photo in house.newPhotos) {
         var res = await houseService.addPhoto(houseId, photo);
         if (!res.data) {
-          emit(ErrorState("Błąd!"));
+          emit(ErrorState("Błąd w wysyłaniu zdjęć!"));
           return;
         }
       }
@@ -150,8 +163,11 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
         offerType: house.offerType, buildingType: house.buildingType));
   }
 
-  void savePhotos(List<Uint8List> photos) {
-    house.photos = photos;
+  void savePhotos(List<Uint8List> photos, List<Photo> oldPhotos,
+      List<Photo> deletedPhotos) {
+    house.newPhotos = photos;
+    house.oldPhotos = oldPhotos;
+    this.deletedPhotos = deletedPhotos;
   }
 
   void saveCreateVirtualTour(bool createVirtualTour) {
@@ -159,11 +175,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void clear() {
-    house = NewHouse(
-      NewLocation(),
-      NewHouseDetails(),
-    );
-
+    house = NewHouse(NewLocation(), NewHouseDetails(), []);
     emit(ChooseTypeFormState(NewHouseDetails()));
   }
 }

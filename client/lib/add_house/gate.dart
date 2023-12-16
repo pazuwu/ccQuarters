@@ -22,7 +22,7 @@ class AddHouseGate extends StatelessWidget {
           if (state is StepperPageState) {
             return ViewsWithStepper(
               state: state,
-              steppingEnabled: house != null,
+              editMode: house != null,
             );
           } else if (state is SendingFinishedState) {
             _buildSendingFinishedView(context, state);

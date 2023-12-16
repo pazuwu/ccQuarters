@@ -5,6 +5,7 @@ import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/services/houses/requests/create_house_request.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';
 import 'package:ccquarters/services/service_response.dart';
@@ -270,6 +271,28 @@ class HouseService {
         options: Options(headers: {
           HttpHeaders.authorizationHeader: _token,
         }),
+      );
+
+      return response.statusCode == StatusCode.OK
+          ? ServiceResponse(data: true)
+          : ServiceResponse(data: false, error: ErrorType.unknown);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+      }
+
+      return ServiceResponse(data: false, error: ErrorType.unknown);
+    }
+  }
+
+  Future<ServiceResponse<bool>> deletePhotos(List<Photo> photos) async {
+    try {
+      var response = await _dio.delete(
+        "$_url/photos",
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: _token,
+        }),
+        data: photos.map((x) => x.filename).toList(),
       );
 
       return response.statusCode == StatusCode.OK

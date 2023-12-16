@@ -4,13 +4,15 @@ import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/house_details.dart';
 import 'package:ccquarters/model/location.dart';
+import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/model/voivodeship.dart';
 import 'package:ccquarters/model/offer_type.dart';
 
 class NewHouse {
   NewHouse(
     this.location,
-    this.houseDetails, {
+    this.houseDetails,
+    this.oldPhotos, {
     this.offerType = OfferType.rent,
     this.buildingType = BuildingType.house,
   });
@@ -18,13 +20,18 @@ class NewHouse {
   NewHouseDetails houseDetails;
   OfferType offerType;
   BuildingType buildingType;
-  List<Uint8List> photos = <Uint8List>[];
+  List<Photo> oldPhotos = [];
+  List<Photo> deletedPhotos = [];
+  List<Uint8List> newPhotos = <Uint8List>[];
 
   NewHouse.fromDetailedHouse(DetailedHouse house)
-      : this(NewLocation.fromLocation(house.location),
-            NewHouseDetails.fromHouseDetails(house.details),
-            offerType: house.offerType,
-            buildingType: house.details.buildingType);
+      : this(
+          NewLocation.fromLocation(house.location),
+          NewHouseDetails.fromHouseDetails(house.details),
+          house.photos.toList(),
+          offerType: house.offerType,
+          buildingType: house.details.buildingType,
+        );
 }
 
 class NewLocation {

@@ -11,18 +11,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ViewsWithStepper extends StatefulWidget {
-  const ViewsWithStepper(
-      {Key? key, required this.state, required this.steppingEnabled})
-      : super(key: key);
+  const ViewsWithStepper({
+    Key? key,
+    required this.state,
+    required this.editMode,
+  }) : super(key: key);
 
   final StepperPageState state;
-  final bool steppingEnabled;
+  final bool editMode;
   @override
   State<ViewsWithStepper> createState() => _ViewsWithStepperState();
 }
 
 class _ViewsWithStepperState extends State<ViewsWithStepper> {
   int activeStep = 0;
+  final _detailsFormKey = GlobalKey<FormState>();
+  final _locationFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,9 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       body: Column(
         children: [
           _buildStepper(context),
-          Expanded(child: _buildView(widget.state)),
+          Expanded(
+            child: _buildView(widget.state),
+          ),
         ],
       ),
     );
@@ -43,23 +49,28 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         details: state.houseDetails,
         offerType: state.offerType,
         buildingType: state.buildingType,
+        detailsFormKey: _detailsFormKey,
       );
     } else if (state is MobileDetailsFormState) {
       return DetailsFormView(
         details: state.houseDetails,
         buildingType: state.buildingType,
-        formKey: GlobalKey<FormState>(),
+        formKey: _detailsFormKey,
       );
     } else if (state is LocationFormState) {
       return LocationFormView(
         location: state.location,
         buildingType: state.buildingType,
+        formKey: _locationFormKey,
       );
     } else if (state is MapState) {
       return const MapView();
     } else if (state is PhotosFormState) {
       return PhotoView(
-        photos: state.photos,
+        oldPhotos: state.oldPhotos,
+        newPhotos: state.newPhotos,
+        deletedPhotos: state.deletedPhotos,
+        editMode: widget.editMode,
         createVirtualTour: state.createVirtualTour,
       );
     }
@@ -77,7 +88,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       ),
       color: Colors.grey[200],
       child: EasyStepper(
-        steppingEnabled: widget.steppingEnabled,
+        steppingEnabled: widget.editMode,
         activeStep: activeStep,
         lineStyle: const LineStyle(
           lineLength: 70,
@@ -94,13 +105,14 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         stepRadius: 8,
         showStepBorder: false,
         steps: _getSteps(getDeviceType(context) == DeviceType.mobile),
-        onStepReached: _goToChoosenPage,
+        onStepReached: (index) => _goToChoosenPage(index, widget.state),
       ),
     );
   }
 
   int _getStepIndex() {
     var isMobile = getDeviceType(context) == DeviceType.mobile;
+
     if (widget.state is ChooseTypeFormState) {
       return _getChooseTypeIndex();
     } else if (widget.state is MobileDetailsFormState) {
@@ -116,8 +128,38 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
     return 0;
   }
 
-  void _goToChoosenPage(int index) {
+  void _goToChoosenPage(int index, StepperPageState state) {
     var isMobile = getDeviceType(context) == DeviceType.mobile;
+
+    if (state is ChooseTypeFormState) {
+      if (!isMobile && _detailsFormKey.currentState!.validate()) {
+        _detailsFormKey.currentState!.save();
+        context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
+      } else if (!isMobile) {
+        return;
+      }
+    } else if (state is MobileDetailsFormState) {
+      if (_detailsFormKey.currentState!.validate()) {
+        _detailsFormKey.currentState!.save();
+        context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
+      } else {
+        return;
+      }
+    } else if (state is LocationFormState) {
+      if (_locationFormKey.currentState!.validate()) {
+        _locationFormKey.currentState!.save();
+        context.read<AddHouseFormCubit>().saveLocation(state.location);
+      } else {
+        return;
+      }
+    } else if (state is PhotosFormState) {
+      context.read<AddHouseFormCubit>().savePhotos(
+            state.newPhotos,
+            state.oldPhotos,
+            state.deletedPhotos,
+          );
+    }
+
     if (index == _getChooseTypeIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
     } else if (index == _getDetailsIndex()) {

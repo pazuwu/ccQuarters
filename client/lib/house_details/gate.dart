@@ -27,7 +27,10 @@ class HouseDetailsGate extends StatelessWidget {
           } else if (state is ErrorState) {
             return Scaffold(
               body: Center(
-                child: Text(state.message),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(state.message),
+                ),
               ),
             );
           } else if (state is DetailsState) {
