@@ -321,6 +321,8 @@ class VTService {
       return VTServiceResponse(error: ErrorType.badRequest);
     } else if (e.response?.statusCode == StatusCode.NOT_FOUND) {
       return VTServiceResponse(error: ErrorType.notFound);
+    } else if (e.response?.statusCode == StatusCode.GATEWAY_TIMEOUT) {
+      return VTServiceResponse(error: ErrorType.noInternet);
     }
 
     return VTServiceResponse(error: ErrorType.unknown);
