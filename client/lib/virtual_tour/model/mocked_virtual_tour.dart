@@ -6,7 +6,7 @@ import 'package:ccquarters/virtual_tour/model/tour.dart';
 
 class VirtualTourMock {
   static Tour from360Url(String url) {
-    return Tour(id: "", areas: [
+    return Tour(name: "Test tour", id: "", areas: [
       Area(id: "salon", name: "Salon"),
       Area(id: "kuchnia", name: "Kuchnia"),
     ], scenes: [

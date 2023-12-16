@@ -1,12 +1,9 @@
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
-import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -17,14 +14,11 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit({
     required this.authService,
     required this.userService,
-    required this.houseService,
-    required this.alertService,
-    required this.vtService,
   }) : super(kIsWeb || authService.isSignedIn
             ? SigningInState()
             : NeedsSigningInState()) {
     if (authService.isSignedIn) {
-      setUserAndTokens();
+      setUser();
     } else {
       if (kIsWeb) {
         skipRegisterAndLogin();
@@ -36,9 +30,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   BaseAuthService authService;
   UserService userService;
-  HouseService houseService;
-  AlertService alertService;
-  VTService vtService;
+
   User? user;
   bool isBusinessAccount = false;
 
@@ -46,7 +38,6 @@ class AuthCubit extends Cubit<AuthState> {
     emit(SigningInState());
     user = null;
     await authService.signInAnnonymously();
-    await setTokens();
     emit(SignedInState());
   }
 
@@ -70,7 +61,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       switch (result) {
         case SignUpResult.success:
-          await setTokens();
           await userService.updateUser(authService.currentUserId!, user!);
           emit(SignedInState());
           break;
@@ -103,7 +93,7 @@ class AuthCubit extends Cubit<AuthState> {
       final result = await authService.signInWithEmail(user!.email, password);
       switch (result) {
         case SignInResult.success:
-          await setUserAndTokens();
+          await setUser();
           break;
         default:
           emit(loginState..error = result.toString());
@@ -114,9 +104,8 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> setUserAndTokens() async {
+  Future<void> setUser() async {
     user = await getUser(authService.currentUserId!);
-    await setTokens();
     emit(SignedInState());
   }
 
@@ -126,16 +115,6 @@ class AuthCubit extends Cubit<AuthState> {
       return null;
     }
     return response.data;
-  }
-
-  Future<void> setTokens() async {
-    var token = await authService.getToken();
-    if (token != null) {
-      userService.setToken(token);
-      houseService.setToken(token);
-      alertService.setToken(token);
-      vtService.setToken(token);
-    }
   }
 
   void savePersonalInfo(

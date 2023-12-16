@@ -1,8 +1,7 @@
 ﻿namespace VirtualTourAPI.Requests
 {
-    public class PostSceneRequest
+    public class PostTourRequest
     {
         public required string Name { get; set; }
-        public string? ParentId { get; set; }
     }
 }
