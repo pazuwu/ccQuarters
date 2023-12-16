@@ -195,8 +195,8 @@ class CallUtils {
     try {
       await launchUrl(uri);
     } catch (e) {
-      // ignore: use_build_context_synchronously
       showDialog<String>(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Nie udała się próba połączenia z właścicielem'),
