@@ -10,12 +10,15 @@ import 'package:ccquarters/model/offer_type.dart';
 
 class NewHouse {
   NewHouse(
+    this.id,
     this.location,
     this.houseDetails,
     this.oldPhotos, {
     this.offerType = OfferType.rent,
     this.buildingType = BuildingType.house,
   });
+
+  String id;
   NewLocation location;
   NewHouseDetails houseDetails;
   OfferType offerType;
@@ -26,6 +29,7 @@ class NewHouse {
 
   NewHouse.fromDetailedHouse(DetailedHouse house)
       : this(
+          house.id,
           NewLocation.fromLocation(house.location),
           NewHouseDetails.fromHouseDetails(house.details),
           house.photos.toList(),

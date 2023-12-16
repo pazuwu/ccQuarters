@@ -73,7 +73,7 @@ class SendingDataState extends HouseFormState {}
 class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit(
       {required this.houseService, required this.vtService, NewHouse? house})
-      : house = house ?? NewHouse(NewLocation(), NewHouseDetails(), []),
+      : house = house ?? NewHouse("", NewLocation(), NewHouseDetails(), []),
         super(ChooseTypeFormState(NewHouseDetails()));
 
   HouseService houseService;
@@ -140,6 +140,39 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     emit(SendingFinishedState(houseId: result.data!));
   }
 
+  Future<void> updateHouse() async {
+    emit(SendingDataState());
+
+    var response = await houseService.updateHouse(house.id, house);
+    if (!response.data) {
+      emit(
+          ErrorState("Nie udało się zapisać zmian. Spróbuj ponownie pózniej!"));
+      return;
+    }
+
+    if (deletedPhotos.isNotEmpty) {
+      var responsePhotos = await houseService.deletePhotos(deletedPhotos);
+      if (!responsePhotos.data) {
+        emit(ErrorState(
+            "Nie udało się usunąć zdjęć. Spróbuj ponownie pózniej!"));
+        return;
+      }
+    }
+
+    if (house.newPhotos.isNotEmpty) {
+      for (var photo in house.newPhotos) {
+        var res = await houseService.addPhoto(house.id, photo);
+        if (!res.data) {
+          emit(ErrorState(
+              "Nie udało się dodać nowych zdjęć. Spróbuj ponownie później!"));
+          return;
+        }
+      }
+    }
+
+    emit(SendingFinishedState(houseId: house.id));
+  }
+
   void saveDetails(NewHouseDetails details) {
     house.houseDetails = details;
   }
@@ -175,7 +208,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void clear() {
-    house = NewHouse(NewLocation(), NewHouseDetails(), []);
+    house = NewHouse("", NewLocation(), NewHouseDetails(), []);
     emit(ChooseTypeFormState(NewHouseDetails()));
   }
 }

@@ -15,17 +15,6 @@ class DetailsView extends StatelessWidget {
   const DetailsView(
       {super.key, required this.house, this.isOwnedByCurrentUser = false});
 
-  _showVirtualTour(BuildContext context) {
-    var hasAccessToEdit =
-        context.read<AuthService>().currentUserId == house.user.id;
-
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => VirtualTourGate(
-              tourId: house.details.virtualTourId!,
-              readOnly: !hasAccessToEdit,
-            )));
-  }
-
   final DetailedHouse house;
   final bool isOwnedByCurrentUser;
   @override
@@ -49,6 +38,20 @@ class DetailsView extends StatelessWidget {
         ],
       ),
       body: Inside(house: house),
+    );
+  }
+
+  _showVirtualTour(BuildContext context) {
+    var hasAccessToEdit =
+        context.read<AuthService>().currentUserId == house.user.id;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => VirtualTourGate(
+          tourId: house.details.virtualTourId!,
+          readOnly: !hasAccessToEdit,
+        ),
+      ),
     );
   }
 

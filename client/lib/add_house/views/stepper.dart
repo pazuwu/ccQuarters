@@ -4,6 +4,7 @@ import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/add_house/views/location_view.dart';
 import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
+import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:easy_stepper/easy_stepper.dart';
@@ -32,6 +33,25 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   Widget build(BuildContext context) {
     activeStep = _getStepIndex();
     return Scaffold(
+      appBar: widget.editMode
+          ? AppBar(
+              title: const Text("Edytuj ogłoszenie"),
+              leading: BackButton(
+                onPressed:
+                    context.read<HouseDetailsCubit>().goBackToHouseDetails,
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    if (_validateAndSaveData(widget.state, false)) {
+                      context.read<AddHouseFormCubit>().updateHouse();
+                    }
+                  },
+                  icon: const Icon(Icons.check),
+                )
+              ],
+            )
+          : null,
       body: Column(
         children: [
           _buildStepper(context),
@@ -131,34 +151,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   void _goToChoosenPage(int index, StepperPageState state) {
     var isMobile = getDeviceType(context) == DeviceType.mobile;
 
-    if (state is ChooseTypeFormState) {
-      if (!isMobile && _detailsFormKey.currentState!.validate()) {
-        _detailsFormKey.currentState!.save();
-        context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
-      } else if (!isMobile) {
-        return;
-      }
-    } else if (state is MobileDetailsFormState) {
-      if (_detailsFormKey.currentState!.validate()) {
-        _detailsFormKey.currentState!.save();
-        context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
-      } else {
-        return;
-      }
-    } else if (state is LocationFormState) {
-      if (_locationFormKey.currentState!.validate()) {
-        _locationFormKey.currentState!.save();
-        context.read<AddHouseFormCubit>().saveLocation(state.location);
-      } else {
-        return;
-      }
-    } else if (state is PhotosFormState) {
-      context.read<AddHouseFormCubit>().savePhotos(
-            state.newPhotos,
-            state.oldPhotos,
-            state.deletedPhotos,
-          );
-    }
+    if (!_validateAndSaveData(state, isMobile)) return;
 
     if (index == _getChooseTypeIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
@@ -171,6 +164,39 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
     } else if (index == _getPhotosIndex(isMobile)) {
       context.read<AddHouseFormCubit>().goToPhotosForm();
     }
+  }
+
+  bool _validateAndSaveData(StepperPageState state, bool isMobile) {
+    if (state is ChooseTypeFormState) {
+      if (!isMobile && _detailsFormKey.currentState!.validate()) {
+        _detailsFormKey.currentState!.save();
+        context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
+      } else if (!isMobile) {
+        return false;
+      }
+    } else if (state is MobileDetailsFormState) {
+      if (_detailsFormKey.currentState!.validate()) {
+        _detailsFormKey.currentState!.save();
+        context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
+      } else {
+        return false;
+      }
+    } else if (state is LocationFormState) {
+      if (_locationFormKey.currentState!.validate()) {
+        _locationFormKey.currentState!.save();
+        context.read<AddHouseFormCubit>().saveLocation(state.location);
+      } else {
+        return false;
+      }
+    } else if (state is PhotosFormState) {
+      context.read<AddHouseFormCubit>().savePhotos(
+            state.newPhotos,
+            state.oldPhotos,
+            state.deletedPhotos,
+          );
+    }
+
+    return true;
   }
 
   List<EasyStep> _getSteps(bool isMobile) {

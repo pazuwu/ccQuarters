@@ -1,7 +1,4 @@
-import 'dart:typed_data';
-
 import 'package:ccquarters/model/detailed_house.dart';
-import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -58,33 +55,6 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
   Future<bool> deleteHouse() async {
     var response = await houseService.deleteHouse(houseId);
     return response.data;
-  }
-
-  Future<void> updateHouse(DetailedHouse house, List<Uint8List> newPhotos,
-      List<Photo> deletedPhotos) async {
-    emit(LoadingState());
-
-    var response = await houseService.updateHouse(house);
-    if (!response.data) {
-      emit(ErrorState(
-          message: "Nie udało się zapisać zmian. Spróbuj ponownie pózniej!"));
-    } else {
-      var responsePhotos = await houseService.deletePhotos(deletedPhotos);
-      if (!responsePhotos.data) {
-        emit(ErrorState(
-            message: "Nie udało się usunąć zdjęć. Spróbuj ponownie pózniej!"));
-      } else {
-        for (var photo in newPhotos) {
-          var res = await houseService.addPhoto(houseId, photo);
-          if (!res.data) {
-            emit(ErrorState(
-                message:
-                    "Nie udało się dodać nowych zdjęć. Spróbuj ponownie później!"));
-            return;
-          }
-        }
-      }
-    }
   }
 
   Future<void> goBackToHouseDetails() async {

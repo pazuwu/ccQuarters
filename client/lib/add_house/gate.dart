@@ -27,21 +27,32 @@ class AddHouseGate extends StatelessWidget {
           } else if (state is SendingFinishedState) {
             _buildSendingFinishedView(context, state);
           } else if (state is ErrorState) {
-            return Center(
-              child: Column(
-                children: [
-                  Text(state.message),
-                  TextButton(
-                    child: const Text("Powtórz wysyłanie"),
-                    onPressed: () =>
-                        context.read<AddHouseFormCubit>().sendData(),
-                  )
-                ],
+            return Scaffold(
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        state.message,
+                        textAlign: TextAlign.center,
+                      ),
+                      TextButton(
+                        child: const Text("Powtórz wysyłanie"),
+                        onPressed: () =>
+                            context.read<AddHouseFormCubit>().sendData(),
+                      )
+                    ],
+                  ),
+                ),
               ),
             );
           } else if (state is SendingDataState) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
 

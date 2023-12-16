@@ -7,6 +7,7 @@ import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/services/houses/requests/create_house_request.dart';
+import 'package:ccquarters/services/houses/requests/delete_photos_request.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
@@ -159,14 +160,15 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> updateHouse(DetailedHouse house) async {
+  Future<ServiceResponse<bool>> updateHouse(
+      String houseId, NewHouse house) async {
     try {
       var response = await _dio.put(
-        "$_url/${house.id}",
+        "$_url/$houseId",
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
-        data: CreateHouseRequest.fromDetailedHouse(house).toJson(),
+        data: CreateHouseRequest.fromNewHouse(house).toJson(),
       );
 
       return response.statusCode == StatusCode.OK
@@ -272,10 +274,12 @@ class HouseService {
     try {
       var response = await _dio.delete(
         "$_url/photos",
+        data: DeletePhotosRequest(
+          photos.map((x) => x.filename).toList(),
+        ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
-        data: photos.map((x) => x.filename).toList(),
       );
 
       return response.statusCode == StatusCode.OK
