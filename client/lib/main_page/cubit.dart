@@ -23,15 +23,15 @@ class MainPageCubit extends Cubit<MainPageState> {
     emit(MainPageInitialState());
   }
 
-  Future<List<House>> getHousesToRent(int pageNumber, int pageCount) async {
+  Future<List<House>?> getHousesToRent(int pageNumber, int pageCount) async {
     return _getHouses(pageNumber, pageCount, OfferType.rent);
   }
 
-  Future<List<House>> getHousesToBuy(int pageNumber, int pageCount) async {
+  Future<List<House>?> getHousesToBuy(int pageNumber, int pageCount) async {
     return _getHouses(pageNumber, pageCount, OfferType.sale);
   }
 
-  Future<List<House>> _getHouses(
+  Future<List<House>?> _getHouses(
       int pageNumber, int pageCount, OfferType offerType) async {
     final response = await houseService.getHouses(
       pageNumber: pageNumber,
@@ -40,9 +40,10 @@ class MainPageCubit extends Cubit<MainPageState> {
     );
 
     if (response.error != ErrorType.none) {
-      return [];
+      return null;
     }
 
+    return [];
     return response.data;
   }
 }
