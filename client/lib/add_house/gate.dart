@@ -68,6 +68,9 @@ class AddHouseGate extends StatelessWidget {
       const Duration(seconds: 2),
       () {
         context.read<AddHouseFormCubit>().clear();
+        if (house != null) {
+          Navigator.of(context).pop();
+        }
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => HouseDetailsGate(

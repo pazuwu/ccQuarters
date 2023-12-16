@@ -8,11 +8,11 @@ part of 'delete_photos_request.dart';
 
 DeletePhotosRequest _$DeletePhotosRequestFromJson(Map<String, dynamic> json) =>
     DeletePhotosRequest(
-      (json['photos'] as List<dynamic>).map((e) => e as String).toList(),
+      (json['filenames'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$DeletePhotosRequestToJson(
         DeletePhotosRequest instance) =>
     <String, dynamic>{
-      'photos': instance.photos,
+      'filenames': instance.filenames,
     };
