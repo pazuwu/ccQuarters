@@ -231,8 +231,8 @@ namespace CCQuartersAPI.Services
                 floors = housesQuery.Floors,
                 minFloor = housesQuery.MinFloor,
                 maxFloor = housesQuery.MaxFloor,
-                offerTypes = housesQuery.OfferTypes?.Select(ot => (int?)ot),
-                buildingTypes = housesQuery.BuildingTypes?.Select(bt => (int?)bt),
+                offerType = (int?)housesQuery.OfferType,
+                buildingType = (int?)housesQuery.BuildingType,
                 voivodeship = housesQuery.Voivodeship,
                 cities = housesQuery.Cities,
                 districts = housesQuery.Districts,
@@ -267,10 +267,10 @@ namespace CCQuartersAPI.Services
                 sb.Append($@" AND Floor >= @minFloor");
             if (query.MaxFloor is not null)
                 sb.Append($@" AND Floor <= @maxFloor");
-            if (query.OfferTypes is not null && query.OfferTypes.Any())
-                sb.Append($@" AND OfferType IN @offerTypes");
-            if (query.BuildingTypes is not null && query.BuildingTypes.Any())
-                sb.Append($@" AND BuildingType IN @buildingTypes");
+            if (query.OfferType is not null)
+                sb.Append($@" AND OfferType = @offerType");
+            if (query.BuildingType is not null)
+                sb.Append($@" AND BuildingType = @buildingType");
             if (query.Voivodeship is not null)
                 sb.Append($@" AND Voivodeship = @voivodeship");
             if (query.Cities is not null && query.Cities.Any())

@@ -60,7 +60,7 @@ namespace CCQuartersAPI.Responses
         public string? UserName { get; set; }
         public string? UserSurname { get; set; }
         public string? UserCompany {  get; set; }
-        public string? UserEmail { get; set; }
+        public string UserEmail { get; set; }
         public string? UserPhoneNumber { get; set; }
         public string? UserPhotoUrl { get; set; }
         public string? VirtualTourId { get; set; }
