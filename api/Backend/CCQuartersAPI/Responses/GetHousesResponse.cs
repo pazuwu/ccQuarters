@@ -10,9 +10,9 @@ namespace CCQuartersAPI.Responses
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int RoomCount { get; set; }
-        public double Area { get; set; }
+        public decimal Area { get; set; }
         public int? Floor { get; set; }
         public string City { get; set; }
         public string Voivodeship { get; set; }

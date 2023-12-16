@@ -7,13 +7,24 @@ import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/virtual_tour/gate.dart';
+import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
   const DetailsView(
       {super.key, required this.house, this.isOwnedByCurrentUser = false});
+
+  _showVirtualTour(BuildContext context) {
+    var hasAccessToEdit =
+        context.read<AuthService>().currentUserId == house.user.id;
+
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => VirtualTourGate(
+              tourId: house.details.virtualTourId!,
+              readOnly: !hasAccessToEdit,
+            )));
+  }
 
   final DetailedHouse house;
   final bool isOwnedByCurrentUser;
@@ -39,18 +50,6 @@ class DetailsView extends StatelessWidget {
       ),
       body: Inside(house: house),
     );
-  }
-
-  _showVirtualTour(BuildContext context) {
-    var hasAccessToEdit =
-        context.read<AuthService>().currentUserId == house.user.id;
-
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => VirtualTourGate(
-              authService: context.read(),
-              tourId: house.details.virtualTourId!,
-              readOnly: !hasAccessToEdit,
-            )));
   }
 
   PopupMenuButton _buildPopUpMenuButton(BuildContext context) {

@@ -19,16 +19,23 @@ namespace AuthLibrary
 
         public static void AddFirebaseAuthentication(this WebApplicationBuilder builder)
         {
+            string? issuer = builder.Configuration["Jwt:Firebase:ValidIssuer"];
+            if (string.IsNullOrEmpty(issuer))
+                issuer = Environment.GetEnvironmentVariable("APPSETTING_JWT_FIREBASE_VALID_ISSUER");
+
+            string? audience = builder.Configuration["Jwt:Firebase:ValidAudience"];
+            if (string.IsNullOrEmpty(audience))
+                audience = Environment.GetEnvironmentVariable("APPSETTING_JWT_FIREBASE_VALID_AUDIENCE");
+
             builder.Services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(opt =>
                 {
-                    opt.Authority = builder.Configuration["Jwt:Firebase:ValidIssuer"];
-                    opt.Audience = builder.Configuration["Jwt:Firebase:ValidAudience"];
-                    opt.TokenValidationParameters.ValidIssuer = builder.Configuration["Jwt:Firebase:ValidIssuer"];
-                    //opt.TokenValidationParameters.ValidAudience = builder.Configuration["Jwt:Firebase:ValidAudience"];
+                    opt.Authority = issuer;
+                    opt.Audience = audience;
+                    opt.TokenValidationParameters.ValidIssuer = issuer;
                 });
 
         }

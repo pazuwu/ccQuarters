@@ -1,5 +1,11 @@
 ﻿using CloudStorageLibrary;
+using AuthLibrary;
+using System.Security.Claims;
 using VirtualTourAPI.Service;
+using Google.Api;
+using VirtualTourAPI.Model;
+using VirtualTourAPI.Requests;
+using Microsoft.AspNetCore.Mvc;
 
 namespace VirtualTourAPI.Endpoints
 {
@@ -24,9 +30,33 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(tour);
         }
 
-        public static async Task<IResult> Post(IVTService service)
+        public static async Task<IResult> GetMy(HttpContext context, IVTService service)
         {
-            var tourId = await service.CreateTour();
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null)
+                Results.Unauthorized();
+
+            var tours = await service.GetAllUserTourInfos(userId!);
+            return Results.Ok(tours);
+        }
+
+        public static async Task<IResult> Post(PostTourRequest postTourRequest, HttpContext context, IVTService service)
+        {
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null)
+                Results.Unauthorized();
+
+            var tour = new TourDTO()
+            {
+                Name = postTourRequest.Name,
+                OwnerId = userId!,
+            };
+
+            var tourId = await service.CreateTour(tour);
 
             if (tourId == null)
                 return Results.Problem("An error occured while creating new tour in database");
@@ -34,9 +64,22 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, IVTService service)
+        public static async Task<IResult> Delete([FromBody]string[] tourIds, HttpContext context, IVTService service)
         {
-            await service.DeleteTour(tourId);
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if(userId == null)
+                Results.Unauthorized();
+
+            foreach (var tourId in tourIds)
+            {
+                if (!await service.HasUserPermissionToModifyTour(tourId, userId!))
+                    continue;
+
+                await service.DeleteTour(tourId);
+            }
+
             return Results.Ok();
         }
     }

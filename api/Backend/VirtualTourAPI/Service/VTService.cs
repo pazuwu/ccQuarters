@@ -192,9 +192,9 @@ namespace VirtualTourAPI.Service
                 ?.Select(d => d.ConvertTo<T>());
         }
 
-        public async Task<string?> CreateTour()
+        public async Task<string?> CreateTour(TourDTO tour)
         {
-            string addedTourId = await _documentRepository.AddAsync(ToursCollection, new Dictionary<string, string>());
+            string addedTourId = await _documentRepository.AddAsync(ToursCollection, tour);
 
             _logger.LogInformation("Created new tour: {Id}", addedTourId);
 
@@ -208,6 +208,24 @@ namespace VirtualTourAPI.Service
             await _documentRepository.DeleteAsync(path);
 
             _logger.LogInformation("Tour deleted: {tourId}", tourId);
+        }
+
+        public async Task<bool> HasUserPermissionToModifyTour(string tourId, string userId)
+        {
+            string tourPath = $"{ToursCollection}/{tourId}";
+            var tourSnapshot = await _documentRepository.GetAsync(tourPath);
+            var tourOwnerId = tourSnapshot?.GetValue<string>(new FieldPath(nameof(TourDTO.OwnerId)));
+
+            return tourOwnerId == userId;
+        }
+
+        public async Task<TourInfoDTO[]> GetAllUserTourInfos(string userId)
+        {
+            var allUserToursSnapshotTask = _documentRepository.GetByFieldAsync(ToursCollection, nameof(TourDTO.OwnerId), userId);
+            await allUserToursSnapshotTask;
+            var allUserToursIds = ConvertCollection<TourInfoDTO>(allUserToursSnapshotTask)?.ToArray();
+
+            return allUserToursIds ?? Array.Empty<TourInfoDTO>();
         }
     }
 }

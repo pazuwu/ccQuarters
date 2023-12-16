@@ -1,5 +1,6 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
+import 'package:ccquarters/virtual_tour/tour_list/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,6 +26,16 @@ class ProfileDrawer extends StatelessWidget {
             title: const Text('Edytuj profil'),
             onTap: () {
               context.read<ProfilePageCubit>().goToEditUserPage();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.directions_walk),
+            title: const Text('Moje Wirtualne spacery'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => VTListGate(
+                        vtService: context.read(),
+                      )));
             },
           ),
           ListTile(

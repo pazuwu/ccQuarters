@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿#if TEST
+
+#else
+
+using Microsoft.Extensions.Configuration;
 
 namespace VirtualTourAPI.Client.IntegrationTests
 {
@@ -30,3 +34,5 @@ namespace VirtualTourAPI.Client.IntegrationTests
         }
     }
 }
+
+#endif

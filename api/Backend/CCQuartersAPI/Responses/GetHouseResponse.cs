@@ -17,7 +17,7 @@ namespace CCQuartersAPI.Responses
         public int? Floor { get; set; }
         public required string DescriptionId { get; set; }
         public required string AdditionalInfoId { get; set; }
-        public string? NerfId { get; set; }
+        public string? VirtualTourId { get; set; }
         public required string UserId { get; set; }
         public required string City { get; set; }
         public required string Voivodeship { get; set; }
@@ -60,9 +60,10 @@ namespace CCQuartersAPI.Responses
         public string? UserName { get; set; }
         public string? UserSurname { get; set; }
         public string? UserCompany {  get; set; }
-        public string? UserEmail { get; set; }
+        public string UserEmail { get; set; }
         public string? UserPhoneNumber { get; set; }
         public string? UserPhotoUrl { get; set; }
+        public string? VirtualTourId { get; set; }
     }
 
     public class PhotoDTO

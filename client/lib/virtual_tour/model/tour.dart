@@ -6,12 +6,14 @@ import 'package:ccquarters/virtual_tour/model/scene.dart';
 
 class Tour {
   Tour({
+    required this.name,
     required this.id,
     this.areas = const [],
     this.scenes = const [],
     this.links = const [],
   });
 
+  final String name;
   final String id;
   final List<Area> areas;
   final List<Scene> scenes;
@@ -19,6 +21,7 @@ class Tour {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'name': name,
       'id': id,
       'areas': areas.map((x) => x.toMap()).toList(),
       'scenes': scenes.map((x) => x.toMap()).toList(),
@@ -28,6 +31,7 @@ class Tour {
 
   factory Tour.fromMap(Map<String, dynamic> map) {
     return Tour(
+      name: map['name'] as String,
       id: map['id'] as String,
       areas: List<Area>.from(
         (map['areas'] as List<dynamic>).map<Area>(
