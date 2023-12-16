@@ -52,9 +52,9 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
     final response = await getUser(userId);
     if (response == null) {
       emit(ErrorState(
-          message: "Nie udało się pobrać danych twojego profilu.",
+          message: "Nie udało się pobrać danych \nTwojego profilu.",
           tip:
-              "Sprawdź swoje połączenie z internetem lub spróbuj ponownie później."));
+              "Sprawdź swoje połączenie z internetem lub \nspróbuj ponownie później."));
       return;
     }
 

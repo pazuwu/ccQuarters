@@ -17,7 +17,7 @@ class AnnouncementsContainer extends StatelessWidget {
 
   final String title;
   final PagingController<int, House> pagingController;
-  final Future<List<House>> Function(int, int) getHouses;
+  final Future<List<House>?> Function(int, int) getHouses;
 
   @override
   Widget build(BuildContext context) {
