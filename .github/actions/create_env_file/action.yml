@@ -9,7 +9,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - name: Make envfile
+  - name: Make .env.dev file
+    uses: SpicyPizza/create-envfile@v1.3
+    with:
+      directory: ${{ inputs.target_dir }}
+      file_name: .env.dev
+  - name: Make .env.production file
     uses: SpicyPizza/create-envfile@v1.3
     with:
       directory: ${{ inputs.target_dir }}
