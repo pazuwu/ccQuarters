@@ -31,7 +31,7 @@ class GoBackNextButtons extends StatelessWidget {
           child: ElevatedButton(
             key: const Key('next'),
             onPressed: nextOnPressed,
-            child:  Text(isLastPage ? "Wyślij" :"Dalej"),
+            child: Text(isLastPage ? "Wyślij" : "Dalej"),
           ),
         ),
       ],

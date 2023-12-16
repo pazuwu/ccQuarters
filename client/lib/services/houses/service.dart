@@ -253,8 +253,6 @@ class HouseService {
       var response = await _dio.post(
         "$_url/$houseId/photo",
         data: photoData,
-        options: Options(headers: {
-        }),
       );
 
       return response.statusCode == StatusCode.OK
