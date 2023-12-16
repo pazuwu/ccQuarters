@@ -34,5 +34,5 @@ jobs:
           cache: true
       - name: Flutter get dependencies
         run: flutter pub get
-      - name: building_android_debug_apk
-        run: flutter build apk --debug
+      - name: building_android_release_apk
+        run: flutter build apk --release
