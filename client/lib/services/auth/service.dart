@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 import 'sign_in_result.dart';
 import 'sign_up_result.dart';
@@ -21,7 +22,11 @@ abstract class BaseAuthService {
 
 class AuthService implements BaseAuthService {
   AuthService({required FirebaseAuth firebaseAuth})
-      : _firebaseAuth = firebaseAuth;
+      : _firebaseAuth = firebaseAuth {
+    if (kIsWeb) {
+      _firebaseAuth.setPersistence(Persistence.LOCAL);
+    }
+  }
 
   final FirebaseAuth _firebaseAuth;
 
