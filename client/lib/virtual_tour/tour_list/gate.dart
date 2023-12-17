@@ -13,8 +13,8 @@ class VTListGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<VTListCubit>(
-          create: (context) =>
-              VTListCubit(vtService: context.read(), state: VTListLoadingState()),
+          create: (context) => VTListCubit(
+              vtService: context.read(), state: VTListLoadingState()),
           child: BlocBuilder<VTListCubit, VTListState>(
             builder: (context, state) {
               if (state is VTListLoadingState) {
