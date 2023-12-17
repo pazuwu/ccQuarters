@@ -16,6 +16,7 @@ Future<T?> showForm<T>(
   } else {
     return showModalBottomSheet<T>(
         context: context,
+        useSafeArea: true,
         enableDrag: true,
         showDragHandle: true,
         isScrollControlled: true,
