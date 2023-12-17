@@ -5,9 +5,10 @@ class HouseDetailsState {}
 class LoadingState extends HouseDetailsState {}
 
 class ErrorState extends HouseDetailsState {
-  ErrorState({required this.message});
+  ErrorState({required this.message, this.tip});
 
   final String message;
+  String? tip;
 }
 
 class DetailsState extends HouseDetailsState {

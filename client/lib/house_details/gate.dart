@@ -1,3 +1,4 @@
+import 'package:ccquarters/common_widgets/error_message.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/house_details/views/edit_house_view.dart';
@@ -27,11 +28,10 @@ class HouseDetailsGate extends StatelessWidget {
             );
           } else if (state is ErrorState) {
             return Scaffold(
-              body: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(state.message),
-                ),
+              body: ErrorMessage(
+                state.message,
+                tip: state.tip,
+                closeButton: true,
               ),
             );
           } else if (state is DetailsState) {

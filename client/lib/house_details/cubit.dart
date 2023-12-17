@@ -23,8 +23,8 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
     var response = await houseService.getHouse(houseId);
     if (response.data == null) {
       emit(ErrorState(
-          message:
-              "Nie udało się pobrać ogłoszenia. Spróbuj ponownie później!"));
+          message: "Wystąpił błąd podczas próby\n pobrania ogłoszenia",
+          tip: "Spróbuj ponownie później"));
     } else {
       house = response.data!;
       emit(DetailsState(house));
