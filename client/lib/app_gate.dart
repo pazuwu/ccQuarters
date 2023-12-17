@@ -49,8 +49,11 @@ class AppMainGate extends StatelessWidget {
         themeMode: ThemeMode.light,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        home: const SafeArea(
-          child: AuthGate(),
+        home: Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: const SafeArea(
+            child: AuthGate(),
+          ),
         ),
       ),
     );
