@@ -164,12 +164,7 @@ class _SceneViewerState extends State<SceneViewer> {
   }
 
   void _addNewLink(double longitude, double latitude) async {
-    var linkFormModel = await showModalBottomSheet<SceneLinkFormModel>(
-      useSafeArea: true,
-      isDismissible: false,
-      isScrollControlled: true,
-      enableDrag: true,
-      showDragHandle: true,
+    var linkFormModel = await showForm<SceneLinkFormModel>(
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
