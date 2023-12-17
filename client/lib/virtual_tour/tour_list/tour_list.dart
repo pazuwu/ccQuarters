@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:ccquarters/common_widgets/show_form.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
@@ -202,11 +203,8 @@ class _TourListState extends State<TourList> {
   }
 
   void _createTour(BuildContext context) {
-    showModalBottomSheet<String>(
+    showForm<String>(
       context: context,
-      enableDrag: true,
-      showDragHandle: true,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const NewTourDialog();
       },
