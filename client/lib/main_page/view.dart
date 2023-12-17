@@ -29,42 +29,59 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
-    return RefreshIndicator(
-      onRefresh: () async {
-        _pagingControllerForHousesToRent.refresh();
-        _pagingControllerForHousesToBuy.refresh();
-      },
-      child: LayoutBuilder(builder: (context, constraints) {
+    return RefreshIndicator(onRefresh: () async {
+      _pagingControllerForHousesToRent.refresh();
+      _pagingControllerForHousesToBuy.refresh();
+    }, child: LayoutBuilder(
+      builder: (context, constraints) {
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: SizedBox(
             height: constraints.maxHeight,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                FakeSearchBox(
-                  color: color,
-                  onTap: () => context.read<MainPageCubit>().search(),
+                const SizedBox(
+                  height: 16,
                 ),
-                AnnouncementsContainer(
-                  title: "Do wynajęcia",
-                  pagingController: _pagingControllerForHousesToRent,
-                  getHouses: (pageNumber, pageCount) async => await context
-                      .read<MainPageCubit>()
-                      .getHousesToRent(pageNumber, pageCount),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: FakeSearchBox(
+                    color: color,
+                    onTap: () => context.read<MainPageCubit>().search(),
+                  ),
                 ),
-                AnnouncementsContainer(
-                  title: "Do kupienia",
-                  pagingController: _pagingControllerForHousesToBuy,
-                  getHouses: (pageNumber, pageCount) async => await context
-                      .read<MainPageCubit>()
-                      .getHousesToBuy(pageNumber, pageCount),
+                const SizedBox(
+                  height: 16,
+                ),
+                Expanded(
+                  child: AnnouncementsContainer(
+                    title: "Do wynajęcia",
+                    pagingController: _pagingControllerForHousesToRent,
+                    getHouses: (pageNumber, pageCount) async => await context
+                        .read<MainPageCubit>()
+                        .getHousesToRent(pageNumber, pageCount),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Expanded(
+                  child: AnnouncementsContainer(
+                    title: "Do kupienia",
+                    pagingController: _pagingControllerForHousesToBuy,
+                    getHouses: (pageNumber, pageCount) async => await context
+                        .read<MainPageCubit>()
+                        .getHousesToBuy(pageNumber, pageCount),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
                 ),
               ],
             ),
           ),
         );
-      }),
-    );
+      },
+    ));
   }
 }

@@ -1,8 +1,6 @@
 import 'package:ccquarters/list_of_houses/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/common_widgets/shadow.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'list.dart';
@@ -21,34 +19,24 @@ class AnnouncementsContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.all(getPaddingSizeForMainPage(context)),
-        child: Shadow(
-          color: Theme.of(context).colorScheme,
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ListOfHousesGate()));
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ListLabel(title: title),
-                  AnnouncementList(
-                    pagingController: pagingController,
-                    getHouses: getHouses,
-                  ),
-                ],
-              ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ListOfHousesGate()));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ListLabel(title: title),
+            AnnouncementList(
+              pagingController: pagingController,
+              getHouses: getHouses,
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -72,7 +60,9 @@ class ListLabel extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
           ),
           const Icon(Icons.arrow_forward),
         ],
