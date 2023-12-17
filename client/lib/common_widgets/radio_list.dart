@@ -94,7 +94,7 @@ class _RadioListFormState<T> extends State<RadioListForm<T>> {
   _buildSceneList(BuildContext context) {
     return Flexible(
       child: FormField<T>(
-        initialValue: _filteredValues.first,
+        initialValue: _chosenValue,
         onSaved: widget.onSaved,
         validator: widget.validator,
         builder: (formFieldState) => Column(
@@ -109,46 +109,50 @@ class _RadioListFormState<T> extends State<RadioListForm<T>> {
                   color: Colors.transparent,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _filteredValues.length,
-                      itemBuilder: (context, index) {
-                        return RadioListTile(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
-                          ),
-                          selected: _chosenValue == _filteredValues[index],
-                          selectedTileColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.65),
-                          fillColor: MaterialStateColor.resolveWith((states) {
-                            if (formFieldState.hasError) {
-                              return Theme.of(context).colorScheme.error;
-                            }
+                    child: _filteredValues.isEmpty
+                        ? const Text("Brak wyników")
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _filteredValues.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                selected:
+                                    _chosenValue == _filteredValues[index],
+                                selectedTileColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.65),
+                                fillColor:
+                                    MaterialStateColor.resolveWith((states) {
+                                  if (formFieldState.hasError) {
+                                    return Theme.of(context).colorScheme.error;
+                                  }
 
-                            return Theme.of(context).colorScheme.primary;
-                          }),
-                          value: _filteredValues[index],
-                          groupValue: _chosenValue,
-                          onChanged: (newValue) {
-                            formFieldState.didChange(newValue);
-                            setState(() {
-                              _searchFocusNode.unfocus();
-                              _chosenValue = newValue;
-                              if (newValue != null) {
-                                widget.valueChanged?.call(newValue);
-                              }
-                            });
-                          },
-                          title:
-                              widget.titleBuilder?.call(_filteredValues[index]),
-                          secondary: widget.secondaryBuilder
-                              ?.call(_filteredValues[index]),
-                        );
-                      },
-                    ),
+                                  return Theme.of(context).colorScheme.primary;
+                                }),
+                                value: _filteredValues[index],
+                                groupValue: _chosenValue,
+                                onChanged: (newValue) {
+                                  formFieldState.didChange(newValue);
+                                  setState(() {
+                                    _searchFocusNode.unfocus();
+                                    _chosenValue = newValue;
+                                    if (newValue != null) {
+                                      widget.valueChanged?.call(newValue);
+                                    }
+                                  });
+                                },
+                                title: widget.titleBuilder
+                                    ?.call(_filteredValues[index]),
+                                secondary: widget.secondaryBuilder
+                                    ?.call(_filteredValues[index]),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ),

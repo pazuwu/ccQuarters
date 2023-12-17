@@ -34,6 +34,7 @@ HouseWithDetails _$HouseWithDetailsFromJson(Map<String, dynamic> json) =>
       json['userEmail'] as String,
       json['userPhoneNumber'] as String?,
       json['userPhotoUrl'] as String?,
+      json['virtualTourId'] as String?,
     );
 
 Map<String, dynamic> _$HouseWithDetailsToJson(HouseWithDetails instance) =>

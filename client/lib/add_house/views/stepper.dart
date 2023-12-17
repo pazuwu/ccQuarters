@@ -5,6 +5,7 @@ import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/add_house/views/location_view.dart';
 import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
+import 'package:ccquarters/add_house/views/virtual_tour_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/utils/consts.dart';
 import 'package:ccquarters/utils/device_type.dart';
@@ -29,6 +30,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   int activeStep = 0;
   final _detailsFormKey = GlobalKey<FormState>();
   final _locationFormKey = GlobalKey<FormState>();
+  final _virtualTourFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +94,12 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         newPhotos: state.newPhotos,
         deletedPhotos: state.deletedPhotos,
         editMode: widget.editMode,
-        createVirtualTour: state.createVirtualTour,
+      );
+    } else if (state is VirtualTourFormState) {
+      return VirtualTourFormView(
+        usedVirtualTour: state.usedVirtualTour,
+        editMode: widget.editMode,
+        formKey: _virtualTourFormKey,
       );
     }
 
@@ -123,6 +130,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         finishedStepTextColor: Colors.black87,
         internalPadding: 50,
         showLoadingAnimation: false,
+        stepAnimationDuration: const Duration(milliseconds: 200),
         stepRadius: 8,
         showStepBorder: false,
         steps: _getSteps(getDeviceType(context) == DeviceType.mobile),
@@ -144,6 +152,8 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       return _getMapIndex();
     } else if (widget.state is PhotosFormState) {
       return _getPhotosIndex(isMobile);
+    } else if (widget.state is VirtualTourFormState) {
+      return _getVirtualTourIndex(isMobile);
     }
 
     return 0;
@@ -164,6 +174,8 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       context.read<AddHouseFormCubit>().goToMap();
     } else if (index == _getPhotosIndex(isMobile)) {
       context.read<AddHouseFormCubit>().goToPhotosForm();
+    } else if (index == _getVirtualTourIndex(isMobile)) {
+      context.read<AddHouseFormCubit>().goToVirtualTourForm();
     }
   }
 
@@ -195,6 +207,12 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
             state.oldPhotos,
             state.deletedPhotos,
           );
+    } else if (state is VirtualTourFormState) {
+      if (_virtualTourFormKey.currentState!.validate()) {
+        _virtualTourFormKey.currentState!.save();
+      } else {
+        return false;
+      }
     }
 
     return true;
@@ -207,7 +225,8 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       _buildStep("Lokalizacja", _getLocationIndex(isMobile), !isMobile),
       if (isMobile) _buildStep("Mapa", _getMapIndex(), true),
       _buildStep("Zdjęcia", _getPhotosIndex(isMobile), false),
-      _buildStep("Wysyłanie", _getSendingIndex(isMobile), true),
+      _buildStep("Wirtualny spacer", _getVirtualTourIndex(isMobile), true),
+      _buildStep("Wysyłanie", _getSendingIndex(isMobile), false),
     ];
   }
 
@@ -216,7 +235,8 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   int _getLocationIndex(bool isMobile) => isMobile ? 2 : 1;
   int _getMapIndex() => 3;
   int _getPhotosIndex(bool isMobile) => isMobile ? 4 : 2;
-  int _getSendingIndex(bool isMobile) => isMobile ? 5 : 3;
+  int _getVirtualTourIndex(bool isMobile) => isMobile ? 5 : 2;
+  int _getSendingIndex(bool isMobile) => isMobile ? 6 : 3;
 
   EasyStep _buildStep(String title, int index, bool topTitle) {
     return EasyStep(
