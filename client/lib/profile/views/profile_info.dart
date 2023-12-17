@@ -42,7 +42,8 @@ class ProfileInfo extends StatelessWidget {
                 : Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.red),
+                      shape: BoxShape.circle,
+                    ),
                     child: Image.asset(
                       "assets/graphics/avatar.png",
                     ),
