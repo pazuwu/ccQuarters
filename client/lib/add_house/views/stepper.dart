@@ -1,4 +1,5 @@
 import 'package:ccquarters/add_house/cubit.dart';
+import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/add_house/views/choose_type_and_details_view.dart';
 import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/add_house/views/location_view.dart';

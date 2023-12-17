@@ -1,28 +1,7 @@
+import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-class HouseDetailsState {}
-
-class LoadingState extends HouseDetailsState {}
-
-class ErrorState extends HouseDetailsState {
-  ErrorState({required this.message});
-
-  final String message;
-}
-
-class DetailsState extends HouseDetailsState {
-  DetailsState(this.house);
-
-  final DetailedHouse house;
-}
-
-class EditHouseState extends HouseDetailsState {
-  EditHouseState(this.house);
-
-  final DetailedHouse house;
-}
 
 class HouseDetailsCubit extends Cubit<HouseDetailsState> {
   HouseDetailsCubit(

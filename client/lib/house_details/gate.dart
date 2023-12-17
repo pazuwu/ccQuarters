@@ -1,4 +1,5 @@
 import 'package:ccquarters/house_details/cubit.dart';
+import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/house_details/views/edit_house_view.dart';
 import 'package:ccquarters/house_details/views/view.dart';
 import 'package:flutter/material.dart';

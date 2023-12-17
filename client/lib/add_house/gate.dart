@@ -1,5 +1,7 @@
 import 'package:ccquarters/add_house/cubit.dart';
+import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/add_house/views/stepper.dart';
+import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,7 @@ class AddHouseGate extends StatelessWidget {
               editMode: house != null,
             );
           } else if (state is SendingFinishedState) {
-            _buildSendingFinishedView(context, state);
+            return _buildSendingFinishedView(context, state);
           } else if (state is ErrorState) {
             return Scaffold(
               body: Center(
@@ -69,28 +71,31 @@ class AddHouseGate extends StatelessWidget {
       () {
         context.read<AddHouseFormCubit>().clear();
         if (house != null) {
-          Navigator.of(context).pop();
-        }
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => HouseDetailsGate(
-              houseId: state.houseId,
+          context.read<HouseDetailsCubit>().loadHouseDetails();
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => HouseDetailsGate(
+                houseId: state.houseId,
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
 
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Ogłoszenie zostało dodane",
-              textScaler: TextScaler.linear(1.5),
+              house != null
+                  ? "Ogłoszenie zostało zaktualizowane"
+                  : "Ogłoszenie zostało dodane",
+              textScaler: const TextScaler.linear(1.3),
             ),
-            Icon(Icons.done)
+            const Icon(Icons.done)
           ],
         ),
       ),
