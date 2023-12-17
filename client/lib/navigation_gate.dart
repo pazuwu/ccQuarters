@@ -1,6 +1,7 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/virtual_tour/tour_list/gate.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,7 @@ class _NavigationGateState extends State<NavigationGate> {
     const MainPageGate(),
     const AddHouseGate(),
     const ProfileGate(),
+    const VTListGate(),
   ];
 
   final List<SideNavigationBarItem> _items = <SideNavigationBarItem>[
@@ -83,15 +85,7 @@ class _NavigationGateState extends State<NavigationGate> {
       BuildContext context, ColorScheme color) {
     return SideNavigationBar(
       selectedIndex: _selectedIndex,
-      items: _items +
-          (kIsWeb && context.read<AuthCubit>().user == null
-              ? [
-                  const SideNavigationBarItem(
-                    icon: Icons.logout,
-                    label: "Zaloguj się lub zarejestruj",
-                  )
-                ]
-              : []),
+      items: _items + _addWebTabItems(context),
       theme: SideNavigationBarTheme(
         backgroundColor: color.background,
         togglerTheme: SideNavigationBarTogglerTheme.standard(),
@@ -107,13 +101,29 @@ class _NavigationGateState extends State<NavigationGate> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 3) {
+    if (index == 4 && context.read<AuthCubit>().user == null) {
       context.read<AuthCubit>().signOut();
       return;
     }
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  List<SideNavigationBarItem> _addWebTabItems(BuildContext context) {
+    return !kIsWeb
+        ? []
+        : [
+            if (context.read<AuthCubit>().user != null)
+              const SideNavigationBarItem(
+                  icon: Icons.directions_walk_outlined,
+                  label: "Moje wirtualne spacery"),
+            if (context.read<AuthCubit>().user == null)
+              const SideNavigationBarItem(
+                icon: Icons.logout,
+                label: "Zaloguj się lub zarejestruj",
+              ),
+          ];
   }
 }
 

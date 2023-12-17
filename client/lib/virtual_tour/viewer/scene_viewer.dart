@@ -1,3 +1,4 @@
+import 'package:ccquarters/common_widgets/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
@@ -140,12 +141,7 @@ class _SceneViewerState extends State<SceneViewer> {
   }
 
   void _editLink(Link link) async {
-    var linkFormModel = await showModalBottomSheet<SceneLinkFormModel>(
-      useSafeArea: true,
-      isDismissible: false,
-      isScrollControlled: true,
-      enableDrag: true,
-      showDragHandle: true,
+    var linkFormModel = await showForm<SceneLinkFormModel>(
       context: context,
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
