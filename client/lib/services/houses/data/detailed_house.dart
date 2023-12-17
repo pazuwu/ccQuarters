@@ -39,6 +39,7 @@ class HouseWithDetails {
   String userEmail;
   String? userPhoneNumber;
   String? userPhotoUrl;
+  String? virtualTourId;
 
   HouseWithDetails(
     this.title,
@@ -67,6 +68,7 @@ class HouseWithDetails {
     this.userEmail,
     this.userPhoneNumber,
     this.userPhotoUrl,
+    this.virtualTourId,
   );
 
   Map<String, dynamic> toJson() => _$HouseWithDetailsToJson(this);
@@ -93,6 +95,7 @@ class HouseWithDetails {
         area: area,
         floor: floor,
         buildingType: buildingType,
+        virtualTourId: virtualTourId,
       ),
       User.fromGetHouse(
         userId,
