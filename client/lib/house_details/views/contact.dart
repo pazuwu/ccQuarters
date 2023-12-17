@@ -72,20 +72,24 @@ class ContactWidget extends StatelessWidget {
                     TableRow(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.all(largePaddingSize),
-                            child: user.photoUrl != null
-                                ? ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      maxHeight: constraints.maxHeight * 0.3,
-                                    ),
-                                    child: ImageWidget(
+                          padding: const EdgeInsets.all(largePaddingSize),
+                          child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight: constraints.maxHeight * 0.3,
+                              ),
+                              child: user.photoUrl != null
+                                  ? ImageWidget(
                                       imageUrl: user.photoUrl!,
                                       shape: BoxShape.circle,
-                                    ),
-                                  )
-                                : const ClipOval(
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Icon(Icons.person))),
+                                    )
+                                  : Container(
+                                      decoration: const BoxDecoration(
+                                          shape: BoxShape.circle),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Image.asset(
+                                          "assets/graphics/avatar.png"),
+                                    )),
+                        ),
                         _buildNameTable(context, user),
                       ],
                     ),
