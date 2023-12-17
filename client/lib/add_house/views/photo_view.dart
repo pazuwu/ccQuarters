@@ -59,11 +59,13 @@ class _PhotoViewState extends State<PhotoView> {
             context.read<AddHouseFormCubit>().goToMap();
           }
         },
-        nextOnPressed: widget.editMode ? null : () {
-          context.read<AddHouseFormCubit>().savePhotos(
-              widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
-          context.read<AddHouseFormCubit>().sendData();
-        },
+        nextOnPressed: widget.editMode
+            ? null
+            : () {
+                context.read<AddHouseFormCubit>().savePhotos(
+                    widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
+                context.read<AddHouseFormCubit>().sendData();
+              },
         hasScrollBody: true,
         isLastPage: true,
       ),

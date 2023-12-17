@@ -23,6 +23,6 @@ class _EditHouseViewState extends State<EditHouseView> {
 
   @override
   Widget build(BuildContext context) {
-    return  AddHouseGate(house: _house);
+    return AddHouseGate(house: _house);
   }
 }

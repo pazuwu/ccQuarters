@@ -11,8 +11,6 @@ import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 
-
-
 class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit(
       {required this.houseService, required this.vtService, NewHouse? house})

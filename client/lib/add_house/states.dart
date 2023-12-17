@@ -1,4 +1,3 @@
-
 import 'package:ccquarters/model/photo.dart';
 import 'package:flutter/foundation.dart';
 
