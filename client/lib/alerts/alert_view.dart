@@ -18,8 +18,8 @@ class AlertView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: alert != null
-            ? const Text("Dodaj nowy alert")
-            : const Text("Edytuj alert"),
+            ? const Text("Edytuj alert")
+            : const Text("Dodaj nowy alert"),
         leading: BackButton(
           onPressed: context.read<AlertsPageCubit>().goToAlertsMainPage,
         ),
@@ -27,15 +27,18 @@ class AlertView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
-              context
-                  .read<AlertsPageCubit>()
-                  .saveAlert(Alert.fromHouseFilter(filters));
+              context.read<AlertsPageCubit>().saveAlert(Alert.fromHouseFilter(
+                    filters,
+                    alert?.id ?? "",
+                  ));
             },
           )
         ],
       ),
-      body: FiltersExpansionPanelList(
-        filters: filters,
+      body: SingleChildScrollView(
+        child: FiltersExpansionPanelList(
+          filters: filters,
+        ),
       ),
     );
   }

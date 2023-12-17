@@ -12,18 +12,23 @@ class AlertService {
   final Dio _dio;
   final String _url;
 
-  Future<ServiceResponse<List<Alert>>> getAlerts() async {
+  Future<ServiceResponse<List<Alert>>> getAlerts(
+      {int pageNumber = 0, int pageCount = 10}) async {
     try {
       var response = await _dio.get(
         _url,
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
+        queryParameters: {
+          "pageNumber": pageNumber,
+          "pageSize": pageCount,
+        },
       );
 
       return response.statusCode == StatusCode.OK
           ? ServiceResponse(
-              data: GetAlertsResponse.fromJson(response.data).alerts)
+              data: GetAlertsResponse.fromJson(response.data).data)
           : ServiceResponse(data: [], error: ErrorType.unknown);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
@@ -36,9 +41,11 @@ class AlertService {
 
   Future<ServiceResponse<bool>> createAlert(Alert alert) async {
     try {
+      alert.id = "isndjpo";
+      var alertJson = alert.toJson();
       var response = await _dio.post(
         _url,
-        data: alert.toJson(),
+        data: alertJson,
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),

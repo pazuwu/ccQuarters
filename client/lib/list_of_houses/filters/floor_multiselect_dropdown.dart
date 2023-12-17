@@ -36,8 +36,8 @@ class FloorMultiSelectDropdown extends StatelessWidget {
             child: DropDownMultiSelect(
               onChanged: onChanged,
               options: List.generate(12, (index) => FloorNumber(index)),
-              selectedValues: filters.floor != null
-                  ? filters.floor!.map((e) => FloorNumber(e)).toList()
+              selectedValues: filters.floors != null
+                  ? filters.floors!.map((e) => FloorNumber(e)).toList()
                   : <FloorNumber>[],
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),

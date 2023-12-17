@@ -11,13 +11,16 @@ extension AlertsAPIMock on Dio {
     const id = "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
     Alert alert = Alert(
       id: id,
-      userId: id,
-      city: "Warszawa",
+      cities: ["Warszawa"],
       maxPrice: 1000000,
     );
 
     dioAdapter.onGet("$url/$id", (request) {
-      var res = GetAlertsResponse(alerts: [alert, alert, alert]);
+      var res = GetAlertsResponse(
+        data: [alert, alert, alert],
+        pageNumber: 1,
+        pageSize: 10,
+      );
       request.reply(StatusCode.OK, res.toJson());
     }, data: Matchers.any);
 

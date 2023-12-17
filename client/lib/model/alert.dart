@@ -1,3 +1,4 @@
+import 'package:ccquarters/model/alert_filter_base.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
@@ -5,64 +6,65 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'alert.g.dart';
 
-@JsonSerializable()
-class Alert {
+@JsonSerializable(includeIfNull: false)
+class Alert extends AlertFilterBase {
   String id;
-  String userId;
-  double? maxPrice;
-  double? maxPricePerM2;
-  double? minArea;
-  double? maxArea;
-  int? minRoomCount;
-  int? maxRoomCount;
-  int? floor;
-  OfferType? offerType;
-  BuildingType? buildingType;
-  String? city;
-  String? zipCode;
-  String? district;
-  String? streetName;
-  String? streetNumber;
-  String? flatNumber;
+  String? voivodeship;
 
-  Alert(
-      {required this.id,
-      required this.userId,
-      this.maxPrice,
-      this.maxPricePerM2,
-      this.minArea,
-      this.maxArea,
-      this.minRoomCount,
-      this.maxRoomCount,
-      this.floor,
-      this.offerType,
-      this.buildingType,
-      this.city,
-      this.zipCode,
-      this.district,
-      this.streetName,
-      this.streetNumber,
-      this.flatNumber});
+  Alert({
+    required this.id,
+    minPrice,
+    maxPrice,
+    maxPricePerM2,
+    minPricePerM2,
+    minArea,
+    maxArea,
+    minRoomCount,
+    maxRoomCount,
+    floors,
+    minFloor,
+    offerType,
+    buildingType,
+    this.voivodeship,
+    cities,
+    districts,
+  }) : super(
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          maxPricePerM2: maxPricePerM2,
+          minPricePerM2: minPricePerM2,
+          minArea: minArea,
+          maxArea: maxArea,
+          minRoomCount: minRoomCount,
+          maxRoomCount: maxRoomCount,
+          floors: floors,
+          minFloor: minFloor,
+          offerType: offerType,
+          buildingType: buildingType,
+          cities: cities,
+          districts: districts,
+        );
 
-  Alert.empty()
-      : id = "",
-        userId = "";
+  Alert.empty() : id = "";
 
-  Alert.fromHouseFilter(HouseFilter filters)
-      : id = "",
-        userId = "",
-        maxPrice = filters.maxPrice,
-        maxPricePerM2 = filters.maxPricePerMeter,
-        minArea = filters.minArea,
-        maxArea = filters.maxArea,
-        minRoomCount = filters.minRoomCount,
-        maxRoomCount = filters.maxRoomCount,
-        floor = filters.floor?.first,
-        offerType = filters.offerType,
-        buildingType = filters.buildingType,
-        city = filters.cities.isNotEmpty ? filters.cities.first : null,
-        district =
-            filters.districts.isNotEmpty ? filters.districts.first : null;
+  Alert.fromHouseFilter(HouseFilter filters, this.id)
+      : voivodeship = filters.voivodeship?.toString(),
+        super(
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          maxPricePerM2: filters.maxPricePerM2,
+          minPricePerM2: filters.minPricePerM2,
+          minArea: filters.minArea,
+          maxArea: filters.maxArea,
+          minRoomCount: filters.minRoomCount,
+          maxRoomCount: filters.maxRoomCount,
+          floors: filters.floors,
+          minFloor: filters.minFloor,
+          offerType: filters.offerType,
+          buildingType: filters.buildingType,
+          cities: filters.cities,
+          districts: filters.districts,
+        );
 
   Map<String, dynamic> toJson() => _$AlertToJson(this);
   factory Alert.fromJson(Map<String, dynamic> json) => _$AlertFromJson(json);

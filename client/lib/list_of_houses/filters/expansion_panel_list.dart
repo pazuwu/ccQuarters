@@ -93,13 +93,13 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         ),
         FromToNumberFields(
           title: "Cena za m\u00B2",
-          from: widget.filters.minPricePerMeter?.toStringAsFixed(2) ?? "",
-          to: widget.filters.maxPricePerMeter?.toStringAsFixed(2) ?? "",
+          from: widget.filters.minPricePerM2?.toStringAsFixed(2) ?? "",
+          to: widget.filters.maxPricePerM2?.toStringAsFixed(2) ?? "",
           onChangedFrom: (val) {
-            widget.filters.minPricePerMeter = double.tryParse(val);
+            widget.filters.minPricePerM2 = double.tryParse(val);
           },
           onChangedTo: (val) {
-            widget.filters.maxPricePerMeter = double.tryParse(val);
+            widget.filters.maxPricePerM2 = double.tryParse(val);
           },
           isDecimal: true,
         ),
@@ -129,15 +129,15 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         FloorMultiSelectDropdown(
           onChanged: (List<FloorNumber> newValue) {
             setState(() {
-              widget.filters.floor =
+              widget.filters.floors =
                   newValue.map((e) => e.floorNumber).toList();
-              widget.filters.floor!.sort();
+              widget.filters.floors!.sort();
             });
           },
           filters: widget.filters,
           onClear: () {
             setState(() {
-              widget.filters.floor = null;
+              widget.filters.floors = null;
             });
           },
         ),

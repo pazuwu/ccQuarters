@@ -42,11 +42,7 @@ class ProfileGate extends StatelessWidget {
                     tip: state.tip,
                   );
                 } else if (state is AlertsState) {
-                  return const AlertsGate(
-                  );
-                } else if (state is AlertsState) {
-                  return const AlertsGate(
-                  );
+                  return const AlertsGate();
                 }
 
                 return Container();

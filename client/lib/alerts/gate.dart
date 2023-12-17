@@ -16,9 +16,7 @@ class AlertsGate extends StatelessWidget {
       child: BlocBuilder<AlertsPageCubit, AlertsState>(
         builder: (context, state) {
           if (state is AlertsMainPageState) {
-            return AlertsView(
-              alerts: state.alerts,
-            );
+            return const AlertsView();
           } else if (state is AlertPageState) {
             return AlertView(
               alert: state.alert,

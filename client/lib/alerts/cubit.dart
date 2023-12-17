@@ -5,11 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AlertsState {}
 
-class AlertsMainPageState extends AlertsState {
-  AlertsMainPageState({required this.alerts});
-
-  final List<Alert> alerts;
-}
+class AlertsMainPageState extends AlertsState {}
 
 class AlertPageState extends AlertsState {
   AlertPageState({
@@ -29,25 +25,21 @@ class ErrorState extends AlertsState {
 class AlertsPageCubit extends Cubit<AlertsState> {
   AlertsPageCubit({
     required this.alertService,
-  }) : super(LoadingOrSendingDataState()) {
-    loadAlerts();
-  }
+  }) : super(AlertsMainPageState());
 
   AlertService alertService;
-  late List<Alert> alerts;
 
-  Future<void> loadAlerts() async {
-    emit(LoadingOrSendingDataState());
+  Future<List<Alert>> getAlerts(int pageNumber, int pageCount) async {
+    final response = await alertService.getAlerts(
+      pageNumber: pageNumber,
+      pageCount: pageCount,
+    );
 
-    final response = await alertService.getAlerts();
     if (response.error != ErrorType.none) {
-      emit(ErrorState(
-          message: "Nie udało się pobrać alertów. Spróbuj ponownie później."));
-      return;
+      return [];
     }
 
-    alerts = response.data;
-    emit(AlertsMainPageState(alerts: response.data));
+    return response.data;
   }
 
   Future<void> saveAlert(Alert alert) async {
@@ -59,7 +51,7 @@ class AlertsPageCubit extends Cubit<AlertsState> {
       await _updateAlert(alert);
     }
 
-    emit(AlertsMainPageState(alerts: alerts));
+    emit(AlertsMainPageState());
   }
 
   Future<void> _createAlert(Alert alert) async {
@@ -69,8 +61,6 @@ class AlertsPageCubit extends Cubit<AlertsState> {
           message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
       return;
     }
-
-    alerts.add(alert);
   }
 
   Future<void> _updateAlert(Alert alert) async {
@@ -81,12 +71,10 @@ class AlertsPageCubit extends Cubit<AlertsState> {
               "Nie udało się zaktualizować alertu. Spróbuj ponownie później."));
       return;
     }
-
-    alerts[alerts.indexWhere((element) => element.id == alert.id)] = alert;
   }
 
   Future<void> goToAlertsMainPage() async {
-    emit(AlertsMainPageState(alerts: alerts));
+    emit(AlertsMainPageState());
   }
 
   Future<void> goToAlertPage(Alert? alert) async {

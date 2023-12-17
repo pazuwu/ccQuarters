@@ -8,12 +8,16 @@ part of 'get_alerts_response.dart';
 
 GetAlertsResponse _$GetAlertsResponseFromJson(Map<String, dynamic> json) =>
     GetAlertsResponse(
-      alerts: (json['alerts'] as List<dynamic>)
+      data: (json['data'] as List<dynamic>)
           .map((e) => Alert.fromJson(e as Map<String, dynamic>))
           .toList(),
+      pageNumber: json['pageNumber'] as int,
+      pageSize: json['pageSize'] as int,
     );
 
 Map<String, dynamic> _$GetAlertsResponseToJson(GetAlertsResponse instance) =>
     <String, dynamic>{
-      'alerts': instance.alerts,
+      'data': instance.data,
+      'pageNumber': instance.pageNumber,
+      'pageSize': instance.pageSize,
     };
