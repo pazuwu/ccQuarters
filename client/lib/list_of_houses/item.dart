@@ -1,5 +1,6 @@
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
+import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/model/house_details.dart';
@@ -9,6 +10,7 @@ import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
 
 class HouseListTile extends StatefulWidget {
@@ -21,6 +23,8 @@ class HouseListTile extends StatefulWidget {
 }
 
 class _HouseListTileState extends State<HouseListTile> {
+  final NumberFormat _formatter = NumberFormat("#,##0", "pl-PL");
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -28,7 +32,7 @@ class _HouseListTileState extends State<HouseListTile> {
       elevation: elevation,
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(formBorderRadius),
       ),
       child: Column(
         children: [
@@ -76,8 +80,8 @@ class _HouseListTileState extends State<HouseListTile> {
       child: ImageWidget(
         imageUrl: widget.house.photo.url,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(borderRadius),
-          topRight: Radius.circular(borderRadius),
+          topLeft: Radius.circular(formBorderRadius),
+          topRight: Radius.circular(formBorderRadius),
         ),
       ),
     );
@@ -87,14 +91,38 @@ class _HouseListTileState extends State<HouseListTile> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                _getIconForHouseType(widget.house.details),
+                color: Colors.white.withOpacity(0.8),
+                shadows: const [Shadow(color: Colors.black54, blurRadius: 64)],
+              ),
+            )),
         Expanded(child: Container()),
-        AlwaysVisibleTextLabel(
-          text: _getCityAndDistrict(widget.house.location),
-          fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
-          fontWeight: FontWeight.w400,
+        AlwaysVisibleLabel(
           background: Colors.black.withOpacity(0.5),
-          alignment: Alignment.centerLeft,
-          paddingSize: 8.0,
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 1,
+              ),
+              Icon(
+                Icons.location_pin,
+                color: Colors.white.withOpacity(0.75),
+                size: 12,
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              Text(
+                _getCityAndDistrict(widget.house.location),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -105,7 +133,7 @@ class _HouseListTileState extends State<HouseListTile> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "${widget.house.details.price.toStringAsFixed(0)} zł",
+          "${_formatter.format(widget.house.details.price)} zł",
           textScaler: const TextScaler.linear(1.4),
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
@@ -128,12 +156,12 @@ class _HouseListTileState extends State<HouseListTile> {
           dotLastColor: Colors.redAccent),
       circleSize: 0,
       isLiked: widget.house.isLiked,
-      size: 40,
+      size: 32,
       likeBuilder: (bool isLiked) {
         return Icon(
           Icons.favorite,
           color: isLiked ? Colors.red : Colors.grey,
-          size: 40,
+          size: 32,
         );
       },
       onTap: (isLiked) async {
@@ -162,6 +190,17 @@ class _HouseListTileState extends State<HouseListTile> {
       result += ", ${formatRoomCount(widget.house.details.roomCount!)}";
     }
     return result;
+  }
+
+  _getIconForHouseType(HouseDetails details) {
+    switch (details.buildingType) {
+      case BuildingType.apartment:
+        return Icons.apartment;
+      case BuildingType.house:
+        return Icons.home;
+      case BuildingType.room:
+        return Icons.bed;
+    }
   }
 }
 
