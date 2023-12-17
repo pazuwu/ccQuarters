@@ -39,7 +39,14 @@ class ProfileInfo extends StatelessWidget {
                     imageUrl: user.photoUrl!,
                     shape: BoxShape.circle,
                   )
-                : const Icon(Icons.person),
+                : Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.red),
+                    child: Image.asset(
+                      "assets/graphics/avatar.png",
+                    ),
+                  ),
           ),
         );
       },
