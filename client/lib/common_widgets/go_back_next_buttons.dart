@@ -9,7 +9,7 @@ class GoBackNextButtons extends StatelessWidget {
   });
 
   final Function()? goBackOnPressed;
-  final Function() nextOnPressed;
+  final Function()? nextOnPressed;
   final bool isLastPage;
 
   @override
@@ -26,14 +26,15 @@ class GoBackNextButtons extends StatelessWidget {
               child: const Text("Wróć"),
             ),
           ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 20.0),
-          child: ElevatedButton(
-            key: const Key('next'),
-            onPressed: nextOnPressed,
-            child:  Text(isLastPage ? "Wyślij" :"Dalej"),
+        if (nextOnPressed != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 20.0),
+            child: ElevatedButton(
+              key: const Key('next'),
+              onPressed: nextOnPressed,
+              child: Text(isLastPage ? "Wyślij" : "Dalej"),
+            ),
           ),
-        ),
       ],
     );
   }

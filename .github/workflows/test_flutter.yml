@@ -1,0 +1,36 @@
+name: Test Flutter App
+
+on:
+  workflow_call:
+    inputs:
+      path_to_project:
+        default: client/
+        type: string
+
+jobs:
+  test_application:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.path_to_project }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Create env file
+        uses: ./.github/actions/create_env_file
+        with:
+          target_dir: ${{ inputs.path_to_project }}env/
+      - name: Flutter setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          cache: true
+      - name: Flutter get dependencies
+        run: flutter pub get
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed lib/
+      - name:  Analyze project
+        run: flutter analyze
+      - name: Run tests
+        run: flutter test

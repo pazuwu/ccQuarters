@@ -64,6 +64,12 @@ dependencies:
   bloc_test: ^9.1.5
   test: ^1.24.9
   http_mock_adapter: ^0.6.1
+  showcaseview: ^2.0.3
+  shared_preferences: ^2.2.2
+  dio_cache_interceptor: ^3.5.0
+  easy_stepper: ^0.8.3
+  connectivity_plus: ^5.0.2
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

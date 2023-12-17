@@ -5,8 +5,10 @@ namespace VirtualTourAPI.Service
     public interface IVTService
     {
         Task<TourDTO?> GetTour(string tourId);
-        Task<string?> CreateTour();
+        Task<TourInfoDTO[]> GetAllUserTourInfos(string userId);
+        Task<string?> CreateTour(TourDTO tourInfo);
         Task DeleteTour(string tourId);
+        Task<bool> HasUserPermissionToModifyTour(string tourId, string userId);
 
         Task<AreaDTO?> GetArea(string tourId, string areaId);
         Task<string?> CreateArea(string tourId, AreaDTO area);

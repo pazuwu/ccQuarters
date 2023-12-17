@@ -1,4 +1,8 @@
-﻿#nullable disable
+﻿#if TEST
+
+#else
+
+#nullable disable
 
 using FluentAssertions;
 using VirtualTourAPI.Model;
@@ -13,7 +17,13 @@ namespace VirtualTourAPI.IntegrationTests
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
-            _tourId = await _service.CreateTour();
+            var tour = new TourDTO()
+            {
+                Name = "Name",
+                OwnerId = "UserId"
+            };
+
+            _tourId = await _service.CreateTour(tour);
             _tourId.Should().NotBeNull();
         }
 
@@ -104,3 +114,5 @@ namespace VirtualTourAPI.IntegrationTests
         }
     }
 }
+
+#endif

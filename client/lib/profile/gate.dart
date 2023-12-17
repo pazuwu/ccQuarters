@@ -1,3 +1,4 @@
+import 'package:ccquarters/common_widgets/error_message.dart';
 import 'package:ccquarters/alerts/gate.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
@@ -36,8 +37,12 @@ class ProfileGate extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is ErrorState) {
-                  return Center(
-                    child: Text(state.message),
+                  return ErrorMessage(
+                    state.message,
+                    tip: state.tip,
+                  );
+                } else if (state is AlertsState) {
+                  return const AlertsGate(
                   );
                 } else if (state is AlertsState) {
                   return const AlertsGate(

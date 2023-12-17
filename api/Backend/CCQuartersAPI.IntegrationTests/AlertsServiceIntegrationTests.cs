@@ -1,4 +1,4 @@
-using CCQuartersAPI.CommonClasses;
+﻿using CCQuartersAPI.CommonClasses;
 using CCQuartersAPI.IntegrationTests.Mocks;
 using CCQuartersAPI.Services;
 using CloudStorageLibrary;
@@ -39,20 +39,22 @@ namespace CCQuartersAPI.IntegrationTests
 
                 Assert.IsNotNull(getAlert);
                 Assert.AreEqual(id, getAlert.Id);
+                Assert.AreEqual(createAlert.MinPrice, getAlert.MinPrice);
                 Assert.AreEqual(createAlert.MaxPrice, getAlert.MaxPrice);
+                Assert.AreEqual(createAlert.MinPricePerM2, getAlert.MinPricePerM2);
                 Assert.AreEqual(createAlert.MaxPricePerM2, getAlert.MaxPricePerM2);
                 Assert.IsTrue(Math.Abs(createAlert.MinArea!.Value - getAlert.MinArea!.Value) < eps);
+                Assert.IsTrue(Math.Abs(createAlert.MaxArea!.Value - getAlert.MaxArea!.Value) < eps);
                 Assert.AreEqual(createAlert.MinRoomCount, getAlert.MinRoomCount);
                 Assert.AreEqual(createAlert.MaxRoomCount, getAlert.MaxRoomCount);
-                Assert.AreEqual(createAlert.Floor, getAlert.Floor);
+                Assert.AreEqual(createAlert.MinFloor, getAlert.MinFloor);
+                Assert.AreEqual(createAlert.MaxFloor, getAlert.MaxFloor);
+                AssertExtensions.AreEqual(createAlert.Floors, getAlert.Floors);
                 Assert.AreEqual(createAlert.OfferType, getAlert.OfferType);
                 Assert.AreEqual(createAlert.BuildingType, getAlert.BuildingType);
-                Assert.AreEqual(createAlert.City, getAlert.City);
-                Assert.AreEqual(createAlert.ZipCode, getAlert.ZipCode);
-                Assert.AreEqual(createAlert.District, getAlert.District);
-                Assert.AreEqual(createAlert.StreetName, getAlert.StreetName);
-                Assert.AreEqual(createAlert.StreetNumber, getAlert.StreetNumber);
-                Assert.AreEqual(createAlert.FlatNumber, getAlert.FlatNumber);
+                Assert.AreEqual(createAlert.Voivodeship, getAlert.Voivodeship);
+                AssertExtensions.AreEqual(createAlert.Cities, getAlert.Cities);
+                AssertExtensions.AreEqual(createAlert.Districts, getAlert.Districts);
             }
             finally
             {
@@ -72,11 +74,10 @@ namespace CCQuartersAPI.IntegrationTests
 
                 Assert.IsNotNull(id);
 
-                var modifyRequest = new Responses.AlertDTO()
-                {
-                    StreetName = "Zmodyfikowana",
-                    MaxPrice = 15000000
-                };
+                var modifyRequest = AlertsServiceTestCases.ExampleAlert;
+                modifyRequest.MaxPrice = 1500000;
+                modifyRequest.Cities = new[] { "Gostynin", "Białystok" };
+                modifyRequest.Districts = new[] { "Centrum" };
 
                 await _alertsService.UpdateAlert(modifyRequest, id.Value, trans);
 
@@ -84,20 +85,22 @@ namespace CCQuartersAPI.IntegrationTests
 
                 Assert.IsNotNull(getAlert);
                 Assert.AreEqual(id, getAlert.Id);
-                Assert.AreEqual(modifyRequest.MaxPrice, getAlert.MaxPrice);
+                Assert.AreEqual(createAlert.MinPrice, getAlert.MinPrice);
+                Assert.AreEqual(createAlert.MaxPrice, modifyRequest.MaxPrice);
+                Assert.AreEqual(createAlert.MinPricePerM2, getAlert.MinPricePerM2);
                 Assert.AreEqual(createAlert.MaxPricePerM2, getAlert.MaxPricePerM2);
                 Assert.IsTrue(Math.Abs(createAlert.MinArea!.Value - getAlert.MinArea!.Value) < eps);
+                Assert.IsTrue(Math.Abs(createAlert.MaxArea!.Value - getAlert.MaxArea!.Value) < eps);
                 Assert.AreEqual(createAlert.MinRoomCount, getAlert.MinRoomCount);
                 Assert.AreEqual(createAlert.MaxRoomCount, getAlert.MaxRoomCount);
-                Assert.AreEqual(createAlert.Floor, getAlert.Floor);
+                Assert.AreEqual(createAlert.MinFloor, getAlert.MinFloor);
+                Assert.AreEqual(createAlert.MaxFloor, getAlert.MaxFloor);
+                AssertExtensions.AreEqual(createAlert.Floors, getAlert.Floors);
                 Assert.AreEqual(createAlert.OfferType, getAlert.OfferType);
                 Assert.AreEqual(createAlert.BuildingType, getAlert.BuildingType);
-                Assert.AreEqual(createAlert.City, getAlert.City);
-                Assert.AreEqual(createAlert.ZipCode, getAlert.ZipCode);
-                Assert.AreEqual(createAlert.District, getAlert.District);
-                Assert.AreEqual(modifyRequest.StreetName, getAlert.StreetName);
-                Assert.AreEqual(createAlert.StreetNumber, getAlert.StreetNumber);
-                Assert.AreEqual(createAlert.FlatNumber, getAlert.FlatNumber);
+                Assert.AreEqual(createAlert.Voivodeship, getAlert.Voivodeship);
+                AssertExtensions.AreEqual(createAlert.Cities, modifyRequest.Cities);
+                AssertExtensions.AreEqual(createAlert.Districts, modifyRequest.Districts);
             }
             finally
             {

@@ -1,11 +1,13 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePageState {}
 
@@ -22,8 +24,12 @@ class EditProfileState extends ProfilePageState {
 class LoadingOrSendingDataState extends ProfilePageState {}
 
 class ErrorState extends ProfilePageState {
-  ErrorState({required this.message});
+  ErrorState({
+    required this.message,
+    this.tip,
+  });
   final String message;
+  final String? tip;
 }
 
 class AlertsState extends ProfilePageState {}
@@ -45,7 +51,9 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
     final response = await getUser(userId);
     if (response == null) {
       emit(ErrorState(
-          message: "Nie udało się pobrać danych. Spróbuj ponownie później."));
+          message: "Nie udało się pobrać danych \nTwojego profilu.",
+          tip:
+              "Sprawdź swoje połączenie z internetem lub \nspróbuj ponownie później."));
       return;
     }
 

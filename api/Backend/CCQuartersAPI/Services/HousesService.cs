@@ -3,8 +3,6 @@ using CCQuartersAPI.Mappers;
 using CCQuartersAPI.Requests;
 using CCQuartersAPI.Responses;
 using CloudStorageLibrary;
-using Firebase.Auth;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using RepositoryLibrary;
 using System.Data;
 using System.Text;
@@ -57,9 +55,9 @@ namespace CCQuartersAPI.Services
                     geoY = houseRequest.GeoY,
                 });
 
-                var detailsQuery = @$"INSERT INTO Details (Id, DescriptionId, Price, RoomCount, Area, Floor, BuildingType, AdditionalInfoId, NerfId, Title)
+                var detailsQuery = @$"INSERT INTO Details (Id, DescriptionId, Price, RoomCount, Area, Floor, BuildingType, AdditionalInfoId, VirtualTourId, Title)
                                     OUTPUT INSERTED.Id
-                                    VALUES (NEWID(), @descriptionId, @price, @roomCount, @area, @floor, @buildingType, @additionalInfoId, NULL, @title)";
+                                    VALUES (NEWID(), @descriptionId, @price, @roomCount, @area, @floor, @buildingType, @additionalInfoId, @virtualTourId, @title)";
 
                 var detailsId = await _rdbRepository.QueryFirstAsync<Guid>(detailsQuery, transaction: trans, param: new
                 {
@@ -70,6 +68,7 @@ namespace CCQuartersAPI.Services
                     floor = houseRequest.Floor,
                     buildingType = (int?)houseRequest.BuildingType,
                     additionalInfoId,
+                    virtualTourId = houseRequest.VirtualTourId,
                     title = houseRequest.Title,
                 });
 
@@ -129,7 +128,7 @@ namespace CCQuartersAPI.Services
                 });
 
                 var detailsQuery = @$"UPDATE Details
-                                    SET Price = @price, RoomCount = @roomCount, Area = @area, Floor = @floor, BuildingType = @buildingType, Title = @title
+                                    SET Price = @price, RoomCount = @roomCount, Area = @area, Floor = @floor, BuildingType = @buildingType, Title = @title, VirtualTourId = @virtualTourId
                                     WHERE Id IN (SELECT DetailsId FROM Houses WHERE Id = @houseId)";
 
                 await _rdbRepository.ExecuteAsync(detailsQuery, transaction: trans, param: new
@@ -140,6 +139,7 @@ namespace CCQuartersAPI.Services
                     floor = houseRequest.Floor ?? houseQueried.Floor,
                     buildingType = (int?)houseRequest.BuildingType ?? (int?)houseQueried.BuildingType,
                     title = houseRequest.Title ?? houseQueried.Title,
+                    virtualTourId = houseRequest.VirtualTourId,
                     houseId
                 });
 
@@ -231,8 +231,8 @@ namespace CCQuartersAPI.Services
                 floors = housesQuery.Floors,
                 minFloor = housesQuery.MinFloor,
                 maxFloor = housesQuery.MaxFloor,
-                offerTypes = housesQuery.OfferTypes?.Select(ot => (int?)ot),
-                buildingTypes = housesQuery.BuildingTypes?.Select(bt => (int?)bt),
+                offerType = (int?)housesQuery.OfferType,
+                buildingType = (int?)housesQuery.BuildingType,
                 voivodeship = housesQuery.Voivodeship,
                 cities = housesQuery.Cities,
                 districts = housesQuery.Districts,
@@ -267,10 +267,10 @@ namespace CCQuartersAPI.Services
                 sb.Append($@" AND Floor >= @minFloor");
             if (query.MaxFloor is not null)
                 sb.Append($@" AND Floor <= @maxFloor");
-            if (query.OfferTypes is not null && query.OfferTypes.Any())
-                sb.Append($@" AND OfferType IN @offerTypes");
-            if (query.BuildingTypes is not null && query.BuildingTypes.Any())
-                sb.Append($@" AND BuildingType IN @buildingTypes");
+            if (query.OfferType is not null)
+                sb.Append($@" AND OfferType = @offerType");
+            if (query.BuildingType is not null)
+                sb.Append($@" AND BuildingType = @buildingType");
             if (query.Voivodeship is not null)
                 sb.Append($@" AND Voivodeship = @voivodeship");
             if (query.Cities is not null && query.Cities.Any())
@@ -356,7 +356,7 @@ namespace CCQuartersAPI.Services
 
         public async Task<DetailedHouseDTO?> GetDetailedHouseInfo(Guid houseId, string userId, IDbTransaction? trans = null)
         {
-            var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId)>0, 1, 0) AS IsLiked, DescriptionId, AdditionalInfoId, NerfId, UserId, GeoX, GeoY
+            var houseQuery = @$"SELECT Title, Price, RoomCount, Area, [Floor], City, Voivodeship, ZipCode, District, StreetName, StreetNumber, FlatNumber, OfferType, BuildingType, IIF((SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId)>0, 1, 0) AS IsLiked, DescriptionId, AdditionalInfoId, VirtualTourId, UserId, GeoX, GeoY
                                 FROM Houses h
                                 JOIN Details d ON h.DetailsId = d.Id
                                 JOIN Locations l ON h.LocationId = l.Id

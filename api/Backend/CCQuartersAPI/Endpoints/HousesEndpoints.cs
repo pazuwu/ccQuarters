@@ -100,7 +100,7 @@ namespace CCQuartersAPI.Endpoints
 
             var user = await usersService.GetUser(house.UserId);
 
-            if(user is not null) 
+            if (user is not null)
             {
                 house.UserName = user.Name;
                 house.UserSurname = user.Surname;
@@ -108,6 +108,8 @@ namespace CCQuartersAPI.Endpoints
                 house.UserEmail = user.Email;
                 house.UserPhoneNumber = user.PhoneNumber;
             }
+            else
+                return Results.NotFound("House author not found");
 
             return Results.Ok(new GetHouseResponse()
             {
@@ -204,7 +206,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var photosInfo = await housePhotosService.GetPhotosInfoByNames(request.Filenames);
+            var photosInfo = (await housePhotosService.GetPhotosInfoByNames(request.Filenames))?.ToList();
 
             if (photosInfo is null || !photosInfo.Any())
                 return Results.NotFound("Photos not found");

@@ -1,8 +1,8 @@
 class VTServiceResponse<T> {
   final T? data;
-  final ErrorType? error;
+  final ErrorType error;
 
-  VTServiceResponse({this.data, this.error});
+  VTServiceResponse({this.data, this.error = ErrorType.none});
 }
 
 enum ErrorType {
@@ -11,4 +11,6 @@ enum ErrorType {
   badRequest,
   alreadyExists,
   unknown,
+  noInternet,
+  none
 }

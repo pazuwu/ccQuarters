@@ -1,6 +1,7 @@
 import 'package:ccquarters/environment.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/services/alerts/service.dart';
+import 'package:ccquarters/services/auth/authorized_dio.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/users/service.dart';
@@ -18,26 +19,31 @@ class AppMainGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(
-          create: (context) =>
-              UserService(Dio(), "${Environment.apiUrl}/users"),
-        ),
-        Provider(
-          create: (context) =>
-              HouseService(Dio(), "${Environment.apiUrl}/houses"),
-        ),
-        Provider(
-          create: (context) =>
-              AlertService(Dio(), "${Environment.apiUrl}/alerts"),
-        ),
-        Provider(
-          create: (context) => VTService(Dio(), Environment.vtApiUrl),
-        ),
         Provider<BaseAuthService>(
-          create: (context) {
-            return AuthService(firebaseAuth: FirebaseAuth.instance);
-          },
-        )
+          create: (context) => AuthService(firebaseAuth: FirebaseAuth.instance),
+        ),
+        Provider<Dio>(
+          create: (context) => AuthorizedDio(context.read()),
+        ),
+        Provider<UserService>(
+          create: (context) =>
+              UserService(context.read(), "${Environment.apiUrl}/users"),
+        ),
+        Provider(
+          create: (context) =>
+              UserService(context.read(), "${Environment.apiUrl}/users"),
+        ),
+        Provider(
+          create: (context) =>
+              HouseService(context.read(), "${Environment.apiUrl}/houses"),
+        ),
+        Provider(
+          create: (context) =>
+              AlertService(context.read(), "${Environment.apiUrl}/alerts"),
+        ),
+        Provider(
+          create: (context) => VTService(context.read(), Environment.vtApiUrl),
+        ),
       ],
       child: MaterialApp(
         themeMode: ThemeMode.light,

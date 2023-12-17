@@ -2,9 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
+import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_area_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_scene_request.dart';
+import 'package:ccquarters/virtual_tour/service/requests/post_tour_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/put_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:dio/dio.dart';
@@ -21,28 +23,44 @@ class VTService {
 
   final Dio _dio;
   final String _url;
-  String _token = "";
 
   VTService(Dio dio, String url)
       : _url = url,
         _dio = dio;
-
-  void setToken(String token) {
-    _token = token;
-  }
 
   Future<VTServiceResponse<Tour>> getTour(String tourId) async {
     try {
       var response = await _dio.get(
         "$_url/$_tours/$tourId",
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
 
       if (response.statusCode == StatusCode.OK) {
         return VTServiceResponse(data: Tour.fromMap(response.data));
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future<VTServiceResponse<List<TourInfo>>> getMyTours() async {
+    try {
+      var response = await _dio.get(
+        "$_url/$_tours/my",
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return VTServiceResponse(
+            data: (response.data as List)
+                .map<TourInfo>((e) => TourInfo.fromMap(e))
+                .toList());
       } else {
         return VTServiceResponse(error: ErrorType.unknown);
       }
@@ -60,9 +78,9 @@ class VTService {
         "$_url/$_tours/$tourId/$_scenes",
         data: PostSceneRequest(
           parentId: parentId,
+          name: name,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -100,7 +118,6 @@ class VTService {
           text: link.text,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -134,7 +151,6 @@ class VTService {
           text: text,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -150,9 +166,7 @@ class VTService {
     try {
       var response = await _dio.delete(
         "$_url/$_tours/$tourId/$_links/$linkId",
-        options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
-        }),
+        options: Options(headers: {}),
       );
 
       return VTServiceResponse(data: response.statusCode == StatusCode.OK);
@@ -170,7 +184,6 @@ class VTService {
           name: name,
         ).toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -208,9 +221,6 @@ class VTService {
       var response = await _dio.post(
         url,
         data: formData,
-        options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
-        }),
         onSendProgress: (int sent, int total) {
           progressCallback?.call(sent, total);
         },
@@ -256,12 +266,14 @@ class VTService {
     }
   }
 
-  Future<VTServiceResponse<String>> postTour() async {
+  Future<VTServiceResponse<String>> postTour({required String name}) async {
     try {
+      var request = PostTourRequest(name: name);
+
       var response = await _dio.post(
         "$_url/$_tours",
+        data: request.toJson(),
         options: Options(headers: {
-          HttpHeaders.authorizationHeader: _token,
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
       );
@@ -280,6 +292,28 @@ class VTService {
     }
   }
 
+  Future<VTServiceResponse<bool>> deleteTours(
+      {required List<String> ids}) async {
+    try {
+      var response = await _dio.delete(
+        "$_url/$_tours",
+        data: ids,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if ((response.statusCode == StatusCode.OK ||
+          response.statusCode == StatusCode.CREATED)) {
+        return VTServiceResponse(data: true);
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
   VTServiceResponse<T> _catchCommonErrors<T>(DioException e) {
     if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
       return VTServiceResponse(error: ErrorType.unauthorized);
@@ -287,6 +321,8 @@ class VTService {
       return VTServiceResponse(error: ErrorType.badRequest);
     } else if (e.response?.statusCode == StatusCode.NOT_FOUND) {
       return VTServiceResponse(error: ErrorType.notFound);
+    } else if (e.response?.statusCode == StatusCode.GATEWAY_TIMEOUT) {
+      return VTServiceResponse(error: ErrorType.noInternet);
     }
 
     return VTServiceResponse(error: ErrorType.unknown);

@@ -1,5 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:ccquarters/house_details/cubit.dart';
+import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:test/test.dart';
 
