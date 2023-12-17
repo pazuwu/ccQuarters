@@ -1,5 +1,7 @@
+import 'package:ccquarters/common_widgets/error_message.dart';
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/message.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +50,20 @@ class _PhotosGridState extends State<PhotosGrid> {
     return PagedGridView<int, House>(
       pagingController: widget.pagingController,
       builderDelegate: PagedChildBuilderDelegate<House>(
+        noItemsFoundIndicatorBuilder: (context) => const Message(
+          title: "W tej zakładce nie masz\n jeszcze żadnych ogłoszeń",
+          icon: Icons.home,
+          adjustToLandscape: true,
+          padding: EdgeInsets.all(8.0),
+        ),
+        firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+          "Nie udało się pobrać ogłoszeń",
+          tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+        ),
+        newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+          "Nie udało się pobrać ogłoszeń",
+          tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+        ),
         itemBuilder: (context, house, index) => Padding(
           padding: const EdgeInsets.all(1.5),
           child: InkWellWithPhoto(

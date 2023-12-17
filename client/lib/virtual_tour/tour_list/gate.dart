@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ccquarters/common_widgets/error_message.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
 import 'package:ccquarters/virtual_tour/tour_list/tour_list.dart';
@@ -51,8 +52,10 @@ class VTListGate extends StatelessWidget {
               } else if (state is VTListLoadedState) {
                 return TourList(tours: state.tours);
               } else if (state is VTListErrorState) {
-                return Center(
-                  child: Text(state.message),
+                return ErrorMessage(
+                  state.message,
+                  tip: state.tip,
+                  closeButton: true,
                 );
               }
 
