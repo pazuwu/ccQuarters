@@ -16,9 +16,8 @@ class User {
   User(this.id, this.name, this.surname, this.company, this.email,
       this.phoneNumber, this.photoUrl, this.registerTime);
 
-  User.fromGetHouses(this.name, this.surname, this.company, this.email,
-      this.phoneNumber, this.photoUrl)
-      : id = "";
+  User.fromGetHouse(this.id, this.name, this.surname, this.company, this.email,
+      this.phoneNumber, this.photoUrl);
 
   User.empty() : this("", "", "", "", "", "", "", DateTime.now());
 

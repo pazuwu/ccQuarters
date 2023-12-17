@@ -206,7 +206,7 @@ namespace CCQuartersAPI.Endpoints
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var photosInfo = await housePhotosService.GetPhotosInfoByNames(request.Filenames);
+            var photosInfo = (await housePhotosService.GetPhotosInfoByNames(request.Filenames))?.ToList();
 
             if (photosInfo is null || !photosInfo.Any())
                 return Results.NotFound("Photos not found");

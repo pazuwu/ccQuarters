@@ -1,18 +1,7 @@
+import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-class HouseDetailsState {}
-
-class LoadingState extends HouseDetailsState {}
-
-class ErrorState extends HouseDetailsState {}
-
-class DetailsState extends HouseDetailsState {
-  DetailsState(this.house);
-
-  final DetailedHouse house;
-}
 
 class HouseDetailsCubit extends Cubit<HouseDetailsState> {
   HouseDetailsCubit(
@@ -33,10 +22,25 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
     emit(LoadingState());
     var response = await houseService.getHouse(houseId);
     if (response.data == null) {
-      emit(ErrorState());
+      emit(ErrorState(
+          message:
+              "Nie udało się pobrać ogłoszenia. Spróbuj ponownie później!"));
     } else {
       house = response.data!;
       emit(DetailsState(house));
     }
+  }
+
+  Future<bool> deleteHouse() async {
+    var response = await houseService.deleteHouse(houseId);
+    return response.data;
+  }
+
+  Future<void> goBackToHouseDetails() async {
+    emit(DetailsState(house));
+  }
+
+  Future<void> goToEditHouse() async {
+    emit(EditHouseState(house));
   }
 }

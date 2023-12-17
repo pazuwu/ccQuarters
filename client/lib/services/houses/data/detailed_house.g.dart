@@ -27,10 +27,11 @@ HouseWithDetails _$HouseWithDetailsFromJson(Map<String, dynamic> json) =>
       const OfferTypeConverter().fromJson(json['offerType'] as int),
       const BuildingTypeConverter().fromJson(json['buildingType'] as int),
       json['isLiked'] as bool,
+      json['userId'] as String,
       json['userName'] as String?,
       json['userSurname'] as String?,
       json['userCompany'] as String?,
-      json['userEmail'] as String?,
+      json['userEmail'] as String,
       json['userPhoneNumber'] as String?,
       json['userPhotoUrl'] as String?,
     );
@@ -57,6 +58,7 @@ Map<String, dynamic> _$HouseWithDetailsToJson(HouseWithDetails instance) =>
       'buildingType':
           const BuildingTypeConverter().toJson(instance.buildingType),
       'isLiked': instance.isLiked,
+      'userId': instance.userId,
       'userName': instance.userName,
       'userSurname': instance.userSurname,
       'userCompany': instance.userCompany,

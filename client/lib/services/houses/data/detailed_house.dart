@@ -32,10 +32,11 @@ class HouseWithDetails {
   @BuildingTypeConverter()
   BuildingType buildingType;
   bool isLiked;
+  String userId;
   String? userName;
   String? userSurname;
   String? userCompany;
-  String? userEmail;
+  String userEmail;
   String? userPhoneNumber;
   String? userPhotoUrl;
 
@@ -59,6 +60,7 @@ class HouseWithDetails {
     this.offerType,
     this.buildingType,
     this.isLiked,
+    this.userId,
     this.userName,
     this.userSurname,
     this.userCompany,
@@ -92,11 +94,12 @@ class HouseWithDetails {
         floor: floor,
         buildingType: buildingType,
       ),
-      User.fromGetHouses(
-        userName ?? "",
-        userSurname ?? "",
+      User.fromGetHouse(
+        userId,
+        userName,
+        userSurname,
         userCompany,
-        userEmail ?? "",
+        userEmail,
         userPhoneNumber,
         userPhotoUrl,
       ),

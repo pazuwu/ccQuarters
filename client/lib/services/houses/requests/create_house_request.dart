@@ -1,5 +1,5 @@
 import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -70,7 +70,7 @@ class CreateHouseRequest {
         geoX = newHouse.location.geoX ?? 0,
         geoY = newHouse.location.geoY ?? 0;
 
-  CreateHouseRequest.fromHouse(House house)
+  CreateHouseRequest.fromDetailedHouse(DetailedHouse house)
       : buildingType = house.details.buildingType,
         offerType = house.offerType,
         title = house.details.title,
