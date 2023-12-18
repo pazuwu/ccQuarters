@@ -1,6 +1,5 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/tour_list/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,11 +32,8 @@ class ProfileDrawer extends StatelessWidget {
             leading: const Icon(Icons.directions_walk),
             title: const Text('Moje Wirtualne spacery'),
             onTap: () {
-              var vtService = context.read<VTService>();
-
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => Provider.value(
-                      value: vtService, child: const VTListGate())));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const VTListGate()));
             },
           ),
           ListTile(
