@@ -96,4 +96,11 @@ class VTListCubit extends Cubit<VTListState> {
     await _service.deleteTours(ids: tourIds);
     await loadTours();
   }
+
+  Future updateTour(String tourId, String name) async {
+    emit(VTTourProcessingState(
+        tours: _tours, prcessingText: "Aktualizowanie wirtualnego spaceru"));
+    await _service.updateTour(tourId, name: name);
+    await loadTours();
+  }
 }
