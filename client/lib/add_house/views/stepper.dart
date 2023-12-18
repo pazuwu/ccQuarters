@@ -166,11 +166,11 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
 
     if (index == _getChooseTypeIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
-    } else if (index == _getDetailsIndex()) {
+    } else if (isMobile && index == _getDetailsIndex()) {
       context.read<AddHouseFormCubit>().goToDetailsForm();
     } else if (index == _getLocationIndex(isMobile)) {
       context.read<AddHouseFormCubit>().goToLocationForm();
-    } else if (index == _getMapIndex()) {
+    } else if (isMobile && index == _getMapIndex()) {
       context.read<AddHouseFormCubit>().goToMap();
     } else if (index == _getPhotosIndex(isMobile)) {
       context.read<AddHouseFormCubit>().goToPhotosForm();
@@ -235,8 +235,8 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   int _getLocationIndex(bool isMobile) => isMobile ? 2 : 1;
   int _getMapIndex() => 3;
   int _getPhotosIndex(bool isMobile) => isMobile ? 4 : 2;
-  int _getVirtualTourIndex(bool isMobile) => isMobile ? 5 : 2;
-  int _getSendingIndex(bool isMobile) => isMobile ? 6 : 3;
+  int _getVirtualTourIndex(bool isMobile) => isMobile ? 5 : 3;
+  int _getSendingIndex(bool isMobile) => isMobile ? 6 : 4;
 
   EasyStep _buildStep(String title, int index, bool topTitle) {
     return EasyStep(

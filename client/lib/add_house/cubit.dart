@@ -16,7 +16,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit(
       {required this.houseService, required this.vtService, NewHouse? house})
       : house = house ?? NewHouse("", NewLocation(), NewHouseDetails(), []),
-        super(ChooseTypeFormState(NewHouseDetails()));
+        super(ChooseTypeFormState(house?.houseDetails ?? NewHouseDetails()));
 
   HouseService houseService;
   late NewHouse house;
