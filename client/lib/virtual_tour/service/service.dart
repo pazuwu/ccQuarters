@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http_status_code/http_status_code.dart';
 
 class VTService {
@@ -21,6 +22,7 @@ class VTService {
   static const String _scenes = "scenes";
   static const String _links = "links";
 
+  final ImageCacheManager _cacheManager = DefaultCacheManager();
   final Dio _dio;
   final String _url;
 
@@ -236,17 +238,20 @@ class VTService {
 
   Future<VTServiceResponse<Uint8List>> downloadFile(String url,
       {void Function(int count, int total)? progressCallback}) async {
-    try {
-      final response =
-          await _dio.get(url, onReceiveProgress: (received, total) {
-        progressCallback?.call(received, total);
-      }, options: Options(responseType: ResponseType.bytes));
+    var fileStream = _cacheManager.getImageFile(url, withProgress: true);
+    Uint8List? downloadedFile;
 
-      return VTServiceResponse(
-          data: Uint8List.fromList(response.data as List<int>));
-    } on DioException catch (e) {
-      return _catchCommonErrors(e);
-    }
+    var subscription = fileStream.listen((event) {
+      if (event is DownloadProgress) {
+        progressCallback?.call(event.downloaded, event.totalSize!);
+      } else if (event is FileInfo) {
+        downloadedFile = event.file.readAsBytesSync();
+      }
+    });
+
+    await subscription.asFuture();
+
+    return VTServiceResponse(data: downloadedFile);
   }
 
   Future postOperation(String tourId, String areaId) async {
