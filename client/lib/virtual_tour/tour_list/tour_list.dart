@@ -4,7 +4,7 @@ import 'package:ccquarters/common_widgets/show_form.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
-import 'package:ccquarters/virtual_tour/tour_list/new_tour_form.dart';
+import 'package:ccquarters/virtual_tour/tour_list/tour_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -22,11 +22,23 @@ class _TourListState extends State<TourList> {
   final GlobalKey _addHint = GlobalKey();
 
   final HashSet<String> _chosenTourIds = HashSet();
+  bool _isSelecting = false;
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 68,
       title: const Text("Moje wirtualne spacery"),
+      actions: [
+        if (_isSelecting)
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  _isSelecting = false;
+                  _chosenTourIds.clear();
+                });
+              },
+              icon: const Icon(Icons.close))
+      ],
     );
   }
 
@@ -56,6 +68,26 @@ class _TourListState extends State<TourList> {
                       ),
                     ),
                   ),
+                  if (_chosenTourIds.length == 1)
+                    Expanded(
+                      child: IconButton(
+                        padding: const EdgeInsets.all(0.0),
+                        onPressed: () {
+                          _editTour(
+                              context,
+                              widget._tours.firstWhere((element) =>
+                                  element.id == _chosenTourIds.first));
+                        },
+                        icon: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.edit),
+                            SizedBox(height: 4),
+                            Text("Zmień nazwę"),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -63,7 +95,7 @@ class _TourListState extends State<TourList> {
   }
 
   void _handleTileTap(int index) {
-    if (_chosenTourIds.isNotEmpty) {
+    if (_isSelecting) {
       if (_chosenTourIds.contains(widget._tours[index].id)) {
         setState(() {
           _chosenTourIds.remove(widget._tours[index].id);
@@ -86,6 +118,7 @@ class _TourListState extends State<TourList> {
   void _handleTileLongPress(int index) {
     if (_chosenTourIds.isEmpty) {
       setState(() {
+        _isSelecting = true;
         _chosenTourIds.add(widget._tours[index].id);
       });
     }
@@ -144,10 +177,10 @@ class _TourListState extends State<TourList> {
               leading: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (_chosenTourIds.isEmpty)
-                    _buildTileIndicator(context)
+                  if (_isSelecting)
+                    _buildTileCheckbox(context, index)
                   else
-                    _buildTileCheckbox(context, index),
+                    _buildTileIndicator(context),
                 ],
               ),
               title: Text(widget._tours[index].name),
@@ -202,11 +235,23 @@ class _TourListState extends State<TourList> {
     }
   }
 
+  void _editTour(BuildContext context, TourInfo tourInfo) {
+    showForm<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return TourForm(
+          tourInfo: tourInfo,
+        );
+      },
+    ).then((tourName) =>
+        context.read<VTListCubit>().updateTour(tourInfo.id, tourName!));
+  }
+
   void _createTour(BuildContext context) {
     showForm<String>(
       context: context,
       builder: (BuildContext context) {
-        return const NewTourDialog();
+        return const TourForm();
       },
     ).then(
         (tourName) => context.read<VTListCubit>().createTour(name: tourName!));

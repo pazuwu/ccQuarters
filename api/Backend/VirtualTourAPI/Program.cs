@@ -44,6 +44,7 @@ app.UseAuthorization();
 app.MapGet("/tours/{tourId}", TourEndpoints.Get).WithOpenApi().RequireFBAuthorization();
 app.MapGet("/tours/my", TourEndpoints.GetMy).WithOpenApi().RequireFBAuthorization();
 app.MapPost("tours", TourEndpoints.Post).WithOpenApi().RequireFBAuthorization();
+app.MapPut("tours/{tourId}", TourEndpoints.Put).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("tours", TourEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/areas", AreaEndpoints.Post).WithOpenApi().RequireFBAuthorization();

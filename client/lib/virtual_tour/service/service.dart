@@ -8,6 +8,7 @@ import 'package:ccquarters/virtual_tour/service/requests/post_link_request.dart'
 import 'package:ccquarters/virtual_tour/service/requests/post_scene_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_tour_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/put_link_request.dart';
+import 'package:ccquarters/virtual_tour/service/requests/put_tour_request.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:dio/dio.dart';
 
@@ -303,6 +304,28 @@ class VTService {
       var response = await _dio.delete(
         "$_url/$_tours",
         data: ids,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if ((response.statusCode == StatusCode.OK ||
+          response.statusCode == StatusCode.CREATED)) {
+        return VTServiceResponse(data: true);
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future<VTServiceResponse<bool>> updateTour(String tourId,
+      {required String name}) async {
+    try {
+      var response = await _dio.put(
+        "$_url/$_tours/$tourId",
+        data: PutTourRequest(name: name).toJson(),
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),

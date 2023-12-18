@@ -7,6 +7,7 @@ namespace VirtualTourAPI.Service
         Task<TourDTO?> GetTour(string tourId);
         Task<TourInfoDTO[]> GetAllUserTourInfos(string userId);
         Task<string?> CreateTour(TourDTO tourInfo);
+        Task UpdateTour(string tourId, TourUpdate tourUpdate);
         Task DeleteTour(string tourId);
         Task<bool> HasUserPermissionToModifyTour(string tourId, string userId);
 
