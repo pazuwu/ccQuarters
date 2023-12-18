@@ -8,21 +8,26 @@ part of 'alert.dart';
 
 Alert _$AlertFromJson(Map<String, dynamic> json) => Alert(
       id: json['id'] as String,
-      minPrice: json['minPrice'],
-      maxPrice: json['maxPrice'],
-      maxPricePerM2: json['maxPricePerM2'],
-      minPricePerM2: json['minPricePerM2'],
-      minArea: json['minArea'],
-      maxArea: json['maxArea'],
-      minRoomCount: json['minRoomCount'],
-      maxRoomCount: json['maxRoomCount'],
-      floors: json['floors'],
-      minFloor: json['minFloor'],
-      offerType: json['offerType'],
-      buildingType: json['buildingType'],
+      minPrice: (json['minPrice'] as num?)?.toDouble(),
+      maxPrice: (json['maxPrice'] as num?)?.toDouble(),
+      maxPricePerM2: (json['maxPricePerM2'] as num?)?.toDouble(),
+      minPricePerM2: (json['minPricePerM2'] as num?)?.toDouble(),
+      minArea: (json['minArea'] as num?)?.toDouble(),
+      maxArea: (json['maxArea'] as num?)?.toDouble(),
+      minRoomCount: json['minRoomCount'] as int?,
+      maxRoomCount: json['maxRoomCount'] as int?,
+      floors: (json['floors'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      minFloor: json['minFloor'] as int?,
+      offerType: _$JsonConverterFromJson<int, OfferType>(
+          json['offerType'], const OfferTypeConverter().fromJson),
+      buildingType: _$JsonConverterFromJson<int, BuildingType>(
+          json['buildingType'], const BuildingTypeConverter().fromJson),
       voivodeship: json['voivodeship'] as String?,
-      cities: json['cities'],
-      districts: json['districts'],
+      cities:
+          (json['cities'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      districts: (json['districts'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$AlertToJson(Alert instance) {
@@ -58,6 +63,12 @@ Map<String, dynamic> _$AlertToJson(Alert instance) {
   writeNotNull('voivodeship', instance.voivodeship);
   return val;
 }
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
 
 Json? _$JsonConverterToJson<Json, Value>(
   Value? value,
