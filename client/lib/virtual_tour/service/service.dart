@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:ccquarters/services/file_service/download_progress.dart';
+import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_area_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_scene_request.dart';
@@ -14,7 +17,6 @@ import 'package:dio/dio.dart';
 
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http_status_code/http_status_code.dart';
 
 class VTService {
@@ -23,13 +25,14 @@ class VTService {
   static const String _scenes = "scenes";
   static const String _links = "links";
 
-  final ImageCacheManager _cacheManager = DefaultCacheManager();
+  final FileService _fileService;
   final Dio _dio;
   final String _url;
 
-  VTService(Dio dio, String url)
+  VTService(Dio dio, FileService cacheManager, String url)
       : _url = url,
-        _dio = dio;
+        _dio = dio,
+        _fileService = cacheManager;
 
   Future<VTServiceResponse<Tour>> getTour(String tourId) async {
     try {
@@ -239,7 +242,7 @@ class VTService {
 
   Future<VTServiceResponse<Uint8List>> downloadFile(String url,
       {void Function(int count, int total)? progressCallback}) async {
-    var fileStream = _cacheManager.getImageFile(url, withProgress: true);
+    var fileStream = _fileService.getImageFile(url, withProgress: true);
     Uint8List? downloadedFile;
 
     var subscription = fileStream.listen((event) {
