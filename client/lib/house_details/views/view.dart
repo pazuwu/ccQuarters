@@ -43,7 +43,7 @@ class DetailsView extends StatelessWidget {
 
   _showVirtualTour(BuildContext context) {
     var hasAccessToEdit =
-        context.read<AuthService>().currentUserId == house.user.id;
+        context.read<BaseAuthService>().currentUserId == house.user.id;
 
     Navigator.of(context).push(
       MaterialPageRoute(

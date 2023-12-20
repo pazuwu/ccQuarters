@@ -1,8 +1,10 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/tour/cubit.dart';
+import 'package:flutter_test/flutter_test.dart' as test;
 import 'package:test/test.dart';
 
+import 'mocks/file_service_mock.dart';
 import 'mocks/vt_api_mock.dart';
 
 const url = "http://ccquarters.com";
@@ -10,6 +12,7 @@ const url = "http://ccquarters.com";
 class VTTestingState extends VTState {}
 
 void main() {
+  test.TestWidgetsFlutterBinding.ensureInitialized();
   virtualTourCubit();
 }
 
@@ -22,6 +25,7 @@ void virtualTourCubit() {
         initialState: VTTestingState(),
         service: VTService(
           VTAPIMock.createVTApiMock(url),
+          FileServiceMock(),
           url,
         ),
       ),
@@ -35,6 +39,7 @@ void virtualTourCubit() {
         initialState: VTTestingState(),
         service: VTService(
           VTAPIMock.createVTApiMock(url),
+          FileServiceMock(),
           url,
         ),
       ),

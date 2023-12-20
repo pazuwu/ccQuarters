@@ -201,6 +201,14 @@ namespace VirtualTourAPI.Service
             return addedTourId;
         }
 
+        public async Task UpdateTour(string tourId, TourUpdate tourUpdate)
+        {
+            string path = $"{ToursCollection}/{tourId}";
+            string addedTourId = await _documentRepository.SetAsync(path, tourUpdate);
+
+            _logger.LogInformation("Changed tour: {Id}", addedTourId);
+        }
+
         public async Task DeleteTour(string tourId)
         {
             string path = $"{ToursCollection}/{tourId}";

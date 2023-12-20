@@ -3,6 +3,7 @@ import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/authorized_dio.dart';
 import 'package:ccquarters/services/auth/service.dart';
+import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/users/service.dart';
 import 'package:ccquarters/theme.dart';
@@ -25,6 +26,7 @@ class AppMainGate extends StatelessWidget {
         Provider<Dio>(
           create: (context) => AuthorizedDio(context.read()),
         ),
+        Provider<FileService>(create: (context) => CacheManagerFileService()),
         Provider<UserService>(
           create: (context) =>
               UserService(context.read(), "${Environment.apiUrl}/users"),
@@ -42,15 +44,19 @@ class AppMainGate extends StatelessWidget {
               AlertService(context.read(), "${Environment.apiUrl}/alerts"),
         ),
         Provider(
-          create: (context) => VTService(context.read(), Environment.vtApiUrl),
+          create: (context) =>
+              VTService(context.read(), context.read(), Environment.vtApiUrl),
         ),
       ],
       child: MaterialApp(
         themeMode: ThemeMode.light,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        home: const SafeArea(
-          child: AuthGate(),
+        home: Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: const SafeArea(
+            child: AuthGate(),
+          ),
         ),
       ),
     );

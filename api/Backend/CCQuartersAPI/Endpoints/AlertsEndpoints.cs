@@ -1,8 +1,8 @@
-﻿using CCQuartersAPI.Responses;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using AuthLibrary;
 using Microsoft.AspNetCore.Mvc;
 using CCQuartersAPI.Services;
+using CCQuartersAPI.AlertsDTOs;
 
 namespace CCQuartersAPI.Endpoints
 {
@@ -31,14 +31,14 @@ namespace CCQuartersAPI.Endpoints
             });
         }
 
-        public static async Task<IResult> CreateAlert([FromServices] IAlertsService service, AlertDTO alert, HttpContext context)
+        public static async Task<IResult> CreateAlert([FromServices] IAlertsService service, CreateAlertRequest alertRequest, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
 
-            var alertId = await service.CreateAlert(alert, userId);
+            var alertId = await service.CreateAlert(alertRequest, userId);
 
             if (alertId is null)
                 return Results.StatusCode(500);
@@ -46,7 +46,7 @@ namespace CCQuartersAPI.Endpoints
             return Results.Created(alertId.Value.ToString(), null);
         }
 
-        public static async Task<IResult> UpdateAlert([FromServices] IAlertsService alertsService, Guid alertId, AlertDTO alert, HttpContext context)
+        public static async Task<IResult> UpdateAlert([FromServices] IAlertsService alertsService, Guid alertId, UpdateAlertRequest alertRequest, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -61,7 +61,7 @@ namespace CCQuartersAPI.Endpoints
             if(userId != alertQueried.UserId) 
                 return Results.Unauthorized();
 
-            await alertsService.UpdateAlert(alert, alertId);
+            await alertsService.UpdateAlert(alertRequest, alertId);
 
             return Results.Ok();
         }

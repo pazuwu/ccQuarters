@@ -42,13 +42,17 @@ class PhotosFormState extends StepperPageState {
     this.oldPhotos,
     this.newPhotos,
     this.deletedPhotos,
-    this.createVirtualTour,
   );
 
   List<Photo> oldPhotos;
   List<Uint8List> newPhotos;
   List<Photo> deletedPhotos;
-  bool createVirtualTour;
+}
+
+class VirtualTourFormState extends StepperPageState {
+  VirtualTourFormState(this.usedVirtualTour);
+
+  String? usedVirtualTour;
 }
 
 class SendingFinishedState extends HouseFormState {

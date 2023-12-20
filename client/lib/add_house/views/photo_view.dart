@@ -1,5 +1,4 @@
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/common_widgets/image.dart';
 import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/utils/device_type.dart';
@@ -16,14 +15,12 @@ class PhotoView extends StatefulWidget {
       required this.oldPhotos,
       required this.newPhotos,
       required this.deletedPhotos,
-      required this.editMode,
-      required this.createVirtualTour});
+      required this.editMode});
 
   final List<Photo> oldPhotos;
   final List<Uint8List> newPhotos;
   final List<Photo> deletedPhotos;
   final bool editMode;
-  final bool createVirtualTour;
 
   @override
   State<PhotoView> createState() => _PhotoViewState();
@@ -31,13 +28,6 @@ class PhotoView extends StatefulWidget {
 
 class _PhotoViewState extends State<PhotoView> {
   int? _selectedIndex;
-  bool _virtualTourIsEnabled = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _virtualTourIsEnabled = widget.createVirtualTour;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +49,13 @@ class _PhotoViewState extends State<PhotoView> {
             context.read<AddHouseFormCubit>().goToMap();
           }
         },
-        nextOnPressed: widget.editMode
-            ? null
-            : () {
-                context.read<AddHouseFormCubit>().savePhotos(
-                    widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
-                context.read<AddHouseFormCubit>().sendData();
-              },
+        nextOnPressed: () {
+          context.read<AddHouseFormCubit>().savePhotos(
+              widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
+          context.read<AddHouseFormCubit>().goToVirtualTourForm();
+        },
         hasScrollBody: true,
-        isLastPage: true,
+        isLastPage: false,
       ),
     );
   }
@@ -78,43 +66,8 @@ class _PhotoViewState extends State<PhotoView> {
         children: [
           _buildPhotosGrid(context),
           const SizedBox(height: 16),
-          _buildDivider(context),
-          _buildVirtualTourSwitch(context),
-          _buildDivider(context),
         ],
       ),
-    );
-  }
-
-  Widget _buildVirtualTourSwitch(BuildContext context) {
-    return ListTile(
-      leading: Icon360(
-        color: _virtualTourIsEnabled ? Colors.blueGrey : Colors.grey,
-      ),
-      title: Text(
-        "Wirtualny spacer",
-        style: TextStyle(
-          color: _virtualTourIsEnabled ? Colors.black : Colors.grey,
-        ),
-      ),
-      trailing: Switch(
-        value: _virtualTourIsEnabled,
-        onChanged: (value) {
-          setState(() {
-            context.read<AddHouseFormCubit>().saveCreateVirtualTour(value);
-            _virtualTourIsEnabled = value;
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _buildDivider(BuildContext context) {
-    return const Divider(
-      endIndent: 10,
-      indent: 10,
-      color: Colors.black,
-      thickness: 1,
     );
   }
 

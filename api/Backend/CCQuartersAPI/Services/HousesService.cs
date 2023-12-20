@@ -206,7 +206,7 @@ namespace CCQuartersAPI.Services
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
-                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order] DESC)
                         WHERE h.DeleteDate IS NULL AND ";
 
             queryBuilder.Append(query);
@@ -309,7 +309,7 @@ namespace CCQuartersAPI.Services
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
-                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order] DESC)
                         WHERE UserId = @userId AND h.DeleteDate IS NULL
                         ORDER BY h.UpdateDate DESC
                         OFFSET @pageNumber * @pageSize ROWS
@@ -329,7 +329,7 @@ namespace CCQuartersAPI.Services
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
-                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = 1
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order] DESC) 
                         WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId) > 0 AND h.DeleteDate IS NULL
                         ORDER BY (SELECT TOP 1 LikeDate FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId ORDER BY LikeDate DESC) DESC
                         OFFSET @pageNumber * @pageSize ROWS

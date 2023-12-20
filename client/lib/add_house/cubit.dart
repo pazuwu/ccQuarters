@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,14 +16,13 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit(
       {required this.houseService, required this.vtService, NewHouse? house})
       : house = house ?? NewHouse("", NewLocation(), NewHouseDetails(), []),
-        super(ChooseTypeFormState(NewHouseDetails()));
+        super(ChooseTypeFormState(house?.houseDetails ?? NewHouseDetails()));
 
   HouseService houseService;
   late NewHouse house;
   List<Photo> deletedPhotos = [];
 
   VTService vtService;
-  bool _createVirtualTour = false;
 
   void goToLocationForm() {
     emit(LocationFormState(house.location, house.buildingType));
@@ -49,19 +49,15 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       house.oldPhotos,
       house.newPhotos,
       deletedPhotos,
-      _createVirtualTour,
     ));
+  }
+
+  void goToVirtualTourForm() {
+    emit(VirtualTourFormState(house.houseDetails.virtualTourId));
   }
 
   Future<void> sendData() async {
     emit(SendingDataState());
-
-    if (_createVirtualTour) {
-      var result = await vtService.postTour(name: "");
-      if (result.data != null) {
-        house.houseDetails.virtualTourId = result.data!;
-      }
-    }
 
     var result = await houseService.createHouse(house);
     if (result.data != null) {
@@ -114,6 +110,11 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     emit(SendingFinishedState(houseId: house.id));
   }
 
+  Future<List<TourInfo>> getMyTours() async {
+    var serviceResult = await vtService.getMyTours();
+    return serviceResult.data ?? [];
+  }
+
   void saveDetails(NewHouseDetails details) {
     house.houseDetails = details;
   }
@@ -144,8 +145,8 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     this.deletedPhotos = deletedPhotos;
   }
 
-  void saveCreateVirtualTour(bool createVirtualTour) {
-    _createVirtualTour = createVirtualTour;
+  void saveChosenVirtualTour(String? virtualTourId) {
+    house.houseDetails.virtualTourId = virtualTourId;
   }
 
   void clear() {
