@@ -1,5 +1,6 @@
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/common_widgets/icon_360.dart';
+import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/utils/device_type.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:ccquarters/common_widgets/view_with_header_and_buttons.dart';
@@ -10,10 +11,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PhotoView extends StatefulWidget {
   const PhotoView(
-      {super.key, required this.photos, required this.createVirtualTour});
+      {super.key,
+      required this.oldPhotos,
+      required this.newPhotos,
+      required this.deletedPhotos,
+      required this.editMode});
 
-  final List<Uint8List> photos;
-  final bool createVirtualTour;
+  final List<Photo> oldPhotos;
+  final List<Uint8List> newPhotos;
+  final List<Photo> deletedPhotos;
+  final bool editMode;
 
   @override
   State<PhotoView> createState() => _PhotoViewState();
@@ -21,13 +28,6 @@ class PhotoView extends StatefulWidget {
 
 class _PhotoViewState extends State<PhotoView> {
   int? _selectedIndex;
-  bool _virtualTourIsEnabled = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _virtualTourIsEnabled = widget.createVirtualTour;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,8 @@ class _PhotoViewState extends State<PhotoView> {
         title: "Dodaj zdjęcia",
         inBetweenWidget: _buildPageContent(context),
         goBackOnPressed: () {
-          context.read<AddHouseFormCubit>().savePhotos(widget.photos);
+          context.read<AddHouseFormCubit>().savePhotos(
+              widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
           if (getDeviceType(context) == DeviceType.web) {
             context.read<AddHouseFormCubit>().goToLocationForm();
           } else {
@@ -49,11 +50,12 @@ class _PhotoViewState extends State<PhotoView> {
           }
         },
         nextOnPressed: () {
-          context.read<AddHouseFormCubit>().savePhotos(widget.photos);
-          context.read<AddHouseFormCubit>().sendData();
+          context.read<AddHouseFormCubit>().savePhotos(
+              widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
+          context.read<AddHouseFormCubit>().goToVirtualTourForm();
         },
         hasScrollBody: true,
-        isLastPage: true,
+        isLastPage: false,
       ),
     );
   }
@@ -64,59 +66,27 @@ class _PhotoViewState extends State<PhotoView> {
         children: [
           _buildPhotosGrid(context),
           const SizedBox(height: 16),
-          _buildDivider(context),
-          _buildVirtualTourSwitch(context),
-          _buildDivider(context),
         ],
       ),
     );
   }
 
-  Widget _buildVirtualTourSwitch(BuildContext context) {
-    return ListTile(
-      leading: Icon360(
-        color: _virtualTourIsEnabled ? Colors.blueGrey : Colors.grey,
-      ),
-      title: Text(
-        "Wirtualny spacer",
-        style: TextStyle(
-          color: _virtualTourIsEnabled ? Colors.black : Colors.grey,
-        ),
-      ),
-      trailing: Switch(
-        value: _virtualTourIsEnabled,
-        onChanged: (value) {
-          setState(() {
-            context.read<AddHouseFormCubit>().saveCreateVirtualTour(value);
-            _virtualTourIsEnabled = value;
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _buildDivider(BuildContext context) {
-    return const Divider(
-      endIndent: 10,
-      indent: 10,
-      color: Colors.black,
-      thickness: 1,
-    );
-  }
-
   Widget _buildPhotosGrid(BuildContext context) {
+    var photosCount = widget.oldPhotos.length + widget.newPhotos.length;
     return Expanded(
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount:
               getDeviceTypeForGrid(context) == DeviceType.mobile ? 3 : 4,
         ),
-        itemCount: widget.photos.length + 1,
+        itemCount: photosCount + 1,
         itemBuilder: (context, index) {
-          if (index == widget.photos.length) {
+          if (index < widget.oldPhotos.length) {
+            return _buildPhotoGridTileForOldPhotos(index);
+          } else if (index == photosCount) {
             return _buildAddGridTile(context);
           } else {
-            return _buildPhotoGridTIle(index);
+            return _buildPhotoGridTile(index);
           }
         },
       ),
@@ -132,7 +102,7 @@ class _PhotoViewState extends State<PhotoView> {
           for (var image in images) {
             if (image.bytes != null) imagesInBytes.add(image.bytes!);
           }
-          setState(() => widget.photos.addAll(imagesInBytes));
+          setState(() => widget.newPhotos.addAll(imagesInBytes));
         }
       },
       child: Icon(
@@ -142,13 +112,13 @@ class _PhotoViewState extends State<PhotoView> {
     );
   }
 
-  GridTile _buildPhotoGridTIle(int index) {
+  GridTile _buildPhotoGridTileForOldPhotos(int index) {
     return GridTile(
       onTap: () async {
         if (index == _selectedIndex) {
           setState(() {
             _selectedIndex = null;
-            widget.photos.removeAt(index);
+            widget.deletedPhotos.add(widget.oldPhotos.removeAt(index));
           });
         } else {
           setState(() {
@@ -159,7 +129,36 @@ class _PhotoViewState extends State<PhotoView> {
       canBeRemoved: index == _selectedIndex,
       child: AspectRatio(
         aspectRatio: 1,
-        child: Image.memory(widget.photos[index], fit: BoxFit.cover),
+        child: ImageWidget(
+          imageUrl: widget.oldPhotos[index].url,
+          fit: BoxFit.cover,
+          borderRadius: BorderRadius.zero,
+        ),
+      ),
+    );
+  }
+
+  GridTile _buildPhotoGridTile(int index) {
+    return GridTile(
+      onTap: () async {
+        if (index == _selectedIndex) {
+          setState(() {
+            _selectedIndex = null;
+            widget.newPhotos.removeAt(index - widget.oldPhotos.length);
+          });
+        } else {
+          setState(() {
+            _selectedIndex = index;
+          });
+        }
+      },
+      canBeRemoved: index == _selectedIndex,
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Image.memory(
+          widget.newPhotos[index - widget.oldPhotos.length],
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

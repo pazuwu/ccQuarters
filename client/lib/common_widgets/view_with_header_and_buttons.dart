@@ -1,8 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 import 'go_back_next_buttons.dart';
-import 'header.dart';
 
 class ViewWithHeader extends StatelessWidget {
   const ViewWithHeader({
@@ -21,13 +19,12 @@ class ViewWithHeader extends StatelessWidget {
   final bool scrollable;
   final bool hasScrollBody;
   final Function()? goBackOnPressed;
-  final Function() nextOnPressed;
+  final Function()? nextOnPressed;
   final bool isLastPage;
 
   Widget _buildMainColumn(BuildContext context) {
     return Column(
       children: [
-        Header(title: title),
         inBetweenWidget,
         GoBackNextButtons(
           goBackOnPressed: goBackOnPressed,

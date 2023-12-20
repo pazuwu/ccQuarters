@@ -1,6 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
+import 'package:ccquarters/add_house/states.dart';
+import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,69 +12,17 @@ import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 
-class HouseFormState {}
-
-class ChooseTypeFormState extends HouseFormState {
-  ChooseTypeFormState(
-    this.houseDetails, {
-    this.offerType = OfferType.rent,
-    this.buildingType = BuildingType.house,
-  });
-
-  final OfferType offerType;
-  final BuildingType buildingType;
-  final NewHouseDetails houseDetails;
-}
-
-class MobileDetailsFormState extends HouseFormState {
-  MobileDetailsFormState(this.houseDetails, this.buildingType);
-
-  final NewHouseDetails houseDetails;
-  final BuildingType buildingType;
-}
-
-class LocationFormState extends HouseFormState {
-  LocationFormState(this.location, this.buildingType);
-
-  final NewLocation location;
-  final BuildingType buildingType;
-}
-
-class MapState extends HouseFormState {}
-
-class PhotosFormState extends HouseFormState {
-  PhotosFormState(this.photos, this.createVirtualTour);
-
-  List<Uint8List> photos;
-  bool createVirtualTour;
-}
-
-class SendingFinishedState extends HouseFormState {
-  String houseId;
-  SendingFinishedState({
-    required this.houseId,
-  });
-}
-
-class ErrorState extends HouseFormState {
-  ErrorState(this.message);
-  String message;
-}
-
-class SendingDataState extends HouseFormState {}
-
 class AddHouseFormCubit extends Cubit<HouseFormState> {
-  AddHouseFormCubit({required this.houseService, required this.vtService})
-      : super(ChooseTypeFormState(NewHouseDetails()));
+  AddHouseFormCubit(
+      {required this.houseService, required this.vtService, NewHouse? house})
+      : house = house ?? NewHouse("", NewLocation(), NewHouseDetails(), []),
+        super(ChooseTypeFormState(house?.houseDetails ?? NewHouseDetails()));
 
   HouseService houseService;
-  NewHouse house = NewHouse(
-    NewLocation(),
-    NewHouseDetails(),
-  );
+  late NewHouse house;
+  List<Photo> deletedPhotos = [];
 
   VTService vtService;
-  bool _createVirtualTour = false;
 
   void goToLocationForm() {
     emit(LocationFormState(house.location, house.buildingType));
@@ -95,26 +45,27 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void goToPhotosForm() {
-    emit(PhotosFormState(house.photos, _createVirtualTour));
+    emit(PhotosFormState(
+      house.oldPhotos,
+      house.newPhotos,
+      deletedPhotos,
+    ));
+  }
+
+  void goToVirtualTourForm() {
+    emit(VirtualTourFormState(house.houseDetails.virtualTourId));
   }
 
   Future<void> sendData() async {
     emit(SendingDataState());
 
-    if (_createVirtualTour) {
-      var result = await vtService.postTour(name: "");
-      if (result.data != null) {
-        house.houseDetails.virtualTourId = result.data!;
-      }
-    }
-
     var result = await houseService.createHouse(house);
     if (result.data != null) {
       var houseId = result.data!;
-      for (var photo in house.photos) {
+      for (var photo in house.newPhotos) {
         var res = await houseService.addPhoto(houseId, photo);
         if (!res.data) {
-          emit(ErrorState("Błąd!"));
+          emit(ErrorState("Błąd w wysyłaniu zdjęć!"));
           return;
         }
       }
@@ -124,6 +75,44 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     }
 
     emit(SendingFinishedState(houseId: result.data!));
+  }
+
+  Future<void> updateHouse() async {
+    emit(SendingDataState());
+
+    var response = await houseService.updateHouse(house.id, house);
+    if (!response.data) {
+      emit(
+          ErrorState("Nie udało się zapisać zmian. Spróbuj ponownie pózniej!"));
+      return;
+    }
+
+    if (deletedPhotos.isNotEmpty) {
+      var responsePhotos = await houseService.deletePhotos(deletedPhotos);
+      if (!responsePhotos.data) {
+        emit(ErrorState(
+            "Nie udało się usunąć zdjęć. Spróbuj ponownie pózniej!"));
+        return;
+      }
+    }
+
+    if (house.newPhotos.isNotEmpty) {
+      for (var photo in house.newPhotos) {
+        var res = await houseService.addPhoto(house.id, photo);
+        if (!res.data) {
+          emit(ErrorState(
+              "Nie udało się dodać nowych zdjęć. Spróbuj ponownie później!"));
+          return;
+        }
+      }
+    }
+
+    emit(SendingFinishedState(houseId: house.id));
+  }
+
+  Future<List<TourInfo>> getMyTours() async {
+    var serviceResult = await vtService.getMyTours();
+    return serviceResult.data ?? [];
   }
 
   void saveDetails(NewHouseDetails details) {
@@ -149,20 +138,19 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
         offerType: house.offerType, buildingType: house.buildingType));
   }
 
-  void savePhotos(List<Uint8List> photos) {
-    house.photos = photos;
+  void savePhotos(List<Uint8List> photos, List<Photo> oldPhotos,
+      List<Photo> deletedPhotos) {
+    house.newPhotos = photos;
+    house.oldPhotos = oldPhotos;
+    this.deletedPhotos = deletedPhotos;
   }
 
-  void saveCreateVirtualTour(bool createVirtualTour) {
-    _createVirtualTour = createVirtualTour;
+  void saveChosenVirtualTour(String? virtualTourId) {
+    house.houseDetails.virtualTourId = virtualTourId;
   }
 
   void clear() {
-    house = NewHouse(
-      NewLocation(),
-      NewHouseDetails(),
-    );
-
+    house = NewHouse("", NewLocation(), NewHouseDetails(), []);
     emit(ChooseTypeFormState(NewHouseDetails()));
   }
 }

@@ -5,7 +5,9 @@ import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/model/photo.dart';
 import 'package:ccquarters/services/houses/requests/create_house_request.dart';
+import 'package:ccquarters/services/houses/requests/delete_photos_request.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
@@ -158,14 +160,15 @@ class HouseService {
     }
   }
 
-  Future<ServiceResponse<bool>> updateHouse(House house) async {
+  Future<ServiceResponse<bool>> updateHouse(
+      String houseId, NewHouse house) async {
     try {
       var response = await _dio.put(
-        "$_url/${house.id}",
+        "$_url/$houseId",
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
-        data: CreateHouseRequest.fromHouse(house).toJson(),
+        data: CreateHouseRequest.fromNewHouse(house).toJson(),
       );
 
       return response.statusCode == StatusCode.OK
@@ -253,6 +256,30 @@ class HouseService {
       var response = await _dio.post(
         "$_url/$houseId/photo",
         data: photoData,
+      );
+
+      return response.statusCode == StatusCode.OK
+          ? ServiceResponse(data: true)
+          : ServiceResponse(data: false, error: ErrorType.unknown);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
+        return ServiceResponse(data: false, error: ErrorType.unauthorized);
+      }
+
+      return ServiceResponse(data: false, error: ErrorType.unknown);
+    }
+  }
+
+  Future<ServiceResponse<bool>> deletePhotos(List<Photo> photos) async {
+    try {
+      var response = await _dio.delete(
+        "$_url/photos",
+        data: DeletePhotosRequest(
+          photos.map((x) => x.filename).toList(),
+        ).toJson(),
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
       );
 
       return response.statusCode == StatusCode.OK

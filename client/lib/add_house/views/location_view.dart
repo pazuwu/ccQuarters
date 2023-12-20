@@ -16,18 +16,18 @@ class LocationFormView extends StatefulWidget {
     super.key,
     required this.location,
     required this.buildingType,
+    required this.formKey,
   });
 
   final NewLocation location;
   final BuildingType buildingType;
+  final GlobalKey<FormState> formKey;
 
   @override
   State<LocationFormView> createState() => _LocationFormViewState();
 }
 
 class _LocationFormViewState extends State<LocationFormView> {
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return ViewWithHeader(
@@ -37,16 +37,16 @@ class _LocationFormViewState extends State<LocationFormView> {
                 firstView: LocationForm(
                     location: widget.location,
                     buildingType: widget.buildingType,
-                    formKey: _formKey),
+                    formKey: widget.formKey),
                 secondView:
                     ChooseLocationOnMap(addHouseFormCubit: context.read()),
               )
             : LocationForm(
                 location: widget.location,
                 buildingType: widget.buildingType,
-                formKey: _formKey),
+                formKey: widget.formKey),
         goBackOnPressed: () {
-          _formKey.currentState!.save();
+          widget.formKey.currentState!.save();
           context.read<AddHouseFormCubit>().saveLocation(widget.location);
           if (getDeviceType(context) == DeviceType.web) {
             context.read<AddHouseFormCubit>().goToChooseTypeForm();
@@ -55,8 +55,8 @@ class _LocationFormViewState extends State<LocationFormView> {
           }
         },
         nextOnPressed: () {
-          if (_formKey.currentState!.validate()) {
-            _formKey.currentState!.save();
+          if (widget.formKey.currentState!.validate()) {
+            widget.formKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveLocation(widget.location);
             if (getDeviceType(context) == DeviceType.web) {
               context.read<AddHouseFormCubit>().goToPhotosForm();

@@ -1,3 +1,4 @@
+import 'package:ccquarters/services/auth/auth_info.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
@@ -42,4 +43,7 @@ class AuthServiceMock extends BaseAuthService {
   Future<void> signOut() {
     return Future(() => null);
   }
+
+  @override
+  Stream<AuthInfo> get authChanges => throw UnimplementedError();
 }

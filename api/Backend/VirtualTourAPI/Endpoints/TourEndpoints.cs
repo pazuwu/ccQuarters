@@ -64,6 +64,24 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
+        public static async Task<IResult> Put(string tourId, PutTourRequest putTourRequest, HttpContext context, IVTService service)
+        {
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null)
+                Results.Unauthorized();
+
+            var tour = new TourUpdate()
+            {
+                Name = putTourRequest.Name,
+            };
+
+            await service.UpdateTour(tourId, tour);
+
+            return Results.Ok();
+        }
+
         public static async Task<IResult> Delete([FromBody]string[] tourIds, HttpContext context, IVTService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;

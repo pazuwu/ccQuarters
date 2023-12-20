@@ -18,10 +18,9 @@ class VTListLoadedState extends VTListState {
 }
 
 class VTListErrorState extends VTListState {
-  VTListErrorState({
-    required this.message,
-  });
+  VTListErrorState({required this.message, this.tip});
   String message;
+  String? tip;
 }
 
 class VTTourProcessingState extends VTListLoadedState {
@@ -48,7 +47,25 @@ class VTListCubit extends Cubit<VTListState> {
   Future loadTours() async {
     var serviceResponse = await _service.getMyTours();
     if (serviceResponse.error != ErrorType.none) {
-      emit(VTListErrorState(message: serviceResponse.error.toString()));
+      switch (serviceResponse.error) {
+        case ErrorType.unauthorized:
+          emit(VTListErrorState(
+              message: "Nie masz uprawnień do tej funckjonalności",
+              tip: "Upewnij się, że jesteś zalogowany i spróbuj ponownie"));
+          return;
+        case ErrorType.noInternet:
+          emit(VTListErrorState(
+              message: "Brak połączenia z internetem",
+              tip:
+                  "Upewnij się, że masz połączenie z internetem i spróbuj ponownie"));
+          return;
+        case ErrorType.unknown:
+        default:
+          emit(VTListErrorState(
+              message:
+                  "Wystapił niezidentyfikowany błąd podczas próby pobrania wirtualnych spacerów. Skonaktuj się z działem technicznym"));
+          return;
+      }
     }
 
     _tours.clear();
@@ -77,6 +94,13 @@ class VTListCubit extends Cubit<VTListState> {
     emit(VTTourProcessingState(
         tours: _tours, prcessingText: "Usuwanie wirtualnego spaceru"));
     await _service.deleteTours(ids: tourIds);
+    await loadTours();
+  }
+
+  Future updateTour(String tourId, String name) async {
+    emit(VTTourProcessingState(
+        tours: _tours, prcessingText: "Aktualizowanie wirtualnego spaceru"));
+    await _service.updateTour(tourId, name: name);
     await loadTours();
   }
 }

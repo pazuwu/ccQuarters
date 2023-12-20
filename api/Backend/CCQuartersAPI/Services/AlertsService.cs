@@ -1,10 +1,6 @@
-﻿using CCQuartersAPI.Responses;
-using CloudStorageLibrary;
-using Firebase.Auth;
+﻿using CCQuartersAPI.AlertsDTOs;
 using RepositoryLibrary;
 using System.Data;
-using System.Data.SqlClient;
-using System.Text;
 
 namespace CCQuartersAPI.Services
 {
@@ -48,7 +44,7 @@ namespace CCQuartersAPI.Services
             return alert;
         }
 
-        public async Task<Guid?> CreateAlert(AlertDTO alert, string userId, IDbTransaction? trans = null)
+        public async Task<Guid?> CreateAlert(CreateAlertRequest alert, string userId, IDbTransaction? trans = null)
         {
             using var transaction = _rdbRepository.BeginTransaction();
             try
@@ -88,7 +84,7 @@ namespace CCQuartersAPI.Services
             }
         }
 
-        public async Task UpdateAlert(AlertDTO alert, Guid alertId, IDbTransaction? trans = null)
+        public async Task UpdateAlert(UpdateAlertRequest alert, Guid alertId, IDbTransaction? trans = null)
         {
             using var transaction = _rdbRepository.BeginTransaction();
             try
@@ -164,7 +160,7 @@ namespace CCQuartersAPI.Services
             alert.Districts = (await _rdbRepository.QueryAsync<string>(districtsQuery, new { alertId }, trans))?.ToArray();
         }
 
-        private async Task InsertAlertAdditonalTables(AlertDTO alert, Guid alertId, IDbTransaction transaction)
+        private async Task InsertAlertAdditonalTables(BaseAlertRequest alert, Guid alertId, IDbTransaction transaction)
         {
             if (alert.Floors is not null && alert.Floors.Any())
             {

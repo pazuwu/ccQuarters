@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/show_form.dart';
 import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/import_type_dialog.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
@@ -36,11 +37,8 @@ class SceneList extends StatelessWidget {
   }
 
   Future<SceneFormModel?> _showChooseImportTypeDialog(BuildContext context) {
-    return showModalBottomSheet<SceneFormModel>(
+    return showForm<SceneFormModel>(
       context: context,
-      enableDrag: true,
-      showDragHandle: true,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const SceneForm();
       },

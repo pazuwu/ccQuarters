@@ -32,12 +32,14 @@ class HouseWithDetails {
   @BuildingTypeConverter()
   BuildingType buildingType;
   bool isLiked;
+  String userId;
   String? userName;
   String? userSurname;
   String? userCompany;
-  String? userEmail;
+  String userEmail;
   String? userPhoneNumber;
   String? userPhotoUrl;
+  String? virtualTourId;
 
   HouseWithDetails(
     this.title,
@@ -59,12 +61,14 @@ class HouseWithDetails {
     this.offerType,
     this.buildingType,
     this.isLiked,
+    this.userId,
     this.userName,
     this.userSurname,
     this.userCompany,
     this.userEmail,
     this.userPhoneNumber,
     this.userPhotoUrl,
+    this.virtualTourId,
   );
 
   Map<String, dynamic> toJson() => _$HouseWithDetailsToJson(this);
@@ -91,12 +95,14 @@ class HouseWithDetails {
         area: area,
         floor: floor,
         buildingType: buildingType,
+        virtualTourId: virtualTourId,
       ),
-      User.fromGetHouses(
-        userName ?? "",
-        userSurname ?? "",
+      User.fromGetHouse(
+        userId,
+        userName,
+        userSurname,
         userCompany,
-        userEmail ?? "",
+        userEmail,
         userPhoneNumber,
         userPhotoUrl,
       ),

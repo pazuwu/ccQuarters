@@ -1,18 +1,46 @@
 import 'dart:io';
 
 import 'package:ccquarters/services/auth/service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:http_status_code/http_status_code.dart';
 
 class AuthorizedDio extends DioForNative {
   final Dio _resendingDioInstance = Dio();
+  final Connectivity _connectivity = Connectivity();
   final BaseAuthService _authService;
   String _token = '';
 
   AuthorizedDio(BaseAuthService authService) : _authService = authService {
+    _authService.authChanges.listen((u) => _token = "");
+
     _addTokenRefreshInterceptor();
     _addCacheInterceptor();
+    _addConnectionInterceptor();
+  }
+
+  void _addConnectionInterceptor() {
+    interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
+      var connectivityResult = await _connectivity.checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        handler.reject(
+          DioException(
+            requestOptions: options,
+            response: Response(
+              requestOptions: options,
+              statusCode: StatusCode.GATEWAY_TIMEOUT,
+              statusMessage: 'No internet connection',
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      handler.next(options);
+    }));
   }
 
   void _addCacheInterceptor() {
@@ -37,9 +65,13 @@ class AuthorizedDio extends DioForNative {
           _setToken(request, handler);
         },
         onError: (e, handler) async {
-          if (e.response?.statusCode == HttpStatus.unauthorized) {
+          if (e.response?.statusCode == null ||
+              e.response?.statusCode == HttpStatus.unauthorized) {
             _refreshTokenAndResend(e, handler);
+            return;
           }
+
+          handler.next(e);
         },
       ),
     );
