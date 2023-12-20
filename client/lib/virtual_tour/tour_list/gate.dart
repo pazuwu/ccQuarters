@@ -9,8 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class VTListGate extends StatelessWidget {
   const VTListGate({super.key});
 
-  final VTService _vtService;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
