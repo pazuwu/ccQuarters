@@ -1,4 +1,6 @@
 import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alert_base.dart';
+import 'package:ccquarters/model/new_alert.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +14,7 @@ class AlertPageState extends AlertsState {
     required this.alert,
   });
 
-  final Alert? alert;
+  final AlertBase alert;
 }
 
 class LoadingOrSendingDataState extends AlertsState {}
@@ -42,19 +44,19 @@ class AlertsPageCubit extends Cubit<AlertsState> {
     return response.data;
   }
 
-  Future<void> saveAlert(Alert alert) async {
+  Future<void> saveAlert(AlertBase alert) async {
     emit(LoadingOrSendingDataState());
 
-    if (alert.id.isEmpty) {
-      _createAlert(alert);
-    } else {
+    if (alert is Alert) {
       await _updateAlert(alert);
+    } else if (alert is NewAlert) {
+      await _createAlert(alert);
     }
 
     emit(AlertsMainPageState());
   }
 
-  Future<void> _createAlert(Alert alert) async {
+  Future<void> _createAlert(NewAlert alert) async {
     final response = await alertService.createAlert(alert);
     if (response.error != ErrorType.none) {
       emit(ErrorState(
@@ -77,7 +79,7 @@ class AlertsPageCubit extends Cubit<AlertsState> {
     emit(AlertsMainPageState());
   }
 
-  Future<void> goToAlertPage(Alert? alert) async {
+  Future<void> goToAlertPage(AlertBase alert) async {
     emit(AlertPageState(alert: alert));
   }
 }

@@ -1,36 +1,33 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'alert.dart';
+part of 'new_alert.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Alert _$AlertFromJson(Map<String, dynamic> json) => Alert(
-      id: json['id'] as String,
-      minPrice: (json['minPrice'] as num?)?.toDouble(),
-      maxPrice: (json['maxPrice'] as num?)?.toDouble(),
-      maxPricePerM2: (json['maxPricePerM2'] as num?)?.toDouble(),
-      minPricePerM2: (json['minPricePerM2'] as num?)?.toDouble(),
-      minArea: (json['minArea'] as num?)?.toDouble(),
-      maxArea: (json['maxArea'] as num?)?.toDouble(),
-      minRoomCount: json['minRoomCount'] as int?,
-      maxRoomCount: json['maxRoomCount'] as int?,
-      floors: (json['floors'] as List<dynamic>?)?.map((e) => e as int).toList(),
-      minFloor: json['minFloor'] as int?,
-      offerType: _$JsonConverterFromJson<int, OfferType>(
-          json['offerType'], const OfferTypeConverter().fromJson),
-      buildingType: _$JsonConverterFromJson<int, BuildingType>(
-          json['buildingType'], const BuildingTypeConverter().fromJson),
-      voivodeship: json['voivodeship'] as String?,
-      cities:
-          (json['cities'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      districts: (json['districts'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-    );
+NewAlert _$NewAlertFromJson(Map<String, dynamic> json) => NewAlert()
+  ..minPrice = (json['minPrice'] as num?)?.toDouble()
+  ..maxPrice = (json['maxPrice'] as num?)?.toDouble()
+  ..minPricePerM2 = (json['minPricePerM2'] as num?)?.toDouble()
+  ..maxPricePerM2 = (json['maxPricePerM2'] as num?)?.toDouble()
+  ..minArea = (json['minArea'] as num?)?.toDouble()
+  ..maxArea = (json['maxArea'] as num?)?.toDouble()
+  ..minRoomCount = json['minRoomCount'] as int?
+  ..maxRoomCount = json['maxRoomCount'] as int?
+  ..floors = (json['floors'] as List<dynamic>?)?.map((e) => e as int).toList()
+  ..minFloor = json['minFloor'] as int?
+  ..buildingType = _$JsonConverterFromJson<int, BuildingType>(
+      json['buildingType'], const BuildingTypeConverter().fromJson)
+  ..offerType = _$JsonConverterFromJson<int, OfferType>(
+      json['offerType'], const OfferTypeConverter().fromJson)
+  ..cities =
+      (json['cities'] as List<dynamic>?)?.map((e) => e as String).toList()
+  ..districts =
+      (json['districts'] as List<dynamic>?)?.map((e) => e as String).toList()
+  ..voivodeship = json['voivodeship'] as String?;
 
-Map<String, dynamic> _$AlertToJson(Alert instance) {
+Map<String, dynamic> _$NewAlertToJson(NewAlert instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -60,7 +57,6 @@ Map<String, dynamic> _$AlertToJson(Alert instance) {
   writeNotNull('cities', instance.cities);
   writeNotNull('districts', instance.districts);
   writeNotNull('voivodeship', instance.voivodeship);
-  val['id'] = instance.id;
   return val;
 }
 

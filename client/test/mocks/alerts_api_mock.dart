@@ -9,7 +9,7 @@ extension AlertsAPIMock on Dio {
     Dio dio = Dio();
     final dioAdapter = DioAdapter(dio: dio);
     const id = "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
-    Alert alert = Alert(
+    var alert = Alert(
       id: id,
       cities: ["Warszawa"],
       maxPrice: 1000000,

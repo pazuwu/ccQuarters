@@ -1,7 +1,9 @@
 import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/list_of_houses/filters/expansion_panel_list.dart';
 import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alert_base.dart';
 import 'package:ccquarters/model/filter.dart';
+import 'package:ccquarters/model/new_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,13 +13,13 @@ class AlertView extends StatelessWidget {
     required this.alert,
   });
 
-  final Alert? alert;
+  final AlertBase alert;
   @override
   Widget build(BuildContext context) {
-    var filters = alert != null ? HouseFilter.fromAlert(alert!) : HouseFilter();
+    var filters = HouseFilter.fromAlert(alert);
     return Scaffold(
       appBar: AppBar(
-        title: alert != null
+        title: alert is Alert
             ? const Text("Edytuj alert")
             : const Text("Dodaj nowy alert"),
         leading: BackButton(
@@ -27,10 +29,10 @@ class AlertView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
-              context.read<AlertsPageCubit>().saveAlert(Alert.fromHouseFilter(
-                    filters,
-                    alert?.id ?? "",
-                  ));
+              context.read<AlertsPageCubit>().saveAlert(alert is Alert
+                  ? Alert.fromHouseFilter(filters, (alert as Alert).id)
+                  : NewAlert.fromHouseFilter(filters));
+              ;
             },
           )
         ],

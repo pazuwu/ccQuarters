@@ -1,17 +1,13 @@
-import 'package:ccquarters/model/alert_base.dart';
+import 'package:ccquarters/model/alert_filter_base.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-part 'alert.g.dart';
 
-@JsonSerializable(includeIfNull: false)
-class Alert extends AlertBase {
-  String id;
+abstract class AlertBase extends AlertFilterBase {
+  String? voivodeship;
 
-  Alert({
-    required this.id,
+  AlertBase({
     double? minPrice,
     double? maxPrice,
     double? maxPricePerM2,
@@ -24,7 +20,7 @@ class Alert extends AlertBase {
     int? minFloor,
     OfferType? offerType,
     BuildingType? buildingType,
-    String? voivodeship,
+    this.voivodeship,
     List<String>? cities,
     List<String>? districts,
   }) : super(
@@ -40,14 +36,29 @@ class Alert extends AlertBase {
           minFloor: minFloor,
           offerType: offerType,
           buildingType: buildingType,
-          voivodeship: voivodeship,
           cities: cities,
           districts: districts,
         );
 
-  Alert.fromHouseFilter(HouseFilter filters, this.id)
-      : super.fromHouseFilter(filters);
+  AlertBase.empty();
 
-  Map<String, dynamic> toJson() => _$AlertToJson(this);
-  factory Alert.fromJson(Map<String, dynamic> json) => _$AlertFromJson(json);
+  AlertBase.fromHouseFilter(HouseFilter filters)
+      : voivodeship = filters.voivodeship?.toString(),
+        super(
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          maxPricePerM2: filters.maxPricePerM2,
+          minPricePerM2: filters.minPricePerM2,
+          minArea: filters.minArea,
+          maxArea: filters.maxArea,
+          minRoomCount: filters.minRoomCount,
+          maxRoomCount: filters.maxRoomCount,
+          floors: filters.floors,
+          minFloor: filters.minFloor,
+          offerType: filters.offerType,
+          buildingType: filters.buildingType,
+          cities: filters.cities,
+          districts: filters.districts,
+        );
+
 }

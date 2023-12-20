@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/new_alert.dart';
 import 'package:ccquarters/services/alerts/responses/get_alerts_response.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
@@ -39,9 +40,8 @@ class AlertService {
     }
   }
 
-  Future<ServiceResponse<bool>> createAlert(Alert alert) async {
+  Future<ServiceResponse<bool>> createAlert(NewAlert alert) async {
     try {
-      alert.id = "isndjpo";
       var alertJson = alert.toJson();
       var response = await _dio.post(
         _url,

@@ -2,6 +2,8 @@ import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/common_widgets/error_message.dart';
 import 'package:ccquarters/common_widgets/message.dart';
 import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alert_base.dart';
+import 'package:ccquarters/model/new_alert.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,16 +64,16 @@ class _AlertsViewState extends State<AlertsView> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              context.read<AlertsPageCubit>().goToAlertPage(null);
+              context.read<AlertsPageCubit>().goToAlertPage(NewAlert());
             },
           )
         ],
       ),
       body: RefreshIndicator(
         onRefresh: () async => _pagingController.refresh(),
-        child: PagedListView<int, Alert>(
+        child: PagedListView<int, AlertBase>(
           pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Alert>(
+          builderDelegate: PagedChildBuilderDelegate<AlertBase>(
             noItemsFoundIndicatorBuilder: (context) => const Message(
               title: "Nie posiadasz żadnych alertów",
               subtitle: "Dodaj je klikając przycisk +",

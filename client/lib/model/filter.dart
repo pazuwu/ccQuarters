@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alert_base.dart';
 import 'package:ccquarters/model/alert_filter_base.dart';
 import 'package:ccquarters/model/voivodeship.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -43,7 +43,7 @@ class HouseFilter extends AlertFilterBase {
   Voivodeship? voivodeship;
   SortingMethod sortBy;
 
-  HouseFilter.fromAlert(Alert alert)
+  HouseFilter.fromAlert(AlertBase alert)
       : voivodeship = alert.voivodeship != null
             ? VoivodeshipEx.getFromName(alert.voivodeship!)
             : null,
