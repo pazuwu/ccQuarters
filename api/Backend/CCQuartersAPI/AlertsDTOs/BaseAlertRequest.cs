@@ -1,15 +1,9 @@
 ﻿using CCQuartersAPI.CommonClasses;
 
-namespace CCQuartersAPI.Responses
+namespace CCQuartersAPI.AlertsDTOs
 {
-    public class GetAlertsResponse : BaseBulkResponse<AlertDTO>
+    public class BaseAlertRequest
     {
-    }
-
-    public class AlertDTO
-    {
-        public Guid Id { get; set; }
-        public string? UserId {  get; set; }
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
         public decimal? MinPricePerM2 { get; set; }

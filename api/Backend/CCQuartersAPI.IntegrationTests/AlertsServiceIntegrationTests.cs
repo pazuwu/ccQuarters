@@ -29,7 +29,7 @@ namespace CCQuartersAPI.IntegrationTests
             var trans = _rdbRepository.BeginTransaction();
             try
             {
-                var createAlert = AlertsServiceTestCases.ExampleAlert;
+                var createAlert = AlertsServiceTestCases.ExampleCreateAlert;
 
                 var id = await _alertsService.CreateAlert(createAlert, userId, trans);
 
@@ -68,13 +68,13 @@ namespace CCQuartersAPI.IntegrationTests
             var trans = _rdbRepository.BeginTransaction();
             try
             {
-                var createAlert = AlertsServiceTestCases.ExampleAlert;
+                var createAlert = AlertsServiceTestCases.ExampleCreateAlert;
 
                 var id = await _alertsService.CreateAlert(createAlert, userId, trans);
 
                 Assert.IsNotNull(id);
 
-                var modifyRequest = AlertsServiceTestCases.ExampleAlert;
+                var modifyRequest = AlertsServiceTestCases.ExampleUpdateAlert;
                 modifyRequest.MaxPrice = 1500000;
                 modifyRequest.Cities = new[] { "Gostynin", "Białystok" };
                 modifyRequest.Districts = new[] { "Centrum" };
@@ -86,7 +86,7 @@ namespace CCQuartersAPI.IntegrationTests
                 Assert.IsNotNull(getAlert);
                 Assert.AreEqual(id, getAlert.Id);
                 Assert.AreEqual(createAlert.MinPrice, getAlert.MinPrice);
-                Assert.AreEqual(createAlert.MaxPrice, modifyRequest.MaxPrice);
+                Assert.AreEqual(modifyRequest.MaxPrice, getAlert.MaxPrice);
                 Assert.AreEqual(createAlert.MinPricePerM2, getAlert.MinPricePerM2);
                 Assert.AreEqual(createAlert.MaxPricePerM2, getAlert.MaxPricePerM2);
                 Assert.IsTrue(Math.Abs(createAlert.MinArea!.Value - getAlert.MinArea!.Value) < eps);
@@ -99,8 +99,8 @@ namespace CCQuartersAPI.IntegrationTests
                 Assert.AreEqual(createAlert.OfferType, getAlert.OfferType);
                 Assert.AreEqual(createAlert.BuildingType, getAlert.BuildingType);
                 Assert.AreEqual(createAlert.Voivodeship, getAlert.Voivodeship);
-                AssertExtensions.AreEqual(createAlert.Cities, modifyRequest.Cities);
-                AssertExtensions.AreEqual(createAlert.Districts, modifyRequest.Districts);
+                AssertExtensions.AreEqual(modifyRequest.Cities, getAlert.Cities);
+                AssertExtensions.AreEqual(modifyRequest.Districts, getAlert.Districts);
             }
             finally
             {
@@ -114,7 +114,7 @@ namespace CCQuartersAPI.IntegrationTests
             var trans = _rdbRepository.BeginTransaction();
             try
             {
-                var createAlert = AlertsServiceTestCases.ExampleAlert;
+                var createAlert = AlertsServiceTestCases.ExampleCreateAlert;
 
                 var id = await _alertsService.CreateAlert(createAlert, userId, trans);
 
