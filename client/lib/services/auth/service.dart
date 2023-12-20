@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:ccquarters/services/auth/auth_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -18,17 +21,24 @@ abstract class BaseAuthService {
     String password,
   );
   Future<void> signOut();
+  Stream<AuthInfo> get authChanges;
 }
 
 class AuthService implements BaseAuthService {
   AuthService({required FirebaseAuth firebaseAuth})
       : _firebaseAuth = firebaseAuth {
+    _firebaseAuth.authStateChanges().listen((event) {
+      _authChangesStreamController.add(AuthInfo());
+    });
+
     if (kIsWeb) {
       _firebaseAuth.setPersistence(Persistence.LOCAL);
     }
   }
 
   final FirebaseAuth _firebaseAuth;
+  final StreamController<AuthInfo> _authChangesStreamController =
+      StreamController.broadcast();
 
   @override
   bool get isSignedIn => _firebaseAuth.currentUser != null;
@@ -110,4 +120,7 @@ class AuthService implements BaseAuthService {
 
   @override
   Future<void> signOut() => _firebaseAuth.signOut();
+
+  @override
+  Stream<AuthInfo> get authChanges => _authChangesStreamController.stream;
 }

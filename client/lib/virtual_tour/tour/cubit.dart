@@ -4,7 +4,6 @@ import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class VTState {}
 
@@ -55,6 +54,25 @@ class VirtualTourCubit extends Cubit<VTState> {
     }
   }
 
+  void _updateProgress(Map<String, DownloadInfo> progressMap, bool readOnly) {
+    if (_tour!.scenes.length != progressMap.length) {
+      return;
+    }
+
+    var progress = 0.0;
+    var allTotals = 0.0;
+    for (var item in progressMap.values) {
+      progress += item.progress;
+      allTotals += item.total;
+    }
+
+    emit(VTLoadingState(
+      tourId: _tour!.id,
+      readOnly: readOnly,
+      progress: progress / allTotals,
+    ));
+  }
+
   Future loadVirtualTour(String tourId, bool readOnly) async {
     var serviceResponse = await _service.getTour(tourId);
 
@@ -62,33 +80,23 @@ class VirtualTourCubit extends Cubit<VTState> {
         serviceResponse.data != null) {
       _tour = serviceResponse.data;
 
-      var currentSceneIndx = 0;
+      List<Future> tasks = [];
+      var progressMap = <String, DownloadInfo>{};
+
       for (var scene in _tour!.scenes) {
         if (scene.photo360Url != null) {
-          var response = await _service.downloadFile(scene.photo360Url!,
+          tasks.add(_service.downloadFile(scene.photo360Url!,
               progressCallback: (progress, total) {
-            emit(VTLoadingState(
-              tourId: tourId,
-              readOnly: readOnly,
-              progress: progress * 1 / _tour!.scenes.length / total +
-                  currentSceneIndx * 1 / _tour!.scenes.length,
-            ));
-          });
-
-          if (response.data != null) {
-            var result = await FlutterImageCompress.compressWithList(
-              response.data!,
-              minHeight: 1920,
-              minWidth: 1080,
-              quality: 98,
-              format: CompressFormat.png,
-            );
-            scene.photo360 = result;
-          }
+            progressMap[scene.id!] =
+                DownloadInfo(progress: progress, total: total);
+            _updateProgress(progressMap, readOnly);
+          }).then((responce) {
+            scene.photo360 = responce.data;
+          }));
         }
-
-        currentSceneIndx++;
       }
+
+      await Future.wait(tasks);
 
       if (readOnly) {
         var scene = _tour!.scenes.first;
@@ -116,4 +124,11 @@ class VirtualTourCubit extends Cubit<VTState> {
       }
     }
   }
+}
+
+class DownloadInfo {
+  DownloadInfo({required this.progress, required this.total});
+
+  final int progress;
+  final int total;
 }

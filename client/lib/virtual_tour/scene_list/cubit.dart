@@ -51,6 +51,8 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       var newScene =
           Scene(name: name, photo360Url: url, id: serviceResponse.data!);
       _tour.scenes.add(newScene);
+
+      emit(VTScenesState());
     }
   }
 

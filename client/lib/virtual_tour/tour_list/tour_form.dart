@@ -1,15 +1,24 @@
+import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:flutter/material.dart';
 
-class NewTourDialog extends StatefulWidget {
-  const NewTourDialog({super.key});
+class TourForm extends StatefulWidget {
+  const TourForm({super.key, this.tourInfo});
+
+  final TourInfo? tourInfo;
 
   @override
-  State<NewTourDialog> createState() => _ImportTypeDialogState();
+  State<TourForm> createState() => _ImportTypeDialogState();
 }
 
-class _ImportTypeDialogState extends State<NewTourDialog> {
+class _ImportTypeDialogState extends State<TourForm> {
   String _tourName = "";
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _tourName = widget.tourInfo?.name ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +39,7 @@ class _ImportTypeDialogState extends State<NewTourDialog> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
-                'Nowy spacer',
+                widget.tourInfo != null ? 'Edycja spaceru' : 'Nowy spacer',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
@@ -38,6 +47,7 @@ class _ImportTypeDialogState extends State<NewTourDialog> {
               height: 24.0,
             ),
             TextFormField(
+              initialValue: _tourName,
               decoration: const InputDecoration(
                 labelText: "Nazwa",
               ),
