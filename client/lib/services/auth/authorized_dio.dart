@@ -37,7 +37,7 @@ class AuthorizedDio extends DioForNative {
         );
 
         return;
-      }
+  }
 
       handler.next(options);
     }));
