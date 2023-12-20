@@ -14,6 +14,8 @@ class AuthorizedDio extends DioForNative {
   String _token = '';
 
   AuthorizedDio(BaseAuthService authService) : _authService = authService {
+    _authService.authChanges.listen((u) => _token = "");
+
     _addTokenRefreshInterceptor();
     _addCacheInterceptor();
     _addConnectionInterceptor();

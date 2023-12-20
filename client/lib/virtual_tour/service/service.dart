@@ -1,13 +1,17 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:ccquarters/services/file_service/download_progress.dart';
+import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_area_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_link_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_scene_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_tour_request.dart';
 import 'package:ccquarters/virtual_tour/service/requests/put_link_request.dart';
+import 'package:ccquarters/virtual_tour/service/requests/put_tour_request.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:dio/dio.dart';
 
@@ -21,12 +25,14 @@ class VTService {
   static const String _scenes = "scenes";
   static const String _links = "links";
 
+  final FileService _fileService;
   final Dio _dio;
   final String _url;
 
-  VTService(Dio dio, String url)
+  VTService(Dio dio, FileService cacheManager, String url)
       : _url = url,
-        _dio = dio;
+        _dio = dio,
+        _fileService = cacheManager;
 
   Future<VTServiceResponse<Tour>> getTour(String tourId) async {
     try {
@@ -236,17 +242,20 @@ class VTService {
 
   Future<VTServiceResponse<Uint8List>> downloadFile(String url,
       {void Function(int count, int total)? progressCallback}) async {
-    try {
-      final response =
-          await _dio.get(url, onReceiveProgress: (received, total) {
-        progressCallback?.call(received, total);
-      }, options: Options(responseType: ResponseType.bytes));
+    var fileStream = _fileService.getImageFile(url, withProgress: true);
+    Uint8List? downloadedFile;
 
-      return VTServiceResponse(
-          data: Uint8List.fromList(response.data as List<int>));
-    } on DioException catch (e) {
-      return _catchCommonErrors(e);
-    }
+    var subscription = fileStream.listen((event) {
+      if (event is DownloadProgress) {
+        progressCallback?.call(event.downloaded, event.totalSize!);
+      } else if (event is FileInfo) {
+        downloadedFile = event.file.readAsBytesSync();
+      }
+    });
+
+    await subscription.asFuture();
+
+    return VTServiceResponse(data: downloadedFile);
   }
 
   Future postOperation(String tourId, String areaId) async {
@@ -298,6 +307,28 @@ class VTService {
       var response = await _dio.delete(
         "$_url/$_tours",
         data: ids,
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if ((response.statusCode == StatusCode.OK ||
+          response.statusCode == StatusCode.CREATED)) {
+        return VTServiceResponse(data: true);
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future<VTServiceResponse<bool>> updateTour(String tourId,
+      {required String name}) async {
+    try {
+      var response = await _dio.put(
+        "$_url/$_tours/$tourId",
+        data: PutTourRequest(name: name).toJson(),
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
