@@ -250,9 +250,6 @@ class _TourListState extends State<TourList> {
   void _createTour(BuildContext context) {
     showForm<String>(
       context: context,
-      enableDrag: true,
-      showDragHandle: true,
-      isScrollControlled: true,
       builder: (BuildContext context) {
         return const TourForm();
       },
