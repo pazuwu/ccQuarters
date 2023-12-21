@@ -96,7 +96,7 @@ class _HouseListTileState extends State<HouseListTile> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
-                _getIconForHouseType(widget.house.details),
+                widget.house.details.buildingType.icon,
                 color: Colors.white.withOpacity(0.8),
                 shadows: const [Shadow(color: Colors.black54, blurRadius: 64)],
               ),
@@ -190,17 +190,6 @@ class _HouseListTileState extends State<HouseListTile> {
       result += ", ${formatRoomCount(widget.house.details.roomCount!)}";
     }
     return result;
-  }
-
-  _getIconForHouseType(HouseDetails details) {
-    switch (details.buildingType) {
-      case BuildingType.apartment:
-        return Icons.apartment;
-      case BuildingType.house:
-        return Icons.home;
-      case BuildingType.room:
-        return Icons.bed;
-    }
   }
 }
 

@@ -61,8 +61,8 @@ class HouseFilter extends AlertFilterBase {
           minFloor: alert.minFloor,
           offerType: alert.offerType,
           buildingType: alert.buildingType,
-          cities: alert.cities,
-          districts: alert.districts,
+          cities: alert.cities ?? [],
+          districts: alert.districts ?? [],
         );
 }
 

@@ -75,6 +75,20 @@ class AlertsPageCubit extends Cubit<AlertsState> {
     }
   }
 
+  Future<void> deleteAlert(Alert alert) async {
+    emit(LoadingOrSendingDataState());
+
+    final response = await alertService.deleteAlert(alert.id);
+    if (response.error != ErrorType.none) {
+      emit(ErrorState(
+          message:
+              "Nie udało się usunąć alertu. Spróbuj ponownie później."));
+      return;
+    }
+
+    emit(AlertsMainPageState());
+  }
+
   Future<void> goToAlertsMainPage() async {
     emit(AlertsMainPageState());
   }

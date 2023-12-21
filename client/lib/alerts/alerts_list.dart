@@ -1,8 +1,8 @@
 import 'package:ccquarters/alerts/cubit.dart';
+import 'package:ccquarters/alerts/alert_list_item.dart';
 import 'package:ccquarters/common_widgets/error_message.dart';
 import 'package:ccquarters/common_widgets/message.dart';
 import 'package:ccquarters/model/alert.dart';
-import 'package:ccquarters/model/alert_base.dart';
 import 'package:ccquarters/model/new_alert.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:flutter/material.dart';
@@ -71,9 +71,9 @@ class _AlertsViewState extends State<AlertsView> {
       ),
       body: RefreshIndicator(
         onRefresh: () async => _pagingController.refresh(),
-        child: PagedListView<int, AlertBase>(
+        child: PagedListView<int, Alert>(
           pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<AlertBase>(
+          builderDelegate: PagedChildBuilderDelegate<Alert>(
             noItemsFoundIndicatorBuilder: (context) => const Message(
               title: "Nie posiadasz żadnych alertów",
               subtitle: "Dodaj je klikając przycisk +",
@@ -90,12 +90,7 @@ class _AlertsViewState extends State<AlertsView> {
               tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
             ),
             itemBuilder: (context, alert, index) {
-              return ListTile(
-                title: Text("${alert.cities} ${alert.districts}"),
-                onTap: () {
-                  context.read<AlertsPageCubit>().goToAlertPage(alert);
-                },
-              );
+              return AlertListItem(alert: alert);
             },
           ),
         ),

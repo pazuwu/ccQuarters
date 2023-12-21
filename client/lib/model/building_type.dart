@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 enum BuildingType {
@@ -18,6 +19,17 @@ extension BuildingTypeEx on BuildingType {
         return "Mieszkanie";
       case BuildingType.room:
         return "Pokój";
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case BuildingType.house:
+        return Icons.house;
+      case BuildingType.apartment:
+        return Icons.apartment;
+      case BuildingType.room:
+        return Icons.bed;
     }
   }
 }

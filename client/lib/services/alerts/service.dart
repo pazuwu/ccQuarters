@@ -51,7 +51,7 @@ class AlertService {
         }),
       );
 
-      return response.statusCode == StatusCode.OK
+      return response.statusCode == StatusCode.CREATED
           ? ServiceResponse(data: true)
           : ServiceResponse(data: false, error: ErrorType.unknown);
     } on DioException catch (e) {
