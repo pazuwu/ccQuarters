@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/services/file_service/file_response.dart';
 import 'package:ccquarters/services/file_service/file_service.dart';
+import 'package:flutter/foundation.dart';
 
-class FileServiceMock extends FileService {
+class FileServiceMock implements FileService {
   @override
   Stream<FileResponse> getImageFile(
     String url, {
@@ -16,7 +16,7 @@ class FileServiceMock extends FileService {
     int? maxWidth,
   }) async* {
     var streamController = StreamController<FileResponse>.broadcast();
-    streamController.add(FileInfo(File(""), url));
+    streamController.add(FileInfo(Uint8List.fromList([]), url));
     await streamController.close();
     yield* streamController.stream;
   }
