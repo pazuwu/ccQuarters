@@ -10,6 +10,7 @@ class AlertListItem extends StatelessWidget {
   const AlertListItem({super.key, required this.alert});
 
   final Alert alert;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -55,15 +56,18 @@ class AlertListItem extends StatelessWidget {
   }
 
   bool _canBuildType() => alert.offerType != null || alert.buildingType != null;
+
   bool _canBuildLocation() =>
       alert.voivodeship != null ||
       (alert.cities != null && alert.cities!.isNotEmpty) ||
       (alert.districts != null && alert.districts!.isNotEmpty);
+
   bool _canBuildPrice() =>
       alert.minPrice != null ||
       alert.maxPrice != null ||
       alert.minPricePerM2 != null ||
       alert.maxPricePerM2 != null;
+
   bool _canBuildDetails() =>
       alert.minArea != null ||
       alert.maxArea != null ||
@@ -79,7 +83,9 @@ class AlertListItem extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (alert.offerType != null) Text(alert.offerType!.toString()),
+            if (alert.offerType != null)
+              Text("${alert.offerType!.toString()} ${_getBuildingTypeString()}",
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
             if (alert.buildingType != null)
               Icon(
                 alert.buildingType!.icon,
@@ -91,6 +97,19 @@ class AlertListItem extends StatelessWidget {
     );
   }
 
+  _getBuildingTypeString() {
+    switch (alert.buildingType) {
+      case BuildingType.apartment:
+        return "mieszkania";
+      case BuildingType.house:
+        return "domu";
+      case BuildingType.room:
+        return "pokoju";
+      case null:
+        return "";
+    }
+  }
+
   _buildLocation() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,13 +118,23 @@ class AlertListItem extends StatelessWidget {
           color: Colors.grey,
         ),
         if (alert.voivodeship != null)
-          Text(
-            "Województwo ${alert.voivodeship!}",
-          ),
+          _getRichTextWithStyle("Województwo: ", alert.voivodeship!),
         if (alert.cities != null && alert.cities!.isNotEmpty)
-          Text("Miasta: ${_getStringOfList(alert.cities!)}"),
+          if (alert.cities!.length == 1)
+            _getRichTextWithStyle("Miasto: ", alert.cities!.first)
+          else
+            _getRichTextWithStyle(
+              "Miasta: ",
+              _getStringOfList(alert.cities!),
+            ),
         if (alert.districts != null && alert.districts!.isNotEmpty)
-          Text("Dzielnice: ${_getStringOfList(alert.districts!)}"),
+          if (alert.districts!.length == 1)
+            _getRichTextWithStyle("Dzielnica: ", alert.districts!.first)
+          else
+            _getRichTextWithStyle(
+              "Dzielnice: ",
+              _getStringOfList(alert.districts!),
+            )
       ],
     );
   }
@@ -118,9 +147,11 @@ class AlertListItem extends StatelessWidget {
           color: Colors.grey,
         ),
         if (alert.minPrice != null || alert.maxPrice != null)
-          Text(_getPriceString(alert.minPrice, alert.maxPrice, false)),
+          _getRichTextWithStyle(
+              "Cena: ", _getPriceString(alert.minPrice, alert.maxPrice)),
         if (alert.minPricePerM2 != null || alert.maxPricePerM2 != null)
-          Text(_getPriceString(alert.minPricePerM2, alert.maxPricePerM2, true)),
+          _getRichTextWithStyle("Cena za m2: ",
+              _getPriceString(alert.minPricePerM2, alert.maxPricePerM2))
       ],
     );
   }
@@ -133,13 +164,31 @@ class AlertListItem extends StatelessWidget {
           color: Colors.grey,
         ),
         if (alert.minArea != null || alert.maxArea != null)
-          Text(_getAreaString()),
+          _getRichTextWithStyle("Powierzchnia: ", _getAreaString()),
         if (alert.minRoomCount != null || alert.maxRoomCount != null)
-          Text(_getRoomString()),
+          _getRichTextWithStyle("Liczba pokoi: ", _getRoomString()),
         if (alert.minFloor != null ||
             (alert.floors != null && alert.floors!.isNotEmpty))
-          Text(_getFloorString()),
+          _getRichTextWithStyle("Piętro: ", _getFloorString()),
       ],
+    );
+  }
+
+  RichText _getRichTextWithStyle(String firstText, String secondText) {
+    return RichText(
+      text: TextSpan(
+        text: firstText,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 15,
+        ),
+        children: <TextSpan>[
+          TextSpan(
+            text: secondText,
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
+      ),
     );
   }
 
@@ -151,12 +200,9 @@ class AlertListItem extends StatelessWidget {
     return result.substring(0, result.length - 2);
   }
 
-  String _getPriceString(double? minPrice, double? maxPrice, bool isPerM2) {
-    String result = "Cena ";
+  String _getPriceString(double? minPrice, double? maxPrice) {
+    String result = "";
 
-    if (isPerM2) {
-      result += "za m2 ";
-    }
     if (minPrice != null) {
       result += "od $minPrice zł ";
     }
@@ -168,7 +214,7 @@ class AlertListItem extends StatelessWidget {
   }
 
   String _getAreaString() {
-    String result = "Powierzchnia: ";
+    String result = "";
     if (alert.minArea != null) {
       result += "od ${alert.minArea} ";
     }
@@ -180,18 +226,18 @@ class AlertListItem extends StatelessWidget {
   }
 
   String _getRoomString() {
-    String result = "Liczba pokoi:";
+    String result = "";
     if (alert.minRoomCount != null) {
-      result += " od ${alert.minRoomCount}";
+      result += "od ${alert.minRoomCount} ";
     }
     if (alert.maxRoomCount != null) {
-      result += " do ${alert.maxRoomCount}";
+      result += "do ${alert.maxRoomCount}";
     }
     return result;
   }
 
   String _getFloorString() {
-    String result = "Piętro: ";
+    String result = "";
     var floors = alert.floors?.map((e) => e.toString()).toList() ?? [];
     if (alert.minFloor != null) {
       floors.add("powyżej ${alert.minFloor}");
