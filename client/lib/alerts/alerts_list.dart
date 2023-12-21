@@ -71,27 +71,37 @@ class _AlertsViewState extends State<AlertsView> {
       ),
       body: RefreshIndicator(
         onRefresh: () async => _pagingController.refresh(),
-        child: PagedListView<int, Alert>(
-          pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Alert>(
-            noItemsFoundIndicatorBuilder: (context) => const Message(
-              title: "Nie posiadasz żadnych alertów",
-              subtitle: "Dodaj je klikając przycisk +",
-              icon: Icons.collections_bookmark,
-              adjustToLandscape: true,
-              padding: EdgeInsets.all(8.0),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width *
+                  (MediaQuery.of(context).orientation == Orientation.landscape
+                      ? 0.5
+                      : 1),
             ),
-            firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
-              "Nie udało się pobrać alertów",
-              tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+            child: PagedListView<int, Alert>(
+              pagingController: _pagingController,
+              builderDelegate: PagedChildBuilderDelegate<Alert>(
+                noItemsFoundIndicatorBuilder: (context) => const Message(
+                  title: "Nie posiadasz żadnych alertów",
+                  subtitle: "Dodaj je klikając przycisk +",
+                  icon: Icons.collections_bookmark,
+                  adjustToLandscape: true,
+                  padding: EdgeInsets.all(8.0),
+                ),
+                firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+                  "Nie udało się pobrać alertów",
+                  tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+                ),
+                newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+                  "Nie udało się pobrać alertów",
+                  tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+                ),
+                itemBuilder: (context, alert, index) {
+                  return AlertListItem(alert: alert);
+                },
+              ),
             ),
-            newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
-              "Nie udało się pobrać alertów",
-              tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-            ),
-            itemBuilder: (context, alert, index) {
-              return AlertListItem(alert: alert);
-            },
           ),
         ),
       ),

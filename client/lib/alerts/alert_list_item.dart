@@ -23,16 +23,29 @@ class AlertListItem extends StatelessWidget {
         child: ListTile(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: _buildWidgetsWithDivider([
               if (_canBuildType()) _buildType(),
               if (_canBuildLocation()) _buildLocation(),
               if (_canBuildPrice()) _buildPrice(),
               if (_canBuildDetails()) _buildDetails(),
-            ],
+            ]),
           ),
         ),
       ),
     );
+  }
+
+  _buildWidgetsWithDivider(List<Widget> widgets) {
+    List<Widget> result = [];
+    for (int i = 0; i < widgets.length; i++) {
+      result.add(widgets[i]);
+      if (i != widgets.length - 1) {
+        result.add(const Divider(
+          color: Colors.grey,
+        ));
+      }
+    }
+    return result;
   }
 
   ActionPane _buildActionPane() {
@@ -118,9 +131,6 @@ class AlertListItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(
-          color: Colors.grey,
-        ),
         if (alert.voivodeship != null)
           _getRichTextWithStyle("Województwo: ", alert.voivodeship!),
         if (alert.cities != null && alert.cities!.isNotEmpty)
@@ -147,9 +157,6 @@ class AlertListItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(
-          color: Colors.grey,
-        ),
         if (alert.minPrice != null || alert.maxPrice != null)
           _getRichTextWithStyle(
               "Cena: ", _getPriceString(alert.minPrice, alert.maxPrice)),
@@ -164,9 +171,6 @@ class AlertListItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(
-          color: Colors.grey,
-        ),
         if (alert.minArea != null || alert.maxArea != null)
           _getRichTextWithStyle("Powierzchnia: ", _getAreaString()),
         if (alert.minRoomCount != null || alert.maxRoomCount != null)
