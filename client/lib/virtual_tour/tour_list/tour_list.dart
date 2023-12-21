@@ -1,18 +1,24 @@
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:showcaseview/showcaseview.dart';
+
 import 'package:ccquarters/common_widgets/show_form.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
 import 'package:ccquarters/virtual_tour/tour_list/tour_form.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class TourList extends StatefulWidget {
-  const TourList({required List<TourInfo> tours, super.key}) : _tours = tours;
+  const TourList({
+    super.key,
+    required tours,
+    this.selectionChanged,
+  }) : _tours = tours;
 
   final List<TourInfo> _tours;
+  final Function(TourInfo)? selectionChanged;
 
   @override
   State<TourList> createState() => _TourListState();
@@ -22,18 +28,19 @@ class _TourListState extends State<TourList> {
   final GlobalKey _addHint = GlobalKey();
 
   final HashSet<String> _chosenTourIds = HashSet();
-  bool _isSelecting = false;
+  bool _isMultiSelecting = false;
+  String? _selectedTourId;
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 68,
       title: const Text("Moje wirtualne spacery"),
       actions: [
-        if (_isSelecting)
+        if (_isMultiSelecting)
           IconButton(
               onPressed: () {
                 setState(() {
-                  _isSelecting = false;
+                  _isMultiSelecting = false;
                   _chosenTourIds.clear();
                 });
               },
@@ -95,7 +102,15 @@ class _TourListState extends State<TourList> {
   }
 
   void _handleTileTap(int index) {
-    if (_isSelecting) {
+    if (widget.selectionChanged != null) {
+      setState(() {
+        _selectedTourId = widget._tours[index].id;
+      });
+      widget.selectionChanged!(widget._tours[index]);
+      return;
+    }
+
+    if (_isMultiSelecting) {
       if (_chosenTourIds.contains(widget._tours[index].id)) {
         setState(() {
           _chosenTourIds.remove(widget._tours[index].id);
@@ -118,7 +133,7 @@ class _TourListState extends State<TourList> {
   void _handleTileLongPress(int index) {
     if (_chosenTourIds.isEmpty) {
       setState(() {
-        _isSelecting = true;
+        _isMultiSelecting = true;
         _chosenTourIds.add(widget._tours[index].id);
       });
     }
@@ -165,7 +180,8 @@ class _TourListState extends State<TourList> {
             child: ListTile(
               visualDensity: VisualDensity.compact,
               selectedTileColor: Colors.blueGrey.shade50,
-              selected: _chosenTourIds.contains(widget._tours[index].id),
+              selected: _chosenTourIds.contains(widget._tours[index].id) ||
+                  _selectedTourId == widget._tours[index].id,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: BorderSide(
@@ -177,7 +193,7 @@ class _TourListState extends State<TourList> {
               leading: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (_isSelecting)
+                  if (_isMultiSelecting)
                     _buildTileCheckbox(context, index)
                   else
                     _buildTileIndicator(context),

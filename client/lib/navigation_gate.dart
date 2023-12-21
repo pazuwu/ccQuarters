@@ -1,7 +1,7 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/virtual_tour/tour_list/gate.dart';
+import 'package:ccquarters/virtual_tour/extended_tour_list/extended_tour_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +23,7 @@ class _NavigationGateState extends State<NavigationGate> {
     const MainPageGate(),
     const AddHouseGate(),
     const ProfileGate(),
-    const VTListGate(),
+    const TourListExtendedGate(),
   ];
 
   final List<SideNavigationBarItem> _items = <SideNavigationBarItem>[
