@@ -19,27 +19,7 @@ class AlertListItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: Slidable(
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (context) {
-                context.read<AlertsPageCubit>().goToAlertPage(alert);
-              },
-              backgroundColor: Colors.blueGrey[300]!,
-              foregroundColor: Colors.white,
-              icon: Icons.edit,
-            ),
-            SlidableAction(
-              onPressed: (context) {
-                context.read<AlertsPageCubit>().deleteAlert(alert);
-              },
-              backgroundColor: Colors.blueGrey,
-              foregroundColor: Colors.white,
-              icon: Icons.delete,
-            ),
-          ],
-        ),
+        endActionPane: _buildActionPane(),
         child: ListTile(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,6 +32,30 @@ class AlertListItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  ActionPane _buildActionPane() {
+    return ActionPane(
+      motion: const ScrollMotion(),
+      children: [
+        SlidableAction(
+          onPressed: (context) {
+            context.read<AlertsPageCubit>().goToAlertPage(alert);
+          },
+          backgroundColor: Colors.blueGrey[300]!,
+          foregroundColor: Colors.white,
+          icon: Icons.edit,
+        ),
+        SlidableAction(
+          onPressed: (context) {
+            context.read<AlertsPageCubit>().deleteAlert(alert);
+          },
+          backgroundColor: Colors.blueGrey,
+          foregroundColor: Colors.white,
+          icon: Icons.delete,
+        ),
+      ],
     );
   }
 
