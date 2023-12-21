@@ -1,27 +1,30 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
 import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
 import 'package:ccquarters/common_widgets/show_form.dart';
-import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
-import 'package:ccquarters/virtual_tour/scene_list/import_type_dialog.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
+import 'package:ccquarters/virtual_tour/scene_list/import_type_dialog.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SceneList extends StatelessWidget {
   const SceneList({
     Key? key,
     required this.tour,
+    this.showTitle = false,
   }) : super(key: key);
 
   final Tour tour;
+  final bool showTitle;
 
   void _showScene(BuildContext context, Scene scene) {
     var vtService = context.read<VTService>();
@@ -71,7 +74,7 @@ class SceneList extends StatelessWidget {
     }
   }
 
-  Widget _buildAddNew(BuildContext context) {
+  Widget _buildHeader(BuildContext context) {
     return Column(
       children: [
         const SizedBox(
@@ -210,36 +213,33 @@ class SceneList extends StatelessWidget {
       value: VTScenesCubit(context.read(), tour),
       child: SafeArea(
         child: Scaffold(
-          appBar: AppBar(title: Text(tour.name)),
-          body: ConstrainedBox(
-            constraints: BoxConstraints.loose(const Size.fromWidth(600)),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: BlocBuilder<VTScenesCubit, VTScenesState>(
-                  builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildAddNew(context),
-                    if (state is VTScenesUploadingState)
-                      _buildProgress(state.progress),
-                    Expanded(
-                      child: ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 8.0,
-                            );
-                          },
-                          itemCount: (tour.scenes.length / 2).ceil(),
-                          itemBuilder: (context, index) {
-                            return _buildSingleScenesRow(context, index);
-                          }),
-                    ),
-                  ],
-                );
-              }),
-            ),
+          appBar: showTitle ? AppBar(title: Text(tour.name)) : null,
+          body: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+            child: BlocBuilder<VTScenesCubit, VTScenesState>(
+                builder: (context, state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(context),
+                  if (state is VTScenesUploadingState)
+                    _buildProgress(state.progress),
+                  Expanded(
+                    child: ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: 8.0,
+                          );
+                        },
+                        itemCount: (tour.scenes.length / 2).ceil(),
+                        itemBuilder: (context, index) {
+                          return _buildSingleScenesRow(context, index);
+                        }),
+                  ),
+                ],
+              );
+            }),
           ),
         ),
       ),
