@@ -249,7 +249,7 @@ class VTService {
       if (event is DownloadProgress) {
         progressCallback?.call(event.downloaded, event.totalSize!);
       } else if (event is FileInfo) {
-        downloadedFile = event.file.readAsBytesSync();
+        downloadedFile = event.file;
       }
     });
 

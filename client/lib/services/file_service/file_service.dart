@@ -37,12 +37,13 @@ class CacheManagerFileService extends FileService {
 
     var streamController = StreamController<FileResponse>.broadcast();
 
-    streamSubscription.listen((event) {
+    streamSubscription.listen((event) async {
       if (event is cm.DownloadProgress) {
         streamController.add(DownloadProgress(
             event.originalUrl, event.totalSize, event.downloaded));
       } else if (event is cm.FileInfo) {
-        streamController.add(FileInfo(event.file, event.originalUrl));
+        var fileBytes = await event.file.readAsBytes();
+        streamController.add(FileInfo(fileBytes, event.originalUrl));
       }
     }).onDone(() {
       streamController.close();
