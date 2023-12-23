@@ -49,20 +49,25 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ToggleButtonsTheme(
-        data: ToggleButtonsThemeData(
-          selectedBorderColor: Theme.of(context).colorScheme.primary,
-          fillColor: Theme.of(context).colorScheme.secondary,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(formBorderRadius),
+    return Expanded(
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: ToggleButtonsTheme(
+          data: ToggleButtonsThemeData(
+            selectedBorderColor: Theme.of(context).colorScheme.primary,
+            fillColor: Theme.of(context).colorScheme.secondary,
+            borderRadius: const BorderRadius.all(
+              Radius.circular(formBorderRadius),
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            _buildBuildingType(context),
-            _buildOfferType(context),
-          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildBuildingType(context),
+              const SizedBox(height: 24),
+              _buildOfferType(context),
+            ],
+          ),
         ),
       ),
     );
@@ -72,32 +77,38 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
     return Padding(
       padding: const EdgeInsets.all(largePaddingSize),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Typ ogłoszenia:',
-            style: TextStyle(fontSize: 20),
+          Text(
+            'Wybierz typ ogłoszenia:',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(
-            height: 20,
+            height: 24,
           ),
-          ToggleButtons(
-            isSelected: _selectedBuildingType,
-            onPressed: (int index) {
-              setState(() {
-                for (int i = 0; i < _selectedBuildingType.length; i++) {
-                  _selectedBuildingType[i] = i == index;
-                }
-                _buildingType = BuildingType.values[index];
-                context
-                    .read<AddHouseFormCubit>()
-                    .saveBuildingType(_buildingType);
-              });
-            },
-            children: [
-              ToggleButton(text: BuildingType.house.toString()),
-              ToggleButton(text: BuildingType.apartment.toString()),
-              ToggleButton(text: BuildingType.room.toString()),
-            ],
+          Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: ToggleButtons(
+                isSelected: _selectedBuildingType,
+                onPressed: (int index) {
+                  setState(() {
+                    for (int i = 0; i < _selectedBuildingType.length; i++) {
+                      _selectedBuildingType[i] = i == index;
+                    }
+                    _buildingType = BuildingType.values[index];
+                    context
+                        .read<AddHouseFormCubit>()
+                        .saveBuildingType(_buildingType);
+                  });
+                },
+                children: [
+                  ToggleButton(text: BuildingType.house.toString()),
+                  ToggleButton(text: BuildingType.apartment.toString()),
+                  ToggleButton(text: BuildingType.room.toString()),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -105,22 +116,28 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
   }
 
   Widget _buildOfferType(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 20,
-        ),
-        const Text(
-          'Typ oferty:',
-          style: TextStyle(fontSize: 20),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        _buildingType != BuildingType.room
-            ? _buildMultiOffertType(context)
-            : _buildSingleOfferType()
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(largePaddingSize),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Wybierz typ oferty:',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: _buildingType != BuildingType.room
+                  ? _buildMultiOffertType(context)
+                  : _buildSingleOfferType(),
+            ),
+          )
+        ],
+      ),
     );
   }
 

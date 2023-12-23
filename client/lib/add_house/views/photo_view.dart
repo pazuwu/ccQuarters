@@ -107,7 +107,7 @@ class _PhotoViewState extends State<PhotoView> {
       },
       child: Icon(
         Icons.add_a_photo_outlined,
-        size: getDeviceTypeForGrid(context) == DeviceType.mobile ? 64 : 96,
+        size: getDeviceTypeForGrid(context) == DeviceType.mobile ? 56 : 96,
       ),
     );
   }
@@ -192,10 +192,10 @@ class GridTile extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Card(
-          shape: const RoundedRectangleBorder(),
+          shape: const BeveledRectangleBorder(),
           borderOnForeground: true,
           elevation: 0,
-          color: Colors.grey.shade200,
+          color: Colors.grey.shade100,
           clipBehavior: Clip.antiAlias,
           child: InkWellWithPhoto(
             onTap: onTap,
