@@ -27,7 +27,13 @@ class AlertsGate extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else if (state is ErrorState) {
-            return ErrorMessage(state.message);
+            return ErrorMessage(
+              state.message,
+              closeButton: true,
+              onClose: () {
+                context.read<AlertsPageCubit>().goToAlertsMainPage();
+              },
+            );
           }
 
           return Container();

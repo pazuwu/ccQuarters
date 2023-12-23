@@ -6,6 +6,7 @@ class ServiceResponse<T> {
 }
 
 enum ErrorType {
+  emptyRequest,
   unauthorized,
   notFound,
   badRequest,

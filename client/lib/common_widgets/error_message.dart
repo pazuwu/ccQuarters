@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ErrorMessage extends Message {
   const ErrorMessage(String errorMessage,
-      {super.key, String? tip, super.closeButton})
+      {super.key, String? tip, super.closeButton, super.onClose})
       : super(
           title: errorMessage,
           subtitle: tip,

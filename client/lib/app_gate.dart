@@ -1,4 +1,5 @@
 import 'package:ccquarters/environment.dart';
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/authorized_dio.dart';
@@ -11,6 +12,7 @@ import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class AppMainGate extends StatelessWidget {
@@ -47,6 +49,12 @@ class AppMainGate extends StatelessWidget {
           create: (context) =>
               VTService(context.read(), context.read(), Environment.vtApiUrl),
         ),
+        BlocProvider(
+          create: (context) => AuthCubit(
+            authService: context.read(),
+            userService: context.read(),
+          ),
+        )
       ],
       child: MaterialApp(
         themeMode: ThemeMode.light,

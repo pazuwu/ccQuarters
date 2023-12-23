@@ -42,10 +42,16 @@ class AlertService {
 
   Future<ServiceResponse<bool>> createAlert(NewAlert alert) async {
     try {
-      var alertJson = alert.toJson();
+      if (alert.isEmpty()) {
+        return ServiceResponse(
+          data: false,
+          error: ErrorType.emptyRequest,
+        );
+      }
+
       var response = await _dio.post(
         _url,
-        data: alertJson,
+        data: alert.toJson(),
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),

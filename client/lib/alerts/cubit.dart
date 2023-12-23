@@ -48,31 +48,37 @@ class AlertsPageCubit extends Cubit<AlertsState> {
     emit(LoadingOrSendingDataState());
 
     if (alert is Alert) {
-      await _updateAlert(alert);
+      if (!await _updateAlert(alert)) return;
     } else if (alert is NewAlert) {
-      await _createAlert(alert);
+      if (!await _createAlert(alert)) return;
     }
 
     emit(AlertsMainPageState());
   }
 
-  Future<void> _createAlert(NewAlert alert) async {
+  Future<bool> _createAlert(NewAlert alert) async {
     final response = await alertService.createAlert(alert);
     if (response.error != ErrorType.none) {
-      emit(ErrorState(
-          message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
-      return;
+      if (response.error == ErrorType.emptyRequest) {
+        emit(ErrorState(message: "Nie można wysłać pustego alertu."));
+      } else {
+        emit(ErrorState(
+            message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
+      }
+      return false;
     }
+    return true;
   }
 
-  Future<void> _updateAlert(Alert alert) async {
+  Future<bool> _updateAlert(Alert alert) async {
     final response = await alertService.updateAlert(alert);
     if (response.error != ErrorType.none) {
       emit(ErrorState(
           message:
               "Nie udało się zaktualizować alertu. Spróbuj ponownie później."));
-      return;
+      return false;
     }
+    return true;
   }
 
   Future<void> deleteAlert(Alert alert) async {

@@ -29,7 +29,7 @@ class ProfileDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.collections_bookmark),
+            leading: const Icon(Icons.notifications),
             title: const Text('Moje alerty'),
             onTap: () {
               context.read<ProfilePageCubit>().goToAlertsPage();
