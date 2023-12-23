@@ -14,28 +14,31 @@ class GoBackNextButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (goBackOnPressed != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 20.0),
-            child: ElevatedButton(
-              key: const Key('goBack'),
-              onPressed: goBackOnPressed,
-              child: const Text("Wróć"),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          if (goBackOnPressed != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 20.0),
+              child: ElevatedButton(
+                key: const Key('goBack'),
+                onPressed: goBackOnPressed,
+                child: const Text("Wróć"),
+              ),
             ),
-          ),
-        if (nextOnPressed != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 20.0),
-            child: ElevatedButton(
-              key: const Key('next'),
-              onPressed: nextOnPressed,
-              child: Text(isLastPage ? "Wyślij" : "Dalej"),
+          if (nextOnPressed != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 20.0, 8.0, 20.0),
+              child: ElevatedButton(
+                key: const Key('next'),
+                onPressed: nextOnPressed,
+                child: Text(isLastPage ? "Wyślij" : "Dalej"),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
