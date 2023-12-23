@@ -115,7 +115,12 @@ extension SortByTypeEx on SortingMethod {
 class FloorNumber {
   FloorNumber(this.floorNumber);
 
+  FloorNumber.aboveTen() : floorNumber = 11 {
+    isAboveTen = true;
+  }
+
   int floorNumber;
+  bool isAboveTen = false;
 
   @override
   String toString() {
@@ -135,7 +140,8 @@ class FloorNumber {
       identical(this, other) ||
       other is FloorNumber &&
           runtimeType == other.runtimeType &&
-          floorNumber == other.floorNumber;
+          floorNumber == other.floorNumber &&
+          isAboveTen == other.isAboveTen;
 
   @override
   int get hashCode => floorNumber.hashCode;

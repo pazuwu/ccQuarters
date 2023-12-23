@@ -129,8 +129,17 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         FloorMultiSelectDropdown(
           onChanged: (List<FloorNumber> newValue) {
             setState(() {
-              widget.filters.floors =
-                  newValue.map((e) => e.floorNumber).toList();
+              var newFloors = newValue.map((e) => e.floorNumber).toList();
+              var indexAboveTen =
+                  newValue.indexWhere((element) => element.isAboveTen);
+
+              if (indexAboveTen != -1) {
+                var aboveTen = newValue[indexAboveTen];
+                widget.filters.minFloor = aboveTen.floorNumber;
+                newFloors.remove(aboveTen.floorNumber);
+              }
+
+              widget.filters.floors = newFloors;
               widget.filters.floors!.sort();
             });
           },
@@ -138,6 +147,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
           onClear: () {
             setState(() {
               widget.filters.floors = null;
+              widget.filters.minFloor = null;
             });
           },
         ),

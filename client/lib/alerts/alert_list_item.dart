@@ -269,7 +269,7 @@ class AlertListItem extends StatelessWidget {
     String result = "";
     var floors = alert.floors?.map((e) => e.toString()).toList() ?? [];
     if (alert.minFloor != null) {
-      floors.add("powyżej ${alert.minFloor}");
+      floors.add("powyżej ${alert.minFloor! - 1}");
     }
     result += "${_getStringOfList(floors)} ";
     return result;
