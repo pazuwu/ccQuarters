@@ -44,9 +44,8 @@ class CacheManagerFileService extends FileService {
       } else if (event is cm.FileInfo) {
         var fileBytes = await event.file.readAsBytes();
         streamController.add(FileInfo(fileBytes, event.originalUrl));
+        streamController.close();
       }
-    }).onDone(() {
-      streamController.close();
     });
 
     yield* streamController.stream;

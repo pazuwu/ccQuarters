@@ -11,6 +11,8 @@ namespace VirtualTourAPI.Model
         public required string Name { get; set; }
         [FirestoreProperty]
         public required string OwnerId { get; set; }
+        [FirestoreProperty]
+        public string? PrimarySceneId { get; set; }
 
         public List<AreaDTO>? Areas { get; set; }
         public List<SceneDTO>? Scenes { get; set; }

@@ -2,7 +2,6 @@
 using AuthLibrary;
 using System.Security.Claims;
 using VirtualTourAPI.Service;
-using Google.Api;
 using VirtualTourAPI.Model;
 using VirtualTourAPI.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +74,7 @@ namespace VirtualTourAPI.Endpoints
             var tour = new TourUpdate()
             {
                 Name = putTourRequest.Name,
+                PrimarySceneId = putTourRequest.PrimarySceneId
             };
 
             await service.UpdateTour(tourId, tour);
