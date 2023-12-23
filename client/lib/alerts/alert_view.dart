@@ -32,7 +32,6 @@ class AlertView extends StatelessWidget {
               context.read<AlertsPageCubit>().saveAlert(alert is Alert
                   ? Alert.fromHouseFilter(filters, (alert as Alert).id)
                   : NewAlert.fromHouseFilter(filters));
-              ;
             },
           )
         ],
