@@ -19,16 +19,31 @@ class AlertListItem extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: Slidable(
-        endActionPane: _buildActionPane(),
+        endActionPane:
+            MediaQuery.of(context).orientation == Orientation.landscape
+                ? null
+                : _buildActionPane(),
         child: ListTile(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _buildWidgetsWithDivider([
-              if (_canBuildType()) _buildType(),
-              if (_canBuildLocation()) _buildLocation(),
-              if (_canBuildPrice()) _buildPrice(),
-              if (_canBuildDetails()) _buildDetails(),
-            ]),
+          title: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _buildWidgetsWithDivider([
+                  if (_canBuildType()) _buildType(),
+                  if (_canBuildLocation()) _buildLocation(),
+                  if (_canBuildPrice()) _buildPrice(),
+                  if (_canBuildDetails()) _buildDetails(),
+                ]),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  onPressed: () {},
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -37,14 +52,17 @@ class AlertListItem extends StatelessWidget {
 
   _buildWidgetsWithDivider(List<Widget> widgets) {
     List<Widget> result = [];
+
     for (int i = 0; i < widgets.length; i++) {
       result.add(widgets[i]);
+
       if (i != widgets.length - 1) {
         result.add(const Divider(
           color: Colors.grey,
         ));
       }
     }
+
     return result;
   }
 
@@ -98,11 +116,14 @@ class AlertListItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (alert.offerType != null)
               Text("${alert.offerType!.toString()} ${_getBuildingTypeString()}",
                   style: const TextStyle(fontWeight: FontWeight.w500)),
+            if (alert.offerType != null)
+              const SizedBox(
+                width: 8.0,
+              ),
             if (alert.buildingType != null)
               Icon(
                 alert.buildingType!.icon,
