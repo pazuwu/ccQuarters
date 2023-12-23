@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 class AlwaysVisibleTextLabel extends StatelessWidget {
@@ -47,20 +48,24 @@ class AlwaysVisibleLabel extends StatelessWidget {
     this.background,
     this.stretch = true,
     this.padding,
+    this.borderRadius,
   }) : super(key: key);
 
   final Widget child;
   final Color? background;
   final bool stretch;
   final EdgeInsets? padding;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: padding ?? const EdgeInsets.all(4.0),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
           color: background ?? Colors.black38,
-          borderRadius: const BorderRadius.all(Radius.circular(4))),
+          borderRadius:
+              borderRadius ?? const BorderRadius.all(Radius.circular(4))),
       child: stretch ? Center(child: child) : child,
     );
   }

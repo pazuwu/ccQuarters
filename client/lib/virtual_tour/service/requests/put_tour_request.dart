@@ -1,19 +1,27 @@
 import 'dart:convert';
 
 class PutTourRequest {
-  final String name;
+  final String? name;
+  final String? primarySceneId;
 
-  PutTourRequest({required this.name});
+  PutTourRequest({
+    this.name,
+    this.primarySceneId,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'name': name,
+      'primarySceneId': primarySceneId,
     };
   }
 
   factory PutTourRequest.fromMap(Map<String, dynamic> map) {
     return PutTourRequest(
-      name: map['name'] as String,
+      name: map['name'] != null ? map['name'] as String : null,
+      primarySceneId: map['primarySceneId'] != null
+          ? map['primarySceneId'] as String
+          : null,
     );
   }
 

@@ -105,6 +105,26 @@ class VTService {
     }
   }
 
+  Future<VTServiceResponse<bool>> deleteScene(
+      String tourId, String sceneId) async {
+    try {
+      var response = await _dio.delete(
+        "$_url/$_tours/$tourId/$_scenes/$sceneId",
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return VTServiceResponse(data: true);
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
   Future<VTServiceResponse<String?>> uploadScenePhoto(
       String tourId, String sceneId, Uint8List photo) async {
     return _uploadPhoto(
@@ -324,11 +344,14 @@ class VTService {
   }
 
   Future<VTServiceResponse<bool>> updateTour(String tourId,
-      {required String name}) async {
+      {String? name, String? primarySceneId}) async {
     try {
       var response = await _dio.put(
         "$_url/$_tours/$tourId",
-        data: PutTourRequest(name: name).toJson(),
+        data: PutTourRequest(
+          name: name,
+          primarySceneId: primarySceneId,
+        ).toJson(),
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
