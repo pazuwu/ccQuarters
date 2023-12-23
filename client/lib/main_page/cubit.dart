@@ -28,7 +28,7 @@ class MainPageCubit extends Cubit<MainPageState> {
   }
 
   Future<List<House>?> getHousesToBuy(int pageNumber, int pageCount) async {
-    return _getHouses(pageNumber, pageCount, OfferType.sale);
+    return _getHouses(pageNumber, pageCount, OfferType.sell);
   }
 
   Future<List<House>?> _getHouses(

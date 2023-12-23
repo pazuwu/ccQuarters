@@ -53,7 +53,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         TitledDropdown(
           title: 'Typ budynku',
           value: widget.filters.buildingType,
-          values: BuildingType.values,
+          values: _getBuildingTypeValues(),
           onChanged: (BuildingType? newValue) =>
               setState(() => widget.filters.buildingType = newValue),
           onClear: () => setState(() {
@@ -63,7 +63,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         TitledDropdown(
           title: 'Typ oferty',
           value: widget.filters.offerType,
-          values: OfferType.values,
+          values: _getOfferTypeValues(),
           onChanged: (OfferType? newValue) =>
               setState(() => widget.filters.offerType = newValue),
           onClear: () => setState(() {
@@ -72,6 +72,25 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         ),
       ],
     );
+  }
+
+  List<BuildingType> _getBuildingTypeValues() {
+    if (widget.filters.offerType == OfferType.sell) {
+      return [
+        BuildingType.apartment,
+        BuildingType.house,
+      ];
+    } else {
+      return BuildingType.values;
+    }
+  }
+
+  List<OfferType> _getOfferTypeValues() {
+    if (widget.filters.buildingType == BuildingType.room) {
+      return [OfferType.rent];
+    } else {
+      return OfferType.values;
+    }
   }
 
   ExpansionPanel _buildDetailsExpansionPanel(BuildContext context) {

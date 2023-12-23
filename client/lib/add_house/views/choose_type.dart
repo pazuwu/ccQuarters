@@ -80,27 +80,50 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
           const SizedBox(
             height: 20,
           ),
-          ToggleButtons(
-            isSelected: _selectedBuildingType,
-            onPressed: (int index) {
-              setState(() {
-                for (int i = 0; i < _selectedBuildingType.length; i++) {
-                  _selectedBuildingType[i] = i == index;
-                }
-                _buildingType = BuildingType.values[index];
-                context
-                    .read<AddHouseFormCubit>()
-                    .saveBuildingType(_buildingType);
-              });
-            },
-            children: [
-              ToggleButton(text: BuildingType.house.toString()),
-              ToggleButton(text: BuildingType.apartment.toString()),
-              ToggleButton(text: BuildingType.room.toString()),
-            ],
-          ),
+          _offerType == OfferType.rent
+              ? _buildBuildingTypeForRent(context)
+              : _buildBuildingTypeForSell(context),
         ],
       ),
+    );
+  }
+
+  ToggleButtons _buildBuildingTypeForRent(BuildContext context) {
+    return ToggleButtons(
+      isSelected: _selectedBuildingType,
+      onPressed: (int index) {
+        setState(() {
+          for (int i = 0; i < _selectedBuildingType.length; i++) {
+            _selectedBuildingType[i] = i == index;
+          }
+          _buildingType = BuildingType.values[index];
+          context.read<AddHouseFormCubit>().saveBuildingType(_buildingType);
+        });
+      },
+      children: [
+        ToggleButton(text: BuildingType.house.toString()),
+        ToggleButton(text: BuildingType.apartment.toString()),
+        ToggleButton(text: BuildingType.room.toString()),
+      ],
+    );
+  }
+
+  ToggleButtons _buildBuildingTypeForSell(BuildContext context) {
+    return ToggleButtons(
+      isSelected: _selectedBuildingType.sublist(0, 2),
+      onPressed: (int index) {
+        setState(() {
+          for (int i = 0; i < _selectedBuildingType.length; i++) {
+            _selectedBuildingType[i] = i == index;
+          }
+          _buildingType = BuildingType.values[index];
+          context.read<AddHouseFormCubit>().saveBuildingType(_buildingType);
+        });
+      },
+      children: [
+        ToggleButton(text: BuildingType.house.toString()),
+        ToggleButton(text: BuildingType.apartment.toString()),
+      ],
     );
   }
 
@@ -135,12 +158,20 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
             }
             _offerType = OfferType.values[index];
             context.read<AddHouseFormCubit>().saveOfferType(_offerType);
+
+            // if (_offerType == OfferType.sell &&
+            //     _buildingType == BuildingType.room) {
+            //   _selectedBuildingTypeForSell[0] = true;
+            //   _selectedBuildingTypeForSell[1] = false;
+            //   _buildingType = BuildingType.house;
+            //   context.read<AddHouseFormCubit>().saveBuildingType(_buildingType);
+            // }
           },
         );
       },
       children: [
         ToggleButton(text: OfferType.rent.toString()),
-        ToggleButton(text: OfferType.sale.toString()),
+        ToggleButton(text: OfferType.sell.toString()),
       ],
     );
   }
@@ -148,16 +179,7 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
   ToggleButtons _buildSingleOfferType() {
     return ToggleButtons(
       isSelected: _selectedSingleOfferType,
-      onPressed: (int index) {
-        setState(
-          () {
-            for (int i = 0; i < _selectedSingleOfferType.length; i++) {
-              _selectedSingleOfferType[i] = i == index;
-            }
-            _offerType = OfferType.rent;
-          },
-        );
-      },
+      onPressed: (int index) {},
       children: [
         ToggleButton(
           text: OfferType.rent.toString(),
