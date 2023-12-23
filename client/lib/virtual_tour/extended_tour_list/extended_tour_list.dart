@@ -2,7 +2,6 @@ import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:ccquarters/virtual_tour/tour_list/gate.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class TourListExtendedGate extends StatefulWidget {
   const TourListExtendedGate({super.key});

@@ -2,10 +2,9 @@
 
 namespace VirtualTourAPI.Model
 {
-    [FirestoreData]
     public class TourUpdate
     {
-        [FirestoreProperty]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
+        public string? PrimarySceneId { get; set; }
     }
 }

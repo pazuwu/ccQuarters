@@ -204,9 +204,19 @@ namespace VirtualTourAPI.Service
         public async Task UpdateTour(string tourId, TourUpdate tourUpdate)
         {
             string path = $"{ToursCollection}/{tourId}";
-            string addedTourId = await _documentRepository.SetAsync(path, tourUpdate);
 
-            _logger.LogInformation("Changed tour: {Id}", addedTourId);
+            var updateDictionary = new Dictionary<string, object>();
+
+            if(tourUpdate.Name != null)
+                updateDictionary[nameof(tourUpdate.Name)] = tourUpdate.Name;
+            if(tourUpdate.PrimarySceneId != null)
+                updateDictionary[nameof(tourUpdate.PrimarySceneId)] = tourUpdate.PrimarySceneId;
+
+            if(updateDictionary.Any())
+            {
+                string addedTourId = await _documentRepository.SetAsync(path, updateDictionary);
+                _logger.LogInformation("Changed tour: {Id}", addedTourId);
+            }
         }
 
         public async Task DeleteTour(string tourId)
