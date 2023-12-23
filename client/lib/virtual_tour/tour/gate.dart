@@ -1,8 +1,8 @@
-import 'package:ccquarters/virtual_tour/tour/cubit.dart';
+import 'package:ccquarters/virtual_tour/scene_list/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
+import 'package:ccquarters/virtual_tour/tour/cubit.dart';
 import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
 
 class VirtualTourGate extends StatelessWidget {
@@ -10,10 +10,12 @@ class VirtualTourGate extends StatelessWidget {
     Key? key,
     required this.tourId,
     required this.readOnly,
+    this.showTitle = false,
   }) : super(key: key);
 
   final String tourId;
   final bool readOnly;
+  final bool showTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class VirtualTourGate extends StatelessWidget {
               }
 
               if (state is VTEditingState) {
-                return SceneList(tour: state.virtualTour);
+                return SceneListGate(tour: state.virtualTour);
               }
 
               if (state is VTViewingState) {

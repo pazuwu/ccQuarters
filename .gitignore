@@ -353,6 +353,6 @@ MigrationBackup/
 .ionide/
 
 # Visual Studio Code file
-.vscode/
+# .vscode/
 client/env/.env.dev
 client/android/app/google-services.json

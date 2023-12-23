@@ -1,35 +1,41 @@
-import 'dart:math';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ccquarters/common_widgets/always_visible_label.dart';
 import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/common_widgets/show_form.dart';
-import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
-import 'package:ccquarters/virtual_tour/scene_list/import_type_dialog.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/model/tour.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
-import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
+import 'package:ccquarters/virtual_tour/scene_list/scene_options.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SceneList extends StatelessWidget {
+import 'package:ccquarters/common_widgets/always_visible_label.dart';
+import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common_widgets/show_form.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
+import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
+import 'package:ccquarters/virtual_tour/scene_list/scene_form.dart';
+import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
+
+class SceneList extends StatefulWidget {
   const SceneList({
     Key? key,
     required this.tour,
+    this.showTitle = false,
   }) : super(key: key);
 
   final Tour tour;
+  final bool showTitle;
 
+  @override
+  State<SceneList> createState() => _SceneListState();
+}
+
+class _SceneListState extends State<SceneList> {
   void _showScene(BuildContext context, Scene scene) {
     var vtService = context.read<VTService>();
 
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return TourViewer(
         readOnly: false,
-        tour: tour,
+        tour: widget.tour,
         service: vtService,
         currentScene: scene,
       );
@@ -51,16 +57,17 @@ class SceneList extends StatelessWidget {
     if (sceneFormModel == null) return;
 
     if (sceneFormModel.importType == ImportType.photos360) {
-      FilePickerResult? result =
-          await FilePicker.platform.pickFiles(type: FileType.image);
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(type: FileType.image, withData: true);
 
-      if (result?.files.single.path != null) {
-        await cubit.createNewSceneFromPhoto(result!.files.single.path!,
+      if (result?.files.single.bytes != null) {
+        await cubit.createNewSceneFromPhoto(result!.files.single.bytes!,
             name: sceneFormModel.name);
       }
     } else if (sceneFormModel.importType == ImportType.photos) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
+        withData: true,
         type: FileType.image,
       );
 
@@ -71,7 +78,7 @@ class SceneList extends StatelessWidget {
     }
   }
 
-  Widget _buildAddNew(BuildContext context) {
+  Widget _buildHeader(BuildContext context) {
     return Column(
       children: [
         const SizedBox(
@@ -108,62 +115,71 @@ class SceneList extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: InkWellWithPhoto(
-        onTap: () {
-          _showScene(context, scene);
-        },
-        imageWidget: Stack(
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 250, minHeight: 250),
-              child: scene.photo360 != null
-                  ? Image.memory(
-                      scene.photo360!,
-                      fit: BoxFit.cover,
-                    )
-                  : CachedNetworkImage(
-                      fadeInDuration: const Duration(milliseconds: 700),
-                      placeholder: (context, text) {
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      imageBuilder: (context, imageProvider) => Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                )),
+      child: Stack(
+        children: [
+          InkWellWithPhoto(
+            onTap: () {
+              _showScene(context, scene);
+            },
+            imageWidget: Stack(
+              children: [
+                ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxHeight: 250, minHeight: 250),
+                  child: scene.photo360 != null
+                      ? SizedBox.expand(
+                          child: Image.memory(
+                            scene.photo360!,
+                            fit: BoxFit.cover,
                           ),
-                      imageUrl:
-                          'https://picsum.photos/1000/2000?=${Random().nextDouble()}'),
+                        )
+                      : const Icon360(),
+                ),
+                Positioned.fill(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(child: Container()),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: AlwaysVisibleTextLabel(
+                          text: scene.name,
+                          fontSize:
+                              Theme.of(context).textTheme.labelLarge?.fontSize,
+                          fontWeight: FontWeight.w500,
+                          background: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Positioned.fill(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const AlwaysVisibleLabel(
-                    background: Colors.black54,
-                    padding: EdgeInsets.all(0.0),
-                    child: Icon360(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Expanded(child: Container()),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: AlwaysVisibleTextLabel(
-                      text: scene.name,
-                      fontSize:
-                          Theme.of(context).textTheme.labelLarge?.fontSize,
-                      fontWeight: FontWeight.w500,
-                      background: Colors.black54,
-                    ),
-                  ),
-                ],
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: SceneOptions(
+                scene: scene,
               ),
             ),
-          ],
-        ),
+          ),
+          if (scene.id == widget.tour.primarySceneId)
+            const Positioned(
+              top: 0,
+              left: 0,
+              child: Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Icon(
+                  shadows: [Shadow(blurRadius: 32, color: Colors.black54)],
+                  Icons.looks_one,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -171,13 +187,23 @@ class SceneList extends StatelessWidget {
   Widget _buildSingleScenesRow(BuildContext context, int index) {
     return Row(
       children: [
-        Expanded(child: _buildSceneTile(context, tour.scenes[2 * index])),
-        if (2 * index + 1 < tour.scenes.length)
+        Expanded(
+          child: _buildSceneTile(
+            context,
+            widget.tour.scenes[2 * index],
+          ),
+        ),
+        if (2 * index + 1 < widget.tour.scenes.length)
           const SizedBox(
             width: 8.0,
           ),
-        if (2 * index + 1 < tour.scenes.length)
-          Expanded(child: _buildSceneTile(context, tour.scenes[2 * index + 1])),
+        if (2 * index + 1 < widget.tour.scenes.length)
+          Expanded(
+            child: _buildSceneTile(
+              context,
+              widget.tour.scenes[2 * index + 1],
+            ),
+          ),
       ],
     );
   }
@@ -204,43 +230,41 @@ class SceneList extends StatelessWidget {
     );
   }
 
+  Widget _buildList(BuildContext context) {
+    return ListView.separated(
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: 8.0,
+        );
+      },
+      itemCount: (widget.tour.scenes.length / 2).ceil(),
+      itemBuilder: (context, index) {
+        return _buildSingleScenesRow(context, index);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: VTScenesCubit(context.read(), tour),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(title: Text(tour.name)),
-          body: ConstrainedBox(
-            constraints: BoxConstraints.loose(const Size.fromWidth(600)),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              child: BlocBuilder<VTScenesCubit, VTScenesState>(
-                  builder: (context, state) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildAddNew(context),
-                    if (state is VTScenesUploadingState)
-                      _buildProgress(state.progress),
-                    Expanded(
-                      child: ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 8.0,
-                            );
-                          },
-                          itemCount: (tour.scenes.length / 2).ceil(),
-                          itemBuilder: (context, index) {
-                            return _buildSingleScenesRow(context, index);
-                          }),
-                    ),
-                  ],
-                );
-              }),
-            ),
-          ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: widget.showTitle ? AppBar(title: Text(widget.tour.name)) : null,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          child: BlocBuilder<VTScenesCubit, VTScenesState>(
+              builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                if (state is VTScenesUploadingState)
+                  _buildProgress(state.progress),
+                Expanded(
+                  child: _buildList(context),
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );

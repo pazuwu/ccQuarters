@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 
 class InkWellWithPhoto extends StatelessWidget {
   const InkWellWithPhoto({
-    super.key,
+    Key? key,
     required this.imageWidget,
     required this.onTap,
+    this.onDoubleTap,
+    this.onLongPress,
     this.inkWellChild,
     this.fit = StackFit.loose,
-    this.onDoubleTap,
-  });
+  }) : super(key: key);
 
   final Widget imageWidget;
   final Function() onTap;
   final Function()? onDoubleTap;
+  final Function()? onLongPress;
   final Widget? inkWellChild;
   final StackFit fit;
 
@@ -28,6 +30,7 @@ class InkWellWithPhoto extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               onDoubleTap: onDoubleTap,
+              onLongPress: onLongPress,
               child: inkWellChild,
             ),
           ),

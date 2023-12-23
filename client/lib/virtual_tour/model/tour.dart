@@ -8,6 +8,7 @@ class Tour {
   Tour({
     required this.name,
     required this.id,
+    this.primarySceneId,
     this.areas = const [],
     this.scenes = const [],
     this.links = const [],
@@ -15,6 +16,8 @@ class Tour {
 
   final String name;
   final String id;
+  String? primarySceneId;
+
   final List<Area> areas;
   final List<Scene> scenes;
   final List<Link> links;
@@ -23,6 +26,7 @@ class Tour {
     return <String, dynamic>{
       'name': name,
       'id': id,
+      'primarySceneId': primarySceneId,
       'areas': areas.map((x) => x.toMap()).toList(),
       'scenes': scenes.map((x) => x.toMap()).toList(),
       'links': links.map((x) => x.toMap()).toList(),
@@ -33,6 +37,9 @@ class Tour {
     return Tour(
       name: map['name'] as String,
       id: map['id'] as String,
+      primarySceneId: map['primarySceneId'] != null
+          ? map['primarySceneId'] as String
+          : null,
       areas: List<Area>.from(
         (map['areas'] as List<dynamic>).map<Area>(
           (x) => Area.fromMap(x as Map<String, dynamic>),
