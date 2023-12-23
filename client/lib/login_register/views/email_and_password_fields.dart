@@ -7,12 +7,14 @@ class EmailAndPasswordFields extends StatelessWidget {
     super.key,
     required this.email,
     required this.password,
+    required this.onLastFieldSubmitted,
     this.repeatPassword,
   });
 
   final TextEditingController email;
   final TextEditingController password;
   final TextEditingController? repeatPassword;
+  final Function() onLastFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,11 @@ class EmailAndPasswordFields extends StatelessWidget {
         }
         return null;
       },
+      onFieldSubmitted: repeatPassword != null
+          ? null
+          : (text) {
+              onLastFieldSubmitted();
+            },
     );
   }
 
@@ -86,6 +93,9 @@ class EmailAndPasswordFields extends StatelessWidget {
             }
 
             return null;
+          },
+          onFieldSubmitted: (text) {
+            onLastFieldSubmitted();
           },
         ),
       ],

@@ -10,6 +10,7 @@ class PersonalInfoFields extends StatefulWidget {
     required this.surname,
     required this.phoneNumber,
     required this.isBusinessAccount,
+    this.onLastFieldSubmitted,
     this.saveIsBusinessAcount,
   });
 
@@ -19,6 +20,7 @@ class PersonalInfoFields extends StatefulWidget {
   final TextEditingController phoneNumber;
   final bool isBusinessAccount;
   final Function? saveIsBusinessAcount;
+  final Function? onLastFieldSubmitted;
 
   @override
   State<PersonalInfoFields> createState() => _PersonalInfoFieldsState();
@@ -150,6 +152,11 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
     return ThemedFormField(
       controller: widget.phoneNumber,
       labelText: 'Numer telefonu',
+      onFieldSubmitted: widget.onLastFieldSubmitted != null
+          ? (text) {
+              widget.onLastFieldSubmitted!();
+            }
+          : null,
     );
   }
 }
