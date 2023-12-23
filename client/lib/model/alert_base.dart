@@ -3,7 +3,6 @@ import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
 
-
 abstract class AlertBase extends AlertFilterBase {
   String? voivodeship;
 
@@ -60,5 +59,4 @@ abstract class AlertBase extends AlertFilterBase {
           cities: filters.cities,
           districts: filters.districts,
         );
-
 }
