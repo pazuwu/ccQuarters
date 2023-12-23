@@ -1,5 +1,5 @@
 import 'package:ccquarters/alerts/cubit.dart';
-import 'package:ccquarters/list_of_houses/filters/expansion_panel_list.dart';
+import 'package:ccquarters/filters/expansion_panel_list.dart';
 import 'package:ccquarters/model/alert.dart';
 import 'package:ccquarters/model/alert_base.dart';
 import 'package:ccquarters/model/filter.dart';

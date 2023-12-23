@@ -1,6 +1,6 @@
 import 'package:ccquarters/list_of_houses/cubit.dart';
-import 'package:ccquarters/list_of_houses/filters/expansion_panel_list.dart';
-import 'package:ccquarters/list_of_houses/filters/sort_by_dropdown.dart';
+import 'package:ccquarters/filters/expansion_panel_list.dart';
+import 'package:ccquarters/filters/sort_by_dropdown.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/utils/consts.dart';

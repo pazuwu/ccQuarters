@@ -1,7 +1,7 @@
-import 'package:ccquarters/list_of_houses/filters/chips.dart';
-import 'package:ccquarters/list_of_houses/filters/titled_dropdown.dart';
-import 'package:ccquarters/list_of_houses/filters/floor_multiselect_dropdown.dart';
-import 'package:ccquarters/list_of_houses/filters/from_to_number_fields.dart';
+import 'package:ccquarters/filters/chips.dart';
+import 'package:ccquarters/filters/titled_dropdown.dart';
+import 'package:ccquarters/filters/floor_multiselect_dropdown.dart';
+import 'package:ccquarters/filters/from_to_number_fields.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
