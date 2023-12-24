@@ -1,4 +1,4 @@
-import 'package:ccquarters/common_widgets/error_message.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/house_details/views/edit_house_view.dart';

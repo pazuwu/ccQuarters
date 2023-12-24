@@ -1,6 +1,6 @@
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/common_widgets/shadow.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/widgets/shadow.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 
 class FakeSearchBox extends StatelessWidget {

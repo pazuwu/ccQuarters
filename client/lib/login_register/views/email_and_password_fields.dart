@@ -1,4 +1,4 @@
-import 'package:ccquarters/common_widgets/themed_form_field.dart';
+import 'package:ccquarters/common/inputs/themed_form_field.dart';
 import 'package:flutter/material.dart';
 
 class EmailAndPasswordFields extends StatelessWidget {

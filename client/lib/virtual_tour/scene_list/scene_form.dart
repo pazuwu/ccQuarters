@@ -1,7 +1,7 @@
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:flutter/material.dart';
 
-import 'package:ccquarters/common_widgets/radio_list.dart';
+import 'package:ccquarters/common/inputs/radio_list.dart';
 
 class SceneFormModel {
   SceneFormModel({

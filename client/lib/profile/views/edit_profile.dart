@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

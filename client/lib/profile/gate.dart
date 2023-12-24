@@ -1,4 +1,4 @@
-import 'package:ccquarters/common_widgets/error_message.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';

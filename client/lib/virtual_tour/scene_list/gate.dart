@@ -1,4 +1,4 @@
-import 'package:ccquarters/common_widgets/snack_messenger.dart';
+import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

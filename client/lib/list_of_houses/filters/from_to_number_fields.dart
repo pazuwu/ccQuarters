@@ -1,5 +1,5 @@
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/common_widgets/number_text_field.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/inputs/number_text_field.dart';
 import 'package:flutter/material.dart';
 
 class FromToNumberFields extends StatelessWidget {

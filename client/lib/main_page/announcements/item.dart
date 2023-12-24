@@ -1,9 +1,9 @@
-import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';

@@ -6,8 +6,8 @@ import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/model/voivodeship.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 
 class FiltersExpansionPanelList extends StatefulWidget {

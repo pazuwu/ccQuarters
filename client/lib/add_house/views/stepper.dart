@@ -7,7 +7,7 @@ import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
 import 'package:ccquarters/add_house/views/virtual_tour_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
