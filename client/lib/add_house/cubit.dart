@@ -19,10 +19,11 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
         super(ChooseTypeFormState(house?.houseDetails ?? NewHouseDetails()));
 
   HouseService houseService;
-  late NewHouse house;
-  List<Photo> deletedPhotos = [];
-
   VTService vtService;
+  late NewHouse house;
+  List<Photo> photosToDelete = [];
+  int? nextPhotoIndexToResend;
+  String? houseId;
 
   void goToLocationForm() {
     emit(LocationFormState(house.location, house.buildingType));
@@ -48,7 +49,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     emit(PhotosFormState(
       house.oldPhotos,
       house.newPhotos,
-      deletedPhotos,
+      photosToDelete,
     ));
   }
 
@@ -59,22 +60,28 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   Future<void> sendData() async {
     emit(SendingDataState());
 
-    var result = await houseService.createHouse(house);
-    if (result.data != null) {
-      var houseId = result.data!;
-      for (var photo in house.newPhotos) {
-        var res = await houseService.addPhoto(houseId, photo);
-        if (!res.data) {
-          emit(ErrorState("Błąd w wysyłaniu zdjęć!"));
-          return;
-        }
+    if (houseId == null) {
+      var result = await houseService.createHouse(house);
+      if (result.data != null) {
+        houseId = result.data!;
+      } else {
+        emit(ErrorState("Wystąpił błąd w tworzeniu ogłoszenia"));
+        return;
       }
-    } else {
-      emit(ErrorState("Błąd!"));
-      return;
     }
 
-    emit(SendingFinishedState(houseId: result.data!));
+    for (int i = nextPhotoIndexToResend ?? 0; i < house.newPhotos.length; i++) {
+      var res = await houseService.addPhoto(houseId!, house.newPhotos[i]);
+      if (!res.data) {
+        nextPhotoIndexToResend = i;
+        emit(ErrorState(
+            "Wystąpił błąd i wysłano $i z ${house.newPhotos.length} zdjęć"));
+        return;
+      }
+    }
+
+    nextPhotoIndexToResend = null;
+    emit(SendingFinishedState(houseId: houseId!));
   }
 
   Future<void> updateHouse() async {
@@ -87,26 +94,32 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       return;
     }
 
-    if (deletedPhotos.isNotEmpty) {
-      var responsePhotos = await houseService.deletePhotos(deletedPhotos);
+    if (photosToDelete.isNotEmpty) {
+      var responsePhotos = await houseService.deletePhotos(photosToDelete);
       if (!responsePhotos.data) {
         emit(ErrorState(
-            "Nie udało się usunąć zdjęć. Spróbuj ponownie pózniej!"));
+            "Nie udało się usunąć zdjęć. Spróbuj ponownie później!"));
         return;
+      } else {
+        photosToDelete = [];
       }
     }
 
     if (house.newPhotos.isNotEmpty) {
-      for (var photo in house.newPhotos) {
-        var res = await houseService.addPhoto(house.id, photo);
+      for (int i = nextPhotoIndexToResend ?? 0;
+          i < house.newPhotos.length;
+          i++) {
+        var res = await houseService.addPhoto(house.id, house.newPhotos[i]);
         if (!res.data) {
+          nextPhotoIndexToResend = i;
           emit(ErrorState(
-              "Nie udało się dodać nowych zdjęć. Spróbuj ponownie później!"));
+              "Wystąpił błąd i wysłano $i z ${house.newPhotos.length} nowych zdjęć"));
           return;
         }
       }
     }
 
+    nextPhotoIndexToResend = null;
     emit(SendingFinishedState(houseId: house.id));
   }
 
@@ -142,7 +155,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       List<Photo> deletedPhotos) {
     house.newPhotos = photos;
     house.oldPhotos = oldPhotos;
-    this.deletedPhotos = deletedPhotos;
+    photosToDelete = deletedPhotos;
   }
 
   void saveChosenVirtualTour(String? virtualTourId) {
@@ -150,6 +163,8 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void clear() {
+    houseId = null;
+    nextPhotoIndexToResend = null;
     house = NewHouse("", NewLocation(), NewHouseDetails(), []);
     emit(ChooseTypeFormState(NewHouseDetails()));
   }

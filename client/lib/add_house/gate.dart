@@ -42,8 +42,9 @@ class AddHouseGate extends StatelessWidget {
                       ),
                       TextButton(
                         child: const Text("Powtórz wysyłanie"),
-                        onPressed: () =>
-                            context.read<AddHouseFormCubit>().sendData(),
+                        onPressed: () => house == null
+                            ? context.read<AddHouseFormCubit>().sendData()
+                            : context.read<AddHouseFormCubit>().updateHouse(),
                       )
                     ],
                   ),
