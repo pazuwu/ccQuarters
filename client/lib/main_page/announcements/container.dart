@@ -1,6 +1,6 @@
 import 'package:ccquarters/list_of_houses/gate.dart';
 import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'list.dart';

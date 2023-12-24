@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:ccquarters/common_widgets/always_visible_label.dart';
+import 'package:ccquarters/common/widgets/always_visible_label.dart';
 
 class IconOptionCombo extends StatefulWidget {
   const IconOptionCombo({

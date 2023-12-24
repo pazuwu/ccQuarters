@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:ccquarters/common_widgets/wide_text_button.dart';
+import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

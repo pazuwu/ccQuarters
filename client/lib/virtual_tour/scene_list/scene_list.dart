@@ -1,12 +1,12 @@
-import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/common_widgets/icon_option_combo.dart';
+import 'package:ccquarters/common/widgets/icon_360.dart';
+import 'package:ccquarters/common/widgets/icon_option_combo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/common_widgets/always_visible_label.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/common_widgets/show_form.dart';
+import 'package:ccquarters/common/widgets/always_visible_label.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';

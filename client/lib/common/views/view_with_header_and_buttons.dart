@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'go_back_next_buttons.dart';
+import '../widgets/go_back_next_buttons.dart';
 
 class ViewWithHeader extends StatelessWidget {
   const ViewWithHeader({

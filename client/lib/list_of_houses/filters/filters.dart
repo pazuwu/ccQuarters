@@ -1,8 +1,8 @@
 import 'package:ccquarters/list_of_houses/filters/expansion_panel_list.dart';
 import 'package:ccquarters/list_of_houses/filters/sort_by_dropdown.dart';
 import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 
 class Filters extends StatefulWidget {

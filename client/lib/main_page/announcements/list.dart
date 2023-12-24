@@ -1,5 +1,5 @@
-import 'package:ccquarters/common_widgets/error_message.dart';
-import 'package:ccquarters/common_widgets/message.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';

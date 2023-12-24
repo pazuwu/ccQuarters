@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:ccquarters/common_widgets/error_message.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
 import 'package:ccquarters/virtual_tour/tour_list/tour_list.dart';
