@@ -1,5 +1,4 @@
 import 'package:ccquarters/common_widgets/themed_form_field.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
 class PersonalInfoFields extends StatefulWidget {
@@ -10,6 +9,7 @@ class PersonalInfoFields extends StatefulWidget {
     required this.surname,
     required this.phoneNumber,
     required this.isBusinessAccount,
+    this.onLastFieldSubmitted,
     this.saveIsBusinessAcount,
   });
 
@@ -19,6 +19,7 @@ class PersonalInfoFields extends StatefulWidget {
   final TextEditingController phoneNumber;
   final bool isBusinessAccount;
   final Function? saveIsBusinessAcount;
+  final Function? onLastFieldSubmitted;
 
   @override
   State<PersonalInfoFields> createState() => _PersonalInfoFieldsState();
@@ -38,7 +39,9 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.web ? 0.4 : 1),
+            (MediaQuery.of(context).orientation == Orientation.landscape
+                ? 0.4
+                : 1),
       ),
       child: Column(
         children: [
@@ -150,6 +153,11 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
     return ThemedFormField(
       controller: widget.phoneNumber,
       labelText: 'Numer telefonu',
+      onFieldSubmitted: widget.onLastFieldSubmitted != null
+          ? (text) {
+              widget.onLastFieldSubmitted!();
+            }
+          : null,
     );
   }
 }
