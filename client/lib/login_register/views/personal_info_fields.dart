@@ -1,5 +1,4 @@
 import 'package:ccquarters/common_widgets/themed_form_field.dart';
-import 'package:ccquarters/utils/device_type.dart';
 import 'package:flutter/material.dart';
 
 class PersonalInfoFields extends StatefulWidget {
@@ -40,7 +39,9 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.web ? 0.4 : 1),
+            (MediaQuery.of(context).orientation == Orientation.landscape
+                ? 0.4
+                : 1),
       ),
       child: Column(
         children: [

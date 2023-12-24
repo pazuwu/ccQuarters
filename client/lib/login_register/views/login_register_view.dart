@@ -193,7 +193,7 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
     );
   }
 
-  _buildFields() {
+  Widget _buildFields() {
     switch (widget.page) {
       case LoginRegisterPageType.login:
         return EmailAndPasswordFields(
