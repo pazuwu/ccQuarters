@@ -31,7 +31,7 @@ class ButtonContactWidget extends StatelessWidget {
         ),
       ),
       child: const Text(
-        "Skontaktuj się z wystawiającym",
+        "Kontakt",
         textScaler: TextScaler.linear(1.3),
       ),
     );
