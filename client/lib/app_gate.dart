@@ -26,7 +26,7 @@ class AppMainGate extends StatelessWidget {
           create: (context) => AuthService(firebaseAuth: FirebaseAuth.instance),
         ),
         Provider<Dio>(
-          create: (context) => AuthorizedDio(context.read()),
+          create: (context) => AuthorizedDio.create(context.read()),
         ),
         Provider<FileService>(create: (context) => CacheManagerFileService()),
         Provider<UserService>(
