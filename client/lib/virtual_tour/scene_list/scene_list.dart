@@ -72,7 +72,8 @@ class _SceneListState extends State<SceneList> {
       );
 
       if (result != null) {
-        await cubit.createNewAreaFromPhotos(result.paths,
+        await cubit.createNewAreaFromPhotos(
+            result.files.map((e) => e.bytes!).toList(),
             name: sceneFormModel.name);
       }
     }
@@ -92,6 +93,7 @@ class _SceneListState extends State<SceneList> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             IconButton(
+              tooltip: "Dodaj scenę",
               onPressed: () => _importHandler(context, context.read()),
               icon: Icon(
                 Icons.add,
@@ -176,6 +178,7 @@ class _SceneListState extends State<SceneList> {
                       Icons.edit,
                       color: Colors.white,
                     ),
+                    tooltip: "Edytuj scenę",
                   ),
                   IconButton(
                     onPressed: () {
@@ -185,6 +188,7 @@ class _SceneListState extends State<SceneList> {
                       Icons.delete,
                       color: Colors.white,
                     ),
+                    tooltip: "Usuń scenę",
                   ),
                   IconButton(
                     onPressed: () {
@@ -196,6 +200,7 @@ class _SceneListState extends State<SceneList> {
                       Icons.looks_one,
                       color: Colors.white,
                     ),
+                    tooltip: "Ustaw jako scenę startową",
                   ),
                 ],
               ),
@@ -270,39 +275,64 @@ class _SceneListState extends State<SceneList> {
     );
   }
 
-  Widget _buildProgress(double progress) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text("Trwa dodawanie zdjęć..."),
-        Row(
-          children: [
-            LinearProgressIndicator(
-              backgroundColor: Colors.blueGrey.shade200,
-              value: progress,
+  Widget _buildList(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var i = 0; i < (widget.tour.scenes.length / 2).ceil(); i++) ...[
+            _buildSingleScenesRow(context, i),
+            const SizedBox(
+              height: 8.0,
+            ),
+          ],
+          if (widget.tour.areas.isNotEmpty) ...[
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              "W trakcie przetwarzania",
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(
-              width: 8.0,
+              height: 24,
             ),
-            Text("${(progress * 100).toStringAsFixed(2)}%"),
+            for (var i = 0; i < widget.tour.areas.length; i++) ...[
+              ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: Colors.blueGrey.shade600,
+                    width: 1,
+                  ),
+                ),
+                leading: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.blueGrey.shade700,
+                  ),
+                  width: 4,
+                  height: 24,
+                ),
+                title: Row(
+                  children: [
+                    Text(widget.tour.areas[i].name),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 8,
+              )
+            ],
+            const SizedBox(
+              width: 8,
+            ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildList(BuildContext context) {
-    return ListView.separated(
-      separatorBuilder: (context, index) {
-        return const SizedBox(
-          height: 8.0,
-        );
-      },
-      itemCount: (widget.tour.scenes.length / 2).ceil(),
-      itemBuilder: (context, index) {
-        return _buildSingleScenesRow(context, index);
-      },
+        ],
+      ),
     );
   }
 
@@ -313,20 +343,15 @@ class _SceneListState extends State<SceneList> {
         appBar: widget.showTitle ? AppBar(title: Text(widget.tour.name)) : null,
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-          child: BlocBuilder<VTScenesCubit, VTScenesState>(
-              builder: (context, state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                if (state is VTScenesUploadingState)
-                  _buildProgress(state.progress),
-                Expanded(
-                  child: _buildList(context),
-                ),
-              ],
-            );
-          }),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: _buildList(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

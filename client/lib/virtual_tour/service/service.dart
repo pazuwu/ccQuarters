@@ -278,14 +278,14 @@ class VTService {
     return VTServiceResponse(data: downloadedFile);
   }
 
-  Future postOperation(String tourId, String areaId) async {
+  Future<VTServiceResponse<String>> postOperation(
+      String tourId, String areaId) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.post<String>(
         "$_url/$_tours/$tourId/$_areas/$areaId/process",
       );
 
-      return VTServiceResponse(
-          data: Uint8List.fromList(response.data as List<int>));
+      return VTServiceResponse(data: response.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.CONFLICT) {
         return VTServiceResponse(error: ErrorType.alreadyExists);
