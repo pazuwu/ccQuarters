@@ -56,8 +56,13 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
           : null,
       body: Column(
         children: [
-          const SizedBox(height: 8),
-          _buildHeader(),
+          if (!widget.editMode)
+            Column(
+              children: [
+                const SizedBox(height: 8),
+                _buildHeader(),
+              ],
+            ),
           const SizedBox(height: 12),
           _buildStepper(context),
           Divider(

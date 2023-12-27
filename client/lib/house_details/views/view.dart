@@ -1,8 +1,11 @@
+import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/views/accordion.dart';
 import 'package:ccquarters/house_details/views/contact.dart';
 import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
+import 'package:ccquarters/list_of_houses/like_button.dart';
+import 'package:ccquarters/list_of_houses/price_info.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/common/device_type.dart';
@@ -12,8 +15,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
-  const DetailsView(
-      {super.key, required this.house, this.isOwnedByCurrentUser = false});
+  const DetailsView({
+    super.key,
+    required this.house,
+    this.isOwnedByCurrentUser = false,
+  });
 
   final DetailedHouse house;
   final bool isOwnedByCurrentUser;
@@ -29,6 +35,17 @@ class DetailsView extends StatelessWidget {
         ),
         title: Text(house.details.title),
         actions: [
+          LikeButtonWithTheme(
+            isLiked: house.isLiked,
+            onTap: (isLiked) async {
+              var newValue = await context
+                  .read<HouseDetailsCubit>()
+                  .likeHouse(house.id, house.isLiked);
+              house.isLiked = newValue;
+
+              return Future.value(newValue);
+            },
+          ),
           if (house.details.virtualTourId != null)
             Icon360(
               onPressed: () => _showVirtualTour(context),
@@ -85,7 +102,7 @@ class DetailsView extends StatelessWidget {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text("Edytuj ogłoszenie"),
+            title: const Text("Usuń ogłoszenie"),
             content: const Text("Czy na pewno chcesz usunąć ogłoszenie?"),
             actions: [
               TextButton(
@@ -155,8 +172,7 @@ class Inside extends StatelessWidget {
                   Photos(
                     photos: house.photos.map((e) => e.url).toList(),
                   ),
-                  if (getDeviceType(context) == DeviceType.mobile)
-                    ButtonContactWidget(user: house.user),
+                  _buildPriceInfo(context),
                   AccordionPage(
                     house: house,
                   ),
@@ -172,5 +188,27 @@ class Inside extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildPriceInfo(BuildContext context) {
+    if (getDeviceType(context) == DeviceType.mobile) {
+      return Padding(
+        padding: const EdgeInsets.only(
+          left: largePaddingSize,
+          right: largePaddingSize,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PriceRoomCountAreaInfo(details: house.details),
+            ButtonContactWidget(user: house.user)
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: PriceRoomCountAreaInfo(details: house.details),
+      );
+    }
   }
 }
