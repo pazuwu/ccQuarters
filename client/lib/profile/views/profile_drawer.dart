@@ -29,8 +29,15 @@ class ProfileDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.notifications),
+            title: const Text('Moje alerty'),
+            onTap: () {
+              context.read<ProfilePageCubit>().goToAlertsPage();
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.directions_walk),
-            title: const Text('Moje Wirtualne spacery'),
+            title: const Text('Moje wirtualne spacery'),
             onTap: () {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const VTListGate()));

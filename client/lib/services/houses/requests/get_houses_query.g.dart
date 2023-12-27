@@ -23,12 +23,10 @@ GetHousesQuery _$GetHousesQueryFromJson(Map<String, dynamic> json) =>
       (json['floors'] as List<dynamic>?)?.map((e) => e as int).toList(),
       json['minFloor'] as int?,
       json['maxFloor'] as int?,
-      (json['offerTypes'] as List<dynamic>?)
-          ?.map((e) => const OfferTypeConverter().fromJson(e as int))
-          .toList(),
-      (json['buildingTypes'] as List<dynamic>?)
-          ?.map((e) => const BuildingTypeConverter().fromJson(e as int))
-          .toList(),
+      _$JsonConverterFromJson<int, OfferType>(
+          json['offerTypes'], const OfferTypeConverter().fromJson),
+      _$JsonConverterFromJson<int, BuildingType>(
+          json['buildingTypes'], const BuildingTypeConverter().fromJson),
       json['voivodeship'] as String?,
       (json['cities'] as List<dynamic>?)?.map((e) => e as String).toList(),
       (json['districts'] as List<dynamic>?)?.map((e) => e as String).toList(),
@@ -60,13 +58,14 @@ Map<String, dynamic> _$GetHousesQueryToJson(GetHousesQuery instance) {
   writeNotNull('floors', instance.floors);
   writeNotNull('minFloor', instance.minFloor);
   writeNotNull('maxFloor', instance.maxFloor);
-  writeNotNull('offerTypes',
-      instance.offerTypes?.map(const OfferTypeConverter().toJson).toList());
+  writeNotNull(
+      'offerTypes',
+      _$JsonConverterToJson<int, OfferType>(
+          instance.offerTypes, const OfferTypeConverter().toJson));
   writeNotNull(
       'buildingTypes',
-      instance.buildingTypes
-          ?.map(const BuildingTypeConverter().toJson)
-          .toList());
+      _$JsonConverterToJson<int, BuildingType>(
+          instance.buildingTypes, const BuildingTypeConverter().toJson));
   writeNotNull('voivodeship', instance.voivodeship);
   writeNotNull('cities', instance.cities);
   writeNotNull('districts', instance.districts);

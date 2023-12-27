@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
@@ -33,10 +32,11 @@ class ErrorState extends ProfilePageState {
   final String? tip;
 }
 
+class AlertsState extends ProfilePageState {}
+
 class ProfilePageCubit extends Cubit<ProfilePageState> {
   ProfilePageCubit({
     required this.userService,
-    required this.alertService,
     required this.houseService,
     required userId,
   }) : super(LoadingOrSendingDataState()) {
@@ -44,7 +44,6 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
   }
 
   UserService userService;
-  AlertService alertService;
   HouseService houseService;
   late User user;
 
@@ -137,5 +136,9 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
 
   Future<void> goToProfilePage() async {
     emit(ProfilePageInitialState(user: user));
+  }
+
+  Future<void> goToAlertsPage() async {
+    emit(AlertsState());
   }
 }

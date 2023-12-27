@@ -1,7 +1,7 @@
-import 'package:ccquarters/list_of_houses/filters/chips.dart';
-import 'package:ccquarters/list_of_houses/filters/titled_dropdown.dart';
-import 'package:ccquarters/list_of_houses/filters/floor_multiselect_dropdown.dart';
-import 'package:ccquarters/list_of_houses/filters/from_to_number_fields.dart';
+import 'package:ccquarters/filters/chips.dart';
+import 'package:ccquarters/filters/titled_dropdown.dart';
+import 'package:ccquarters/filters/floor_multiselect_dropdown.dart';
+import 'package:ccquarters/filters/from_to_number_fields.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/offer_type.dart';
@@ -53,7 +53,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         TitledDropdown(
           title: 'Typ budynku',
           value: widget.filters.buildingType,
-          values: BuildingType.values,
+          values: _getBuildingTypeValues(),
           onChanged: (BuildingType? newValue) =>
               setState(() => widget.filters.buildingType = newValue),
           onClear: () => setState(() {
@@ -63,7 +63,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         TitledDropdown(
           title: 'Typ oferty',
           value: widget.filters.offerType,
-          values: OfferType.values,
+          values: _getOfferTypeValues(),
           onChanged: (OfferType? newValue) =>
               setState(() => widget.filters.offerType = newValue),
           onClear: () => setState(() {
@@ -72,6 +72,25 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         ),
       ],
     );
+  }
+
+  List<BuildingType> _getBuildingTypeValues() {
+    if (widget.filters.offerType == OfferType.sell) {
+      return [
+        BuildingType.apartment,
+        BuildingType.house,
+      ];
+    } else {
+      return BuildingType.values;
+    }
+  }
+
+  List<OfferType> _getOfferTypeValues() {
+    if (widget.filters.buildingType == BuildingType.room) {
+      return [OfferType.rent];
+    } else {
+      return OfferType.values;
+    }
   }
 
   ExpansionPanel _buildDetailsExpansionPanel(BuildContext context) {
@@ -93,13 +112,13 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         ),
         FromToNumberFields(
           title: "Cena za m\u00B2",
-          from: widget.filters.minPricePerMeter?.toStringAsFixed(2) ?? "",
-          to: widget.filters.maxPricePerMeter?.toStringAsFixed(2) ?? "",
+          from: widget.filters.minPricePerM2?.toStringAsFixed(2) ?? "",
+          to: widget.filters.maxPricePerM2?.toStringAsFixed(2) ?? "",
           onChangedFrom: (val) {
-            widget.filters.minPricePerMeter = double.tryParse(val);
+            widget.filters.minPricePerM2 = double.tryParse(val);
           },
           onChangedTo: (val) {
-            widget.filters.maxPricePerMeter = double.tryParse(val);
+            widget.filters.maxPricePerM2 = double.tryParse(val);
           },
           isDecimal: true,
         ),
@@ -129,15 +148,25 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
         FloorMultiSelectDropdown(
           onChanged: (List<FloorNumber> newValue) {
             setState(() {
-              widget.filters.floor =
-                  newValue.map((e) => e.floorNumber).toList();
-              widget.filters.floor!.sort();
+              var newFloors = newValue.map((e) => e.floorNumber).toList();
+              var indexAboveTen =
+                  newValue.indexWhere((element) => element.isAboveTen);
+
+              if (indexAboveTen != -1) {
+                var aboveTen = newValue[indexAboveTen];
+                widget.filters.minFloor = aboveTen.floorNumber;
+                newFloors.remove(aboveTen.floorNumber);
+              }
+
+              widget.filters.floors = newFloors;
+              widget.filters.floors!.sort();
             });
           },
           filters: widget.filters,
           onClear: () {
             setState(() {
-              widget.filters.floor = null;
+              widget.filters.floors = null;
+              widget.filters.minFloor = null;
             });
           },
         ),

@@ -23,9 +23,9 @@ class GetHousesQuery {
   int? minFloor;
   int? maxFloor;
   @OfferTypeConverter()
-  List<OfferType>? offerTypes;
+  OfferType? offerTypes;
   @BuildingTypeConverter()
-  List<BuildingType>? buildingTypes;
+  BuildingType? buildingTypes;
   String? voivodeship;
   List<String>? cities;
   List<String>? districts;
@@ -57,21 +57,17 @@ class GetHousesQuery {
       : sortMethod = filter?.sortBy,
         minPrice = filter?.minPrice,
         maxPrice = filter?.maxPrice,
-        minPricePerM2 = filter?.minPricePerMeter,
-        maxPricePerM2 = filter?.maxPricePerMeter,
+        minPricePerM2 = filter?.minPricePerM2,
+        maxPricePerM2 = filter?.maxPricePerM2,
         maxArea = filter?.maxArea,
         minArea = filter?.minArea,
         maxRoomCount = filter?.maxRoomCount,
         minRoomCount = filter?.minRoomCount,
-        floors = filter?.floor,
+        floors = filter?.floors,
         minFloor = filter?.minFloor,
-        offerTypes = filter != null && filter.offerType != null
-            ? [filter.offerType!]
-            : null,
-        buildingTypes = filter != null && filter.buildingType != null
-            ? [filter.buildingType!]
-            : null,
-        voivodeship = filter?.cities.isNotEmpty ?? false
+        offerTypes = filter?.offerType,
+        buildingTypes = filter?.buildingType,
+        voivodeship = filter?.cities?.isNotEmpty ?? false
             ? filter!.voivodeship.toString()
             : null,
         cities = filter?.cities,

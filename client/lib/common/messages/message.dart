@@ -10,6 +10,7 @@ class Message extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.closeButton,
+    this.onClose,
     this.adjustToLandscape = true,
   }) : super(key: key);
 
@@ -18,6 +19,7 @@ class Message extends StatelessWidget {
   final String title;
   final String? subtitle;
   final bool? closeButton;
+  final Function()? onClose;
   final bool adjustToLandscape;
 
   Widget _buildLandscapeMessage(BuildContext context) {
@@ -52,7 +54,8 @@ class Message extends StatelessWidget {
             if (closeButton ?? false) ...[
               const SizedBox(height: 24),
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed:
+                    onClose != null ? onClose! : () => Navigator.pop(context),
                 child: const Text("Zamknij"),
               ),
             ],

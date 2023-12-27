@@ -1,9 +1,12 @@
-import 'package:ccquarters/list_of_houses/filters/expansion_panel_list.dart';
-import 'package:ccquarters/list_of_houses/filters/sort_by_dropdown.dart';
+import 'package:ccquarters/list_of_houses/cubit.dart';
+import 'package:ccquarters/filters/expansion_panel_list.dart';
+import 'package:ccquarters/filters/sort_by_dropdown.dart';
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Filters extends StatefulWidget {
   const Filters({super.key, required this.filters, required this.onSave});
@@ -83,9 +86,24 @@ class FilterForm extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(mediumPaddingSize),
-                  child: Text(
-                    'Filtry',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Filtry',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      if (context.read<AuthCubit>().user != null)
+                        IconButton(
+                          icon: const Icon(Icons.add_alert_rounded),
+                          onPressed: () {
+                            context
+                                .read<ListOfHousesCubit>()
+                                .createAlert(filters);
+                          },
+                          tooltip: 'Zapisz jako alert',
+                        ),
+                    ],
                   ),
                 ),
                 FiltersExpansionPanelList(filters: filters),

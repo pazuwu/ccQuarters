@@ -16,6 +16,7 @@ class ListOfHousesGate extends StatelessWidget {
     return BlocProvider(
       create: (_) => ListOfHousesCubit(
         houseService: context.read(),
+        alertService: context.read(),
       ),
       child: BlocBuilder<ListOfHousesCubit, ListOfHousesState>(
         builder: (context, state) {

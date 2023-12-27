@@ -19,7 +19,7 @@ class _CityChipKeyboardInputState extends State<CityChipKeyboardInput> {
     return ChipKeyboardInput(
       label: "Miasto",
       textEditingController: _textEditingController,
-      choices: widget.filters.cities,
+      choices: widget.filters.cities!,
       onAdded: () {
         if (_textEditingController.text.isEmpty) {
           setState(() {
@@ -29,7 +29,7 @@ class _CityChipKeyboardInputState extends State<CityChipKeyboardInput> {
         }
         setState(() {
           showValidation = false;
-          widget.filters.cities.add(_textEditingController.text.trim());
+          widget.filters.cities!.add(_textEditingController.text.trim());
           _textEditingController.clear();
         });
       },
@@ -55,13 +55,13 @@ class _DistrictChipKeyboardInputState extends State<DistrictChipKeyboardInput> {
     return ChipKeyboardInput(
       label: "Dzielnica",
       textEditingController: _textEditingController,
-      choices: widget.filters.districts,
+      choices: widget.filters.districts!,
       onAdded: () {
         if (_textEditingController.text.isEmpty) {
           return;
         }
         setState(() {
-          widget.filters.districts.add(_textEditingController.text.trim());
+          widget.filters.districts!.add(_textEditingController.text.trim());
           _textEditingController.clear();
         });
       },

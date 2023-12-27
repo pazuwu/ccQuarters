@@ -35,10 +35,8 @@ class FloorMultiSelectDropdown extends StatelessWidget {
             ),
             child: DropDownMultiSelect(
               onChanged: onChanged,
-              options: List.generate(12, (index) => FloorNumber(index)),
-              selectedValues: filters.floor != null
-                  ? filters.floor!.map((e) => FloorNumber(e)).toList()
-                  : <FloorNumber>[],
+              options: _getOptions(),
+              selectedValues: _getSelectedValues(),
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
               ),
@@ -51,5 +49,28 @@ class FloorMultiSelectDropdown extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<FloorNumber> _getOptions() {
+    List<FloorNumber> result = [];
+
+    result.addAll(List.generate(11, (index) => FloorNumber(index)));
+    result.add(FloorNumber.aboveTen());
+
+    return result;
+  }
+
+  List<FloorNumber> _getSelectedValues() {
+    List<FloorNumber> result = [];
+
+    if (filters.floors != null) {
+      result.addAll(filters.floors!.map((e) => FloorNumber(e)));
+    }
+
+    if (filters.minFloor != null) {
+      result.add(FloorNumber.aboveTen());
+    }
+
+    return result;
   }
 }

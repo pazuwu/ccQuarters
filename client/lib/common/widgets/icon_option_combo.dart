@@ -67,7 +67,9 @@ class _IconOptionComboState extends State<IconOptionCombo> {
       },
       icon: Icon(
         isOpened ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-        color: Colors.white,
+        color: !isOpened && widget.foreground != null
+            ? widget.foreground
+            : Colors.white,
         size: widget.iconsSize ?? 16,
         shadows: [
           Shadow(blurRadius: 32, color: widget.background ?? Colors.black54)

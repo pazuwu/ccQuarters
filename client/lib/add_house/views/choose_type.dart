@@ -86,31 +86,59 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
           const SizedBox(
             height: 24,
           ),
-          Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: ToggleButtons(
-                isSelected: _selectedBuildingType,
-                onPressed: (int index) {
-                  setState(() {
-                    for (int i = 0; i < _selectedBuildingType.length; i++) {
-                      _selectedBuildingType[i] = i == index;
-                    }
-                    _buildingType = BuildingType.values[index];
-                    context
-                        .read<AddHouseFormCubit>()
-                        .saveBuildingType(_buildingType);
-                  });
-                },
-                children: [
-                  ToggleButton(text: BuildingType.house.toString()),
-                  ToggleButton(text: BuildingType.apartment.toString()),
-                  ToggleButton(text: BuildingType.room.toString()),
-                ],
-              ),
-            ),
-          ),
+          _offerType == OfferType.rent
+              ? _buildBuildingTypeForRent(context)
+              : _buildBuildingTypeForSell(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBuildingTypeForRent(BuildContext context) {
+    return Center(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: ToggleButtons(
+          isSelected: _selectedBuildingType,
+          onPressed: (int index) {
+            setState(() {
+              for (int i = 0; i < _selectedBuildingType.length; i++) {
+                _selectedBuildingType[i] = i == index;
+              }
+              _buildingType = BuildingType.values[index];
+              context.read<AddHouseFormCubit>().saveBuildingType(_buildingType);
+            });
+          },
+          children: [
+            ToggleButton(text: BuildingType.house.toString()),
+            ToggleButton(text: BuildingType.apartment.toString()),
+            ToggleButton(text: BuildingType.room.toString()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBuildingTypeForSell(BuildContext context) {
+    return Center(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: ToggleButtons(
+          isSelected: _selectedBuildingType.sublist(0, 2),
+          onPressed: (int index) {
+            setState(() {
+              for (int i = 0; i < _selectedBuildingType.length; i++) {
+                _selectedBuildingType[i] = i == index;
+              }
+              _buildingType = BuildingType.values[index];
+              context.read<AddHouseFormCubit>().saveBuildingType(_buildingType);
+            });
+          },
+          children: [
+            ToggleButton(text: BuildingType.house.toString()),
+            ToggleButton(text: BuildingType.apartment.toString()),
+          ],
+        ),
       ),
     );
   }
@@ -157,7 +185,7 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
       },
       children: [
         ToggleButton(text: OfferType.rent.toString()),
-        ToggleButton(text: OfferType.sale.toString()),
+        ToggleButton(text: OfferType.sell.toString()),
       ],
     );
   }
@@ -165,16 +193,7 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
   ToggleButtons _buildSingleOfferType() {
     return ToggleButtons(
       isSelected: _selectedSingleOfferType,
-      onPressed: (int index) {
-        setState(
-          () {
-            for (int i = 0; i < _selectedSingleOfferType.length; i++) {
-              _selectedSingleOfferType[i] = i == index;
-            }
-            _offerType = OfferType.rent;
-          },
-        );
-      },
+      onPressed: (int index) {},
       children: [
         ToggleButton(
           text: OfferType.rent.toString(),
