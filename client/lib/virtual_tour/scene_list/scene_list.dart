@@ -1,6 +1,8 @@
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/widgets/icon_option_combo.dart';
+import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -72,10 +74,30 @@ class _SceneListState extends State<SceneList> {
       );
 
       if (result != null) {
-        await cubit.createNewAreaFromPhotos(
-            result.files.map((e) => e.bytes!).toList(),
-            name: sceneFormModel.name);
+        await cubit.createNewArea(
+          images: result.files.map((e) => e.bytes!).toList(),
+          name: sceneFormModel.name,
+          createOperation: !sceneFormModel.draft,
+        );
       }
+    }
+  }
+
+  void _addPhotosToArea(
+      BuildContext context, VTScenesCubit cubit, Area area) async {
+    var photos = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      withData: true,
+      allowCompression: true,
+      type: FileType.image,
+    );
+
+    if (photos != null) {
+      cubit.addPhotosToArea(
+        area.id!,
+        photos.files.map((e) => e.bytes!).toList(),
+        createOperationFlag: false,
+      );
     }
   }
 
@@ -298,29 +320,81 @@ class _SceneListState extends State<SceneList> {
               height: 24,
             ),
             for (var i = 0; i < widget.tour.areas.length; i++) ...[
-              ListTile(
-                shape: RoundedRectangleBorder(
+              Container(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(
-                    color: Colors.blueGrey.shade600,
-                    width: 1,
-                  ),
+                  color: widget.tour.areas[i].operationId == null
+                      ? Colors.amber.shade50
+                      : Colors.blueGrey.shade50,
                 ),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.blueGrey.shade700,
-                  ),
-                  width: 4,
-                  height: 24,
-                ),
-                title: Row(
-                  children: [
-                    Text(widget.tour.areas[i].name),
-                    const SizedBox(
-                      width: 8,
+                child: ListTile(
+                  leading: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.blueGrey.shade700,
                     ),
-                  ],
+                    width: 4,
+                    height: 24,
+                  ),
+                  title: Row(
+                    children: [
+                      Text(widget.tour.areas[i].name),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                    ],
+                  ),
+                  subtitle: widget.tour.areas[i].operationId == null
+                      ? RichText(
+                          text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text:
+                                  'Przetwarzanie sceny nie zostało jeszcze rozpoczęte. \n',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(color: Colors.grey.shade600),
+                            ),
+                            TextSpan(
+                              text:
+                                  'Kliknij tutaj, aby rozpocząć przetwarzanie.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(color: Colors.blue),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  context.read<VTScenesCubit>().createOperation(
+                                        widget.tour.areas[i].id!,
+                                      );
+                                },
+                            ),
+                          ],
+                        ))
+                      : null,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (widget.tour.areas[i].operationId == null)
+                        IconButton(
+                            onPressed: () {
+                              _addPhotosToArea(context, context.read(),
+                                  widget.tour.areas[i]);
+                            },
+                            icon:
+                                const Icon(Icons.add_photo_alternate_outlined)),
+                      IconButton(
+                        onPressed: () {
+                          context
+                              .read<VTScenesCubit>()
+                              .showAreaPhotos(widget.tour.areas[i]);
+                        },
+                        icon: const Icon(Icons.photo_library_outlined),
+                        tooltip: "Podgląd zdjęć",
+                      )
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(

@@ -116,6 +116,9 @@ namespace VirtualTourAPI.Service
 
             _logger.LogInformation("Created new operation for tour: {tourId}, area: {areaId}", tourId, areaId);
 
+            string areaPath = $"{ToursCollection}/{tourId}/{AreasCollection}/{areaId}";
+            await _documentRepository.UpdateAsync(areaPath, nameof(AreaDTO.OperationId), addedOperationId);
+
             return addedOperationId;
         }
 

@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/scene_list/states.dart';
+import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
@@ -51,49 +52,116 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     }
   }
 
-  Future<Area?> createNewAreaFromPhotos(List<Uint8List?> files,
-      {required String name}) async {
+  Future<bool> addPhotosToArea(String areaId, List<Uint8List?> files,
+      {bool createOperationFlag = true}) async {
+    var futures = <Future<bool>>[];
+    var failedImages = <Uint8List>[];
+
+    emit(
+      VTScenesLoadingState(tour: _tour, message: "Przeysyłanie zdjęć..."),
+    );
+
+    for (var file in files) {
+      if (file != null) {
+        futures.add(
+          _uploadAreaPhoto(areaId, file).then(
+            (result) {
+              if (result == false) {
+                failedImages.add(file);
+              }
+
+              return result;
+            },
+          ),
+        );
+      }
+    }
+
+    await Future.wait(futures);
+
+    if (failedImages.isNotEmpty) {
+      emit(
+        VTScenesUploadFailedState(
+          tour: _tour,
+          failedImages: failedImages,
+          areaId: areaId,
+        ),
+      );
+      return false;
+    }
+
+    emit(VTScenesSuccessState(
+      tour: _tour,
+      message: "Zdjęcia zostały dodane",
+      changedObject: areaId,
+    ));
+
+    return createOperationFlag ? await createOperation(areaId) : true;
+  }
+
+  Future<bool> createNewArea({
+    required List<Uint8List?> images,
+    required String name,
+    bool createOperation = true,
+  }) async {
     var response = await _service.postArea(_tour.id, name: name);
 
     if (response.data != null) {
-      emit(
-        VTScenesLoadingState(tour: _tour, message: "Przeysyłanie zdjęć..."),
+      _tour.areas.add(Area(
+        id: response.data,
+        name: name,
+        photoIds: [],
+      ));
+
+      return addPhotosToArea(
+        response.data!,
+        images,
+        createOperationFlag: createOperation,
       );
-
-      var futures = <Future>[];
-
-      for (var file in files) {
-        if (file != null) {
-          futures.add(_uploadAreaPhoto(response.data!, file));
-        }
-      }
-
-      await Future.wait(futures);
-
-      await _service.postOperation(_tour.id, response.data!);
-      emit(VTScenesSuccessState(
-          tour: _tour,
-          message: "Zaplanowano utworzenie sceny $name",
-          changedObject: response.data!));
     }
 
-    return Area(
-      id: response.data!,
-    );
+    return false;
+  }
+
+  Future<bool> createOperation(String areaId, [int attempt = 0]) async {
+    var plannedLoading = Timer(const Duration(milliseconds: 500), () {
+      emit(VTScenesLoadingState(
+          tour: _tour, message: "Planowanie przetwarzania"));
+    });
+    var serviceResponse = await _service.postOperation(_tour.id, areaId);
+
+    plannedLoading.cancel();
+
+    if (serviceResponse.error != ErrorType.none) {
+      emit(VTScenesCreateOperationFailedState(
+          tour: _tour, areaId: areaId, attempt: ++attempt));
+      return false;
+    }
+    _tour.areas.firstWhere((element) => element.id == areaId).operationId =
+        serviceResponse.data;
+
+    emit(VTScenesSuccessState(
+        tour: _tour,
+        message: "Zaplanowano utworzenie sceny",
+        changedObject: areaId));
+
+    return true;
   }
 
   Future _uploadScenePhoto(String sceneId, Uint8List photoBytes) async {
     await _service.uploadScenePhoto(_tour.id, sceneId, photoBytes);
   }
 
-  Future _uploadAreaPhoto(String areaId, Uint8List photoBytes,
+  Future<bool> _uploadAreaPhoto(String areaId, Uint8List photoBytes,
       {void Function(int count, int total)? progressCallback}) async {
-    await _service.uploadAreaPhoto(
+    var serviceResponse = await _service.uploadAreaPhoto(
       _tour.id,
       areaId,
       photoBytes,
       progressCallback: progressCallback,
     );
+
+    return serviceResponse.data?.isNotEmpty ?? false;
   }
 
   Future setAsPrimaryScene(String sceneId) async {
@@ -131,5 +199,32 @@ class VTScenesCubit extends Cubit<VTScenesState> {
             tour: _tour, message: "Usunięto scenę", changedObject: sceneId),
       );
     }
+  }
+
+  Future showAreaPhotos(Area area) async {
+    var plannedLoading = Timer(const Duration(milliseconds: 500), () {
+      emit(VTScenesLoadingState(tour: _tour, message: "Pobieranie zdjęć"));
+    });
+    var serviceResponse = await _service.getAreaPhotos(_tour.id, area.id!);
+    plannedLoading.cancel();
+
+    if (serviceResponse.error == ErrorType.none) {
+      emit(ShowAreaPhotosState(
+        tour: _tour,
+        photoUrls: serviceResponse.data!,
+        area: area,
+      ));
+      return;
+    }
+
+    emit(VTScenesErrorState(
+      tour: _tour,
+      message:
+          "Wystąpił błąd podczas próby pobrania zdjęć. Sprawdź swoje połączenie z Internetem",
+    ));
+  }
+
+  void closeAreaPhotos() {
+    emit(VTScenesState(tour: _tour));
   }
 }
