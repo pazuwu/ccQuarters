@@ -1,41 +1,30 @@
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/browser.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http_status_code/http_status_code.dart';
 
 import 'package:ccquarters/services/auth/service.dart';
 
-class AuthorizedDioForBrowser extends DioForBrowser with AuthorizedDio {
-  AuthorizedDioForBrowser(BaseAuthService authService) {
-    _initialize(authService);
-  }
-}
-
-class AuthorizedDioForNative extends DioForNative with AuthorizedDio {
-  AuthorizedDioForNative(BaseAuthService authService) {
-    _initialize(authService);
-  }
-}
-
-mixin AuthorizedDio on Dio {
+class AuthorizedDio {
   final Dio _resendingDioInstance = Dio();
+  final Dio _dio = Dio();
   final Connectivity _connectivity = Connectivity();
   late final BaseAuthService _authService;
   String _token = '';
 
-  static Dio create(BaseAuthService authService) {
-    return kIsWeb
-        ? AuthorizedDioForBrowser(authService)
-        : AuthorizedDioForNative(authService);
+  AuthorizedDio(
+    BaseAuthService authService,
+  ) : _authService = authService {
+    _initialize();
   }
 
-  void _initialize(BaseAuthService authService) {
-    _authService = authService;
+  Dio create() {
+    return _dio;
+  }
+
+  void _initialize() {
     _authService.authChanges.listen((u) => _token = "");
 
     _addTokenRefreshInterceptor();
@@ -44,7 +33,8 @@ mixin AuthorizedDio on Dio {
   }
 
   void _addConnectionInterceptor() {
-    interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (options, handler) async {
       var connectivityResult = await _connectivity.checkConnectivity();
       if (connectivityResult == ConnectivityResult.none) {
         handler.reject(
@@ -77,11 +67,11 @@ mixin AuthorizedDio on Dio {
       allowPostMethod: false,
     );
 
-    interceptors.add(DioCacheInterceptor(options: options));
+    _dio.interceptors.add(DioCacheInterceptor(options: options));
   }
 
   void _addTokenRefreshInterceptor() {
-    interceptors.add(
+    _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (request, handler) async {
           _setToken(request, handler);
