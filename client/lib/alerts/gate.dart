@@ -1,7 +1,7 @@
 import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/alerts/alerts_list.dart';
 import 'package:ccquarters/alerts/alert_view.dart';
-import 'package:ccquarters/common_widgets/error_message.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

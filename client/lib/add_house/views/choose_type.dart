@@ -180,14 +180,6 @@ class _ChooseTypeViewState extends State<ChooseTypeView> {
             }
             _offerType = OfferType.values[index];
             context.read<AddHouseFormCubit>().saveOfferType(_offerType);
-
-            // if (_offerType == OfferType.sell &&
-            //     _buildingType == BuildingType.room) {
-            //   _selectedBuildingTypeForSell[0] = true;
-            //   _selectedBuildingTypeForSell[1] = false;
-            //   _buildingType = BuildingType.house;
-            //   context.read<AddHouseFormCubit>().saveBuildingType(_buildingType);
-            // }
           },
         );
       },

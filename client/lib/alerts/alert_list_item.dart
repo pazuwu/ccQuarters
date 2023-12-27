@@ -1,7 +1,8 @@
 import 'package:ccquarters/alerts/cubit.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/widgets/icon_option_combo.dart';
 import 'package:ccquarters/model/alert.dart';
 import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/utils/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -13,20 +14,20 @@ class AlertListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.secondary,
-      elevation: elevation,
-      margin: const EdgeInsets.all(8),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      child: Slidable(
-        endActionPane:
-            MediaQuery.of(context).orientation == Orientation.landscape
-                ? null
-                : _buildActionPane(),
-        child: ListTile(
-          title: Stack(
-            children: [
-              Column(
+    return Stack(
+      children: [
+        Card(
+          shadowColor: Theme.of(context).colorScheme.secondary,
+          elevation: elevation,
+          margin: const EdgeInsets.all(8),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+          child: Slidable(
+            endActionPane:
+                MediaQuery.of(context).orientation == Orientation.landscape
+                    ? null
+                    : _buildActionPane(),
+            child: ListTile(
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: _buildWidgetsWithDivider([
                   if (_canBuildType()) _buildType(),
@@ -35,18 +36,16 @@ class AlertListItem extends StatelessWidget {
                   if (_canBuildDetails()) _buildDetails(),
                 ]),
               ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: IconButton(
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  onPressed: () {},
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+        if (MediaQuery.of(context).orientation == Orientation.landscape)
+          Positioned(
+            right: 0,
+            top: 0,
+            child: _buildIconOptionCombo(context),
+          ),
+      ],
     );
   }
 
@@ -200,6 +199,35 @@ class AlertListItem extends StatelessWidget {
             (alert.floors != null && alert.floors!.isNotEmpty))
           _getRichTextWithStyle("Piętro: ", _getFloorString()),
       ],
+    );
+  }
+
+  Widget _buildIconOptionCombo(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(mediumPaddingSize),
+      child: IconOptionCombo(
+        foreground: Colors.black,
+        children: [
+          IconButton(
+            onPressed: () {
+              context.read<AlertsPageCubit>().goToAlertPage(alert);
+            },
+            icon: const Icon(
+              Icons.edit,
+              color: Colors.white,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.read<AlertsPageCubit>().deleteAlert(alert);
+            },
+            icon: const Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
