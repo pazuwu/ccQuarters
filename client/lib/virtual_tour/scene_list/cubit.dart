@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ccquarters/virtual_tour/model/area.dart';
+import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/states.dart';
 import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 
 class VTScenesCubit extends Cubit<VTScenesState> {
@@ -18,7 +18,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
   ) : super(VTScenesState(tour: _tour));
 
   final VTService _service;
-  final Tour _tour;
+  final TourForEdit _tour;
 
   Future createNewSceneFromPhoto(Uint8List photo,
       {required String name}) async {
@@ -110,7 +110,6 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       _tour.areas.add(Area(
         id: response.data,
         name: name,
-        photoIds: [],
       ));
 
       return addPhotosToArea(

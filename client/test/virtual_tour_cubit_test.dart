@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 import 'package:ccquarters/virtual_tour/tour/cubit.dart';
+import 'package:ccquarters/virtual_tour/tour/states.dart';
 import 'package:flutter_test/flutter_test.dart' as test;
 import 'package:test/test.dart';
 

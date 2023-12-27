@@ -1,21 +1,15 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace VirtualTourAPI.Model
+namespace VirtualTourAPI.DBOModel
 {
     [FirestoreData]
-    public class TourDTO
+    public class NewTourDBO
     {
-        [FirestoreDocumentId]
-        public string? Id { get; set; }
         [FirestoreProperty]
         public required string Name { get; set; }
         [FirestoreProperty]
         public required string OwnerId { get; set; }
         [FirestoreProperty]
         public string? PrimarySceneId { get; set; }
-
-        public List<AreaDTO>? Areas { get; set; }
-        public List<SceneDTO>? Scenes { get; set; }
-        public List<LinkDTO>? Links { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 import 'package:ccquarters/virtual_tour/scene_list/gate.dart';
+import 'package:ccquarters/virtual_tour/tour/states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

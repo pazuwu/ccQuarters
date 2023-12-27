@@ -1,25 +1,28 @@
-﻿using VirtualTourAPI.Model;
+﻿using VirtualTourAPI.DTOModel;
+using VirtualTourAPI.Model;
 
 namespace VirtualTourAPI.Service
 {
     public interface IVTService
     {
         Task<TourDTO?> GetTour(string tourId);
-        Task<TourInfoDTO[]> GetAllUserTourInfos(string userId);
-        Task<string?> CreateTour(TourDTO tourInfo);
-        Task UpdateTour(string tourId, TourUpdate tourUpdate);
+        Task<TourForEditDTO?> GetTourForEdit(string tourId);
+        Task<TourInfoDBO[]> GetAllUserTourInfos(string userId);
+        Task<string?> CreateTour(NewTourDTO newTour);
+        Task UpdateTour(string tourId, TourUpdateDTO tourUpdate);
         Task DeleteTour(string tourId);
         Task<bool> HasUserPermissionToModifyTour(string tourId, string userId);
 
         Task<AreaDTO?> GetArea(string tourId, string areaId);
-        Task<string?> CreateArea(string tourId, AreaDTO area);
-        Task AddPhotoToArea(string tourId, string areaId, string photoId);
+        Task<AreaPhotosInfoDTO> GetAreaPhotosInfo(string tourId, string areaId);
+        Task<string> CreateArea(string tourId, NewAreaDTO area);
+        Task<string> AddPhotoToArea(string tourId, string areaId);
         Task DeleteArea(string tourId, string areaId);
 
-        Task<string?> CreateScene(string tourId, SceneDTO scene);
+        Task<string> CreateScene(string tourId, NewSceneDTO scene);
         Task DeleteScene(string tourId, string sceneId);
 
-        Task<string?> CreateLink(string tourId, LinkDTO link);
+        Task<string> CreateLink(string tourId, NewLinkDTO link);
         Task UpdateLink(string tourId, LinkDTO link);
         Task DeleteLink(string tourId, string linkId);
 
