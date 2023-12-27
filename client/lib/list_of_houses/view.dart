@@ -62,44 +62,20 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:
-          widget.isSearch ? _buildSearchAppBar(context) : _buildTitleAppBar(),
-      body: RefreshIndicator(
-        onRefresh: () async => _pagingController.refresh(),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (getDeviceType(context) == DeviceType.web)
-              _buildFiltersColumn(context),
-            _buildList(context),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async => _pagingController.refresh(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (getDeviceType(context) == DeviceType.web)
+                _buildFiltersColumn(context),
+              _buildList(context),
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  AppBar _buildSearchAppBar(BuildContext context) {
-    return AppBar(
-      toolbarHeight: 68,
-      leading: IconButton(
-        onPressed: () => context.read<MainPageCubit>().goBack(),
-        icon: const Icon(Icons.arrow_back),
-      ),
-      title: SearchBox(
-        color: Theme.of(context).colorScheme,
-        controller: _controller,
-        onSubmitted: (value) {
-          context.read<ListOfHousesCubit>().saveSearch(value);
-          _pagingController.refresh();
-        },
-      ),
-    );
-  }
-
-  AppBar _buildTitleAppBar() {
-    return AppBar(
-      title: const Text("Ogłoszenia na wynajem"),
     );
   }
 
@@ -123,30 +99,74 @@ class _ListOfHousesState extends State<ListOfHouses> {
       constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width *
               (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: largePaddingSize,
-          right: largePaddingSize,
-        ),
-        child: CustomScrollView(
-          slivers: [
-            _buildFiltersSliver(context),
-            _buildListSliver(),
-          ],
-        ),
+      child: CustomScrollView(
+        slivers: [
+          _buildAppBarSliver(context),
+          _buildFiltersSliver(context),
+          _buildListSliver(),
+        ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _buildAppBarSliver(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 16,
+          ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => widget.isSearch
+                    ? context.read<MainPageCubit>().goBack()
+                    : Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 6.0,
+                  ),
+                  child: widget.isSearch
+                      ? SearchBox(
+                          color: Theme.of(context).colorScheme,
+                          controller: _controller,
+                          onSubmitted: (value) {
+                            context.read<ListOfHousesCubit>().saveSearch(value);
+                            _pagingController.refresh();
+                          },
+                        )
+                      : Text(
+                          "Ogłoszenia na wynajem",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   SliverToBoxAdapter _buildFiltersSliver(BuildContext context) {
     return SliverToBoxAdapter(
-      child: SizedBox(
-        child: Filters(
-          filters: context.read<ListOfHousesCubit>().filter,
-          onSave: (HouseFilter filter) {
-            context.read<ListOfHousesCubit>().saveFilter(filter);
-            _pagingController.refresh();
-          },
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: largePaddingSize,
+          right: largePaddingSize,
+        ),
+        child: SizedBox(
+          child: Filters(
+            filters: context.read<ListOfHousesCubit>().filter,
+            onSave: (HouseFilter filter) {
+              context.read<ListOfHousesCubit>().saveFilter(filter);
+              _pagingController.refresh();
+            },
+          ),
         ),
       ),
     );
@@ -154,27 +174,33 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   SliverFillRemaining _buildListSliver() {
     return SliverFillRemaining(
-      child: PagedListView<int, House>(
-        pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<House>(
-          noItemsFoundIndicatorBuilder: (context) => const Message(
-            title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
-            subtitle: "Spróbuj ponownie później",
-            icon: Icons.home,
-            adjustToLandscape: true,
-            padding: EdgeInsets.all(8.0),
-          ),
-          firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
-            "Nie udało się pobrać ogłoszeń",
-            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-          ),
-          newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
-            "Nie udało się pobrać ogłoszeń",
-            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-          ),
-          itemBuilder: (context, item, index) => LayoutBuilder(
-            builder: (context, constraints) => HouseListTile(
-              house: item,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: largePaddingSize,
+          right: largePaddingSize,
+        ),
+        child: PagedListView<int, House>(
+          pagingController: _pagingController,
+          builderDelegate: PagedChildBuilderDelegate<House>(
+            noItemsFoundIndicatorBuilder: (context) => const Message(
+              title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
+              subtitle: "Spróbuj ponownie później",
+              icon: Icons.home,
+              adjustToLandscape: true,
+              padding: EdgeInsets.all(8.0),
+            ),
+            firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+              "Nie udało się pobrać ogłoszeń",
+              tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+            ),
+            newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+              "Nie udało się pobrać ogłoszeń",
+              tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+            ),
+            itemBuilder: (context, item, index) => LayoutBuilder(
+              builder: (context, constraints) => HouseListTile(
+                house: item,
+              ),
             ),
           ),
         ),
