@@ -7,7 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AlertsState {}
 
-class AlertsMainPageState extends AlertsState {}
+class AlertsMainPageState extends AlertsState {
+  AlertsMainPageState({this.isSuccess = true, this.message});
+
+  final String? message;
+  final bool isSuccess;
+}
 
 class AlertPageState extends AlertsState {
   AlertPageState({
@@ -18,11 +23,6 @@ class AlertPageState extends AlertsState {
 }
 
 class LoadingOrSendingDataState extends AlertsState {}
-
-class ErrorState extends AlertsState {
-  ErrorState({required this.message});
-  final String message;
-}
 
 class AlertsPageCubit extends Cubit<AlertsState> {
   AlertsPageCubit({
@@ -53,17 +53,22 @@ class AlertsPageCubit extends Cubit<AlertsState> {
       if (!await _createAlert(alert)) return;
     }
 
-    emit(AlertsMainPageState());
+    emit(AlertsMainPageState(message: "Alert został zapisany."));
   }
 
   Future<bool> _createAlert(NewAlert alert) async {
     final response = await alertService.createAlert(alert);
     if (response.error != ErrorType.none) {
       if (response.error == ErrorType.emptyRequest) {
-        emit(ErrorState(message: "Nie można wysłać pustego alertu."));
+        emit(AlertsMainPageState(
+          message: "Nie można wysłać pustego alertu.",
+          isSuccess: false,
+        ));
       } else {
-        emit(ErrorState(
-            message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
+        emit(AlertsMainPageState(
+          message: "Nie udało się wysłać alertu. Spróbuj ponownie później.",
+          isSuccess: false,
+        ));
       }
       return false;
     }
@@ -73,9 +78,11 @@ class AlertsPageCubit extends Cubit<AlertsState> {
   Future<bool> _updateAlert(Alert alert) async {
     final response = await alertService.updateAlert(alert);
     if (response.error != ErrorType.none) {
-      emit(ErrorState(
-          message:
-              "Nie udało się zaktualizować alertu. Spróbuj ponownie później."));
+      emit(AlertsMainPageState(
+        message:
+            "Nie udało się zaktualizować alertu. Spróbuj ponownie później.",
+        isSuccess: false,
+      ));
       return false;
     }
     return true;
@@ -86,12 +93,16 @@ class AlertsPageCubit extends Cubit<AlertsState> {
 
     final response = await alertService.deleteAlert(alert.id);
     if (response.error != ErrorType.none) {
-      emit(ErrorState(
-          message: "Nie udało się usunąć alertu. Spróbuj ponownie później."));
+      emit(AlertsMainPageState(
+        message: "Nie udało się usunąć alertu. Spróbuj ponownie później.",
+        isSuccess: false,
+      ));
       return;
     }
 
-    emit(AlertsMainPageState());
+    emit(AlertsMainPageState(
+      message: "Alert został usunięty.",
+    ));
   }
 
   Future<void> goToAlertsMainPage() async {

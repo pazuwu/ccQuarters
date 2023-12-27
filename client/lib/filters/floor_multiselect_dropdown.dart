@@ -56,7 +56,7 @@ class FloorMultiSelectDropdown extends StatelessWidget {
 
     result.addAll(List.generate(11, (index) => FloorNumber(index)));
     result.add(FloorNumber.aboveTen());
-    
+
     return result;
   }
 

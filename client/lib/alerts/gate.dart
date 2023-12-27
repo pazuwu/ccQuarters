@@ -1,7 +1,7 @@
 import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/alerts/alerts_list.dart';
 import 'package:ccquarters/alerts/alert_view.dart';
-import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,7 +16,15 @@ class AlertsGate extends StatelessWidget {
       ),
       child: BlocBuilder<AlertsPageCubit, AlertsState>(
         builder: (context, state) {
+          SnackMessenger.hide(context);
           if (state is AlertsMainPageState) {
+            if (state.message != null && state.message!.isNotEmpty) {
+              if (state.isSuccess) {
+                SnackMessenger.showSuccess(context, state.message!);
+              } else {
+                SnackMessenger.showError(context, state.message!);
+              }
+            }
             return const AlertsView();
           } else if (state is AlertPageState) {
             return AlertView(
@@ -25,14 +33,6 @@ class AlertsGate extends StatelessWidget {
           } else if (state is LoadingOrSendingDataState) {
             return const Center(
               child: CircularProgressIndicator(),
-            );
-          } else if (state is ErrorState) {
-            return ErrorMessage(
-              state.message,
-              closeButton: true,
-              onClose: () {
-                context.read<AlertsPageCubit>().goToAlertsMainPage();
-              },
             );
           }
 
