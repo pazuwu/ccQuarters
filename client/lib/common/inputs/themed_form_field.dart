@@ -6,12 +6,14 @@ class ThemedFormField extends StatelessWidget {
       this.obscureText = false,
       this.controller,
       this.labelText,
-      this.validator});
+      this.validator,
+      this.onFieldSubmitted});
 
   final bool obscureText;
   final TextEditingController? controller;
   final String? labelText;
   final String? Function(String?)? validator;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +46,7 @@ class ThemedFormField extends StatelessWidget {
         labelText: labelText,
       ),
       validator: validator,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }

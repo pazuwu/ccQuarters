@@ -1,6 +1,6 @@
-import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 class ProfileInfo extends StatelessWidget {

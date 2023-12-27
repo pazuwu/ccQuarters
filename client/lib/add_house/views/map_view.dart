@@ -1,4 +1,4 @@
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/map/location_picker.dart';
 import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/common_widgets/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});

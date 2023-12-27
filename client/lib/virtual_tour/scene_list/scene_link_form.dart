@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/common_widgets/input_decorator_form.dart';
-import 'package:ccquarters/common_widgets/radio_list.dart';
+import 'package:ccquarters/common/widgets/icon_360.dart';
+import 'package:ccquarters/common/inputs/input_decorator_form.dart';
+import 'package:ccquarters/common/inputs/radio_list.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 
 class SceneLinkFormModel {

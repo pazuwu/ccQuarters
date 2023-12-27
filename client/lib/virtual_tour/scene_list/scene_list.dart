@@ -1,12 +1,12 @@
-import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/virtual_tour/scene_list/scene_options.dart';
+import 'package:ccquarters/common/widgets/icon_360.dart';
+import 'package:ccquarters/common/widgets/icon_option_combo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/common_widgets/always_visible_label.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/common_widgets/show_form.dart';
+import 'package:ccquarters/common/widgets/always_visible_label.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
@@ -161,8 +161,43 @@ class _SceneListState extends State<SceneList> {
             right: 0,
             child: Padding(
               padding: const EdgeInsets.all(4.0),
-              child: SceneOptions(
-                scene: scene,
+              child: IconOptionCombo(
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      await showForm<SceneFormModel>(
+                        context: context,
+                        builder: (context) => SceneForm(
+                          scene: scene,
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      _deleteScene(context, scene);
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      context
+                          .read<VTScenesCubit>()
+                          .setAsPrimaryScene(scene.id!);
+                    },
+                    icon: const Icon(
+                      Icons.looks_one,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -181,6 +216,33 @@ class _SceneListState extends State<SceneList> {
             ),
         ],
       ),
+    );
+  }
+
+  void _deleteScene(BuildContext context, Scene scene) {
+    showDialog(
+      context: context,
+      builder: (c) {
+        return AlertDialog(
+          title: const Text("Usuwanie sceny"),
+          content: Text("Czy na pewno chcesz usunąć scenę '${scene.name}'?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(c).pop();
+              },
+              child: const Text("Anuluj"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(c).pop();
+                context.read<VTScenesCubit>().deleteScene(scene.id!);
+              },
+              child: const Text("Usuń"),
+            ),
+          ],
+        );
+      },
     );
   }
 

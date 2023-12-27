@@ -1,7 +1,7 @@
-import 'package:ccquarters/common_widgets/error_message.dart';
-import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/common_widgets/message.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';

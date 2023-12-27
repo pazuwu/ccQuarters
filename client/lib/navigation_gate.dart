@@ -1,6 +1,6 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/main_page/gate.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/virtual_tour/extended_tour_list/extended_tour_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

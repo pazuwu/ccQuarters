@@ -1,4 +1,4 @@
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 class WideTextButton extends StatelessWidget {

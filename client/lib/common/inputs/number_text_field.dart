@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../utils/consts.dart';
+import '../consts.dart';
 
 class NumberTextField extends StatefulWidget {
   const NumberTextField({

@@ -7,8 +7,7 @@ import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
 import 'package:ccquarters/add_house/views/virtual_tour_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +56,16 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
           : null,
       body: Column(
         children: [
+          const SizedBox(height: 8),
+          _buildHeader(),
+          const SizedBox(height: 12),
           _buildStepper(context),
+          Divider(
+            color: Colors.blueGrey.shade300,
+            thickness: 1,
+            height: 1,
+          ),
+          const SizedBox(height: 8),
           Expanded(
             child: _buildView(widget.state),
           ),
@@ -108,31 +116,34 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
 
   Widget _buildStepper(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        smallPaddingSize,
-        largePaddingSize,
-        smallPaddingSize,
-        0,
-      ),
-      color: Colors.grey[200],
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: EasyStepper(
+        padding: EdgeInsetsGeometryTween(
+          begin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          end: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        )
+            .animate(CurvedAnimation(
+              parent: ModalRoute.of(context)!.animation!,
+              curve: Curves.easeInOut,
+            ))
+            .value,
         steppingEnabled: widget.editMode,
         activeStep: activeStep,
-        lineStyle: const LineStyle(
-          lineLength: 70,
+        lineStyle: LineStyle(
+          lineLength: 90,
           lineSpace: 0,
           lineType: LineType.normal,
-          defaultLineColor: Colors.white,
+          defaultLineColor: Colors.grey.shade300,
           finishedLineColor: Colors.blueGrey,
           lineThickness: 1.5,
         ),
+        unreachedStepBackgroundColor: Colors.blueGrey,
         activeStepTextColor: Colors.black87,
         finishedStepTextColor: Colors.black87,
         internalPadding: 50,
         showLoadingAnimation: false,
         stepAnimationDuration: const Duration(milliseconds: 200),
         stepRadius: 8,
-        showStepBorder: false,
         steps: _getSteps(getDeviceType(context) == DeviceType.mobile),
         onStepReached: (index) => _goToChoosenPage(index, widget.state),
       ),
@@ -250,6 +261,34 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       ),
       title: title,
       topTitle: topTitle,
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.blueGrey,
+        ),
+        height: 64,
+        child: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(
+                Icons.newspaper,
+                color: Colors.white,
+              ),
+            ),
+            Text("Nowe ogłoszenie",
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                    )),
+          ],
+        ),
+      ),
     );
   }
 }

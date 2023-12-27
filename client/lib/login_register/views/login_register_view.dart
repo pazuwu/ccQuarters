@@ -1,10 +1,10 @@
-import 'package:ccquarters/common_widgets/wide_text_button.dart';
+import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/email_and_password_fields.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -186,17 +186,25 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
       child: Text(
         "${state.error!}!",
         style: TextStyle(
-            color: Theme.of(context).colorScheme.error, fontFamily: "Arial"),
+          color: Theme.of(context).colorScheme.error,
+          fontFamily: "Arial",
+        ),
       ),
     );
   }
 
-  _buildFields() {
+  Widget _buildFields() {
     switch (widget.page) {
       case LoginRegisterPageType.login:
         return EmailAndPasswordFields(
           email: firstTextField,
           password: secondTextField,
+          onLastFieldSubmitted: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              _saveEmail();
+              context.read<AuthCubit>().signIn(password: secondTextField.text);
+            }
+          },
         );
       case LoginRegisterPageType.registerPersonalInfo:
         return PersonalInfoFields(
@@ -208,12 +216,26 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
           saveIsBusinessAcount: (value) {
             context.read<AuthCubit>().isBusinessAccount = value;
           },
+          onLastFieldSubmitted: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              _savePersonalInfo();
+              context.read<AuthCubit>().goToEmailAndPasswordRegisterPage();
+            }
+          },
         );
       case LoginRegisterPageType.registerEmailAndPassword:
         return EmailAndPasswordFields(
           email: firstTextField,
           password: secondTextField,
           repeatPassword: thirdTextField,
+          onLastFieldSubmitted: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              _saveEmail();
+              context
+                  .read<AuthCubit>()
+                  .register(password: secondTextField.text);
+            }
+          },
         );
     }
   }

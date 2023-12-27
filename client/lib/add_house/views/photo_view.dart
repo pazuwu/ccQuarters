@@ -1,9 +1,9 @@
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/photo.dart';
-import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/common_widgets/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/device_type.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +107,7 @@ class _PhotoViewState extends State<PhotoView> {
       },
       child: Icon(
         Icons.add_a_photo_outlined,
-        size: getDeviceTypeForGrid(context) == DeviceType.mobile ? 64 : 96,
+        size: getDeviceTypeForGrid(context) == DeviceType.mobile ? 56 : 96,
       ),
     );
   }
@@ -192,10 +192,10 @@ class GridTile extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Card(
-          shape: const RoundedRectangleBorder(),
+          shape: const BeveledRectangleBorder(),
           borderOnForeground: true,
           elevation: 0,
-          color: Colors.grey.shade200,
+          color: Colors.grey.shade100,
           clipBehavior: Clip.antiAlias,
           child: InkWellWithPhoto(
             onTap: onTap,

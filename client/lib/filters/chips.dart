@@ -1,5 +1,5 @@
 import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/common_widgets/chip_keyboard_input.dart';
+import 'package:ccquarters/common/inputs/chip_keyboard_input.dart';
 import 'package:flutter/material.dart';
 
 class CityChipKeyboardInput extends StatefulWidget {

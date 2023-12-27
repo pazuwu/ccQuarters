@@ -69,31 +69,31 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  NestedScrollView _buildScrollView() {
-    return NestedScrollView(
-      headerSliverBuilder: (context, value) {
-        return [
-          SliverToBoxAdapter(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ProfileInfo(user: widget.user),
-                _buildButtons(context),
-              ],
-            ),
+  CustomScrollView _buildScrollView() {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ProfileInfo(user: widget.user),
+              _buildButtons(context),
+            ],
           ),
-          SliverToBoxAdapter(
-            child: HousesAndLikedHousesTabBar(
-              tabController: _tabController,
-            ),
+        ),
+        SliverToBoxAdapter(
+          child: HousesAndLikedHousesTabBar(
+            tabController: _tabController,
           ),
-        ];
-      },
-      body: HousesTabBarViewWithGrids(
-        pagingControllerForLikedHouses: _pagingControllerForLikedHouses,
-        pagingControllerForMyHouses: _pagingControllerForMyHouses,
-        tabController: _tabController,
-      ),
+        ),
+        SliverFillRemaining(
+          child: HousesTabBarViewWithGrids(
+            pagingControllerForLikedHouses: _pagingControllerForLikedHouses,
+            pagingControllerForMyHouses: _pagingControllerForMyHouses,
+            tabController: _tabController,
+          ),
+        ),
+      ],
     );
   }
 

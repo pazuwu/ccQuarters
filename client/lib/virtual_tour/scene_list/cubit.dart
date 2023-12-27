@@ -89,9 +89,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
 
       emit(
         VTScenesSuccessState(
-            tour: _tour,
-            message: "Scena została dodana",
-            changedObject: newScene),
+            tour: _tour, message: "Dodano nową scenę", changedObject: newScene),
       );
     }
   }
@@ -155,7 +153,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       emit(
         VTScenesSuccessState(
           tour: _tour,
-          message: "Scena główna zmieniona",
+          message: "Scena główna została zmieniona",
           changedObject: sceneId,
         ),
       );
@@ -174,7 +172,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       _tour.scenes.removeWhere((element) => element.id == sceneId);
       emit(
         VTScenesSuccessState(
-            tour: _tour, message: "Scena usunięta", changedObject: sceneId),
+            tour: _tour, message: "Usunięto scenę", changedObject: sceneId),
       );
     }
   }

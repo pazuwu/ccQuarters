@@ -1,7 +1,7 @@
-import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/device_type.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 
 class Photos extends StatefulWidget {
