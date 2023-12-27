@@ -5,12 +5,14 @@ class Area {
   final String? transformsid;
   final String name;
   final List<String> photoIds;
+  String? operationId;
 
   Area({
     this.id,
     this.transformsid,
     this.name = "",
     this.photoIds = const [],
+    this.operationId,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class Area {
       'transformsid': transformsid,
       'name': name,
       'photoIds': photoIds,
+      'operationId': operationId,
     };
   }
 
@@ -28,9 +31,9 @@ class Area {
       transformsid:
           map['transformsid'] != null ? map['transformsid'] as String : null,
       name: map['name'] as String,
-      photoIds: List<String>.from(
-        (map['photoIds'] as List<dynamic>? ?? []),
-      ),
+      photoIds: List<String>.from((map['photoIds'] as List<dynamic>? ?? [])),
+      operationId:
+          map['operationId'] != null ? map['operationId'] as String : null,
     );
   }
 

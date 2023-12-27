@@ -228,6 +228,29 @@ class VTService {
     }
   }
 
+  Future<VTServiceResponse<List<String>>> getAreaPhotos(
+      String tourId, String areaId) async {
+    try {
+      var response = await _dio.get(
+        "$_url/$_tours/$tourId/$_areas/$areaId/photos",
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return VTServiceResponse(
+          data: ((response.data as List?)?.map((e) => e as String).toList() ??
+              []),
+        );
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
   Future<VTServiceResponse<String?>> uploadAreaPhoto(
       String tourId, String areaId, Uint8List photo,
       {void Function(int count, int total)? progressCallback}) async {

@@ -87,8 +87,7 @@ mixin AuthorizedDio on Dio {
           _setToken(request, handler);
         },
         onError: (e, handler) async {
-          if (e.response?.statusCode == null ||
-              e.response?.statusCode == HttpStatus.unauthorized) {
+          if (e.response?.statusCode == HttpStatus.unauthorized) {
             _refreshTokenAndResend(e, handler);
             return;
           }
