@@ -378,12 +378,13 @@ class _SceneListState extends State<SceneList> {
                     children: [
                       if (widget.tour.areas[i].operationId == null)
                         IconButton(
-                            onPressed: () {
-                              _addPhotosToArea(context, context.read(),
-                                  widget.tour.areas[i]);
-                            },
-                            icon:
-                                const Icon(Icons.add_photo_alternate_outlined)),
+                          onPressed: () {
+                            _addPhotosToArea(
+                                context, context.read(), widget.tour.areas[i]);
+                          },
+                          icon: const Icon(Icons.add_photo_alternate_outlined),
+                          tooltip: "Dodaj więcej zdjęć",
+                        ),
                       IconButton(
                         onPressed: () {
                           context
