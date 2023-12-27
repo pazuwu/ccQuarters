@@ -1,3 +1,5 @@
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/filters/filters.dart';
 import 'package:ccquarters/list_of_houses/item.dart';
@@ -155,6 +157,21 @@ class _ListOfHousesState extends State<ListOfHouses> {
       child: PagedListView<int, House>(
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<House>(
+          noItemsFoundIndicatorBuilder: (context) => const Message(
+            title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
+            subtitle: "Spróbuj ponownie później",
+            icon: Icons.home,
+            adjustToLandscape: true,
+            padding: EdgeInsets.all(8.0),
+          ),
+          firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+            "Nie udało się pobrać ogłoszeń",
+            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+          ),
+          newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+            "Nie udało się pobrać ogłoszeń",
+            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+          ),
           itemBuilder: (context, item, index) => LayoutBuilder(
             builder: (context, constraints) => HouseListTile(
               house: item,
