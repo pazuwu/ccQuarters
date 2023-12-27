@@ -38,9 +38,9 @@ class VirtualTourCubit extends Cubit<VTState> {
 
   Future loadVirtualTour(String tourId, bool readOnly) async {
     if (readOnly) {
-      _loadVirtualTourForView(tourId);
+      return _loadVirtualTourForView(tourId);
     } else {
-      _loadVirtualTourForEdit(tourId);
+      return _loadVirtualTourForEdit(tourId);
     }
   }
 

@@ -60,6 +60,10 @@ extension VTAPIMock on Dio {
       request.reply(StatusCode.OK, tourMap);
     }, data: Matchers.any);
 
+    dioAdapter.onGet("$url/tours/$id/forEdit", (request) {
+      request.reply(StatusCode.OK, tourMap);
+    }, data: Matchers.any);
+
     dioAdapter.onPost("$url/tours/$id/scenes", (request) {
       request.reply(
         StatusCode.CREATED,
