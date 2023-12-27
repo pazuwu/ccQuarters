@@ -67,7 +67,7 @@ class GetHousesQuery {
         minFloor = filter?.minFloor,
         offerType = filter?.offerType,
         buildingType = filter?.buildingType,
-        voivodeship = filter?.voivodeship.toString(),
+        voivodeship = filter?.voivodeship?.toString(),
         cities = filter?.cities,
         districts = filter?.districts;
 
