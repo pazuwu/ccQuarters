@@ -101,7 +101,7 @@ class _NavigationGateState extends State<NavigationGate> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 4 && context.read<AuthCubit>().user == null) {
+    if (index == 3 && context.read<AuthCubit>().user == null) {
       context.read<AuthCubit>().signOut();
       return;
     }
