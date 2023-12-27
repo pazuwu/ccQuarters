@@ -1,13 +1,11 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
 import 'package:ccquarters/virtual_tour/model/area.dart';
+import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:ccquarters/virtual_tour/model/tour.dart';
-
 class VTScenesState extends Equatable {
-  final Tour tour;
+  final TourForEdit tour;
   const VTScenesState({required this.tour});
 
   @override

@@ -2,9 +2,9 @@
 using AuthLibrary;
 using System.Security.Claims;
 using VirtualTourAPI.Service;
-using VirtualTourAPI.Model;
 using VirtualTourAPI.Requests;
 using Microsoft.AspNetCore.Mvc;
+using VirtualTourAPI.DTOModel;
 
 namespace VirtualTourAPI.Endpoints
 {
@@ -22,6 +22,25 @@ namespace VirtualTourAPI.Endpoints
                 foreach (var scene in tour.Scenes)
                 {
                     if(scene.Id != null)
+                        scene.Photo360Url = await storage.GetDownloadUrl($"tours/{tourId}/scenes", scene.Id);
+                }
+            }
+
+            return Results.Ok(tour);
+        }
+
+        public static async Task<IResult> GetForEdit(string tourId, IVTService service, IStorage storage)
+        {
+            var tour = await service.GetTourForEdit(tourId);
+
+            if (tour == null)
+                return Results.NotFound();
+
+            if (tour.Scenes != null)
+            {
+                foreach (var scene in tour.Scenes)
+                {
+                    if (scene.Id != null)
                         scene.Photo360Url = await storage.GetDownloadUrl($"tours/{tourId}/scenes", scene.Id);
                 }
             }
@@ -49,7 +68,7 @@ namespace VirtualTourAPI.Endpoints
             if (userId == null)
                 Results.Unauthorized();
 
-            var tour = new TourDTO()
+            var tour = new NewTourDTO()
             {
                 Name = postTourRequest.Name,
                 OwnerId = userId!,
@@ -63,7 +82,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
-        public static async Task<IResult> Put(string tourId, PutTourRequest putTourRequest, HttpContext context, IVTService service)
+        public static async Task<IResult> Put(string tourId, TourUpdateDTO tourUpdate, HttpContext context, IVTService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -71,13 +90,7 @@ namespace VirtualTourAPI.Endpoints
             if (userId == null)
                 Results.Unauthorized();
 
-            var tour = new TourUpdate()
-            {
-                Name = putTourRequest.Name,
-                PrimarySceneId = putTourRequest.PrimarySceneId
-            };
-
-            await service.UpdateTour(tourId, tour);
+            await service.UpdateTour(tourId, tourUpdate);
 
             return Results.Ok();
         }

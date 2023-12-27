@@ -5,7 +5,7 @@
 #nullable disable
 
 using FluentAssertions;
-using VirtualTourAPI.Model;
+using VirtualTourAPI.DTOModel;
 
 namespace VirtualTourAPI.IntegrationTests
 {
@@ -17,7 +17,7 @@ namespace VirtualTourAPI.IntegrationTests
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
-            var tour = new TourDTO()
+            var tour = new NewTourDTO()
             {
                 Name = "Name",
                 OwnerId = "UserId"
@@ -36,81 +36,75 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task CreateAreaShouldCreateArea()
         {
-            var area = new AreaDTO()
+            var area = new NewAreaDTO()
             {
                 Name = nameof(CreateAreaShouldCreateArea),
             };
 
             var areaId = await _service.CreateArea(_tourId, area);
 
-            var tour = await _service.GetTour(_tourId);
+            var tour = await _service.GetTourForEdit(_tourId);
             tour.Areas.Should().Contain(a => a.Id == areaId && a.Name == area.Name);
         }
 
         [TestMethod]
         public async Task DeleteAreaShouldDeleteArea()
         {
-            var area = new AreaDTO()
+            var area = new NewAreaDTO()
             {
                 Name = nameof(DeleteAreaShouldDeleteArea),
             };
 
             var areaId = await _service.CreateArea(_tourId, area);
 
-            var tour = await _service.GetTour(_tourId);
+            var tour = await _service.GetTourForEdit(_tourId);
             tour.Areas.Should().Contain(s => s.Id == areaId && s.Name == area.Name);
 
             await _service.DeleteArea(_tourId, areaId);
 
-            var tourAfterSceneDelete = await _service.GetTour(_tourId);
+            var tourAfterSceneDelete = await _service.GetTourForEdit(_tourId);
             tourAfterSceneDelete.Areas.Should().NotContain(s => s.Id == areaId && s.Name == area.Name);
         }
 
         [TestMethod]
         public async Task AddPhotoToAreaShouldAddPhotoId()
         {
-            var area = new AreaDTO()
+            var area = new NewAreaDTO()
             {
                 Name = "Area name",
             };
 
             var areaId = await _service.CreateArea(_tourId, area);
 
-            var tour = await _service.GetTour(_tourId);
+            var tour = await _service.GetTourForEdit(_tourId);
             tour.Areas.Should().Contain(s => s.Id == areaId && s.Name == area.Name);
 
-            var photoId = Guid.NewGuid().ToString();
-
-            await _service.AddPhotoToArea(_tourId, areaId, photoId);
+            var photoId = await _service.AddPhotoToArea(_tourId, areaId);
             
-            var tourAfterAddPhoto = await _service.GetTour(_tourId);
+            var tourAfterAddPhoto = await _service.GetTourForEdit(_tourId);
             var areaAfterAddPhoto = tourAfterAddPhoto.Areas.Find(a => a.Id == areaId);
             areaAfterAddPhoto.Should().NotBeNull();
-            areaAfterAddPhoto.PhotoIds.Should().Contain(photoId);
         }
 
         [TestMethod]
         public async Task GetAreaShouldReturnArea()
         {
-            var area = new AreaDTO()
+            var area = new NewAreaDTO()
             {
                 Name = "Area name",
             };
 
             var areaId = await _service.CreateArea(_tourId, area);
 
-            var tour = await _service.GetTour(_tourId);
+            var tour = await _service.GetTourForEdit(_tourId);
             tour.Areas.Should().Contain(s => s.Id == areaId && s.Name == area.Name);
 
-            var photoId = Guid.NewGuid().ToString();
-
-            await _service.AddPhotoToArea(_tourId, areaId, photoId);
+            var photoId = await _service.AddPhotoToArea(_tourId, areaId);
 
             var areaAfterAddPhoto = await _service.GetArea(_tourId, areaId);
             areaAfterAddPhoto.Should().NotBeNull();
             areaAfterAddPhoto.Id.Should().Be(areaId);
             areaAfterAddPhoto.Name.Should().Be(area.Name);
-            areaAfterAddPhoto.PhotoIds.Should().Contain(photoId);
         }
     }
 }

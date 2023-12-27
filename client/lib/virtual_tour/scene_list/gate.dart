@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
+import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
 import 'package:ccquarters/virtual_tour/scene_list/states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
 
 class SceneListGate extends StatelessWidget {
@@ -14,7 +14,7 @@ class SceneListGate extends StatelessWidget {
     required this.tour,
   }) : super(key: key);
 
-  final Tour tour;
+  final TourForEdit tour;
 
   @override
   Widget build(BuildContext context) {

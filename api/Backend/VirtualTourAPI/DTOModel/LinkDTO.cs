@@ -1,9 +1,10 @@
-﻿using VirtualTourAPI.DTOModel;
-
-namespace VirtualTourAPI.Requests
+﻿
+namespace VirtualTourAPI.DTOModel
 {
-    public class PutLinkRequest
+    public class LinkDTO
     {
+        public required string Id { get; set; }
+        public string? ParentId { get; set; }
         public string? Text { get; set; }
         public string? DestinationId { get; set; }
         public GeoPointDTO? Position { get; set; }

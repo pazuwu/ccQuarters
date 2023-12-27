@@ -1,6 +1,7 @@
 ﻿using AuthLibrary;
 using Google.Cloud.Firestore;
 using System.Security.Claims;
+using VirtualTourAPI.DTOModel;
 using VirtualTourAPI.Model;
 using VirtualTourAPI.Requests;
 using VirtualTourAPI.Service;
@@ -23,21 +24,17 @@ namespace VirtualTourAPI.Endpoints
                 errors.Add(nameof(request.ParentId), new[] { "Is mandatory." });
             if (string.IsNullOrWhiteSpace(request.DestinationId))
                 errors.Add(nameof(request.DestinationId), new[] { "Is mandatory." });
-            if (request.Longitude is null)
-                errors.Add(nameof(request.Longitude), new[] { "Is mandatory." });
-            if (request.Latitude is null)
-                errors.Add(nameof(request.Latitude), new[] { "Is mandatory." });
 
             if (errors.Count > 0)
                 return Results.ValidationProblem(errors);
 
-            var newLink = new LinkDTO()
+            var newLink = new NewLinkDTO()
             {
                 ParentId = request.ParentId,
                 DestinationId = request.DestinationId,
-                Position = new GeoPoint(request.Latitude!.Value, request.Longitude!.Value),
+                Position = request.Position,
                 Text = request.Text,
-                NextOrientation = request.NextOrientation.MapToDBGeoPoint(),
+                NextOrientation = request.NextOrientation,
             };
 
             var createdLinkId = await service.CreateLink(tourId, newLink);
@@ -60,8 +57,8 @@ namespace VirtualTourAPI.Endpoints
             {
                 Id = linkId,
                 DestinationId = request.DestinationId,
-                NextOrientation = request.NextOrientation.MapToDBGeoPoint(),
-                Position = request.Position.MapToDBGeoPoint(),
+                NextOrientation = request.NextOrientation,
+                Position = request.Position,
                 Text = request.Text,
             };
 

@@ -8,6 +8,8 @@ Future<T?> showForm<T>(
       context: context,
       useSafeArea: true,
       builder: (context) => Dialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16.0))),
           child: ConstrainedBox(
               constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.4),

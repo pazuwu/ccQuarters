@@ -1,6 +1,6 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace VirtualTourAPI.Model
+namespace VirtualTourAPI.DTOModel
 {
     [FirestoreData]
     public class VTOperationDTO
