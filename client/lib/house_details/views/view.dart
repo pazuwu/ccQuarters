@@ -1,4 +1,6 @@
 import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/messages/delete_dialog.dart';
+import 'package:ccquarters/common/messages/dialog_with_message.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/views/accordion.dart';
 import 'package:ccquarters/house_details/views/contact.dart';
@@ -92,57 +94,31 @@ class DetailsView extends StatelessWidget {
         if (item == 0)
           context.read<HouseDetailsCubit>().goToEditHouse()
         else if (item == 1)
-          _showDeleteHouseDialog(context)
+          showDeleteDialog(
+            context,
+            "ogłoszenia",
+            "ogłoszenie",
+            () {
+              context.read<HouseDetailsCubit>().deleteHouse().then(
+                (value) {
+                  if (value) {
+                    showDialogWithMessage(
+                      context: context,
+                      title: "Ogłoszenie zostało usunięte.",
+                      onOk: () => Navigator.pop(context),
+                    );
+                  } else {
+                    showDialogWithMessage(
+                      context: context,
+                      title: "Nie udało się usunąć ogłoszenia.",
+                      content: "Spróbuj ponownie później.",
+                    );
+                  }
+                },
+              );
+            },
+          ),
       },
-    );
-  }
-
-  _showDeleteHouseDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Usuń ogłoszenie"),
-            content: const Text("Czy na pewno chcesz usunąć ogłoszenie?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("Nie"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text("Tak"),
-              ),
-            ],
-          );
-        }).then((delete) {
-      if (delete) {
-        context.read<HouseDetailsCubit>().deleteHouse().then((value) {
-          if (value) {
-            _showDialogWithMessage(context, "Ogłoszenie zostało usunięte.");
-            Navigator.pop(context);
-          } else {
-            _showDialogWithMessage(context,
-                "Nie udało się usunąć ogłoszenia. Spróbuj ponownie później.");
-          }
-        });
-      }
-    });
-  }
-
-  _showDialogWithMessage(BuildContext context, String error) {
-    showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        content: Text(error),
-        actions: <Widget>[
-          Center(
-            child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK')),
-          )
-        ],
-      ),
     );
   }
 }
