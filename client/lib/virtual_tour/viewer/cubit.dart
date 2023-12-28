@@ -1,5 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:equatable/equatable.dart';
+import 'dart:async';
+
+import 'package:ccquarters/virtual_tour/viewer/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
@@ -8,55 +9,55 @@ import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
 import 'package:ccquarters/virtual_tour/service/service.dart';
 
-abstract class VTViewerState extends Equatable {
-  @override
-  bool? get stringify => true;
-
-  @override
-  List<Object?> get props => [];
-}
-
-class VTViewingSceneState extends VTViewerState {
-  final Scene currentScene;
-  final List<Link> links;
-  final int index;
-
-  VTViewingSceneState({
-    required this.currentScene,
-    required this.links,
-    required this.index,
-  });
-
-  @override
-  List<Object?> get props => [index];
-}
-
-class VTViewerInitial extends VTViewerState {}
-
 class VTViewerCubit extends Cubit<VTViewerState> {
   final Tour _tour;
   final VTService _service;
-  int index = 1;
+  Future? _downloadingFuture;
 
   VTViewerCubit(this._tour, this._service, {Scene? initialScene})
       : super(VTViewingSceneState(
-            index: 0,
-            currentScene: initialScene ?? _tour.scenes.first,
-            links: _getLinksForParent(
-                _tour, initialScene?.id ?? _tour.scenes.first.id ?? "")));
+          changedObject: 0,
+          currentScene: initialScene ?? _tour.scenes.first,
+          links: _getLinksForParent(
+              _tour, initialScene?.id ?? _tour.scenes.first.id ?? ""),
+        )) {
+    downloadNeighbors(initialScene ?? _tour.scenes.first);
+  }
 
   List<Scene> get scenes => _tour.scenes;
 
-  void useLink(Link link) {
+  Future useLink(Link link) async {
+    var source =
+        _tour.scenes.firstWhere((element) => element.id == link.parentId);
+
     var destination = _tour.scenes.firstWhere(
-        (element) => element.id == link.destinationId,
-        orElse: () => Scene(name: "", photo360Url: ""));
+      (element) => element.id == link.destinationId,
+      orElse: () => Scene(name: "", photo360Url: ""),
+    );
+
+    if (_downloadingFuture != null) {
+      var plannedLoading = Timer(
+        const Duration(milliseconds: 500),
+        () {
+          emit(VTViewerScenesLoadingState(
+              currentScene: source,
+              links: _getLinksForParent(_tour, destination.id!),
+              changedObject: DateTime.timestamp(),
+              message: "Ładowanie kolejnej sceny"));
+        },
+      );
+
+      await _downloadingFuture;
+      plannedLoading.cancel();
+      _downloadingFuture = null;
+    }
 
     if (destination.id != null) {
       emit(VTViewingSceneState(
-          index: index++,
-          currentScene: destination,
-          links: _getLinksForParent(_tour, destination.id!)));
+        changedObject: DateTime.timestamp(),
+        currentScene: destination,
+        links: _getLinksForParent(_tour, destination.id!),
+      ));
     }
   }
 
@@ -99,6 +100,7 @@ class VTViewerCubit extends Cubit<VTViewerState> {
           destinationId: destinationId,
           nextOrientation: nextOrientation,
           text: text);
+
       if (serviceResponse.data == true) {
         _tour.links.remove(link);
         _tour.links.add(link.copyWith(
@@ -120,10 +122,30 @@ class VTViewerCubit extends Cubit<VTViewerState> {
       var state = this.state as VTViewingSceneState;
 
       emit(VTViewingSceneState(
-          index: index++,
+          changedObject: DateTime.timestamp(),
           currentScene: state.currentScene,
           links: _getLinksForParent(_tour, state.currentScene.id!)));
     }
+  }
+
+  Future downloadNeighbors(Scene scene) async {
+    var futureMap = <String, Future>{};
+
+    for (var link in _tour.links.where(
+      (element) => element.parentId == scene.id,
+    )) {
+      var destination = _tour.scenes
+          .firstWhere((element) => element.id == link.destinationId);
+
+      if (destination.photo360 == null &&
+          !futureMap.containsKey(destination.id)) {
+        futureMap[destination.id!] = _service
+            .downloadFile(destination.id!)
+            .then((value) => destination.photo360 = value.data);
+      }
+    }
+
+    _downloadingFuture = Future.wait(futureMap.values);
   }
 
   static List<Link> _getLinksForParent(Tour tour, String parentId) {

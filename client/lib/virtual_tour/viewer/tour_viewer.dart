@@ -1,3 +1,5 @@
+import 'package:ccquarters/common/messages/snack_messenger.dart';
+import 'package:ccquarters/virtual_tour/viewer/states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +29,11 @@ class TourViewer extends StatelessWidget {
       value: VTViewerCubit(tour, service, initialScene: currentScene),
       child:
           BlocBuilder<VTViewerCubit, VTViewerState>(builder: (context, state) {
+        SnackMessenger.hide(context);
+        if (state is VTViewerScenesLoadingState) {
+          SnackMessenger.showLoading(context, state.message);
+        }
+
         if (state is VTViewingSceneState) {
           return SceneViewer(
             scene: state.currentScene,

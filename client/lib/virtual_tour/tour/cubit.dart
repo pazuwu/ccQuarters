@@ -70,7 +70,7 @@ class VirtualTourCubit extends Cubit<VTState> {
         serviceResponse.data != null) {
       _tour = serviceResponse.data;
 
-      await _downloadSceneImages(_tour!, true);
+      await _downloadPrimaryScene(_tour!);
 
       var scene = _tour!.scenes.first;
       emit(
@@ -82,6 +82,26 @@ class VirtualTourCubit extends Cubit<VTState> {
     } else {
       _handleServiceError(serviceResponse);
     }
+  }
+
+  Future _downloadPrimaryScene(Tour tour) async {
+    var scene = tour.primarySceneId != null
+        ? tour.scenes.firstWhere((element) => element.id == tour.primarySceneId)
+        : tour.scenes.firstOrNull;
+
+    if (scene == null) {
+      return;
+    }
+
+    var progressMap = <String, DownloadInfo>{};
+
+    await _service.downloadFile(scene.photo360Url!,
+        progressCallback: (progress, total) {
+      progressMap[scene.id!] = DownloadInfo(progress: progress, total: total);
+      _updateProgress(progressMap, true);
+    }).then((responce) {
+      scene.photo360 = responce.data;
+    });
   }
 
   Future _downloadSceneImages(Tour tour, bool readOnly) async {
