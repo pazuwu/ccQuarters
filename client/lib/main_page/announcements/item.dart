@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/house.dart';
@@ -59,16 +60,23 @@ class HouseItem extends StatelessWidget {
         maxWidth: MediaQuery.of(context).size.width *
             (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
       ),
-      child: ImageWidget(
-        imageUrl: house.photo.url.isNotEmpty
-            ? house.photo.url
-            : "https://picsum.photos/512",
-        fit: BoxFit.cover,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(formBorderRadius),
-          topRight: Radius.circular(formBorderRadius),
-        ),
-      ),
+      child: house.photoUrl != null
+          ? ImageWidget(
+              imageUrl: house.photoUrl!,
+              fit: BoxFit.cover,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(formBorderRadius),
+                topRight: Radius.circular(formBorderRadius),
+              ),
+            )
+          : AssetImageWidget(
+              imagePath: house.getFilenameDependOnBuildingType(),
+              fit: BoxFit.contain,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(formBorderRadius),
+                topRight: Radius.circular(formBorderRadius),
+              ),
+            ),
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/list_of_houses/like_button.dart';
@@ -84,13 +85,22 @@ class _HouseListTileState extends State<HouseListTile> {
     return ConstrainedBox(
       constraints:
           BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
-      child: ImageWidget(
-        imageUrl: widget.house.photo.url,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(formBorderRadius),
-          topRight: Radius.circular(formBorderRadius),
-        ),
-      ),
+      child: widget.house.photoUrl != null
+          ? ImageWidget(
+              imageUrl: widget.house.photoUrl!,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(formBorderRadius),
+                topRight: Radius.circular(formBorderRadius),
+              ),
+            )
+          : AssetImageWidget(
+              fit: BoxFit.contain,
+              imagePath: widget.house.getFilenameDependOnBuildingType(),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(formBorderRadius),
+                topRight: Radius.circular(formBorderRadius),
+              ),
+            ),
     );
   }
 
@@ -98,16 +108,19 @@ class _HouseListTileState extends State<HouseListTile> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                widget.house.details.buildingType.icon,
-                color: Colors.white.withOpacity(0.8),
-                shadows: const [Shadow(color: Colors.black54, blurRadius: 64)],
-              ),
-            )),
+        if (widget.house.photoUrl != null)
+          Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  widget.house.details.buildingType.icon,
+                  color: Colors.white.withOpacity(0.8),
+                  shadows: const [
+                    Shadow(color: Colors.black54, blurRadius: 64)
+                  ],
+                ),
+              )),
         Expanded(child: Container()),
         AlwaysVisibleLabel(
           background: Colors.black.withOpacity(0.5),

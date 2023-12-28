@@ -102,6 +102,9 @@ flutter:
   assets:
     - env/.env.dev
     - assets/graphics/avatar.png
+    - assets/graphics/apartment.png
+    - assets/graphics/house.png
+    - assets/graphics/room.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
