@@ -73,6 +73,8 @@ dependencies:
   intl: ^0.18.1
   flutter_cache_manager: ^3.3.1
   flutter_slidable: ^3.0.1
+  photo_view: ^0.14.0
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:

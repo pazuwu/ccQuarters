@@ -2,6 +2,7 @@ import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/views/show_gallery.dart';
 import 'package:flutter/material.dart';
 
 class Photos extends StatefulWidget {
@@ -122,7 +123,13 @@ class _PhotosState extends State<Photos> {
         ),
       ),
       child: MainPhoto(
-        onTap: () {},
+        onTap: () {
+          showGallery(
+            context,
+            urls: widget.photos,
+            initialIndex: _selectedIndex,
+          );
+        },
         photo: widget.photos.isNotEmpty
             ? widget.photos[_selectedIndex]
             : "https://picsum.photos/512",
