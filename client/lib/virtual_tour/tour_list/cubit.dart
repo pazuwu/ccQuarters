@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,7 +62,8 @@ class VTListCubit extends Cubit<VTListState> {
         default:
           emit(VTListErrorState(
               message:
-                  "Wystapił niezidentyfikowany błąd podczas próby pobrania wirtualnych spacerów. Skonaktuj się z działem technicznym"));
+                  "Wystapił niezidentyfikowany błąd podczas próby pobrania wirtualnych spacerów. \n"
+                  "Skonaktuj się z działem technicznym"));
           return;
       }
     }
