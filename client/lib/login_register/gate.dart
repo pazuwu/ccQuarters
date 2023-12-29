@@ -25,7 +25,7 @@ class AuthGate extends StatelessWidget {
           ),
         );
       } else if (state is NeedsSigningInState) {
-        return const ChooseLoginOrRegisterView();
+        return ScrollableLoginView();
       } else if (state is LoadingState) {
         return const Scaffold(
           body: Center(
