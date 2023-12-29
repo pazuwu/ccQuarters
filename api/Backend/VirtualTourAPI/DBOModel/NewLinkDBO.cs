@@ -1,25 +1,18 @@
 ﻿using Google.Cloud.Firestore;
 
-namespace VirtualTourAPI.Model
+namespace VirtualTourAPI.DBOModel
 {
     [FirestoreData]
-    public class LinkDTO
+    public class NewLinkDBO
     {
-        [FirestoreDocumentId]
-        public string? Id { get; set; }
-
-        [FirestoreProperty]
-        public string? ParentId { get; set; }
-
         [FirestoreProperty]
         public string? Text { get; set; }
-
         [FirestoreProperty]
-        public string? DestinationId { get; set; }
-
+        public required string DestinationId { get; set; }
+        [FirestoreProperty]
+        public string? ParentId { get; set; }
         [FirestoreProperty]
         public GeoPoint? Position { get; set; }
-
         [FirestoreProperty]
         public GeoPoint? NextOrientation { get; set; }
     }

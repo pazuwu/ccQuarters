@@ -1,15 +1,14 @@
 ﻿using AuthLibrary;
 using CloudStorageLibrary;
 using System.Security.Claims;
-using VirtualTourAPI.Model;
-using VirtualTourAPI.Requests;
+using VirtualTourAPI.DTOModel;
 using VirtualTourAPI.Service;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class AreaEndpoints
     {
-        public static async Task<IResult> Post(string tourId, HttpContext context, PostAreaRequest request, IVTService service)
+        public static async Task<IResult> Post(string tourId, HttpContext context, NewAreaDTO newArea, IVTService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -17,7 +16,7 @@ namespace VirtualTourAPI.Endpoints
             if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
-            var createdAreaId = await service.CreateArea(tourId, new AreaDTO() { Name = request.Name });
+            var createdAreaId = await service.CreateArea(tourId, newArea);
 
             if (string.IsNullOrWhiteSpace(createdAreaId))
                 return Results.Problem("DB error occured while creating object.");
@@ -47,25 +46,24 @@ namespace VirtualTourAPI.Endpoints
 
             using var fileStream = file.OpenReadStream();
             var collectionName = $"tours/{tourId}/{areaId}";
-            var filename = Guid.NewGuid().ToString();
 
-            await storage.UploadFileAsync(collectionName, fileStream, filename);
-            await service.AddPhotoToArea(tourId, areaId, filename);
+            var photoId = await service.AddPhotoToArea(tourId, areaId);
+            await storage.UploadFileAsync(collectionName, fileStream, photoId);
 
-            return Results.Created(filename, null);
+            return Results.Created(photoId, null);
         }
 
         public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IVTService service)
         {
-            var area = await service.GetArea(tourId, areaId);
+            var areaPhotosInfo = await service.GetAreaPhotosInfo(tourId, areaId);
             var collectionName = $"tours/{tourId}/{areaId}";
 
-            if (area == null)
+            if (areaPhotosInfo == null)
                 return Results.NotFound();
 
-            if (area.PhotoIds != null)
+            if (areaPhotosInfo.PhotoIds != null)
             {
-                var urls = await storage.GetDownloadUrls(collectionName, area.PhotoIds);
+                var urls = await storage.GetDownloadUrls(collectionName, areaPhotosInfo.PhotoIds);
                 return Results.Ok(urls.ToArray());
             }
 

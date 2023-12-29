@@ -3,17 +3,11 @@
 namespace VirtualTourAPI.Model
 {
     [FirestoreData]
-    public class SceneDTO
+    public class TourInfoDBO
     {
         [FirestoreDocumentId]
         public string? Id { get; set; }
-
         [FirestoreProperty]
-        public string? ParentId { get; set; }
-
-        [FirestoreProperty]
-        public string? Name { get; set; }
-
-        public string? Photo360Url { get; set; }
+        public required string Name { get; set; }
     }
 }

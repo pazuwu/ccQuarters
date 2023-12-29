@@ -1,19 +1,30 @@
 import 'dart:io';
 
-import 'package:ccquarters/services/auth/service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:http_status_code/http_status_code.dart';
 
-class AuthorizedDio extends DioForNative {
+import 'package:ccquarters/services/auth/service.dart';
+
+class AuthorizedDio {
   final Dio _resendingDioInstance = Dio();
+  final Dio _dio = Dio();
   final Connectivity _connectivity = Connectivity();
-  final BaseAuthService _authService;
+  late final BaseAuthService _authService;
   String _token = '';
 
-  AuthorizedDio(BaseAuthService authService) : _authService = authService {
+  AuthorizedDio(
+    BaseAuthService authService,
+  ) : _authService = authService {
+    _initialize();
+  }
+
+  Dio create() {
+    return _dio;
+  }
+
+  void _initialize() {
     _authService.authChanges.listen((u) => _token = "");
 
     _addTokenRefreshInterceptor();
@@ -22,7 +33,8 @@ class AuthorizedDio extends DioForNative {
   }
 
   void _addConnectionInterceptor() {
-    interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
+    _dio.interceptors
+        .add(InterceptorsWrapper(onRequest: (options, handler) async {
       var connectivityResult = await _connectivity.checkConnectivity();
       if (connectivityResult == ConnectivityResult.none) {
         handler.reject(
@@ -55,18 +67,17 @@ class AuthorizedDio extends DioForNative {
       allowPostMethod: false,
     );
 
-    interceptors.add(DioCacheInterceptor(options: options));
+    _dio.interceptors.add(DioCacheInterceptor(options: options));
   }
 
   void _addTokenRefreshInterceptor() {
-    interceptors.add(
+    _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (request, handler) async {
           _setToken(request, handler);
         },
         onError: (e, handler) async {
-          if (e.response?.statusCode == null ||
-              e.response?.statusCode == HttpStatus.unauthorized) {
+          if (e.response?.statusCode == HttpStatus.unauthorized) {
             _refreshTokenAndResend(e, handler);
             return;
           }

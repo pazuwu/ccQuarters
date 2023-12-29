@@ -1,28 +1,20 @@
 ﻿using AuthLibrary;
 using CloudStorageLibrary;
-using Google.Api;
 using System.Security.Claims;
-using VirtualTourAPI.Model;
-using VirtualTourAPI.Requests;
+using VirtualTourAPI.DTOModel;
 using VirtualTourAPI.Service;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class SceneEndpoints
     {
-        public static async Task<IResult> Post(string tourId, HttpContext context, PostSceneRequest request, IVTService service)
+        public static async Task<IResult> Post(string tourId, HttpContext context, NewSceneDTO newScene, IVTService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
             if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
-
-            var newScene = new SceneDTO()
-            {
-                Name = request.Name,
-                ParentId = request.ParentId,
-            };
 
             var createdSceneId = await service.CreateScene(tourId, newScene);
 

@@ -1,6 +1,7 @@
-﻿namespace VirtualTourAPI.Requests
+﻿
+namespace VirtualTourAPI.DTOModel
 {
-    public class PostSceneRequest
+    public class NewSceneDTO
     {
         public required string Name { get; set; }
         public string? ParentId { get; set; }

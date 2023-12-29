@@ -3,10 +3,11 @@ import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 
 class VirtualTourMock {
   static Tour from360Url(String url) {
-    return Tour(name: "Test tour", id: "", areas: [
+    return TourForEdit(name: "Test tour", id: "", areas: [
       Area(id: "salon", name: "Salon"),
       Area(id: "kuchnia", name: "Kuchnia"),
     ], scenes: [

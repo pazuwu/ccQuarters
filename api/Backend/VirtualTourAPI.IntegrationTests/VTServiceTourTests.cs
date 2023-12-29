@@ -3,7 +3,7 @@
 #else
 
 using FluentAssertions;
-using VirtualTourAPI.Model;
+using VirtualTourAPI.DTOModel;
 
 #nullable disable
 
@@ -15,7 +15,7 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task CreateTourShouldCreateTour()
         {
-            var tour = new TourDTO()
+            var tour = new NewTourDTO()
             {
                 Name = "Name",
                 OwnerId = "UserId"
@@ -34,7 +34,7 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task DeleteTourShouldDeleteTour()
         {
-            var tour = new TourDTO()
+            var tour = new NewTourDTO()
             {
                 Name = "Name",
                 OwnerId = "UserId"
@@ -56,13 +56,13 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task GetUserToursShouldReturnOnlyUsersTours()
         {
-            var firstTour = new TourDTO()
+            var firstTour = new NewTourDTO()
             {
                 Name = "Name",
                 OwnerId = "First User"
             };
 
-            var secondTour = new TourDTO()
+            var secondTour = new NewTourDTO()
             {
                 Name = "Name",
                 OwnerId = "Second User"

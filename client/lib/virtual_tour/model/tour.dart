@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/link.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 
@@ -9,7 +8,6 @@ class Tour {
     required this.name,
     required this.id,
     this.primarySceneId,
-    this.areas = const [],
     this.scenes = const [],
     this.links = const [],
   });
@@ -18,7 +16,6 @@ class Tour {
   final String id;
   String? primarySceneId;
 
-  final List<Area> areas;
   final List<Scene> scenes;
   final List<Link> links;
 
@@ -27,7 +24,6 @@ class Tour {
       'name': name,
       'id': id,
       'primarySceneId': primarySceneId,
-      'areas': areas.map((x) => x.toMap()).toList(),
       'scenes': scenes.map((x) => x.toMap()).toList(),
       'links': links.map((x) => x.toMap()).toList(),
     };
@@ -40,11 +36,6 @@ class Tour {
       primarySceneId: map['primarySceneId'] != null
           ? map['primarySceneId'] as String
           : null,
-      areas: List<Area>.from(
-        (map['areas'] as List<dynamic>).map<Area>(
-          (x) => Area.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
       scenes: List<Scene>.from(
         (map['scenes'] as List<dynamic>).map<Scene>(
           (x) => Scene.fromMap(x as Map<String, dynamic>),

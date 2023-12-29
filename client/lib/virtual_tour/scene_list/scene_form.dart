@@ -1,16 +1,18 @@
-import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ccquarters/common/inputs/radio_list.dart';
+import 'package:ccquarters/virtual_tour/model/scene.dart';
 
 class SceneFormModel {
   SceneFormModel({
     required this.name,
     required this.importType,
+    required this.draft,
   });
 
-  String name;
-  ImportType importType;
+  final String name;
+  final ImportType importType;
+  final bool draft;
 }
 
 enum ImportType {
@@ -95,33 +97,55 @@ class _SceneFormState extends State<SceneForm> {
                 RadioListForm(
                   defaultValue: _selectedImport,
                   values: ImportType.values,
-                  valueChanged: (newValue) => _selectedImport = newValue,
+                  valueChanged: (newValue) => setState(() {
+                    _selectedImport = newValue;
+                  }),
                   titleBuilder: (value) => Text(_formatImportType(value)),
                 ),
               ],
               const SizedBox(
                 height: 16.0,
               ),
-              Align(
-                alignment: Alignment.topRight,
-                child: FilledButton(
-                  style: TextButton.styleFrom(
-                    textStyle: Theme.of(context).textTheme.labelLarge,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (_selectedImport == ImportType.photos) ...[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(
+                          SceneFormModel(
+                            name: _selectedName,
+                            importType: _selectedImport,
+                            draft: true,
+                          ),
+                        );
+                      },
+                      child: const Text("Utwórz wersję roboczą"),
+                    ),
+                    const SizedBox(
+                      width: 4.0,
+                    ),
+                  ],
+                  FilledButton(
+                    style: TextButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    child: widget.scene != null
+                        ? const Text('Zapisz')
+                        : const Text('Utwórz'),
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        Navigator.of(context).pop(
+                          SceneFormModel(
+                            name: _selectedName,
+                            importType: _selectedImport,
+                            draft: false,
+                          ),
+                        );
+                      }
+                    },
                   ),
-                  child: widget.scene != null
-                      ? const Text('Zapisz')
-                      : const Text('Utwórz'),
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      Navigator.of(context).pop(
-                        SceneFormModel(
-                          name: _selectedName,
-                          importType: _selectedImport,
-                        ),
-                      );
-                    }
-                  },
-                ),
+                ],
               ),
               const SizedBox(
                 height: 16.0,

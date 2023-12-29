@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:ccquarters/services/file_service/download_progress.dart';
 import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
+import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/virtual_tour/service/requests/post_area_request.dart';
@@ -45,6 +46,25 @@ class VTService {
 
       if (response.statusCode == StatusCode.OK) {
         return VTServiceResponse(data: Tour.fromMap(response.data));
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
+  Future<VTServiceResponse<TourForEdit>> getTourForEdit(String tourId) async {
+    try {
+      var response = await _dio.get(
+        "$_url/$_tours/$tourId/forEdit",
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return VTServiceResponse(data: TourForEdit.fromMap(response.data));
       } else {
         return VTServiceResponse(error: ErrorType.unknown);
       }
@@ -228,6 +248,29 @@ class VTService {
     }
   }
 
+  Future<VTServiceResponse<List<String>>> getAreaPhotos(
+      String tourId, String areaId) async {
+    try {
+      var response = await _dio.get(
+        "$_url/$_tours/$tourId/$_areas/$areaId/photos",
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return VTServiceResponse(
+          data: ((response.data as List?)?.map((e) => e as String).toList() ??
+              []),
+        );
+      } else {
+        return VTServiceResponse(error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e);
+    }
+  }
+
   Future<VTServiceResponse<String?>> uploadAreaPhoto(
       String tourId, String areaId, Uint8List photo,
       {void Function(int count, int total)? progressCallback}) async {
@@ -278,14 +321,14 @@ class VTService {
     return VTServiceResponse(data: downloadedFile);
   }
 
-  Future postOperation(String tourId, String areaId) async {
+  Future<VTServiceResponse<String>> postOperation(
+      String tourId, String areaId) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.post<String>(
         "$_url/$_tours/$tourId/$_areas/$areaId/process",
       );
 
-      return VTServiceResponse(
-          data: Uint8List.fromList(response.data as List<int>));
+      return VTServiceResponse(data: response.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.CONFLICT) {
         return VTServiceResponse(error: ErrorType.alreadyExists);

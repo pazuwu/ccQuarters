@@ -1,8 +1,7 @@
-﻿using Google.Cloud.Firestore;
-
-namespace VirtualTourAPI.Model
+﻿
+namespace VirtualTourAPI.DTOModel
 {
-    public class TourUpdate
+    public class TourUpdateDTO
     {
         public string? Name { get; set; }
         public string? PrimarySceneId { get; set; }
