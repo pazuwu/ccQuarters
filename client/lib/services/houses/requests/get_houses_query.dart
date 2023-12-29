@@ -23,9 +23,9 @@ class GetHousesQuery {
   int? minFloor;
   int? maxFloor;
   @OfferTypeConverter()
-  OfferType? offerTypes;
+  OfferType? offerType;
   @BuildingTypeConverter()
-  BuildingType? buildingTypes;
+  BuildingType? buildingType;
   String? voivodeship;
   List<String>? cities;
   List<String>? districts;
@@ -45,8 +45,8 @@ class GetHousesQuery {
     this.floors,
     this.minFloor,
     this.maxFloor,
-    this.offerTypes,
-    this.buildingTypes,
+    this.offerType,
+    this.buildingType,
     this.voivodeship,
     this.cities,
     this.districts,
@@ -65,11 +65,9 @@ class GetHousesQuery {
         minRoomCount = filter?.minRoomCount,
         floors = filter?.floors,
         minFloor = filter?.minFloor,
-        offerTypes = filter?.offerType,
-        buildingTypes = filter?.buildingType,
-        voivodeship = filter?.cities?.isNotEmpty ?? false
-            ? filter!.voivodeship.toString()
-            : null,
+        offerType = filter?.offerType,
+        buildingType = filter?.buildingType,
+        voivodeship = filter?.voivodeship?.toString(),
         cities = filter?.cities,
         districts = filter?.districts;
 

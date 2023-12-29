@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/messages/delete_dialog.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/widgets/icon_option_combo.dart';
 import 'package:ccquarters/virtual_tour/model/area.dart';
@@ -204,7 +205,14 @@ class _SceneListState extends State<SceneList> {
                   ),
                   IconButton(
                     onPressed: () {
-                      _deleteScene(context, scene);
+                      showDeleteDialog(
+                        context,
+                        "sceny",
+                        "scenę '${scene.name}'",
+                        () => context
+                            .read<VTScenesCubit>()
+                            .deleteScene(scene.id!),
+                      );
                     },
                     icon: const Icon(
                       Icons.delete,
@@ -243,33 +251,6 @@ class _SceneListState extends State<SceneList> {
             ),
         ],
       ),
-    );
-  }
-
-  void _deleteScene(BuildContext context, Scene scene) {
-    showDialog(
-      context: context,
-      builder: (c) {
-        return AlertDialog(
-          title: const Text("Usuwanie sceny"),
-          content: Text("Czy na pewno chcesz usunąć scenę '${scene.name}'?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(c).pop();
-              },
-              child: const Text("Anuluj"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(c).pop();
-                context.read<VTScenesCubit>().deleteScene(scene.id!);
-              },
-              child: const Text("Usuń"),
-            ),
-          ],
-        );
-      },
     );
   }
 

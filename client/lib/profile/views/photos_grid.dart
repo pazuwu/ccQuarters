@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
@@ -67,10 +68,16 @@ class _PhotosGridState extends State<PhotosGrid> {
         itemBuilder: (context, house, index) => Padding(
           padding: const EdgeInsets.all(1.5),
           child: InkWellWithPhoto(
-            imageWidget: ImageWidget(
-              imageUrl: house.photo.url,
-              borderRadius: const BorderRadius.all(Radius.zero),
-            ),
+            imageWidget: house.photoUrl != null
+                ? ImageWidget(
+                    imageUrl: house.photoUrl!,
+                    borderRadius: const BorderRadius.all(Radius.zero),
+                  )
+                : AssetImageWidget(
+                    imagePath: house.getFilenameDependOnBuildingType(),
+                    fit: BoxFit.contain,
+                    borderRadius: const BorderRadius.all(Radius.zero),
+                  ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

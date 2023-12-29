@@ -1,6 +1,7 @@
 import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/houses/service.dart';
+import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HouseDetailsCubit extends Cubit<HouseDetailsState> {
@@ -42,5 +43,20 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
 
   Future<void> goToEditHouse() async {
     emit(EditHouseState(house));
+  }
+
+  Future<bool> likeHouse(String houseId, bool isLiked) async {
+    ServiceResponse<bool> response;
+    if (isLiked) {
+      response = await houseService.unlikeHouse(houseId);
+    } else {
+      response = await houseService.likeHouse(houseId);
+    }
+
+    if (response.error != ErrorType.none) {
+      return isLiked;
+    }
+
+    return !isLiked;
   }
 }

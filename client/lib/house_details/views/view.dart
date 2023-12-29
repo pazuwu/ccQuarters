@@ -1,8 +1,13 @@
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/messages/delete_dialog.dart';
+import 'package:ccquarters/common/messages/dialog_with_message.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/views/accordion.dart';
 import 'package:ccquarters/house_details/views/contact.dart';
 import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
+import 'package:ccquarters/list_of_houses/like_button.dart';
+import 'package:ccquarters/list_of_houses/price_info.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/common/device_type.dart';
@@ -12,8 +17,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
-  const DetailsView(
-      {super.key, required this.house, this.isOwnedByCurrentUser = false});
+  const DetailsView({
+    super.key,
+    required this.house,
+    this.isOwnedByCurrentUser = false,
+  });
 
   final DetailedHouse house;
   final bool isOwnedByCurrentUser;
@@ -29,6 +37,17 @@ class DetailsView extends StatelessWidget {
         ),
         title: Text(house.details.title),
         actions: [
+          LikeButtonWithTheme(
+            isLiked: house.isLiked,
+            onTap: (isLiked) async {
+              var newValue = await context
+                  .read<HouseDetailsCubit>()
+                  .likeHouse(house.id, house.isLiked);
+              house.isLiked = newValue;
+
+              return Future.value(newValue);
+            },
+          ),
           if (house.details.virtualTourId != null)
             Icon360(
               onPressed: () => _showVirtualTour(context),
@@ -75,57 +94,31 @@ class DetailsView extends StatelessWidget {
         if (item == 0)
           context.read<HouseDetailsCubit>().goToEditHouse()
         else if (item == 1)
-          _showDeleteHouseDialog(context)
+          showDeleteDialog(
+            context,
+            "ogłoszenia",
+            "ogłoszenie",
+            () {
+              context.read<HouseDetailsCubit>().deleteHouse().then(
+                (value) {
+                  if (value) {
+                    showDialogWithMessage(
+                      context: context,
+                      title: "Ogłoszenie zostało usunięte.",
+                      onOk: () => Navigator.pop(context),
+                    );
+                  } else {
+                    showDialogWithMessage(
+                      context: context,
+                      title: "Nie udało się usunąć ogłoszenia.",
+                      content: "Spróbuj ponownie później.",
+                    );
+                  }
+                },
+              );
+            },
+          ),
       },
-    );
-  }
-
-  _showDeleteHouseDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Edytuj ogłoszenie"),
-            content: const Text("Czy na pewno chcesz usunąć ogłoszenie?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("Nie"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text("Tak"),
-              ),
-            ],
-          );
-        }).then((delete) {
-      if (delete) {
-        context.read<HouseDetailsCubit>().deleteHouse().then((value) {
-          if (value) {
-            _showDialogWithMessage(context, "Ogłoszenie zostało usunięte.");
-            Navigator.pop(context);
-          } else {
-            _showDialogWithMessage(context,
-                "Nie udało się usunąć ogłoszenia. Spróbuj ponownie później.");
-          }
-        });
-      }
-    });
-  }
-
-  _showDialogWithMessage(BuildContext context, String error) {
-    showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        content: Text(error),
-        actions: <Widget>[
-          Center(
-            child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK')),
-          )
-        ],
-      ),
     );
   }
 }
@@ -155,8 +148,7 @@ class Inside extends StatelessWidget {
                   Photos(
                     photos: house.photos.map((e) => e.url).toList(),
                   ),
-                  if (getDeviceType(context) == DeviceType.mobile)
-                    ButtonContactWidget(user: house.user),
+                  _buildPriceInfo(context),
                   AccordionPage(
                     house: house,
                   ),
@@ -172,5 +164,27 @@ class Inside extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildPriceInfo(BuildContext context) {
+    if (getDeviceType(context) == DeviceType.mobile) {
+      return Padding(
+        padding: const EdgeInsets.only(
+          left: largePaddingSize,
+          right: largePaddingSize,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PriceRoomCountAreaInfo(details: house.details),
+            ButtonContactWidget(user: house.user)
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: PriceRoomCountAreaInfo(details: house.details),
+      );
+    }
   }
 }
