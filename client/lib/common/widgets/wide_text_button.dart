@@ -19,7 +19,8 @@ class WideTextButton extends StatelessWidget {
       padding: const EdgeInsets.all(smallPaddingSize),
       child: SizedBox(
         width: MediaQuery.of(context).size.width *
-            (MediaQuery.of(context).orientation == Orientation.landscape
+            (MediaQuery.of(context).orientation == Orientation.landscape &&
+                    MediaQuery.of(context).size.width > 700
                 ? 0.25
                 : 0.5),
         child: ElevatedButton(
