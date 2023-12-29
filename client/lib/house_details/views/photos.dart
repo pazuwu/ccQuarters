@@ -71,35 +71,38 @@ class _PhotosState extends State<Photos> {
               isMobile ? 0 : smallPaddingSize,
               isMobile ? smallPaddingSizeForScrollBar : 0,
             ),
-            child: ListView.builder(
+            child: SingleChildScrollView(
               controller: _scrollController,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return PhotoTile(
-                  photo: widget.photos[index],
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                    _scrollController.animateTo(
-                        isMobile
-                            ? index *
-                                (MediaQuery.of(context).size.height * 0.1 -
-                                    smallPaddingSizeForScrollBar +
-                                    extraSmallPaddingSize)
-                            : index *
-                                (constraints.maxWidth * 0.2 -
-                                    paddingSizeForScrollBar +
-                                    smallPaddingSize),
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.ease);
-                  },
-                  isFirst: index == 0,
-                  isMobile: isMobile,
-                );
-              },
-              itemCount: widget.photos.length,
               scrollDirection: isMobile ? Axis.horizontal : Axis.vertical,
+              child: Flex(
+                mainAxisSize: MainAxisSize.min,
+                direction: isMobile ? Axis.horizontal : Axis.vertical,
+                children: [
+                  for (int index = 0; index < widget.photos.length; index++)
+                    PhotoTile(
+                      photo: widget.photos[index],
+                      onTap: () {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                        _scrollController.animateTo(
+                            isMobile
+                                ? index *
+                                    (MediaQuery.of(context).size.height * 0.1 -
+                                        smallPaddingSizeForScrollBar +
+                                        extraSmallPaddingSize)
+                                : index *
+                                    (constraints.maxWidth * 0.2 -
+                                        paddingSizeForScrollBar +
+                                        smallPaddingSize),
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.ease);
+                      },
+                      isFirst: index == 0,
+                      isMobile: isMobile,
+                    )
+                ],
+              ),
             ),
           ),
         ),
