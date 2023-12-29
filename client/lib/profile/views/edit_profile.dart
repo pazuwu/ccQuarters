@@ -191,17 +191,23 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   Widget _buildPersonalInfoFields() {
-    return PersonalInfoFields(
-      company: _companyTextField,
-      name: _nameTextField,
-      surname: _surnameTextField,
-      phoneNumber: _phoneNumberTextField,
-      isBusinessAccount: _isBusinessAccount,
-      saveIsBusinessAcount: (value) {
-        setState(() {
-          _isBusinessAccount = value;
-        });
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) {
+        _deleteImage = false;
       },
+      child: PersonalInfoFields(
+        company: _companyTextField,
+        name: _nameTextField,
+        surname: _surnameTextField,
+        phoneNumber: _phoneNumberTextField,
+        isBusinessAccount: _isBusinessAccount,
+        saveIsBusinessAcount: (value) {
+          setState(() {
+            _isBusinessAccount = value;
+          });
+        },
+      ),
     );
   }
 
