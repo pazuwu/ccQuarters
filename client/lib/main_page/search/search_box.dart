@@ -57,12 +57,15 @@ class SearchBox extends StatefulWidget {
 
 class _SearchBoxState extends State<SearchBox> {
   bool _showClearButton = false;
+
   @override
   void initState() {
     widget.controller.addListener(() {
-      setState(() {
-        _showClearButton = widget.controller.text.isNotEmpty;
-      });
+      if (mounted) {
+        setState(() {
+          _showClearButton = widget.controller.text.isNotEmpty;
+        });
+      }
     });
     super.initState();
   }

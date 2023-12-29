@@ -9,6 +9,7 @@ import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/device_type.dart';
+import 'package:ccquarters/model/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -25,14 +26,15 @@ class _ListOfHousesState extends State<ListOfHouses> {
   final PagingController<int, House> _pagingController =
       PagingController(firstPageKey: 0);
   final _controller = TextEditingController();
-
   final _numberOfPostsPerRequest = 10;
+  late bool _isSearch;
 
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    _isSearch = widget.isSearch;
     super.initState();
   }
 
@@ -87,7 +89,9 @@ class _ListOfHousesState extends State<ListOfHouses> {
       child: FilterForm(
         filters: context.read<ListOfHousesCubit>().filter,
         onSave: (HouseFilter filter) {
-          context.read<ListOfHousesCubit>().saveFilter(filter);
+          setState(() {
+            context.read<ListOfHousesCubit>().saveFilter(filter);
+          });
           _pagingController.refresh();
         },
       ),
@@ -118,37 +122,76 @@ class _ListOfHousesState extends State<ListOfHouses> {
           ),
           Row(
             children: [
-              IconButton(
-                onPressed: () => widget.isSearch
-                    ? context.read<MainPageCubit>().goBack()
-                    : Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 6.0,
-                  ),
-                  child: widget.isSearch
-                      ? SearchBox(
-                          color: Theme.of(context).colorScheme,
-                          controller: _controller,
-                          onSubmitted: (value) {
-                            context.read<ListOfHousesCubit>().saveSearch(value);
-                            _pagingController.refresh();
-                          },
-                        )
-                      : Text(
-                          "Ogłoszenia na wynajem",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                ),
-              ),
+              _buildBackButton(context),
+              _buildAppBarMainWidget(context),
+              if (!_isSearch) _buildSearchButton(),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  IconButton _buildBackButton(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        if (widget.isSearch) {
+          context.read<MainPageCubit>().goBack();
+        } else {
+          if (_isSearch) {
+            setState(() {
+              if (_controller.text.isNotEmpty) {
+                context.read<ListOfHousesCubit>().saveSearch("");
+                _controller.clear();
+                _pagingController.refresh();
+              }
+              _isSearch = false;
+            });
+          } else {
+            Navigator.pop(context);
+          }
+        }
+      },
+      icon: const Icon(Icons.arrow_back),
+    );
+  }
+
+  Expanded _buildAppBarMainWidget(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+          vertical: 6.0,
+        ),
+        child: _isSearch
+            ? SearchBox(
+                color: Theme.of(context).colorScheme,
+                controller: _controller,
+                onSubmitted: (value) {
+                  context.read<ListOfHousesCubit>().saveSearch(value);
+                  _pagingController.refresh();
+                },
+              )
+            : Row(
+                children: [
+                  Text(
+                    _getTitle(),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  IconButton _buildSearchButton() {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _isSearch = true;
+        });
+      },
+      icon: const Icon(Icons.search),
     );
   }
 
@@ -163,7 +206,9 @@ class _ListOfHousesState extends State<ListOfHouses> {
           child: Filters(
             filters: context.read<ListOfHousesCubit>().filter,
             onSave: (HouseFilter filter) {
-              context.read<ListOfHousesCubit>().saveFilter(filter);
+              setState(() {
+                context.read<ListOfHousesCubit>().saveFilter(filter);
+              });
               _pagingController.refresh();
             },
           ),
@@ -206,5 +251,23 @@ class _ListOfHousesState extends State<ListOfHouses> {
         ),
       ),
     );
+  }
+
+  String _getTitle() {
+    var title = "Ogłoszenia";
+    var offerType = context.read<ListOfHousesCubit>().filter.offerType;
+
+    if (offerType != null) {
+      switch (offerType) {
+        case OfferType.rent:
+          title += " na wynajem";
+          break;
+        case OfferType.sell:
+          title += " na sprzedaż";
+          break;
+      }
+    }
+
+    return title;
   }
 }
