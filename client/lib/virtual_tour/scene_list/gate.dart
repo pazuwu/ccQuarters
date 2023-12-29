@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
+import 'package:ccquarters/common/views/show_gallery.dart';
 import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
 import 'package:ccquarters/virtual_tour/scene_list/states.dart';
@@ -58,9 +60,19 @@ class SceneListGate extends StatelessWidget {
                 ),
                 itemCount: state.photoUrls.length,
                 itemBuilder: (context, index) {
-                  return CachedNetworkImage(
-                    imageUrl: state.photoUrls[index],
-                    fit: BoxFit.cover,
+                  return InkWellWithPhoto(
+                    fit: StackFit.expand,
+                    onTap: () {
+                      showGallery(
+                        context,
+                        urls: state.photoUrls,
+                        initialIndex: index,
+                      );
+                    },
+                    imageWidget: CachedNetworkImage(
+                      imageUrl: state.photoUrls[index],
+                      fit: BoxFit.cover,
+                    ),
                   );
                 },
               ),
