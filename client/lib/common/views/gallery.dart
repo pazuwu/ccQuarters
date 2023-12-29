@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
-import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/images/image.dart';
 
 class Gallery extends StatefulWidget {
   const Gallery({
@@ -27,32 +25,14 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
-  static const double _photoTileHeight = 100;
-  static const double _photoTileWidth = 100;
-  final ItemScrollController _itemScrollController = ItemScrollController();
-  late PageController _pageController = PageController();
-  late int lastPage = 0;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+
+    RawKeyboard.instance.addListener(_keyboardCallback);
     _pageController = PageController(initialPage: widget.initialIndex);
-
-    _pageController.addListener(() {
-      if (_pageController.page == null) return;
-
-      var roundedPage = _pageController.page!.round();
-
-      if (_pageController.page != null) {
-        _itemScrollController.scrollTo(
-          alignment: 0.5,
-          index: roundedPage,
-          duration: const Duration(milliseconds: 200),
-        );
-      }
-
-      lastPage = roundedPage;
-    });
   }
 
   @override
@@ -63,81 +43,97 @@ class _GalleryState extends State<Gallery> {
       appBar: AppBar(
         leading: IconButton(
           color: Colors.white,
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_outlined),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         backgroundColor: Colors.transparent,
       ),
-      body: Stack(
-        children: [
-          PhotoViewGallery.builder(
-            scrollPhysics: const BouncingScrollPhysics(),
-            pageController: _pageController,
-            builder: (BuildContext context, int index) {
-              return index >= widget.memoryPhotos.length
-                  ? PhotoViewGalleryPageOptions(
-                      imageProvider:
-                          CachedNetworkImageProvider(widget.imageUrls[index]),
-                    )
-                  : PhotoViewGalleryPageOptions(
-                      imageProvider: MemoryImage(widget.memoryPhotos[index]),
-                    );
-            },
-            itemCount: widget.memoryPhotos.length + widget.imageUrls.length,
-            loadingBuilder: (context, event) => const Center(
-              child: SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: CircularProgressIndicator(),
+      body: IconButtonTheme(
+        data: const IconButtonThemeData(
+            style: ButtonStyle(
+          iconColor: MaterialStatePropertyAll(Colors.white),
+          iconSize: MaterialStatePropertyAll(32),
+          visualDensity: VisualDensity.compact,
+        )),
+        child: Stack(
+          children: [
+            PhotoViewGallery.builder(
+              scrollPhysics: const ClampingScrollPhysics(),
+              pageController: _pageController,
+              builder: (BuildContext context, int index) {
+                return index >= widget.memoryPhotos.length
+                    ? PhotoViewGalleryPageOptions(
+                        imageProvider:
+                            CachedNetworkImageProvider(widget.imageUrls[index]),
+                      )
+                    : PhotoViewGalleryPageOptions(
+                        imageProvider: MemoryImage(widget.memoryPhotos[index]),
+                      );
+              },
+              itemCount: widget.memoryPhotos.length + widget.imageUrls.length,
+              loadingBuilder: (context, event) => const Center(
+                child: SizedBox(
+                  width: 20.0,
+                  height: 20.0,
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 24.0),
-              child: _buildPhotoList(context),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPhotoList(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints.tightFor(height: _photoTileHeight),
-      child: ScrollablePositionedList.builder(
-        initialScrollIndex: widget.initialIndex,
-        itemScrollController: _itemScrollController,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return _buildPhotoTile(context, index);
-        },
-        itemCount: widget.memoryPhotos.length + widget.imageUrls.length,
-        scrollDirection: Axis.horizontal,
-      ),
-    );
-  }
-
-  Widget _buildPhotoTile(BuildContext context, int index) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints.tightFor(width: _photoTileWidth),
-      child: Padding(
-        padding: EdgeInsets.only(left: index == 0 ? 0 : extraSmallPaddingSize),
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: index >= widget.memoryPhotos.length
-              ? ImageWidget(
-                  imageUrl: widget.imageUrls[index],
-                  fit: BoxFit.cover,
-                  borderRadius: BorderRadius.zero,
-                )
-              : Image.memory(widget.memoryPhotos[index]),
+            if (kIsWeb)
+              Positioned.fill(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(width: 12),
+                    Container(
+                      decoration: const BoxDecoration(boxShadow: [
+                        BoxShadow(
+                          color: Colors.black54,
+                          blurRadius: 48,
+                        ),
+                      ]),
+                      child: IconButton(
+                        onPressed: () {
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        icon: const Icon(Icons.arrow_left),
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        _pageController.nextPage(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut);
+                      },
+                      icon: const Icon(Icons.arrow_right),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                ),
+              ),
+          ],
         ),
       ),
     );
+  }
+
+  void _keyboardCallback(RawKeyEvent value) {
+    if (value.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    } else if (value.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 }
