@@ -37,17 +37,6 @@ class DetailsView extends StatelessWidget {
         ),
         title: Text(house.details.title),
         actions: [
-          LikeButtonWithTheme(
-            isLiked: house.isLiked,
-            onTap: (isLiked) async {
-              var newValue = await context
-                  .read<HouseDetailsCubit>()
-                  .likeHouse(house.id, house.isLiked);
-              house.isLiked = newValue;
-
-              return Future.value(newValue);
-            },
-          ),
           if (house.details.virtualTourId != null)
             Icon360(
               onPressed: () => _showVirtualTour(context),
@@ -145,10 +134,13 @@ class Inside extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (getDeviceType(context) == DeviceType.mobile)
+                    _buildPriceInfo(context),
                   Photos(
                     photos: house.photos.map((e) => e.url).toList(),
                   ),
-                  _buildPriceInfo(context),
+                  if (getDeviceType(context) == DeviceType.mobile)
+                    ButtonContactWidget(user: house.user),
                   AccordionPage(
                     house: house,
                   ),
@@ -160,31 +152,50 @@ class Inside extends StatelessWidget {
             ),
           ),
           if (getDeviceType(context) == DeviceType.web)
-            ContactWidget(user: house.user),
+            ContactWidget(
+              user: house.user,
+              additionalWidget: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Divider(
+                      thickness: 1,
+                      height: 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  _buildPriceInfo(context),
+                ],
+              ),
+            ),
         ],
       ),
     );
   }
 
   Widget _buildPriceInfo(BuildContext context) {
-    if (getDeviceType(context) == DeviceType.mobile) {
-      return Padding(
-        padding: const EdgeInsets.only(
-          left: largePaddingSize,
-          right: largePaddingSize,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            PriceRoomCountAreaInfo(details: house.details),
-            ButtonContactWidget(user: house.user)
-          ],
-        ),
-      );
-    } else {
-      return Center(
-        child: PriceRoomCountAreaInfo(details: house.details),
-      );
-    }
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: largePaddingSize,
+        right: largePaddingSize,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          PriceRoomCountAreaInfo(details: house.details),
+          LikeButtonWithTheme(
+            isLiked: house.isLiked,
+            onTap: (isLiked) async {
+              var newValue = await context
+                  .read<HouseDetailsCubit>()
+                  .likeHouse(house.id, house.isLiked);
+              house.isLiked = newValue;
+              return Future.value(newValue);
+            },
+            size: 40,
+          ),
+        ],
+      ),
+    );
   }
 }
