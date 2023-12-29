@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-showDeleteDialog(
-    BuildContext context, String whatToDeleteTitle, String whatToDelete, Function() onDelete) {
+showDeleteDialog(BuildContext context, String whatToDeleteTitle,
+    String whatToDelete, Function() onDelete) {
   showDialog(
       context: context,
       builder: (context) {
