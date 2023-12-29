@@ -101,6 +101,10 @@ class _NavigationGateState extends State<NavigationGate> {
   }
 
   void _onItemTapped(int index) {
+    if (index == 5) {
+      Navigator.of(context).pushNamed("test");
+    }
+
     if (index == 4 && context.read<AuthCubit>().user == null) {
       context.read<AuthCubit>().signOut();
       return;
@@ -123,6 +127,8 @@ class _NavigationGateState extends State<NavigationGate> {
                 icon: Icons.logout,
                 label: "Zaloguj się lub zarejestruj",
               ),
+            const SideNavigationBarItem(
+                icon: Icons.text_snippet_rounded, label: "test"),
           ];
   }
 }

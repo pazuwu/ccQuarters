@@ -11,6 +11,22 @@ class TourListExtendedGate extends StatefulWidget {
 }
 
 class _TourListExtendedGateState extends State<TourListExtendedGate> {
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery.of(context).orientation == Orientation.portrait
+        ? const VTListGate()
+        : const TourListLandscape();
+  }
+}
+
+class TourListLandscape extends StatefulWidget {
+  const TourListLandscape({super.key});
+
+  @override
+  State<TourListLandscape> createState() => _TourListLandscapeState();
+}
+
+class _TourListLandscapeState extends State<TourListLandscape> {
   TourInfo? _selectedTour;
 
   @override

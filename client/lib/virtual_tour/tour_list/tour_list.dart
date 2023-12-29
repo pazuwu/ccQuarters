@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 import 'package:ccquarters/common/views/show_form.dart';
@@ -33,6 +34,14 @@ class _TourListState extends State<TourList> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      leading: MediaQuery.of(context).orientation == Orientation.portrait
+          ? IconButton(
+              onPressed: () {
+                context.go('/profile');
+              },
+              icon: const Icon(Icons.arrow_back_ios),
+            )
+          : null,
       toolbarHeight: 68,
       title: const Text("Moje wirtualne spacery"),
       actions: [

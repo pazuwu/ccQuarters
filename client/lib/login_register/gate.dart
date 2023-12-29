@@ -5,6 +5,7 @@ import 'package:ccquarters/login_register/views/login_register_view.dart';
 import 'package:ccquarters/navigation_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
       if (state is SignedInState) {
+        context.go('/home');
         return const NavigationGate();
       } else if (state is NeedsSigningInState) {
         return const ChooseLoginOrRegisterView();
