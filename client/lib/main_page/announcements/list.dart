@@ -64,15 +64,15 @@ class _AnnouncementListState extends State<AnnouncementList> {
             noItemsFoundIndicatorBuilder: (context) => const Message(
               title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
               subtitle: "Spróbuj ponownie później",
-              icon: Icons.home,
+              imageWidget: Icon(Icons.home),
               adjustToLandscape: true,
               padding: EdgeInsets.all(8.0),
             ),
-            firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+            firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
               "Nie udało się pobrać ogłoszeń",
               tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
             ),
-            newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+            newPageErrorIndicatorBuilder: (context) => ErrorMessage(
               "Nie udało się pobrać ogłoszeń",
               tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
             ),

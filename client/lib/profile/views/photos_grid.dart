@@ -53,15 +53,15 @@ class _PhotosGridState extends State<PhotosGrid> {
       builderDelegate: PagedChildBuilderDelegate<House>(
         noItemsFoundIndicatorBuilder: (context) => const Message(
           title: "W tej zakładce nie masz\n jeszcze żadnych ogłoszeń",
-          icon: Icons.home,
+          imageWidget: Icon(Icons.home),
           adjustToLandscape: true,
           padding: EdgeInsets.all(8.0),
         ),
-        firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+        firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
           "Nie udało się pobrać ogłoszeń",
           tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
         ),
-        newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+        newPageErrorIndicatorBuilder: (context) => ErrorMessage(
           "Nie udało się pobrać ogłoszeń",
           tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
         ),

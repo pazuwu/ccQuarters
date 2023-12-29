@@ -86,15 +86,15 @@ class _AlertsViewState extends State<AlertsView> {
                 noItemsFoundIndicatorBuilder: (context) => const Message(
                   title: "Nie posiadasz żadnych alertów",
                   subtitle: "Dodaj je klikając przycisk +",
-                  icon: Icons.collections_bookmark,
+                  imageWidget: Icon(Icons.collections_bookmark),
                   adjustToLandscape: true,
                   padding: EdgeInsets.all(8.0),
                 ),
-                firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+                firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
                   "Nie udało się pobrać alertów",
                   tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
                 ),
-                newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+                newPageErrorIndicatorBuilder: (context) => ErrorMessage(
                   "Nie udało się pobrać alertów",
                   tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
                 ),
