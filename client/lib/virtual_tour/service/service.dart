@@ -159,8 +159,7 @@ class VTService {
           parentId: link.parentId,
           destinationId: link.destinationId,
           nextOrientation: link.nextOrientation,
-          longitude: link.position.longitude,
-          latitude: link.position.latitude,
+          position: link.position,
           text: link.text,
         ).toJson(),
         options: Options(headers: {
