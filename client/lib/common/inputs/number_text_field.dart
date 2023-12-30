@@ -52,10 +52,6 @@ class _NumberTextFieldState extends State<NumberTextField> {
             ]
           : [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-          borderSide: BorderSide.none,
-        ),
         labelText: widget.label,
         suffixIcon: _showClearButton
             ? IconButton(

@@ -28,17 +28,19 @@ class FloorMultiSelectDropdown extends StatelessWidget {
         children: [
           const Text("Piętro"),
           const SizedBox(width: 10),
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: min(200, MediaQuery.of(context).size.width / 2),
-              maxHeight: 100,
-            ),
-            child: DropDownMultiSelect(
-              onChanged: onChanged,
-              options: _getOptions(),
-              selectedValues: _getSelectedValues(),
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: min(200, MediaQuery.of(context).size.width / 2),
+                maxHeight: 100,
+              ),
+              child: DropDownMultiSelect(
+                onChanged: onChanged,
+                options: _getOptions(),
+                selectedValues: _getSelectedValues(),
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                ),
               ),
             ),
           ),
