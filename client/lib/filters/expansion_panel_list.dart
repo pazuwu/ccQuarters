@@ -29,18 +29,24 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
       _isExpanded[1] = true;
     }
 
-    return ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          _isExpanded[index] = isExpanded;
-        });
-      },
-      dividerColor: Colors.grey,
-      children: [
-        _buildOfferTypeExpansionPanel(context),
-        _buildDetailsExpansionPanel(context),
-        _buildLocationExpansionPanel(context),
-      ],
+    return Theme(
+      data: Theme.of(context).copyWith(
+        inputDecorationTheme:
+            const InputDecorationTheme(enabledBorder: UnderlineInputBorder()),
+      ),
+      child: ExpansionPanelList(
+        expansionCallback: (int index, bool isExpanded) {
+          setState(() {
+            _isExpanded[index] = isExpanded;
+          });
+        },
+        dividerColor: Colors.grey,
+        children: [
+          _buildOfferTypeExpansionPanel(context),
+          _buildDetailsExpansionPanel(context),
+          _buildLocationExpansionPanel(context),
+        ],
+      ),
     );
   }
 

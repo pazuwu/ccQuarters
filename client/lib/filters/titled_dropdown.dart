@@ -30,14 +30,17 @@ class TitledDropdown<T> extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(
                   paddingSize, 0, paddingSize, paddingSize),
               child: DropdownButtonFormField<T?>(
+                isExpanded: true,
                 value: value,
                 onChanged: onChanged,
+                menuMaxHeight: MediaQuery.of(context).size.height * 0.3,
                 items: values.map<DropdownMenuItem<T>>((T value) {
                   return DropdownMenuItem<T>(
                     value: value,
                     child: Text(
                       value.toString(),
-                      style: const TextStyle(fontSize: 14),
+                      style: const TextStyle(
+                          fontSize: 14, overflow: TextOverflow.ellipsis),
                     ),
                   );
                 }).toList(),
