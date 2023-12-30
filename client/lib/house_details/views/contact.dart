@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
+
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/common/consts.dart';
@@ -48,53 +50,83 @@ class ContactWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 1,
-      child: Center(
-        child: LayoutBuilder(
-          builder: (context, constraints) => ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: constraints.maxWidth * 0.8,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            const Text(
+              "Skontaktuj się z wystawiającym ogłoszenie!",
+              textScaler: TextScaler.linear(1.25),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 16),
-                  child: Text(
-                    "Skontaktuj się z wystawiającym ogłoszenie!",
-                    textScaler: TextScaler.linear(1.25),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            const SizedBox(height: 16),
+            Flexible(
+              child: Card(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(largePaddingSize),
-                          child: ConstrainedBox(
+                    const SizedBox(
+                      width: double.infinity,
+                      height: 0,
+                    ),
+                    Flexible(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) => Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            ConstrainedBox(
                               constraints: BoxConstraints(
-                                maxHeight: constraints.maxHeight * 0.3,
+                                maxWidth: _getContactPhotoWidth(constraints),
                               ),
-                              child: user.photoUrl != null
-                                  ? ImageWidget(
-                                      imageUrl: user.photoUrl!,
-                                      shape: BoxShape.circle,
-                                    )
-                                  : Container(
-                                      decoration: const BoxDecoration(
-                                          shape: BoxShape.circle),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Image.asset(
-                                          "assets/graphics/avatar.png"),
-                                    )),
+                              child: Padding(
+                                padding: const EdgeInsets.all(largePaddingSize),
+                                child: user.photoUrl != null
+                                    ? ImageWidget(
+                                        imageUrl: user.photoUrl!,
+                                        shape: BoxShape.circle,
+                                      )
+                                    : Container(
+                                        decoration: const BoxDecoration(
+                                            shape: BoxShape.circle),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Image.asset(
+                                            "assets/graphics/avatar.png"),
+                                      ),
+                              ),
+                            ),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: _getContactInfoWidth(constraints) +
+                                            _getContactPhotoWidth(constraints) >
+                                        constraints.maxWidth
+                                    ? constraints.maxWidth
+                                    : _getContactInfoWidth(constraints),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: largePaddingSize,
+                                    vertical: 32.0),
+                                child: Column(
+                                  children: [
+                                    _buildInfoTable(context, user),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    _buildContactTable(context, user),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        _buildNameTable(context, user),
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -102,37 +134,44 @@ class ContactWidget extends StatelessWidget {
                 if (additionalWidget != null) additionalWidget!,
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-Widget _buildNameTable(BuildContext context, User user) {
-  return Padding(
-    padding: const EdgeInsets.all(largePaddingSize),
-    child: Table(
-      columnWidths: const {
-        0: FlexColumnWidth(2),
-        1: FlexColumnWidth(8),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: [
-        if (user.name != null && user.surname != null)
-          _buildNameTableRow(
-            context,
-            Icons.person,
-            "${user.name!} ${user.surname!}",
-          ),
-        if (user.company != null)
-          _buildNameTableRow(
-            context,
-            Icons.business,
-            user.company!,
-          ),
-      ],
-    ),
+double _getContactPhotoWidth(BoxConstraints constraints) {
+  return max(constraints.maxWidth * 0.4, 180);
+}
+
+double _getContactInfoWidth(BoxConstraints constraints) {
+  return max(constraints.maxWidth * 0.6, 200);
+}
+
+Widget _buildInfoTable(BuildContext context, User user) {
+  return Table(
+    columnWidths: const {
+      0: FlexColumnWidth(2),
+      1: FlexColumnWidth(6),
+      2: FlexColumnWidth(2),
+    },
+    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+    children: [
+      if ((user.name?.isNotEmpty ?? false) ||
+          (user.surname?.isNotEmpty ?? false))
+        _buildNameTableRow(
+          context,
+          Icons.person,
+          "${user.name!} ${user.surname!}",
+        ),
+      if (user.company?.isNotEmpty ?? false)
+        _buildNameTableRow(
+          context,
+          Icons.business,
+          user.company!,
+        ),
+    ],
   );
 }
 
@@ -159,6 +198,7 @@ TableRow _buildNameTableRow(BuildContext context, IconData icon, String name) {
     children: [
       Icon(icon),
       Text(name),
+      Container(),
     ],
   );
 }
