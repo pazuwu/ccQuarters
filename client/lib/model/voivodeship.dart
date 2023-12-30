@@ -17,11 +17,7 @@ enum Voivodeship {
   zachodniopomorskie;
 
   @override
-  toString() => name;
-}
-
-extension VoivodeshipEx on Voivodeship {
-  String get name {
+  String toString() {
     switch (this) {
       case Voivodeship.dolnoslaskie:
         return "Dolnośląskie";
@@ -57,7 +53,9 @@ extension VoivodeshipEx on Voivodeship {
         return "Zachodniopomorskie";
     }
   }
+}
 
+extension VoivodeshipEx on Voivodeship {
   static Voivodeship getFromName(String name) {
     switch (name) {
       case "Dolnośląskie":

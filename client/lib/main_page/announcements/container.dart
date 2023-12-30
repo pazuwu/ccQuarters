@@ -1,7 +1,7 @@
-import 'package:ccquarters/list_of_houses/gate.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'list.dart';
 
@@ -21,8 +21,7 @@ class AnnouncementsContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ListOfHousesGate()));
+        context.go('/houses');
       },
       child: Container(
         decoration: BoxDecoration(

@@ -123,6 +123,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               IconButton(
                 onPressed: () {
                   context.read<AuthCubit>().signOut();
+                  context.go('/login');
                 },
                 icon: const Icon(Icons.logout),
                 tooltip: "Wyloguj się",

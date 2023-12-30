@@ -7,8 +7,8 @@ import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
-import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
@@ -22,11 +22,21 @@ class DetailsView extends StatelessWidget {
     return Scaffold(
       key: const Key("details_view"),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: 68,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back),
-        ),
+        leading: MediaQuery.of(context).orientation == Orientation.portrait
+            ? IconButton(
+                onPressed: () {
+                  var previousRoute = GoRouterState.of(context).extra;
+                  if (previousRoute == null) {
+                    context.pop();
+                  } else {
+                    context.go(previousRoute.toString());
+                  }
+                },
+                icon: const Icon(Icons.arrow_back),
+              )
+            : null,
         title: Text(house.details.title),
         actions: [
           if (house.details.virtualTourId != null)
@@ -42,17 +52,7 @@ class DetailsView extends StatelessWidget {
   }
 
   _showVirtualTour(BuildContext context) {
-    var hasAccessToEdit =
-        context.read<BaseAuthService>().currentUserId == house.user.id;
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => VirtualTourGate(
-          tourId: house.details.virtualTourId!,
-          readOnly: !hasAccessToEdit,
-        ),
-      ),
-    );
+    context.push('/tours/${house.details.virtualTourId}');
   }
 
   PopupMenuButton _buildPopUpMenuButton(BuildContext context) {

@@ -20,7 +20,9 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   ListOfHousesCubit({
     required this.houseService,
     required this.alertService,
-  }) : super(ListOfHousesInitialState());
+    HouseFilter? filter,
+  })  : filter = filter ?? HouseFilter(),
+        super(ListOfHousesInitialState());
 
   HouseService houseService;
   AlertService alertService;

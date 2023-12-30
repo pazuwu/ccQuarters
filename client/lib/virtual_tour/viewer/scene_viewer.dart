@@ -1,6 +1,7 @@
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 import 'package:ccquarters/common/widgets/always_visible_label.dart';
@@ -214,7 +215,7 @@ class _SceneViewerState extends State<SceneViewer> {
         leading: _buildAlwaysVisibleButton(
             icon: Icons.arrow_back,
             onPressed: () {
-              Navigator.of(context).pop();
+              context.pop();
             }),
         backgroundColor: Colors.transparent,
         title: _buildAddHint(context),

@@ -19,8 +19,7 @@ class SortBy extends StatelessWidget {
               .map<DropdownMenuItem<SortingMethod>>((SortingMethod value) {
             return DropdownMenuItem(
               value: value,
-              child:
-                  Text(value.toString(), style: const TextStyle(fontSize: 14)),
+              child: Text(value.name, style: const TextStyle(fontSize: 14)),
             );
           }).toList(),
         ),

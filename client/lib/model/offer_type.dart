@@ -5,11 +5,7 @@ enum OfferType {
   sell;
 
   @override
-  toString() => name;
-}
-
-extension OfferTypeEx on OfferType {
-  String get name {
+  toString() {
     switch (this) {
       case OfferType.rent:
         return "Wynajem";

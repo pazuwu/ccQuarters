@@ -1,5 +1,7 @@
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 class NavigationItem {
@@ -14,52 +16,33 @@ class NavigationItem {
   });
 }
 
-class NavigationShell extends StatefulWidget {
-  const NavigationShell({
+class NavigationShell extends StatelessWidget {
+  NavigationShell({
     Key? key,
     required this.items,
     this.additionalItems = const [],
+    required this.path,
     required this.child,
-  }) : super(key: key);
+  })  : _selectedIndex = _computeIndex(path, items, additionalItems),
+        super(key: key);
 
   final List<NavigationItem> items;
   final List<NavigationItem> additionalItems;
+  final String? path;
   final Widget child;
-
-  @override
-  State<NavigationShell> createState() => _NavigationShellState();
-}
-
-class _NavigationShellState extends State<NavigationShell> {
-  int _selectedIndex = 0;
-  int? _selectedAdditionalIndex;
+  final int _selectedIndex;
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).orientation == Orientation.portrait &&
-        _selectedIndex >= widget.items.length &&
-        _selectedAdditionalIndex == null) {
-      setState(() {
-        _selectedAdditionalIndex = _selectedIndex;
-        _selectedIndex = widget.items.length - 1;
-      });
-    } else if (MediaQuery.of(context).orientation == Orientation.landscape &&
-        _selectedAdditionalIndex != null) {
-      setState(() {
-        _selectedIndex = _selectedAdditionalIndex!;
-        _selectedAdditionalIndex = null;
-      });
-    }
-
     return MediaQuery.of(context).orientation == Orientation.landscape
         ? _buildSideNavigationBar(context)
-        : _buildBottomNavigationBar();
+        : _buildBottomNavigationBar(context);
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar(BuildContext context) {
     return Column(
       children: [
-        Expanded(child: widget.child),
+        Expanded(child: child),
         SizedBox(
           height: 70,
           child: BottomNavigationBar(
@@ -68,12 +51,13 @@ class _NavigationShellState extends State<NavigationShell> {
             selectedItemColor: Theme.of(context).primaryColor,
             type: BottomNavigationBarType.fixed,
             iconSize: 35,
-            items: widget.items
+            items: _getAllVisibleItems(context, true)
                 .map((i) =>
                     BottomNavigationBarItem(icon: Icon(i.icon), label: i.label))
                 .toList(),
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
+            currentIndex:
+                _selectedIndex > items.length - 1 ? 0 : _selectedIndex,
+            onTap: (index) => _onItemTapped(context, index),
           ),
         ),
       ],
@@ -85,14 +69,9 @@ class _NavigationShellState extends State<NavigationShell> {
       children: [
         SideNavigationBar(
           selectedIndex: _selectedIndex,
-          items: widget.items
-                  .map((i) =>
-                      SideNavigationBarItem(icon: i.icon, label: i.label))
-                  .toList() +
-              widget.additionalItems
-                  .map((i) =>
-                      SideNavigationBarItem(icon: i.icon, label: i.label))
-                  .toList(),
+          items: _getAllVisibleItems(context, true)
+              .map((i) => SideNavigationBarItem(icon: i.icon, label: i.label))
+              .toList(),
           theme: SideNavigationBarTheme(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             togglerTheme: SideNavigationBarTogglerTheme.standard(),
@@ -103,26 +82,43 @@ class _NavigationShellState extends State<NavigationShell> {
             ),
             dividerTheme: SideNavigationBarDividerTheme.standard(),
           ),
-          onTap: _onItemTapped,
+          onTap: (index) => _onItemTapped(context, index),
         ),
-        Expanded(child: widget.child),
+        Expanded(child: child),
       ],
     );
   }
 
-  void _onItemTapped(int index) {
-    if (_selectedAdditionalIndex != null) {
-      index = widget.items.length - 1;
+  void _onItemTapped(BuildContext context, int index) {
+    if (index < items.length) {
+      context.go(items[index].path);
+    } else if (index - items.length < additionalItems.length) {
+      context.go(additionalItems[index - items.length].path);
+    }
+  }
+
+  List<NavigationItem> _getAllVisibleItems(
+      BuildContext context, bool isLandscape) {
+    var user = context.read<AuthCubit>().user;
+    var allItems =
+        isLandscape && user != null ? items + additionalItems : items;
+
+    return allItems;
+  }
+
+  static int _computeIndex(String? path, List<NavigationItem> items,
+      List<NavigationItem> additionalItems) {
+    var selectedIndex = items.indexWhere((i) => i.path == path);
+
+    if (selectedIndex == -1) {
+      selectedIndex =
+          additionalItems.indexWhere((i) => i.path == path) + items.length;
     }
 
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index < widget.items.length) {
-      context.go(widget.items[index].path);
-    } else if (index - widget.items.length < widget.additionalItems.length) {
-      context.go(widget.additionalItems[index - widget.items.length].path);
+    if (selectedIndex == -1) {
+      selectedIndex = 0;
     }
+
+    return selectedIndex;
   }
 }

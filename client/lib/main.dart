@@ -6,7 +6,7 @@ import 'package:ccquarters/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   await appSetup();
@@ -14,7 +14,7 @@ void main() async {
 }
 
 Future appSetup() async {
-  usePathUrlStrategy();
+  setPathUrlStrategy();
   await dotenv.load(fileName: Environment.filename);
   HttpOverrides.global = CCQHttpOverrides();
   await Firebase.initializeApp(
