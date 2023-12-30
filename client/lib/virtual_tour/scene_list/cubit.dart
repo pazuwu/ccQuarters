@@ -58,7 +58,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     var failedImages = <Uint8List>[];
 
     emit(
-      VTScenesLoadingState(tour: _tour, message: "Przeysyłanie zdjęć..."),
+      VTScenesLoadingState(tour: _tour, message: "Przesyłanie zdjęć..."),
     );
 
     for (var file in files) {
