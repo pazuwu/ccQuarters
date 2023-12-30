@@ -54,11 +54,7 @@ class _NavigationGateState extends State<NavigationGate> {
           if (typeOfDevice == DeviceType.web)
             _buildSideNavigationBar(context, color),
           Expanded(
-            child: _selectedIndex == 2
-                ? ProfileGate(
-                    user: context.read<AuthCubit>().user,
-                  )
-                : _pages.elementAt(_selectedIndex),
+            child: _pages.elementAt(_selectedIndex),
           )
         ],
       ),

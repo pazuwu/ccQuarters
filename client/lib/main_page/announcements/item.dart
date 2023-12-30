@@ -89,14 +89,20 @@ class HouseItem extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (house.details.roomCount != null) _buildRoomCount(context),
-            _buildPrice(context),
-          ],
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (house.details.roomCount != null &&
+                  house.details.roomCount != 0)
+                _buildRoomCount(context),
+              const SizedBox(
+                width: 15,
+              ),
+              _buildPrice(context),
+            ],
+          ),
         ),
       ),
     );

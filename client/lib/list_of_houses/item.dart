@@ -55,27 +55,7 @@ class _HouseListTileState extends State<HouseListTile> {
             },
             inkWellChild: _buildCityAndDistrictLabel(context),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-                largePaddingSize, paddingSize, largePaddingSize, paddingSize),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                PriceRoomCountAreaInfo(details: widget.house.details),
-                LikeButtonWithTheme(
-                  isLiked: widget.house.isLiked,
-                  onTap: (isLiked) async {
-                    var newValue = await context
-                        .read<ListOfHousesCubit>()
-                        .likeHouse(widget.house.id, widget.house.isLiked);
-                    widget.house.isLiked = newValue;
-
-                    return Future.value(newValue);
-                  },
-                ),
-              ],
-            ),
-          )
+          _buildInfo(context)
         ],
       ),
     );
@@ -154,5 +134,43 @@ class _HouseListTileState extends State<HouseListTile> {
       result += ", ${location.district}";
     }
     return result;
+  }
+
+  Padding _buildInfo(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+          largePaddingSize, paddingSize, largePaddingSize, paddingSize),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              widget.house.details.title.toUpperCase(),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              PriceRoomCountAreaInfo(details: widget.house.details),
+              LikeButtonWithTheme(
+                isLiked: widget.house.isLiked,
+                onTap: (isLiked) async {
+                  var newValue = await context
+                      .read<ListOfHousesCubit>()
+                      .likeHouse(widget.house.id, widget.house.isLiked);
+                  widget.house.isLiked = newValue;
+
+                  return Future.value(newValue);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

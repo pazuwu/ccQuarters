@@ -103,9 +103,13 @@ flutter:
   assets:
     - env/.env.dev
     - assets/graphics/avatar.png
-    - assets/graphics/apartment.png
-    - assets/graphics/house.png
-    - assets/graphics/room.png
+    - assets/graphics/apartment.png # from https://www.flaticon.com/authors/freepik
+    - assets/graphics/house.png # from https://www.flaticon.com/authors/freepik
+    - assets/graphics/room.png # from https://www.flaticon.com/authors/freepik
+    - assets/graphics/warning.png # from https://www.flaticon.com/authors/freepik
+    - assets/graphics/question.png # from https://www.flaticon.com/authors/freepik 
+    - assets/graphics/forgot-password.png # from https://www.flaticon.com/authors/freepik 
+    - assets/graphics/check.png # from https://www.flaticon.com/authors/freepik 
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

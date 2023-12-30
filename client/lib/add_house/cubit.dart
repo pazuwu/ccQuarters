@@ -22,8 +22,8 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   VTService vtService;
   late NewHouse house;
   List<Photo> photosToDelete = [];
-  int? nextPhotoIndexToResend;
   String? houseId;
+  (int, int)? photosSendingProgress;
 
   void goToLocationForm() {
     emit(LocationFormState(house.location, house.buildingType));
@@ -70,17 +70,10 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       }
     }
 
-    for (int i = nextPhotoIndexToResend ?? 0; i < house.newPhotos.length; i++) {
-      var res = await houseService.addPhoto(houseId!, house.newPhotos[i]);
-      if (!res.data) {
-        nextPhotoIndexToResend = i;
-        emit(ErrorState(
-            "Wystąpił błąd i wysłano $i z ${house.newPhotos.length} zdjęć"));
-        return;
-      }
+    if (!await _uploadPhotos(houseId!, house.newPhotos)) {
+      return;
     }
 
-    nextPhotoIndexToResend = null;
     emit(SendingFinishedState(houseId: houseId!));
   }
 
@@ -105,22 +98,60 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       }
     }
 
-    if (house.newPhotos.isNotEmpty) {
-      for (int i = nextPhotoIndexToResend ?? 0;
-          i < house.newPhotos.length;
-          i++) {
-        var res = await houseService.addPhoto(house.id, house.newPhotos[i]);
-        if (!res.data) {
-          nextPhotoIndexToResend = i;
-          emit(ErrorState(
-              "Wystąpił błąd i wysłano $i z ${house.newPhotos.length} nowych zdjęć"));
-          return;
-        }
-      }
+    if (!await _uploadPhotos(house.id, house.newPhotos)) {
+      return;
     }
 
-    nextPhotoIndexToResend = null;
     emit(SendingFinishedState(houseId: house.id));
+  }
+
+  Future<bool> _uploadPhotos(String houseId, List<Uint8List> photos) async {
+    var futures = <Future<bool>>[];
+    var failedImages = <Uint8List>[];
+
+    for (var file in photos) {
+      futures.add(
+        _uploadPhoto(houseId, file).then(
+          (result) {
+            if (result == false) {
+              failedImages.add(file);
+            }
+
+            return result;
+          },
+        ),
+      );
+    }
+
+    await Future.wait(futures);
+
+    if (failedImages.isNotEmpty) {
+      if (photosSendingProgress == null) {
+        photosSendingProgress = (
+          house.newPhotos.length - failedImages.length,
+          house.newPhotos.length
+        );
+      } else {
+        photosSendingProgress = (
+          photosSendingProgress!.$2 - failedImages.length,
+          photosSendingProgress!.$2
+        );
+      }
+
+      house.newPhotos = failedImages;
+      emit(ErrorState(
+          "Wystąpił błąd i wysłano ${photosSendingProgress!.$1} z ${photosSendingProgress!.$2} zdjęć"));
+      return false;
+    }
+
+    photosSendingProgress = null;
+    return true;
+  }
+
+  Future<bool> _uploadPhoto(String houseId, Uint8List photoBytes) async {
+    var serviceResponse = await houseService.addPhoto(houseId, photoBytes);
+
+    return serviceResponse.data;
   }
 
   Future<List<TourInfo>> getMyTours() async {
@@ -164,7 +195,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
 
   void clear() {
     houseId = null;
-    nextPhotoIndexToResend = null;
+    photosSendingProgress = null;
     house = NewHouse("", NewLocation(), NewHouseDetails(), []);
     emit(ChooseTypeFormState(NewHouseDetails()));
   }

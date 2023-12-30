@@ -6,7 +6,7 @@ class Message extends StatelessWidget {
   const Message({
     Key? key,
     this.padding,
-    this.icon,
+    this.imageWidget,
     required this.title,
     this.subtitle,
     this.closeButton,
@@ -15,7 +15,7 @@ class Message extends StatelessWidget {
   }) : super(key: key);
 
   final EdgeInsets? padding;
-  final IconData? icon;
+  final Widget? imageWidget;
   final String title;
   final String? subtitle;
   final bool? closeButton;
@@ -26,13 +26,12 @@ class Message extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (icon != null) ...[
-          Icon(
-            icon!,
-            size: 0.25 *
-                min(MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height),
-          ),
+        if (imageWidget != null) ...[
+          SizedBox.square(
+              dimension: 0.25 *
+                  min(MediaQuery.of(context).size.width,
+                      MediaQuery.of(context).size.height),
+              child: imageWidget!),
           const SizedBox(width: 48),
         ],
         Column(
@@ -69,13 +68,12 @@ class Message extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (icon != null) ...[
-          Icon(
-            icon!,
-            size: 0.25 *
-                min(MediaQuery.of(context).size.width,
-                    MediaQuery.of(context).size.height),
-          ),
+        if (imageWidget != null) ...[
+          SizedBox.square(
+              dimension: 0.25 *
+                  min(MediaQuery.of(context).size.width,
+                      MediaQuery.of(context).size.height),
+              child: imageWidget!),
           const SizedBox(height: 24),
         ],
         Text(
