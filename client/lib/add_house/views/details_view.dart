@@ -88,6 +88,7 @@ class DetailsForm extends StatelessWidget {
     return TextFormField(
       key: const Key("titleField"),
       initialValue: details.title,
+      maxLength: 50,
       onSaved: (newValue) => details.title = newValue?.trim() ?? '',
       decoration: createInputDecorationForForm(
         context,

@@ -4,7 +4,7 @@ import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
 import 'package:ccquarters/profile/views/profile.dart';
-import 'package:ccquarters/profile/sign_in_widget.dart';
+import 'package:ccquarters/login_register/sign_in_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
