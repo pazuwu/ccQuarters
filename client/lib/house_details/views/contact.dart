@@ -67,163 +67,163 @@ class ContactWidget extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Flexible(
-              child: Card(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      width: double.infinity,
-                      height: 0,
-                    ),
-                    Flexible(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) => Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: _getContactPhotoWidth(constraints),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(largePaddingSize),
-                                child: user.photoUrl != null
-                                    ? ImageWidget(
-                                        imageUrl: user.photoUrl!,
-                                        shape: BoxShape.circle,
-                                      )
-                                    : Container(
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle),
-                                        clipBehavior: Clip.antiAlias,
-                                        child: Image.asset(
-                                            "assets/graphics/avatar.png"),
-                                      ),
-                              ),
-                            ),
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: _getContactInfoWidth(constraints) +
-                                            _getContactPhotoWidth(constraints) >
-                                        constraints.maxWidth
-                                    ? constraints.maxWidth
-                                    : _getContactInfoWidth(constraints),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: largePaddingSize,
-                                    vertical: 32.0),
-                                child: Column(
-                                  children: [
-                                    _buildInfoTable(context, user),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    _buildContactTable(context, user),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                _buildContactTable(context, user),
-                if (additionalWidget != null) additionalWidget!,
-              ],
+              child: _buildContactInfo(),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-double _getContactPhotoWidth(BoxConstraints constraints) {
-  return max(constraints.maxWidth * 0.4, 180);
-}
-
-double _getContactInfoWidth(BoxConstraints constraints) {
-  return max(constraints.maxWidth * 0.6, 200);
-}
-
-Widget _buildInfoTable(BuildContext context, User user) {
-  return Table(
-    columnWidths: const {
-      0: FlexColumnWidth(2),
-      1: FlexColumnWidth(6),
-      2: FlexColumnWidth(2),
-    },
-    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-    children: [
-      if ((user.name?.isNotEmpty ?? false) ||
-          (user.surname?.isNotEmpty ?? false))
-        _buildNameTableRow(
-          context,
-          Icons.person,
-          "${user.name!} ${user.surname!}",
+  Widget _buildContactInfo() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(
+          width: double.infinity,
+          height: 0,
         ),
-      if (user.company?.isNotEmpty ?? false)
-        _buildNameTableRow(
-          context,
-          Icons.business,
-          user.company!,
+        Flexible(
+          child: LayoutBuilder(
+            builder: (context, constraints) => Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: _getContactPhotoWidth(constraints),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(largePaddingSize),
+                    child: user.photoUrl != null
+                        ? ImageWidget(
+                            imageUrl: user.photoUrl!,
+                            shape: BoxShape.circle,
+                          )
+                        : Container(
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.asset("assets/graphics/avatar.png"),
+                          ),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: _getContactInfoWidth(constraints),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: largePaddingSize,
+                      vertical: 32.0,
+                    ),
+                    child: Column(
+                      children: [
+                        _buildNameTable(context, user),
+                        const SizedBox(height: 16),
+                        _buildContactTable(context, user),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-Widget _buildContactTable(BuildContext context, User user) {
-  return Table(
-    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-    columnWidths: const {
-      0: FlexColumnWidth(2),
-      1: FlexColumnWidth(6),
-      2: FlexColumnWidth(2),
-    },
-    children: [
-      if (user.phoneNumber != null)
-        _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
-            () => CallUtils.openDialer(user.phoneNumber!, context)),
-      _buildContactTableRow(context, user.email, Icons.email,
-          () => CallUtils.openDialerForEmail(user.email, context)),
-    ],
-  );
-}
+  double _getContactPhotoWidth(BoxConstraints constraints) {
+    return max(constraints.maxWidth * 0.4, 180);
+  }
 
-TableRow _buildNameTableRow(BuildContext context, IconData icon, String name) {
-  return TableRow(
-    children: [
-      Icon(icon),
-      Text(name),
-      Container(),
-    ],
-  );
-}
+  double _getContactInfoWidth(BoxConstraints constraints) {
+    var prefereedSizeInRow = max(constraints.maxWidth * 0.6, 200.0);
 
-TableRow _buildContactTableRow(
-  BuildContext context,
-  String text,
-  IconData icon,
-  Function() onPressed,
-) {
-  return TableRow(
-    children: [
-      IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon),
-      ),
-      Text(text),
-      IconButton(
-        icon: const Icon(Icons.copy),
-        onPressed: () async => await Clipboard.setData(
-          ClipboardData(text: text),
+    return prefereedSizeInRow + _getContactPhotoWidth(constraints) >
+            constraints.maxWidth
+        ? constraints.maxWidth
+        : prefereedSizeInRow;
+  }
+
+  Widget _buildNameTable(BuildContext context, User user) {
+    return Table(
+      columnWidths: const {
+        0: FlexColumnWidth(2),
+        1: FlexColumnWidth(6),
+        2: FlexColumnWidth(2),
+      },
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      children: [
+        if ((user.name?.isNotEmpty ?? false) ||
+            (user.surname?.isNotEmpty ?? false))
+          _buildNameTableRow(
+            context,
+            Icons.person,
+            "${user.name!} ${user.surname!}",
+          ),
+        if (user.company?.isNotEmpty ?? false)
+          _buildNameTableRow(
+            context,
+            Icons.business,
+            user.company!,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildContactTable(BuildContext context, User user) {
+    return Table(
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      columnWidths: const {
+        0: FlexColumnWidth(2),
+        1: FlexColumnWidth(6),
+        2: FlexColumnWidth(2),
+      },
+      children: [
+        if (user.phoneNumber != null)
+          _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
+              () => CallUtils.openDialer(user.phoneNumber!, context)),
+        _buildContactTableRow(context, user.email, Icons.email,
+            () => CallUtils.openDialerForEmail(user.email, context)),
+      ],
+    );
+  }
+
+  TableRow _buildNameTableRow(
+      BuildContext context, IconData icon, String name) {
+    return TableRow(
+      children: [
+        Icon(icon),
+        Text(name),
+        Container(),
+      ],
+    );
+  }
+
+  TableRow _buildContactTableRow(
+    BuildContext context,
+    String text,
+    IconData icon,
+    Function() onPressed,
+  ) {
+    return TableRow(
+      children: [
+        IconButton(
+          onPressed: onPressed,
+          icon: Icon(icon),
         ),
-      ),
-    ],
-  );
+        Text(text),
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: () async => await Clipboard.setData(
+            ClipboardData(text: text),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class CallUtils {
