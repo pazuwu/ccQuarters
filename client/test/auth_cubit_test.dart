@@ -26,7 +26,7 @@ void authCubit() {
       ),
       act: (cubit) => cubit.skipRegisterAndLogin(),
       expect: () => [
-        isA<SigningInState>(),
+        isA<LoadingState>(),
         isA<SignedInState>(),
       ],
     );
@@ -42,7 +42,7 @@ void authCubit() {
       ),
       act: (cubit) => cubit.register(password: "password"),
       expect: () => [
-        isA<SigningInState>(),
+        isA<LoadingState>(),
         isA<SignedInState>(),
       ],
     );
@@ -58,7 +58,7 @@ void authCubit() {
       ),
       act: (cubit) => cubit.signIn(password: "password"),
       expect: () => [
-        isA<SigningInState>(),
+        isA<LoadingState>(),
         isA<SignedInState>(),
       ],
     );

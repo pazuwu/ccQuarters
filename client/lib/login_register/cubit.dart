@@ -1,4 +1,5 @@
 import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/services/auth/reset_password_result.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
@@ -15,7 +16,7 @@ class AuthCubit extends Cubit<AuthState> {
     required this.authService,
     required this.userService,
   }) : super(kIsWeb || authService.isSignedIn
-            ? SigningInState()
+            ? LoadingState()
             : NeedsSigningInState()) {
     if (authService.isSignedIn) {
       setUser();
@@ -35,7 +36,7 @@ class AuthCubit extends Cubit<AuthState> {
   bool isBusinessAccount = false;
 
   Future<void> skipRegisterAndLogin() async {
-    emit(SigningInState());
+    emit(LoadingState());
     user = null;
     await authService.signInAnnonymously();
     emit(SignedInState());
@@ -44,7 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> register({
     required String password,
   }) async {
-    emit(SigningInState());
+    emit(LoadingState());
     if (user == null) {
       user = User.empty();
       emit(InputDataState(user: user!));
@@ -77,7 +78,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signIn({
     required String password,
   }) async {
-    emit(SigningInState());
+    emit(LoadingState());
     if (user == null) {
       user = User.empty();
       emit(InputDataState(user: user!));
@@ -101,6 +102,23 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } catch (e) {
       emit(loginState..error = 'Nieoczekiwany błąd');
+    }
+  }
+
+  Future<void> resetPassword(String email) async {
+    emit(LoadingState());
+    email = email.trim();
+    if (!kIsWeb && !await InternetConnectionChecker().hasConnection) {
+      emit(ForgotPasswordState(email: email, error: "Brak Internetu!"));
+      return;
+    }
+
+    saveEmail(email);
+    var result = await authService.sendPasswordResetEmail(email);
+    if (result == ResetPasswordResult.success) {
+      emit(ForgotPasswordSuccessState());
+    } else {
+      emit(ForgotPasswordState(email: email, error: result.toString()));
     }
   }
 
@@ -128,6 +146,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void saveEmail(String email) {
     user ??= User.empty();
+    email = email.trim();
     user!.email = email;
   }
 
@@ -151,5 +170,9 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> goToStartPage() async {
     emit(NeedsSigningInState());
+  }
+
+  Future<void> goToForgotPasswordPage(String email) async {
+    emit(ForgotPasswordState(email: email));
   }
 }
