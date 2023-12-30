@@ -319,7 +319,7 @@ class _SceneListState extends State<SceneList> {
                   ),
                   title: Row(
                     children: [
-                      Text(widget.tour.areas[i].name),
+                      Flexible(child: Text(widget.tour.areas[i].name)),
                       const SizedBox(
                         width: 8,
                       ),
