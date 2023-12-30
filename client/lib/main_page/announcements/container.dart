@@ -1,5 +1,6 @@
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/model/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -11,11 +12,13 @@ class AnnouncementsContainer extends StatelessWidget {
     required this.title,
     required this.pagingController,
     required this.getHouses,
+    required this.offerType,
   });
 
   final String title;
   final PagingController<int, House> pagingController;
   final Future<List<House>?> Function(int, int) getHouses;
+  final OfferType offerType;
 
   @override
   Widget build(BuildContext context) {

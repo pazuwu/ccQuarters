@@ -62,6 +62,7 @@ class ProfileInfo extends StatelessWidget {
           Text(
             "${user.name!} ${user.surname!}",
             style: Theme.of(context).textTheme.headlineSmall,
+            textScaler: const TextScaler.linear(0.8),
           ),
         if (user.company != null)
           Text(

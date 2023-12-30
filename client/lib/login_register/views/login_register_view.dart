@@ -270,7 +270,12 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
         ),
         if (widget.page == LoginRegisterPageType.login)
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              _saveEmail();
+              context
+                  .read<AuthCubit>()
+                  .goToForgotPasswordPage(firstTextField.text);
+            },
             child: const Text("Zapomniałeś hasła?"),
           ),
       ],

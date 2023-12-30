@@ -51,7 +51,7 @@ class NavigationShell extends StatelessWidget {
             selectedItemColor: Theme.of(context).primaryColor,
             type: BottomNavigationBarType.fixed,
             iconSize: 35,
-            items: _getAllVisibleItems(context, true)
+            items: _getAllVisibleItems(context, false)
                 .map((i) =>
                     BottomNavigationBarItem(icon: Icon(i.icon), label: i.label))
                 .toList(),

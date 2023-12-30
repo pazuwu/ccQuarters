@@ -31,17 +31,20 @@ class ButtonContactWidget extends StatelessWidget {
         ),
       ),
       child: const Text(
-        "Kontakt",
+        "Skontaktuj się z wystawiającym!",
         textScaler: TextScaler.linear(1.3),
+        textAlign: TextAlign.center,
       ),
     );
   }
 }
 
 class ContactWidget extends StatelessWidget {
-  const ContactWidget({super.key, required this.user});
+  const ContactWidget({super.key, required this.user, this.additionalWidget});
 
   final User user;
+  final Widget? additionalWidget;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -96,6 +99,7 @@ class ContactWidget extends StatelessWidget {
                   ],
                 ),
                 _buildContactTable(context, user),
+                if (additionalWidget != null) additionalWidget!,
               ],
             ),
           ),

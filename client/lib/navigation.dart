@@ -3,7 +3,6 @@ import 'package:ccquarters/alerts/gate.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/gate.dart';
-import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/navigation_bar.dart';
@@ -11,7 +10,6 @@ import 'package:ccquarters/profile/gate.dart';
 import 'package:ccquarters/virtual_tour/extended_tour_list/extended_tour_list.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CCQNavigation {
@@ -79,8 +77,7 @@ class CCQNavigation {
                   ),
                   GoRoute(
                     path: '/profile',
-                    builder: (context, state) =>
-                        ProfileGate(user: context.read<AuthCubit>().user),
+                    builder: (context, state) => const ProfileGate(),
                   ),
                   GoRoute(
                     path: '/my-tours',

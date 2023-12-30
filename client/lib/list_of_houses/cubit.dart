@@ -1,6 +1,7 @@
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/new_alert.dart';
+import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
@@ -20,13 +21,14 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   ListOfHousesCubit({
     required this.houseService,
     required this.alertService,
+    OfferType? offerType,
     HouseFilter? filter,
   })  : filter = filter ?? HouseFilter(),
         super(ListOfHousesInitialState());
 
   HouseService houseService;
   AlertService alertService;
-  HouseFilter filter = HouseFilter();
+  HouseFilter filter;
 
   void saveFilter(HouseFilter filter) {
     this.filter = filter;

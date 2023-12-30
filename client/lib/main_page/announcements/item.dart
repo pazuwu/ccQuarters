@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common/consts.dart';
@@ -54,16 +55,23 @@ class HouseItem extends StatelessWidget {
         maxWidth: MediaQuery.of(context).size.width *
             (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
       ),
-      child: ImageWidget(
-        imageUrl: house.photo.url.isNotEmpty
-            ? house.photo.url
-            : "https://picsum.photos/512",
-        fit: BoxFit.cover,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(formBorderRadius),
-          topRight: Radius.circular(formBorderRadius),
-        ),
-      ),
+      child: house.photoUrl != null
+          ? ImageWidget(
+              imageUrl: house.photoUrl!,
+              fit: BoxFit.cover,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(formBorderRadius),
+                topRight: Radius.circular(formBorderRadius),
+              ),
+            )
+          : AssetImageWidget(
+              imagePath: house.getFilenameDependOnBuildingType(),
+              fit: BoxFit.contain,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(formBorderRadius),
+                topRight: Radius.circular(formBorderRadius),
+              ),
+            ),
     );
   }
 
@@ -76,14 +84,20 @@ class HouseItem extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (house.details.roomCount != null) _buildRoomCount(context),
-            _buildPrice(context),
-          ],
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (house.details.roomCount != null &&
+                  house.details.roomCount != 0)
+                _buildRoomCount(context),
+              const SizedBox(
+                width: 15,
+              ),
+              _buildPrice(context),
+            ],
+          ),
         ),
       ),
     );

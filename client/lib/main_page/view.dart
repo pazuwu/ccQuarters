@@ -1,5 +1,6 @@
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -60,6 +61,7 @@ class _MainPageState extends State<MainPage> {
                     getHouses: (pageNumber, pageCount) async => await context
                         .read<MainPageCubit>()
                         .getHousesToRent(pageNumber, pageCount),
+                    offerType: OfferType.rent,
                   ),
                 ),
                 const SizedBox(
@@ -72,6 +74,7 @@ class _MainPageState extends State<MainPage> {
                     getHouses: (pageNumber, pageCount) async => await context
                         .read<MainPageCubit>()
                         .getHousesToBuy(pageNumber, pageCount),
+                    offerType: OfferType.sell,
                   ),
                 ),
                 const SizedBox(

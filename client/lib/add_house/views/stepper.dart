@@ -56,8 +56,13 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
           : null,
       body: Column(
         children: [
-          const SizedBox(height: 8),
-          _buildHeader(),
+          if (!widget.editMode)
+            Column(
+              children: [
+                const SizedBox(height: 8),
+                _buildHeader(),
+              ],
+            ),
           const SizedBox(height: 12),
           _buildStepper(context),
           Divider(
@@ -237,7 +242,6 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       if (isMobile) _buildStep("Mapa", _getMapIndex(), true),
       _buildStep("Zdjęcia", _getPhotosIndex(isMobile), false),
       _buildStep("Wirtualny spacer", _getVirtualTourIndex(isMobile), true),
-      _buildStep("Wysyłanie", _getSendingIndex(isMobile), false),
     ];
   }
 
@@ -247,7 +251,6 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   int _getMapIndex() => 3;
   int _getPhotosIndex(bool isMobile) => isMobile ? 4 : 2;
   int _getVirtualTourIndex(bool isMobile) => isMobile ? 5 : 3;
-  int _getSendingIndex(bool isMobile) => isMobile ? 6 : 4;
 
   EasyStep _buildStep(String title, int index, bool topTitle) {
     return EasyStep(
@@ -282,10 +285,12 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
                 color: Colors.white,
               ),
             ),
-            Text("Nowe ogłoszenie",
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                    )),
+            Text(
+              "Nowe ogłoszenie",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Colors.white,
+                  ),
+            ),
           ],
         ),
       ),

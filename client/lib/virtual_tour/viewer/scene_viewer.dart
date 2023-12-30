@@ -215,7 +215,13 @@ class _SceneViewerState extends State<SceneViewer> {
         leading: _buildAlwaysVisibleButton(
             icon: Icons.arrow_back,
             onPressed: () {
-              context.pop();
+              var previousUrl = GoRouterState.of(context).extra?.toString();
+
+              if (previousUrl != null) {
+                context.go(previousUrl);
+              } else {
+                context.pop();
+              }
             }),
         backgroundColor: Colors.transparent,
         title: _buildAddHint(context),
