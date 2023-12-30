@@ -1,6 +1,6 @@
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/alerts/gate.dart';
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
 import 'package:ccquarters/profile/views/profile.dart';
@@ -9,18 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileGate extends StatelessWidget {
-  const ProfileGate({super.key, this.user});
-
-  final User? user;
+  const ProfileGate({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var user = context.read<AuthCubit>().user;
     return user != null
         ? BlocProvider(
             create: (_) => ProfilePageCubit(
               userService: context.read(),
               houseService: context.read(),
-              userId: user!.id,
+              userId: user.id,
             ),
             child: BlocBuilder<ProfilePageCubit, ProfilePageState>(
               builder: (context, state) {
