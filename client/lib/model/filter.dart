@@ -74,7 +74,20 @@ enum SortingMethod {
   highestPricePerMeter;
 
   @override
-  toString() => name;
+  String toString() {
+    switch (this) {
+      case SortingMethod.newest:
+        return "Najnowsze";
+      case SortingMethod.lowestPrice:
+        return "Najtańsze";
+      case SortingMethod.highestPrice:
+        return "Najdroższe";
+      case SortingMethod.lowestPricePerMeter:
+        return "Najtańsze za m2";
+      case SortingMethod.highestPricePerMeter:
+        return "Najdroższe za m2";
+    }
+  }
 }
 
 class SortingMethodConverter implements JsonConverter<SortingMethod, int> {
@@ -92,23 +105,6 @@ class SortingMethodConverter implements JsonConverter<SortingMethod, int> {
     }
 
     return object.index;
-  }
-}
-
-extension SortByTypeEx on SortingMethod {
-  String get name {
-    switch (this) {
-      case SortingMethod.newest:
-        return "Najnowsze";
-      case SortingMethod.lowestPrice:
-        return "Najtańsze";
-      case SortingMethod.highestPrice:
-        return "Najdroższe";
-      case SortingMethod.lowestPricePerMeter:
-        return "Najtańsze za m2";
-      case SortingMethod.highestPricePerMeter:
-        return "Najdroższe za m2";
-    }
   }
 }
 

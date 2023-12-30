@@ -2,6 +2,7 @@ import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/filters/filters.dart';
+import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/item.dart';
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/main_page/search/search_box.dart';
@@ -12,6 +13,7 @@ import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ListOfHouses extends StatefulWidget {
@@ -89,9 +91,9 @@ class _ListOfHousesState extends State<ListOfHouses> {
       child: FilterForm(
         filters: context.read<ListOfHousesCubit>().filter,
         onSave: (HouseFilter filter) {
-          setState(() {
-            context.read<ListOfHousesCubit>().saveFilter(filter);
-          });
+          context.read<ListOfHousesCubit>().saveFilter(filter);
+          var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
+          context.go(Uri(path: '/houses', queryParameters: query).toString());
           _pagingController.refresh();
         },
       ),
@@ -122,7 +124,8 @@ class _ListOfHousesState extends State<ListOfHouses> {
           ),
           Row(
             children: [
-              _buildBackButton(context),
+              if (MediaQuery.of(context).orientation == Orientation.portrait)
+                _buildBackButton(context),
               _buildAppBarMainWidget(context),
               if (!_isSearch) _buildSearchButton(),
             ],
@@ -208,6 +211,9 @@ class _ListOfHousesState extends State<ListOfHouses> {
             onSave: (HouseFilter filter) {
               setState(() {
                 context.read<ListOfHousesCubit>().saveFilter(filter);
+                var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
+                context.go(
+                    Uri(path: '/houses', queryParameters: query).toString());
               });
               _pagingController.refresh();
             },

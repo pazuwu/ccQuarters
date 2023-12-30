@@ -14,8 +14,7 @@ import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/virtual_tour/model/scene.dart';
 import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/scene_form.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
-import 'package:ccquarters/virtual_tour/viewer/tour_viewer.dart';
+import 'package:go_router/go_router.dart';
 
 class SceneList extends StatefulWidget {
   const SceneList({
@@ -33,16 +32,10 @@ class SceneList extends StatefulWidget {
 
 class _SceneListState extends State<SceneList> {
   void _showScene(BuildContext context, Scene scene) {
-    var vtService = context.read<VTService>();
-
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return TourViewer(
-        readOnly: false,
-        tour: widget.tour,
-        service: vtService,
-        currentScene: scene,
-      );
-    }));
+    context.go(
+      '/tours/${widget.tour.id}',
+      extra: GoRouter.of(context).routeInformationProvider.value.uri,
+    );
   }
 
   Future<SceneFormModel?> _showChooseImportTypeDialog(BuildContext context) {

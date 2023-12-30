@@ -1,6 +1,6 @@
 import 'package:ccquarters/environment.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/login_register/gate.dart';
+import 'package:ccquarters/navigation.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/authorized_dio.dart';
 import 'package:ccquarters/services/auth/service.dart';
@@ -56,16 +56,11 @@ class AppMainGate extends StatelessWidget {
           ),
         )
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         themeMode: ThemeMode.light,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        home: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: const SafeArea(
-            child: AuthGate(),
-          ),
-        ),
+        routerConfig: CCQNavigation.createRouter(),
       ),
     );
   }

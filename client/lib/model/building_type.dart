@@ -7,11 +7,7 @@ enum BuildingType {
   room;
 
   @override
-  toString() => name;
-}
-
-extension BuildingTypeEx on BuildingType {
-  String get name {
+  toString() {
     switch (this) {
       case BuildingType.house:
         return "Dom";
@@ -21,7 +17,9 @@ extension BuildingTypeEx on BuildingType {
         return "Pokój";
     }
   }
+}
 
+extension BuildingTypeEx on BuildingType {
   IconData get icon {
     switch (this) {
       case BuildingType.house:

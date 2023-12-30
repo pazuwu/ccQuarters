@@ -3,9 +3,9 @@ import 'package:ccquarters/alerts/alert_list_item.dart';
 import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/model/alert.dart';
 import 'package:ccquarters/model/new_alert.dart';
-import 'package:ccquarters/profile/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../common/messages/error_message.dart';
@@ -58,9 +58,11 @@ class _AlertsViewState extends State<AlertsView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Alerty"),
-        leading: BackButton(
-          onPressed: context.read<ProfilePageCubit>().goToProfilePage,
-        ),
+        leading: MediaQuery.of(context).orientation == Orientation.portrait
+            ? BackButton(
+                onPressed: () => context.go('/profile'),
+              )
+            : null,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

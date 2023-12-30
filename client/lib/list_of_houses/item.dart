@@ -1,5 +1,4 @@
 import 'package:ccquarters/common/images/asset_image.dart';
-import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/list_of_houses/like_button.dart';
 import 'package:ccquarters/list_of_houses/price_info.dart';
@@ -12,6 +11,7 @@ import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HouseListTile extends StatefulWidget {
   const HouseListTile({super.key, required this.house});
@@ -37,14 +37,9 @@ class _HouseListTileState extends State<HouseListTile> {
           InkWellWithPhoto(
             imageWidget: _buildPhoto(context),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HouseDetailsGate(
-                    houseId: widget.house.id,
-                  ),
-                ),
-              );
+              context.go('/houses/${widget.house.id}',
+                  extra:
+                      GoRouter.of(context).routeInformationProvider.value.uri);
             },
             onDoubleTap: () {
               setState(() {
