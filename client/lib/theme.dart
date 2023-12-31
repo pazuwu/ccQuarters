@@ -67,6 +67,7 @@ class AppTheme {
           color: Colors.black,
         )),
     useMaterial3: true,
+    fontFamily: 'Lato',
   );
 
   static ThemeData dark = ThemeData(
