@@ -30,7 +30,7 @@ class AuthGate extends StatelessWidget {
           ),
         );
       } else if (state is NeedsSigningInState) {
-        return ScrollableLoginView();
+        return ScrollableView(child: const ChooseLoginOrRegisterView());
       } else if (state is LoadingState) {
         return const Scaffold(
           body: Center(
@@ -54,7 +54,7 @@ class AuthGate extends StatelessWidget {
             user: state.user);
       } else if (state is ForgotPasswordState) {
         return ScrollableView(
-          view: ForgotPasswordPage(
+          child: ForgotPasswordPage(
             email: state.email,
             error: state.error,
           ),
