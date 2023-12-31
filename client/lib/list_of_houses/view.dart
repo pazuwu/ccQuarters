@@ -139,7 +139,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
     return IconButton(
       onPressed: () {
         if (widget.isSearch) {
-          context.read<MainPageCubit>().goBack();
+          context.go('/home');
         } else {
           if (_isSearch) {
             setState(() {
@@ -171,7 +171,6 @@ class _ListOfHousesState extends State<ListOfHouses> {
                 color: Theme.of(context).colorScheme,
                 controller: _controller,
                 onSubmitted: (value) {
-                  context.read<ListOfHousesCubit>().saveSearch(value);
                   _pagingController.refresh();
                 },
               )
