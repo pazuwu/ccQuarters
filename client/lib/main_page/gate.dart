@@ -19,7 +19,7 @@ class _MainPageGateState extends State<MainPageGate> {
         builder: (context, state) {
           if (state is MainPageInitialState) {
             return const MainPage();
-          } 
+          }
 
           return Container();
         },

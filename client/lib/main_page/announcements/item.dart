@@ -154,6 +154,6 @@ class HouseItem extends StatelessWidget {
 
   static double getMaxItemWidth(BuildContext context) {
     return MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2);
+        (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2);
   }
 }
