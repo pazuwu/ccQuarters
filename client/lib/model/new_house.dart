@@ -84,6 +84,7 @@ class NewHouseDetails {
     this.area = 0,
     this.floor,
     this.virtualTourId,
+    this.additionalInfo
   });
 
   String description;
@@ -93,6 +94,7 @@ class NewHouseDetails {
   double area;
   int? floor;
   String? virtualTourId;
+  Map<String, String>? additionalInfo;
 
   NewHouseDetails.fromHouseDetails(HouseDetails details)
       : this(

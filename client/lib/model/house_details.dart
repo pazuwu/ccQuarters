@@ -10,6 +10,7 @@ class HouseDetails {
     this.floor,
     required this.buildingType,
     this.virtualTourId,
+    this.additionalInfo,
   });
 
   String? description;
@@ -20,4 +21,5 @@ class HouseDetails {
   int? floor;
   BuildingType buildingType;
   String? virtualTourId;
+  Map<String, String>? additionalInfo;
 }
