@@ -21,27 +21,35 @@ class HouseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) => Card(
-        shadowColor: Theme.of(context).colorScheme.secondary,
-        elevation: elevation,
-        margin: const EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(formBorderRadius),
+      builder: (context, constraints) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width *
+              (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(formBorderRadius),
-          child: InkWellWithPhoto(
-            imageWidget: Column(
-              children: [
-                _buildPhoto(constraints, context),
-                _buildLabel(constraints, context),
-              ],
+        child: Card(
+          shadowColor: Theme.of(context).colorScheme.secondary,
+          elevation: elevation,
+          margin: const EdgeInsets.all(8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(formBorderRadius),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(formBorderRadius),
+            child: InkWellWithPhoto(
+              imageWidget: Column(
+                children: [
+                  _buildPhoto(constraints, context),
+                  _buildLabel(constraints, context),
+                ],
+              ),
+              onTap: () {
+                context.go('/houses/${house.id}',
+                    extra: GoRouter.of(context)
+                        .routeInformationProvider
+                        .value
+                        .uri);
+              },
             ),
-            onTap: () {
-              context.go('/houses/${house.id}',
-                  extra:
-                      GoRouter.of(context).routeInformationProvider.value.uri);
-            },
           ),
         ),
       ),
@@ -52,8 +60,6 @@ class HouseItem extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: constraints.maxHeight - 52,
-        maxWidth: MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
       ),
       child: house.photoUrl != null
           ? ImageWidget(
@@ -77,27 +83,26 @@ class HouseItem extends StatelessWidget {
 
   Widget _buildLabel(BoxConstraints constraints, BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minHeight: 36,
-        minWidth: MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (house.details.roomCount != null &&
-                  house.details.roomCount != 0)
-                _buildRoomCount(context),
-              const SizedBox(
-                width: 15,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (house.details.roomCount != null && house.details.roomCount != 0)
+              _buildRoomCount(context),
+            const SizedBox(
+              width: 15,
+            ),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: _buildPrice(context),
               ),
-              _buildPrice(context),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
