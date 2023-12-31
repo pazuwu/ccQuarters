@@ -5,6 +5,7 @@ import 'package:ccquarters/common/views/gallery.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/gate.dart';
+import 'package:ccquarters/list_of_houses/houses_extra.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/navigation_bar.dart';
@@ -95,8 +96,10 @@ class CCQNavigation {
                       path: '/houses',
                       builder: (context, state) => ListOfHousesGate(
                             filter: HouseFilterQuery.fromMap(
-                                    state.uri.queryParameters)
-                                .toHouseFilter(),
+                              state.uri.queryParameters,
+                            ).toHouseFilter(),
+                            isSearch: state.extra is HousesExtra &&
+                                (state.extra as HousesExtra).isSearch,
                           ),
                       routes: [
                         GoRoute(

@@ -5,6 +5,7 @@ import 'package:ccquarters/house_details/views/edit_house_view.dart';
 import 'package:ccquarters/house_details/views/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HouseDetailsGate extends StatelessWidget {
   const HouseDetailsGate({super.key, required this.houseId});
@@ -32,6 +33,8 @@ class HouseDetailsGate extends StatelessWidget {
                 state.message,
                 tip: state.tip,
                 closeButton: true,
+                onClose: () => context
+                    .go(GoRouterState.of(context).extra?.toString() ?? '/home'),
               ),
             );
           } else if (state is DetailsState) {

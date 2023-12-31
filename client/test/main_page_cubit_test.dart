@@ -24,17 +24,5 @@ void mainPageCubit() {
       act: (cubit) => cubit.goBack(),
       expect: () => [isA<MainPageInitialState>()],
     );
-
-    blocTest<MainPageCubit, MainPageState>(
-      'emits SearchState when search is called',
-      build: () => MainPageCubit(
-        HouseService(
-          HousesAPIMock.createHousesApiMock("$url/houses"),
-          "$url/houses",
-        ),
-      ),
-      act: (cubit) => cubit.search(),
-      expect: () => [isA<SearchState>()],
-    );
   });
 }

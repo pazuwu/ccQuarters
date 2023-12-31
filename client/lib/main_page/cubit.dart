@@ -9,15 +9,10 @@ class MainPageState {}
 
 class MainPageInitialState extends MainPageState {}
 
-class SearchState extends MainPageState {}
-
 class MainPageCubit extends Cubit<MainPageState> {
   MainPageCubit(this.houseService) : super(MainPageInitialState());
 
   HouseService houseService;
-  void search() {
-    emit(SearchState());
-  }
 
   void goBack() {
     emit(MainPageInitialState());
