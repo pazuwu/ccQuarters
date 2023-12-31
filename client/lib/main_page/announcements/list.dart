@@ -8,10 +8,12 @@ import 'item.dart';
 class AnnouncementList extends StatefulWidget {
   const AnnouncementList({
     super.key,
+    this.scrollController,
     required this.pagingController,
     required this.getHouses,
   });
 
+  final ScrollController? scrollController;
   final PagingController<int, House> pagingController;
   final Future<List<House>?> Function(int, int) getHouses;
 
@@ -55,32 +57,28 @@ class _AnnouncementListState extends State<AnnouncementList> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(left: 8.0, right: 8.0),
-        child: PagedListView<int, House>(
-          scrollDirection: Axis.horizontal,
-          pagingController: widget.pagingController,
-          builderDelegate: PagedChildBuilderDelegate<House>(
-            noItemsFoundIndicatorBuilder: (context) => const Message(
-              title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
-              subtitle: "Spróbuj ponownie później",
-              imageWidget: Icon(Icons.home),
-              adjustToLandscape: true,
-              padding: EdgeInsets.all(8.0),
-            ),
-            firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
-              "Nie udało się pobrać ogłoszeń",
-              tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-            ),
-            newPageErrorIndicatorBuilder: (context) => ErrorMessage(
-              "Nie udało się pobrać ogłoszeń",
-              tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-            ),
-            itemBuilder: (context, item, index) => LayoutBuilder(
-              builder: (context, constraints) => HouseItem(
-                house: item,
-              ),
-            ),
+      child: PagedListView<int, House>(
+        scrollDirection: Axis.horizontal,
+        scrollController: widget.scrollController,
+        pagingController: widget.pagingController,
+        builderDelegate: PagedChildBuilderDelegate<House>(
+          noItemsFoundIndicatorBuilder: (context) => const Message(
+            title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
+            subtitle: "Spróbuj ponownie później",
+            imageWidget: Icon(Icons.home),
+            adjustToLandscape: true,
+            padding: EdgeInsets.all(8.0),
+          ),
+          firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
+            "Nie udało się pobrać ogłoszeń",
+            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+          ),
+          newPageErrorIndicatorBuilder: (context) => ErrorMessage(
+            "Nie udało się pobrać ogłoszeń",
+            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+          ),
+          itemBuilder: (context, item, index) => HouseItem(
+            house: item,
           ),
         ),
       ),

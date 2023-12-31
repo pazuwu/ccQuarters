@@ -41,7 +41,7 @@ class HouseFilterQuery {
     this.districts,
     this.title,
     this.voivodeship,
-    required this.sortBy,
+    this.sortBy = SortingMethod.newest,
   });
 
   factory HouseFilterQuery.fromHouseFilter(HouseFilter filter) {
