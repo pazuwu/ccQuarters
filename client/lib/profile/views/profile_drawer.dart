@@ -49,7 +49,7 @@ class ProfileDrawer extends StatelessWidget {
                 : 'Wyloguj się'),
             onTap: () {
               context.read<AuthCubit>().signOut();
-              context.go('/login');
+              GoRouter.of(context).refresh();
             },
           ),
         ],

@@ -1,5 +1,7 @@
 import 'package:ccquarters/add_house/gate.dart';
 import 'package:ccquarters/alerts/gate.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/views/gallery.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/gate.dart';
@@ -15,20 +17,22 @@ import 'package:go_router/go_router.dart';
 class CCQNavigation {
   static RouterConfig<Object> createRouter() {
     return GoRouter(
-      initialLocation: '/login',
+      initialLocation: '/home',
       routes: [
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: const AuthGate(),
+          ),
+        ),
         ShellRoute(
           builder: (context, state, widget) => Scaffold(
-            body: SafeArea(child: widget),
+            body: SafeArea(
+              child: AuthGate(child: widget),
+            ),
           ),
           routes: [
-            GoRoute(
-              path: '/login',
-              builder: (context, state) => Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: const AuthGate(),
-              ),
-            ),
             ShellRoute(
                 builder: (context, state, widget) => Material(
                         child: NavigationShell(
@@ -113,6 +117,24 @@ class CCQNavigation {
                       Orientation.portrait,
                 ),
               ),
+            ),
+            GoRoute(
+              path: '/gallery',
+              builder: (context, state) {
+                if (state.extra is GalleryParameters) {
+                  final params = state.extra as GalleryParameters;
+                  return Gallery(
+                    imageUrls: params.imageUrls,
+                    memoryPhotos: params.memoryPhotos,
+                    initialIndex: params.initialIndex,
+                  );
+                }
+
+                return ErrorMessage(
+                  'Strona o podanym adresie nie istnieje',
+                  tip: 'Upewnij się, że link, który wpisałeś jest poprawny',
+                );
+              },
             ),
           ],
         ),

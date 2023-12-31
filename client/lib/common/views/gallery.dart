@@ -4,18 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
+class GalleryParameters {
+  final List<String> imageUrls;
+  final List<Uint8List> memoryPhotos;
+  final int initialIndex;
+
+  GalleryParameters({
+    this.imageUrls = const [],
+    this.memoryPhotos = const [],
+    required this.initialIndex,
+  });
+}
+
 class Gallery extends StatefulWidget {
   const Gallery({
     Key? key,
     this.imageUrls = const [],
     this.memoryPhotos = const [],
-    required this.width,
     required this.initialIndex,
   }) : super(key: key);
 
   final List<String> imageUrls;
   final List<Uint8List> memoryPhotos;
-  final double width;
   final int initialIndex;
 
   @override

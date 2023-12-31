@@ -9,16 +9,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AuthGate extends StatelessWidget {
-  const AuthGate({Key? key}) : super(key: key);
+  const AuthGate({Key? key, this.child}) : super(key: key);
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
       if (state is SignedInState) {
+        if (child != null) {
+          return child!;
+        }
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           context.go('/home');
         });
-
         return const Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
