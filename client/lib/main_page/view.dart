@@ -69,7 +69,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 Expanded(
                   child: AnnouncementsContainer(
-                    title: "Do kupienia",
+                    title: "Na sprzedaż",
                     pagingController: _pagingControllerForHousesToBuy,
                     getHouses: (pageNumber, pageCount) async => await context
                         .read<MainPageCubit>()

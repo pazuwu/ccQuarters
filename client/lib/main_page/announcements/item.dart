@@ -23,8 +23,7 @@ class HouseItem extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) => ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width *
-              (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
+          maxWidth: getMaxItemWidth(context),
         ),
         child: Card(
           shadowColor: Theme.of(context).colorScheme.secondary,
@@ -90,8 +89,7 @@ class HouseItem extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: 36,
-        minWidth: MediaQuery.of(context).size.width *
-            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
+        minWidth: getMaxItemWidth(context),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -152,5 +150,10 @@ class HouseItem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  static double getMaxItemWidth(BuildContext context) {
+    return MediaQuery.of(context).size.width *
+            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2);
   }
 }

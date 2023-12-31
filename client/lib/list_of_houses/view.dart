@@ -151,7 +151,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
               _isSearch = false;
             });
           } else {
-            Navigator.pop(context);
+            context.go('/home');
           }
         }
       },
