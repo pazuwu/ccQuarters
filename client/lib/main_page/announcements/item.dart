@@ -39,7 +39,12 @@ class HouseItem extends StatelessWidget {
               imageWidget: Column(
                 children: [
                   _buildPhoto(constraints, context),
-                  _buildLabel(constraints, context),
+                  Flexible(
+                      child: Center(
+                    child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: _buildLabel(constraints, context)),
+                  )),
                 ],
               ),
               onTap: () {
@@ -83,25 +88,23 @@ class HouseItem extends StatelessWidget {
 
   Widget _buildLabel(BoxConstraints constraints, BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minHeight: 36,
+      constraints: BoxConstraints(
+        maxHeight: 36,
+        minWidth: MediaQuery.of(context).size.width *
+            (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (house.details.roomCount != null && house.details.roomCount != 0)
               _buildRoomCount(context),
             const SizedBox(
-              width: 15,
+              width: 24,
             ),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: _buildPrice(context),
-              ),
-            ),
+            _buildPrice(context),
           ],
         ),
       ),
