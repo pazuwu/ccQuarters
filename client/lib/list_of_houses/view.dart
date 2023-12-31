@@ -4,7 +4,6 @@ import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/filters/filters.dart';
 import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/item.dart';
-import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/main_page/search/search_box.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
