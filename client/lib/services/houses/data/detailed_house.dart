@@ -13,7 +13,7 @@ part 'detailed_house.g.dart';
 class HouseWithDetails {
   String title;
   String? description;
-  Map<String, dynamic> additionalInfo;
+  Map<String, dynamic>? additionalInfo;
   double price;
   int roomCount;
   double area;
