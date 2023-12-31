@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ScrollableView extends StatelessWidget {
-  ScrollableView({super.key, required this.view});
+  ScrollableView({super.key, required this.child});
 
-  final Widget view;
+  final Widget child;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -18,10 +18,10 @@ class ScrollableView extends StatelessWidget {
                 constraints: const BoxConstraints(
                   maxHeight: 600,
                 ),
-                child: view,
+                child: child,
               ),
             ),
           )
-        : view;
+        : child;
   }
 }
