@@ -1,5 +1,6 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/add_additional_info.dart';
+import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/common/consts.dart';
@@ -236,7 +237,7 @@ class _DetailsFormState extends State<DetailsForm> {
             ),
             const SizedBox(width: 8),
             IconButton(
-                onPressed: () => _buildWindowToFillWithTitleAndText(context),
+                onPressed: () => _buildAdditionalInfoForm(context),
                 icon: const Icon(Icons.add)),
           ],
         ),
@@ -246,13 +247,28 @@ class _DetailsFormState extends State<DetailsForm> {
             children: [
               for (final item in items)
                 InputChip(
-                  onPressed: () {},
+                  onPressed: () {
+                    _buildAdditionalInfoForm(
+                      context,
+                      title: item.key,
+                      info: item.value,
+                      isEdit: true,
+                    );
+                  },
                   label: Text("${item.key}: ${item.value}"),
                   onDeleted: () {
                     setState(() {
                       widget.details.additionalInfo!.remove(item.key);
                     });
                   },
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(formBorderRadius / 1.5),
+                    side: const BorderSide(
+                      color: Colors.blueGrey,
+                      width: inputDecorationBorderSide,
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -260,16 +276,24 @@ class _DetailsFormState extends State<DetailsForm> {
     );
   }
 
-  _buildWindowToFillWithTitleAndText(BuildContext context) {
+  _buildAdditionalInfoForm(
+    BuildContext context, {
+    String title = "",
+    String info = "",
+    bool isEdit = false,
+  }) {
     return showForm(
       context: context,
       builder: (c) {
-        return AddAdditionalInfo(
-          onAdd: (title, info) {
-            _addAdditionalInfo(title, info);
+        return AdditionalInfoForm(
+          onSubmit: (t, info) {
+            if (isEdit) {
+              widget.details.additionalInfo!.remove(title);
+            }
+            _addAdditionalInfo(t, info);
           },
-          title: "",
-          info: "",
+          title: title.toString(),
+          info: info.toString(),
         );
       },
     );
@@ -280,6 +304,11 @@ class _DetailsFormState extends State<DetailsForm> {
       widget.details.additionalInfo ??= {};
       if (!widget.details.additionalInfo!.containsKey(title)) {
         widget.details.additionalInfo!.putIfAbsent(title, () => info);
+      } else {
+        SnackMessenger.showMessage(
+          context,
+          "Informacja o takim tytule już istnieje, edytuj ją",
+        );
       }
     });
   }
