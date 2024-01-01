@@ -1,17 +1,26 @@
-import 'package:ccquarters/list_of_houses/cubit.dart';
-import 'package:ccquarters/filters/expansion_panel_list.dart';
-import 'package:ccquarters/filters/sort_by_dropdown.dart';
-import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/device_type.dart';
+import 'package:ccquarters/filters/expansion_panel_list.dart';
+import 'package:ccquarters/filters/sort_by_dropdown.dart';
+import 'package:ccquarters/list_of_houses/cubit.dart';
+import 'package:ccquarters/login_register/cubit.dart';
+import 'package:ccquarters/model/filter.dart';
+
 class Filters extends StatefulWidget {
-  const Filters({super.key, required this.filters, required this.onSave});
+  const Filters({
+    Key? key,
+    this.onlySort = false,
+    required this.filters,
+    required this.onSave,
+  }) : super(key: key);
 
   final HouseFilter filters;
+  final bool onlySort;
   final Function(HouseFilter) onSave;
 
   @override
@@ -24,16 +33,11 @@ class _FiltersState extends State<Filters> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        getDeviceType(context) == DeviceType.mobile
+        !widget.onlySort
             ? IconButton(
                 icon: const Icon(Icons.filter_list_rounded),
                 onPressed: () {
-                  showModalBottomSheet<bool>(
-                    useSafeArea: true,
-                    isDismissible: false,
-                    isScrollControlled: true,
-                    enableDrag: true,
-                    showDragHandle: true,
+                  showForm<bool>(
                     context: context,
                     builder: (BuildContext context) => FilterForm(
                       filters: widget.filters,

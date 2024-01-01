@@ -2,6 +2,7 @@ import 'package:ccquarters/add_house/gate.dart';
 import 'package:ccquarters/alerts/gate.dart';
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/views/gallery.dart';
+import 'package:ccquarters/common/views/scrollable_view.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/gate.dart';
@@ -19,20 +20,20 @@ class CCQNavigation {
   static final RouterConfig<Object> _router = GoRouter(
     initialLocation: '/home',
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: const AuthGate(),
-        ),
-      ),
       ShellRoute(
         builder: (context, state, widget) => Scaffold(
           body: SafeArea(
-            child: AuthGate(child: widget),
+            child: ScrollableView(child: AuthGate(child: widget)),
           ),
         ),
         routes: [
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: const AuthGate(),
+            ),
+          ),
           ShellRoute(
               builder: (context, state, widget) => Material(
                       child: NavigationShell(

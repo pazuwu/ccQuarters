@@ -1,4 +1,3 @@
-import 'package:ccquarters/common/views/scrollable_view.dart';
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/choose.dart';
 import 'package:ccquarters/login_register/cubit.dart';
@@ -30,7 +29,7 @@ class AuthGate extends StatelessWidget {
           ),
         );
       } else if (state is NeedsSigningInState) {
-        return ScrollableView(child: const ChooseLoginOrRegisterView());
+        return const ChooseLoginOrRegisterView();
       } else if (state is LoadingState) {
         return const Scaffold(
           body: Center(
@@ -53,11 +52,9 @@ class AuthGate extends StatelessWidget {
             page: LoginRegisterPageType.registerEmailAndPassword,
             user: state.user);
       } else if (state is ForgotPasswordState) {
-        return ScrollableView(
-          child: ForgotPasswordPage(
-            email: state.email,
-            error: state.error,
-          ),
+        return ForgotPasswordPage(
+          email: state.email,
+          error: state.error,
         );
       } else if (state is ForgotPasswordSuccessState) {
         return const ForgotPasswordSuccessPage();
