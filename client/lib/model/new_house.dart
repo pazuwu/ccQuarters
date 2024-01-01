@@ -84,7 +84,7 @@ class NewHouseDetails {
     this.area = 0,
     this.floor,
     this.virtualTourId,
-    this.additionalInfo
+    this.additionalInfo,
   });
 
   String description;
@@ -98,11 +98,13 @@ class NewHouseDetails {
 
   NewHouseDetails.fromHouseDetails(HouseDetails details)
       : this(
-            description: details.description ?? "",
-            title: details.title,
-            price: details.price,
-            roomCount: details.roomCount ?? 0,
-            area: details.area,
-            floor: details.floor,
-            virtualTourId: details.virtualTourId);
+          description: details.description ?? "",
+          title: details.title,
+          price: details.price,
+          roomCount: details.roomCount ?? 0,
+          area: details.area,
+          floor: details.floor,
+          virtualTourId: details.virtualTourId,
+          additionalInfo: details.additionalInfo,
+        );
 }
