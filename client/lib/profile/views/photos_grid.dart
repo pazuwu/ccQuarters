@@ -79,7 +79,9 @@ class _PhotosGridState extends State<PhotosGrid> {
                     borderRadius: const BorderRadius.all(Radius.zero),
                   ),
             onTap: () {
-              context.go('/houses/${house.id}');
+              context.go('/houses/${house.id}',
+                  extra:
+                      GoRouter.of(context).routeInformationProvider.value.uri);
             },
           ),
         ),

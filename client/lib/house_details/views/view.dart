@@ -34,14 +34,7 @@ class DetailsView extends StatelessWidget {
         toolbarHeight: 68,
         leading: MediaQuery.of(context).orientation == Orientation.portrait
             ? IconButton(
-                onPressed: () {
-                  var previousRoute = GoRouterState.of(context).extra;
-                  if (previousRoute == null) {
-                    context.pop();
-                  } else {
-                    context.go(previousRoute.toString());
-                  }
-                },
+                onPressed: () => _goBack(context),
                 icon: const Icon(Icons.arrow_back),
               )
             : null,
@@ -57,6 +50,15 @@ class DetailsView extends StatelessWidget {
       ),
       body: Inside(house: house),
     );
+  }
+
+  void _goBack(BuildContext context) {
+    var previousRoute = GoRouterState.of(context).extra;
+    if (previousRoute == null) {
+      context.pop();
+    } else {
+      context.go(previousRoute.toString());
+    }
   }
 
   _showVirtualTour(BuildContext context) {
@@ -97,7 +99,7 @@ class DetailsView extends StatelessWidget {
                     showDialogWithMessage(
                       context: context,
                       title: "Ogłoszenie zostało usunięte.",
-                      onOk: () => Navigator.pop(context),
+                      onOk: () => _goBack(context),
                     );
                   } else {
                     showDialogWithMessage(
