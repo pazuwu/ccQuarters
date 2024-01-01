@@ -68,6 +68,14 @@ class NavigationShell extends StatelessWidget {
     return Row(
       children: [
         SideNavigationBar(
+          header: SideNavigationBarHeader(
+            image: Image.asset(
+              "assets/logo/logo.png",
+              height: 32.5,
+            ),
+            title: const Text("CCQuarters"),
+            subtitle: Container(),
+          ),
           selectedIndex: _selectedIndex,
           items: _getAllVisibleItems(context, true)
               .map((i) => SideNavigationBarItem(icon: i.icon, label: i.label))

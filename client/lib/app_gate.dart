@@ -57,6 +57,7 @@ class AppMainGate extends StatelessWidget {
         )
       ],
       child: MaterialApp.router(
+        title: "CCQuarters",
         themeMode: ThemeMode.light,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
