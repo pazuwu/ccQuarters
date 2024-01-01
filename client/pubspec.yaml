@@ -121,7 +121,6 @@ flutter:
     - assets/graphics/question.png # from https://www.flaticon.com/authors/freepik 
     - assets/graphics/forgot-password.png # from https://www.flaticon.com/authors/freepik 
     - assets/graphics/check.png # from https://www.flaticon.com/authors/freepik 
-    - assets/logo/logo.ico
     - assets/logo/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
