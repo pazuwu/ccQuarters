@@ -22,7 +22,8 @@ class EmailAndPasswordFields extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width *
-            (MediaQuery.of(context).orientation == Orientation.landscape
+            (MediaQuery.of(context).orientation == Orientation.landscape &&
+                    MediaQuery.of(context).size.width > 700
                 ? 0.4
                 : 1),
       ),
