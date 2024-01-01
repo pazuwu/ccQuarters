@@ -82,6 +82,12 @@ class _ListOfHousesState extends State<ListOfHouses> {
     );
   }
 
+  void _updateUrl(BuildContext context) {
+    var filter = context.read<ListOfHousesCubit>().filter;
+    var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
+    context.go(Uri(path: '/houses', queryParameters: query).toString());
+  }
+
   Widget _buildFiltersColumn(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
@@ -91,8 +97,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
         filters: context.read<ListOfHousesCubit>().filter,
         onSave: (HouseFilter filter) {
           context.read<ListOfHousesCubit>().saveFilter(filter);
-          var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
-          context.go(Uri(path: '/houses', queryParameters: query).toString());
+          _updateUrl(context);
           _pagingController.refresh();
         },
       ),
@@ -170,6 +175,8 @@ class _ListOfHousesState extends State<ListOfHouses> {
                 color: Theme.of(context).colorScheme,
                 controller: _controller,
                 onSubmitted: (value) {
+                  context.read<ListOfHousesCubit>().saveSearch(value);
+                  _updateUrl(context);
                   _pagingController.refresh();
                 },
               )
@@ -209,9 +216,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
             onSave: (HouseFilter filter) {
               setState(() {
                 context.read<ListOfHousesCubit>().saveFilter(filter);
-                var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
-                context.go(
-                    Uri(path: '/houses', queryParameters: query).toString());
+                _updateUrl(context);
               });
               _pagingController.refresh();
             },

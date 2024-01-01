@@ -29,6 +29,7 @@ class GetHousesQuery {
   String? voivodeship;
   List<String>? cities;
   List<String>? districts;
+  String? title;
 
   GetHousesQuery(
     this.pageSize,
@@ -50,6 +51,7 @@ class GetHousesQuery {
     this.voivodeship,
     this.cities,
     this.districts,
+    this.title,
   );
 
   GetHousesQuery.fromHouseFilter(
@@ -69,7 +71,8 @@ class GetHousesQuery {
         buildingType = filter?.buildingType,
         voivodeship = filter?.voivodeship?.toString(),
         cities = filter?.cities,
-        districts = filter?.districts;
+        districts = filter?.districts,
+        title = filter?.title;
 
   Map<String, dynamic> toJson() => _$GetHousesQueryToJson(this);
   factory GetHousesQuery.fromJson(Map<String, dynamic> json) =>

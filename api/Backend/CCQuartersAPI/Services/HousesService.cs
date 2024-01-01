@@ -220,6 +220,7 @@ namespace CCQuartersAPI.Services
             return await GetSimpleHousesInfoInternal(queryBuilder.ToString(), new
             {
                 userId,
+                title = $"%{housesQuery.Title}%",
                 minPrice = housesQuery.MinPrice,
                 maxPrice = housesQuery.MaxPrice,
                 minPricePerM2 = housesQuery.MinPricePerM2,
@@ -245,6 +246,8 @@ namespace CCQuartersAPI.Services
         {
             var sb = new StringBuilder("1=1");
 
+            if (query.Title is not null)
+                sb.Append($@" AND Title like @title");
             if (query.MinPrice is not null)
                 sb.Append($@" AND Price >= @minPrice");
             if (query.MaxPrice is not null)
