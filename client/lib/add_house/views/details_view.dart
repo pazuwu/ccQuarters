@@ -1,5 +1,5 @@
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/add_house/views/add_additional_info.dart';
+import 'package:ccquarters/add_house/views/additional_info_form.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/model/new_house.dart';

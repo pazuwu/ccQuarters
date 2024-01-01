@@ -1,5 +1,4 @@
 import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -59,6 +58,7 @@ class CreateHouseRequest {
         area = newHouse.houseDetails.area,
         floor = newHouse.houseDetails.floor,
         description = newHouse.houseDetails.description,
+        additionalInfo = newHouse.houseDetails.additionalInfo,
         virtualTourId = newHouse.houseDetails.virtualTourId,
         voivodeship = newHouse.location.voivodeship.toString(),
         city = newHouse.location.city,
@@ -67,28 +67,8 @@ class CreateHouseRequest {
         streetName = newHouse.location.streetName,
         streetNumber = newHouse.location.streetNumber,
         flatNumber = newHouse.location.flatNumber,
-        geoX = newHouse.location.geoX ?? 0,
-        geoY = newHouse.location.geoY ?? 0;
-
-  CreateHouseRequest.fromDetailedHouse(DetailedHouse house)
-      : buildingType = house.details.buildingType,
-        offerType = house.offerType,
-        title = house.details.title,
-        price = house.details.price,
-        roomCount = house.details.roomCount,
-        area = house.details.area,
-        floor = house.details.floor,
-        virtualTourId = house.details.virtualTourId,
-        description = house.details.description,
-        voivodeship = house.location.voivodeship,
-        city = house.location.city,
-        zipCode = house.location.zipCode,
-        district = house.location.district,
-        streetName = house.location.streetName,
-        streetNumber = house.location.streetNumber,
-        flatNumber = house.location.flatNumber,
-        geoX = house.location.geoX,
-        geoY = house.location.geoY;
+        geoX = newHouse.location.geoX,
+        geoY = newHouse.location.geoY;
 
   Map<String, dynamic> toJson() => _$CreateHouseRequestToJson(this);
   factory CreateHouseRequest.fromJson(Map<String, dynamic> json) =>

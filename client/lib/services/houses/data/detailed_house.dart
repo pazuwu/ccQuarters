@@ -96,6 +96,7 @@ class HouseWithDetails {
         floor: floor,
         buildingType: buildingType,
         virtualTourId: virtualTourId,
+        additionalInfo: additionalInfo?.cast<String, String>(),
       ),
       User.fromGetHouse(
         userId,

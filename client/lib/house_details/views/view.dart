@@ -139,9 +139,10 @@ class Inside extends StatelessWidget {
                 children: [
                   if (getDeviceType(context) == DeviceType.mobile)
                     _buildPriceInfo(context),
-                  Photos(
-                    photos: house.photos.map((e) => e.url).toList(),
-                  ),
+                  if (house.photos.isNotEmpty)
+                    Photos(
+                      photos: house.photos.map((e) => e.url).toList(),
+                    ),
                   if (getDeviceType(context) == DeviceType.mobile)
                     ButtonContactWidget(user: house.user),
                   AccordionPage(

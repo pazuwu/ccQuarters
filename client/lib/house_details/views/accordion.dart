@@ -37,6 +37,8 @@ class AccordionPage extends StatelessWidget {
           _buildDescriptionAccordionSection(context),
         _buildDetailsAccordionSection(context),
         _buildLocationAccordionSection(context),
+        if (house.details.additionalInfo != null)
+          _buildAdditionalInfoAccordionSection(context),
       ],
     );
   }
@@ -115,6 +117,20 @@ class AccordionPage extends StatelessWidget {
     );
   }
 
+  AccordionSection _buildAdditionalInfoAccordionSection(BuildContext context) {
+    return AccordionSection(
+      contentVerticalPadding: 20,
+      isOpen: _shouldBeOpen(context),
+      leftIcon: const Icon(Icons.add_home_outlined, color: Colors.white),
+      header: const Text('Dodatkowe informacje', style: headerStyle),
+      content: Column(
+        children: _buildWidgetsWithDivider(house.details.additionalInfo!.entries
+            .map((e) => HouseDetailsRow(title: e.key, value: e.value))
+            .toList()),
+      ),
+    );
+  }
+
   bool _shouldBeOpen(BuildContext context) {
     return MediaQuery.of(context).size.height > 600;
   }
@@ -154,20 +170,20 @@ class HouseDetailsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 14),
-            ),
-            Text(
-              value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-          ],
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14),
+        ),
+        const SizedBox(width: 10),
+        Flexible(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.end,
+          ),
         ),
       ],
     );
