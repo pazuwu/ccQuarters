@@ -1,10 +1,10 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/add_additional_info.dart';
+import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
 import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/model/building_type.dart';
@@ -261,24 +261,18 @@ class _DetailsFormState extends State<DetailsForm> {
   }
 
   _buildWindowToFillWithTitleAndText(BuildContext context) {
-    return kIsWeb
-        ? showDialog(
-            context: context,
-            builder: (c) {
-              return AddAdditionalInfo(onAdd: (title, info) {
-                _addAdditionalInfo(title, info);
-              });
-            },
-          )
-        : showModalBottomSheet(
-            showDragHandle: true,
-            context: context,
-            builder: (c) {
-              return AddAdditionalInfo(onAdd: (title, info) {
-                _addAdditionalInfo(title, info);
-              });
-            },
-          );
+    return showForm(
+      context: context,
+      builder: (c) {
+        return AddAdditionalInfo(
+          onAdd: (title, info) {
+            _addAdditionalInfo(title, info);
+          },
+          title: "",
+          info: "",
+        );
+      },
+    );
   }
 
   _addAdditionalInfo(String title, String info) {

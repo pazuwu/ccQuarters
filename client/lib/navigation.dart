@@ -16,8 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CCQNavigation {
-  static RouterConfig<Object> createRouter() {
-    return GoRouter(
+  static final RouterConfig<Object> _router = GoRouter(
       initialLocation: '/home',
       routes: [
         GoRoute(
@@ -143,5 +142,6 @@ class CCQNavigation {
         ),
       ],
     );
-  }
+
+  static RouterConfig<Object> get router => _router;
 }
