@@ -2,23 +2,23 @@ import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
 import 'package:flutter/material.dart';
 
-class AddAdditionalInfo extends StatefulWidget {
-  const AddAdditionalInfo({
+class AdditionalInfoForm extends StatefulWidget {
+  const AdditionalInfoForm({
     super.key,
-    required this.onAdd,
+    required this.onSubmit,
     required this.title,
     required this.info,
   });
 
-  final Function(String title, String info) onAdd;
+  final Function(String title, String info) onSubmit;
   final String title;
   final String info;
 
   @override
-  State<AddAdditionalInfo> createState() => _AddAdditionalInfoState();
+  State<AdditionalInfoForm> createState() => _AdditionalInfoFormState();
 }
 
-class _AddAdditionalInfoState extends State<AddAdditionalInfo> {
+class _AdditionalInfoFormState extends State<AdditionalInfoForm> {
   final _formKey = GlobalKey<FormState>();
   late String _title, _info;
 
@@ -46,7 +46,7 @@ class _AddAdditionalInfoState extends State<AddAdditionalInfo> {
                 children: [
                   TextFormField(
                     key: const Key("additionalInfoTitleField"),
-                    initialValue: "",
+                    initialValue: _title,
                     onSaved: (newValue) => _title = newValue?.trim() ?? '',
                     decoration: createInputDecorationForForm(
                       context,
@@ -60,13 +60,16 @@ class _AddAdditionalInfoState extends State<AddAdditionalInfo> {
                   const SizedBox(height: sizedBoxHeight),
                   TextFormField(
                     key: const Key("additionalInfoField"),
-                    initialValue: "",
+                    initialValue: _info,
                     onSaved: (newValue) => _info = newValue?.trim() ?? '',
                     decoration: createInputDecorationForForm(
                       context,
                       "Informacja",
                       isRequired: true,
+                      alignLabelWithHint: true,
                     ),
+                    minLines: 4,
+                    maxLines: null,
                     validator: (value) =>
                         value?.isEmpty ?? false ? "Wpisz informację" : null,
                   ),
@@ -85,10 +88,10 @@ class _AddAdditionalInfoState extends State<AddAdditionalInfo> {
                         if (_formKey.currentState!.validate()) {
                           Navigator.pop(context);
                           _formKey.currentState!.save();
-                          widget.onAdd(_title, _info);
+                          widget.onSubmit(_title, _info);
                         }
                       },
-                      child: const Text("Dodaj")),
+                      child: const Text("Zapisz")),
                 ],
               ),
             ],
