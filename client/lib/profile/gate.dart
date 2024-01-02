@@ -1,5 +1,4 @@
 import 'package:ccquarters/common/messages/error_message.dart';
-import 'package:ccquarters/alerts/gate.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
@@ -37,8 +36,6 @@ class ProfileGate extends StatelessWidget {
               state.message,
               tip: state.tip,
             );
-          } else if (state is AlertsState) {
-            return const AlertsGate();
           }
 
           return Container();

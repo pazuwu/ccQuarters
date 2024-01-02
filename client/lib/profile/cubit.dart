@@ -32,8 +32,6 @@ class ErrorState extends ProfilePageState {
   final String? tip;
 }
 
-class AlertsState extends ProfilePageState {}
-
 class ProfilePageCubit extends Cubit<ProfilePageState> {
   ProfilePageCubit({
     required this.userService,
@@ -136,9 +134,5 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
 
   Future<void> goToProfilePage() async {
     emit(ProfilePageInitialState(user: user));
-  }
-
-  Future<void> goToAlertsPage() async {
-    emit(AlertsState());
   }
 }

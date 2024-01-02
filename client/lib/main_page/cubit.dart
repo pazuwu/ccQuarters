@@ -14,10 +14,6 @@ class MainPageCubit extends Cubit<MainPageState> {
 
   HouseService houseService;
 
-  void goBack() {
-    emit(MainPageInitialState());
-  }
-
   Future<List<House>?> getHousesToRent(int pageNumber, int pageCount) async {
     return _getHouses(pageNumber, pageCount, OfferType.rent);
   }
