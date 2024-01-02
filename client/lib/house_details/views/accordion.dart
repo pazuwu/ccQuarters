@@ -33,11 +33,13 @@ class AccordionPage extends StatelessWidget {
       sectionClosingHapticFeedback: SectionHapticFeedback.light,
       disableScrolling: true,
       children: [
-        if (house.details.description != null)
+        if (house.details.description != null &&
+            house.details.description!.isNotEmpty)
           _buildDescriptionAccordionSection(context),
         _buildDetailsAccordionSection(context),
         _buildLocationAccordionSection(context),
-        if (house.details.additionalInfo != null)
+        if (house.details.additionalInfo != null &&
+            house.details.additionalInfo!.isNotEmpty)
           _buildAdditionalInfoAccordionSection(context),
       ],
     );
