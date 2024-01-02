@@ -21,5 +21,6 @@
         public string? Voivodeship { get; set; }
         public string[]? Cities { get; set; }
         public string[]? Districts { get; set; }
+        public string? Title { get; set; }
     }
 }

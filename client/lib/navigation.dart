@@ -2,10 +2,13 @@ import 'package:ccquarters/add_house/gate.dart';
 import 'package:ccquarters/alerts/gate.dart';
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/views/gallery.dart';
+import 'package:ccquarters/common/views/require_sign_in.dart';
+import 'package:ccquarters/common/views/scrollable_view.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/list_of_houses/filter_query.dart';
 import 'package:ccquarters/list_of_houses/gate.dart';
 import 'package:ccquarters/list_of_houses/houses_extra.dart';
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/navigation_bar.dart';
@@ -13,26 +16,31 @@ import 'package:ccquarters/profile/gate.dart';
 import 'package:ccquarters/virtual_tour/extended_tour_list/extended_tour_list.dart';
 import 'package:ccquarters/virtual_tour/tour/gate.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CCQNavigation {
   static final RouterConfig<Object> _router = GoRouter(
     initialLocation: '/home',
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: const AuthGate(),
-        ),
-      ),
       ShellRoute(
         builder: (context, state, widget) => Scaffold(
           body: SafeArea(
-            child: AuthGate(child: widget),
+            child: ScrollableView(
+              child: AuthGate(
+                child: widget,
+              ),
+            ),
           ),
         ),
         routes: [
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: const AuthGate(),
+            ),
+          ),
           ShellRoute(
               builder: (context, state, widget) => Material(
                       child: NavigationShell(
@@ -59,12 +67,21 @@ class CCQNavigation {
                         icon: Icons.notifications,
                         label: "Moje alerty",
                         path: '/my-alerts',
+                        isVisible: NavigationItemVisibility.whenSignedIn,
                       ),
                       NavigationItem(
                         icon: Icons.directions_walk_outlined,
                         label: "Moje wirtualne spacery",
                         path: '/my-tours',
+                        isVisible: NavigationItemVisibility.whenSignedIn,
                       ),
+                      NavigationItem(
+                          icon: Icons.login,
+                          label: "Zaloguj się",
+                          path: '/login',
+                          isVisible: NavigationItemVisibility.whenSignedOut,
+                          onTap: (context) =>
+                              context.read<AuthCubit>().signOut()),
                     ],
                     child: widget,
                   )),
@@ -77,19 +94,27 @@ class CCQNavigation {
                 ),
                 GoRoute(
                   path: '/new-house',
-                  builder: (context, state) => const AddHouseGate(),
+                  builder: (context, state) => const RequireSignIn(
+                    child: AddHouseGate(),
+                  ),
                 ),
                 GoRoute(
                   path: '/profile',
-                  builder: (context, state) => const ProfileGate(),
+                  builder: (context, state) => const RequireSignIn(
+                    child: ProfileGate(),
+                  ),
                 ),
                 GoRoute(
                   path: '/my-tours',
-                  builder: (context, state) => const TourListExtendedGate(),
+                  builder: (context, state) => const RequireSignIn(
+                    child: TourListExtendedGate(),
+                  ),
                 ),
                 GoRoute(
                   path: '/my-alerts',
-                  builder: (context, state) => const AlertsGate(),
+                  builder: (context, state) => const RequireSignIn(
+                    child: AlertsGate(),
+                  ),
                 ),
                 GoRoute(
                     path: '/houses',

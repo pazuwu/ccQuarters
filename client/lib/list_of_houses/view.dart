@@ -8,8 +8,8 @@ import 'package:ccquarters/main_page/search/search_box.dart';
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -69,17 +69,31 @@ class _ListOfHousesState extends State<ListOfHouses> {
       child: Scaffold(
         body: RefreshIndicator(
           onRefresh: () async => _pagingController.refresh(),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (getDeviceType(context) == DeviceType.web)
-                _buildFiltersColumn(context),
-              _buildList(context),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) => Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (constraints.maxWidth > constraints.maxHeight &&
+                    MediaQuery.of(context).orientation == Orientation.landscape)
+                  _buildFiltersColumn(context),
+                Expanded(
+                    child: _buildList(
+                        context,
+                        constraints.maxWidth > constraints.maxHeight
+                            ? Orientation.landscape
+                            : Orientation.portrait)),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _updateUrl(BuildContext context) {
+    var filter = context.read<ListOfHousesCubit>().filter;
+    var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
+    context.go(Uri(path: '/houses', queryParameters: query).toString());
   }
 
   Widget _buildFiltersColumn(BuildContext context) {
@@ -91,46 +105,39 @@ class _ListOfHousesState extends State<ListOfHouses> {
         filters: context.read<ListOfHousesCubit>().filter,
         onSave: (HouseFilter filter) {
           context.read<ListOfHousesCubit>().saveFilter(filter);
-          var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
-          context.go(Uri(path: '/houses', queryParameters: query).toString());
+          _updateUrl(context);
           _pagingController.refresh();
         },
       ),
     );
   }
 
-  Widget _buildList(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width *
-              (getDeviceType(context) == DeviceType.web ? 0.5 : 1)),
-      child: CustomScrollView(
-        slivers: [
-          _buildAppBarSliver(context),
-          _buildFiltersSliver(context),
-          _buildListSliver(),
-        ],
-      ),
+  Widget _buildList(BuildContext context, Orientation orientation) {
+    return Column(
+      children: [
+        _buildAppBarSliver(context),
+        _buildFiltersSliver(context, orientation == Orientation.landscape),
+        Expanded(
+          child: _buildListSliver(),
+        ),
+      ],
     );
   }
 
-  SliverToBoxAdapter _buildAppBarSliver(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 16,
-          ),
-          Row(
-            children: [
-              if (MediaQuery.of(context).orientation == Orientation.portrait)
-                _buildBackButton(context),
-              _buildAppBarMainWidget(context),
-              if (!_isSearch) _buildSearchButton(),
-            ],
-          ),
-        ],
-      ),
+  Widget _buildAppBarSliver(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 16,
+        ),
+        Row(
+          children: [
+            if (!kIsWeb) _buildBackButton(context),
+            _buildAppBarMainWidget(context),
+            if (!_isSearch) _buildSearchButton(),
+          ],
+        ),
+      ],
     );
   }
 
@@ -170,6 +177,8 @@ class _ListOfHousesState extends State<ListOfHouses> {
                 color: Theme.of(context).colorScheme,
                 controller: _controller,
                 onSubmitted: (value) {
+                  context.read<ListOfHousesCubit>().saveSearch(value);
+                  _updateUrl(context);
                   _pagingController.refresh();
                 },
               )
@@ -196,40 +205,44 @@ class _ListOfHousesState extends State<ListOfHouses> {
     );
   }
 
-  SliverToBoxAdapter _buildFiltersSliver(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: largePaddingSize,
-          right: largePaddingSize,
-        ),
-        child: SizedBox(
-          child: Filters(
-            filters: context.read<ListOfHousesCubit>().filter,
-            onSave: (HouseFilter filter) {
-              setState(() {
-                context.read<ListOfHousesCubit>().saveFilter(filter);
-                var query = HouseFilterQuery.fromHouseFilter(filter).toMap();
-                context.go(
-                    Uri(path: '/houses', queryParameters: query).toString());
-              });
-              _pagingController.refresh();
-            },
-          ),
+  Widget _buildFiltersSliver(BuildContext context, bool onlySort) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: largePaddingSize,
+        right: largePaddingSize,
+      ),
+      child: SizedBox(
+        child: Filters(
+          onlySort: onlySort,
+          filters: context.read<ListOfHousesCubit>().filter,
+          onSave: (HouseFilter filter) {
+            setState(() {
+              context.read<ListOfHousesCubit>().saveFilter(filter);
+              _updateUrl(context);
+            });
+            _pagingController.refresh();
+          },
         ),
       ),
     );
   }
 
-  SliverFillRemaining _buildListSliver() {
-    return SliverFillRemaining(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: largePaddingSize,
-          right: largePaddingSize,
-        ),
-        child: PagedListView<int, House>(
+  Widget _buildListSliver() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: largePaddingSize,
+        right: largePaddingSize,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) => PagedGridView<int, House>(
           pagingController: _pagingController,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            childAspectRatio: 1.2,
+            mainAxisSpacing: 16.0,
+            crossAxisSpacing: 16.0,
+            crossAxisCount:
+                constraints.maxHeight > constraints.maxWidth ? 1 : 2,
+          ),
           builderDelegate: PagedChildBuilderDelegate<House>(
             noItemsFoundIndicatorBuilder: (context) => const Message(
               title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
@@ -246,10 +259,8 @@ class _ListOfHousesState extends State<ListOfHouses> {
               "Nie udało się pobrać ogłoszeń",
               tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
             ),
-            itemBuilder: (context, item, index) => LayoutBuilder(
-              builder: (context, constraints) => HouseListTile(
-                house: item,
-              ),
+            itemBuilder: (context, item, index) => HouseListTile(
+              house: item,
             ),
           ),
         ),

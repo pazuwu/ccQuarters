@@ -43,7 +43,7 @@ class AuthService implements BaseAuthService {
       StreamController.broadcast();
 
   @override
-  bool get isSignedIn => _firebaseAuth.currentUser != null;
+  bool get isSignedIn => !(_firebaseAuth.currentUser?.isAnonymous ?? true);
   @override
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 
