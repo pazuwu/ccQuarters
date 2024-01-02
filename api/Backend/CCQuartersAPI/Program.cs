@@ -14,7 +14,7 @@ namespace CCQuartersAPI
 
             builder.AddFirebaseAuthorizarion();
             builder.AddFirebaseAuthentication();
-            builder.Services.AddCors();
+            builder.Services.AddCors(c => c.AddLocationHeaderCorsOptions());
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c => c.AddFirebaseSecurityDefinition());
@@ -48,6 +48,7 @@ namespace CCQuartersAPI
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors(LocationHeaderCorsPolicy.LocationPolicyName);
 
             app.MapGet("/houses", HousesEndpoints.GetHouses).WithOpenApi().RequireFBAuthorization();
             app.MapGet("/houses/liked", HousesEndpoints.GetLikedHouses).WithOpenApi().RequireFBAuthorization();

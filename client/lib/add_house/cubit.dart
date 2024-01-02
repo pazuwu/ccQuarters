@@ -10,7 +10,7 @@ import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:ccquarters/model/offer_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/services/virtual_tours/service.dart';
 
 class AddHouseFormCubit extends Cubit<HouseFormState> {
   AddHouseFormCubit(

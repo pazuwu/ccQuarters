@@ -11,7 +11,7 @@ builder.AddFirebaseAuthorizarion();
 builder.AddFirebaseAuthentication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.AddFirebaseSecurityDefinition());
-builder.Services.AddCors();
+builder.Services.AddCors(c => c.AddLocationHeaderCorsOptions());
 
 builder.Services.Configure<DocumentDBOptions>(options =>
     builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
@@ -40,6 +40,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(LocationHeaderCorsPolicy.LocationPolicyName);
 
 app.MapGet("/tours/{tourId}", TourEndpoints.Get).WithOpenApi().RequireFBAuthorization();
 app.MapGet("/tours/{tourId}/forEdit", TourEndpoints.GetForEdit).WithOpenApi().RequireFBAuthorization();

@@ -1,9 +1,9 @@
+import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/virtual_tour/tour/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/virtual_tour/model/tour.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
-import 'package:ccquarters/virtual_tour/service/service_response.dart';
+import 'package:ccquarters/services/virtual_tours/service.dart';
 
 class VirtualTourCubit extends Cubit<VTState> {
   final VTService _service;
@@ -104,7 +104,7 @@ class VirtualTourCubit extends Cubit<VTState> {
     await Future.wait(tasks);
   }
 
-  void _handleServiceError<T>(VTServiceResponse<T> serviceResponse) {
+  void _handleServiceError<T>(ServiceResponse<T> serviceResponse) {
     switch (serviceResponse.error) {
       case ErrorType.unauthorized:
         emit(VTErrorState(text: "Nie masz uprawnień do tego spaceru"));

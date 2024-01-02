@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/virtual_tour/model/area.dart';
 import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:ccquarters/virtual_tour/scene_list/states.dart';
-import 'package:ccquarters/virtual_tour/service/service_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/services/virtual_tours/service.dart';
 
 class VTScenesCubit extends Cubit<VTScenesState> {
   VTScenesCubit(
@@ -171,7 +171,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     var result = await _service.updateTour(_tour.id, primarySceneId: sceneId);
     plannedLoading.cancel();
 
-    if (result.data ?? false) {
+    if (result.data) {
       _tour.primarySceneId = sceneId;
       emit(
         VTScenesSuccessState(
@@ -191,7 +191,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     var result = await _service.deleteScene(_tour.id, sceneId);
     plannedLoading.cancel();
 
-    if (result.data ?? false) {
+    if (result.data) {
       _tour.scenes.removeWhere((element) => element.id == sceneId);
       emit(
         VTScenesSuccessState(

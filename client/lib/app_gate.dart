@@ -8,7 +8,7 @@ import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/users/service.dart';
 import 'package:ccquarters/theme.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/services/virtual_tours/service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,6 @@
 ﻿using AuthLibrary;
 using CloudStorageLibrary;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using VirtualTourAPI.DTOModel;
 using VirtualTourAPI.Service;
@@ -21,7 +22,7 @@ namespace VirtualTourAPI.Endpoints
             if (string.IsNullOrWhiteSpace(createdSceneId))
                 return Results.Problem("DB error occured while creating object.");
 
-            return Results.Created(createdSceneId, null);
+            return Results.Created(createdSceneId, "");
         }
 
         public static async Task<IResult> Delete(string tourId, string sceneId, HttpContext context, IVTService service)

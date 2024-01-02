@@ -13,5 +13,6 @@ enum ErrorType {
   forbidden,
   unknown,
   noInternet,
+  alreadyExists,
   none,
 }

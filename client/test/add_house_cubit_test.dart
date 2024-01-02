@@ -3,7 +3,7 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/services/virtual_tours/service.dart';
 import 'package:test/test.dart';
 
 import 'mocks/file_service_mock.dart';
