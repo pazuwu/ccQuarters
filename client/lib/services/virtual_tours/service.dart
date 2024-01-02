@@ -3,17 +3,17 @@ import 'dart:typed_data';
 
 import 'package:ccquarters/services/file_service/download_progress.dart';
 import 'package:ccquarters/services/file_service/file_info.dart';
+import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/virtual_tour/model/geo_point.dart';
 import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
 import 'package:ccquarters/virtual_tour/model/tour_info.dart';
 import 'package:ccquarters/services/file_service/file_service.dart';
-import 'package:ccquarters/virtual_tour/service/requests/post_area_request.dart';
-import 'package:ccquarters/virtual_tour/service/requests/post_link_request.dart';
-import 'package:ccquarters/virtual_tour/service/requests/post_scene_request.dart';
-import 'package:ccquarters/virtual_tour/service/requests/post_tour_request.dart';
-import 'package:ccquarters/virtual_tour/service/requests/put_link_request.dart';
-import 'package:ccquarters/virtual_tour/service/requests/put_tour_request.dart';
-import 'package:ccquarters/virtual_tour/service/service_response.dart';
+import 'package:ccquarters/services/virtual_tours/requests/post_area_request.dart';
+import 'package:ccquarters/services/virtual_tours/requests/post_link_request.dart';
+import 'package:ccquarters/services/virtual_tours/requests/post_scene_request.dart';
+import 'package:ccquarters/services/virtual_tours/requests/post_tour_request.dart';
+import 'package:ccquarters/services/virtual_tours/requests/put_link_request.dart';
+import 'package:ccquarters/services/virtual_tours/requests/put_tour_request.dart';
 import 'package:dio/dio.dart';
 
 import 'package:ccquarters/virtual_tour/model/link.dart';
@@ -35,7 +35,7 @@ class VTService {
         _dio = dio,
         _fileService = cacheManager;
 
-  Future<VTServiceResponse<Tour>> getTour(String tourId) async {
+  Future<ServiceResponse<Tour?>> getTour(String tourId) async {
     try {
       var response = await _dio.get(
         "$_url/$_tours/$tourId",
@@ -45,16 +45,21 @@ class VTService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return VTServiceResponse(data: Tour.fromMap(response.data));
+        return ServiceResponse(
+          data: Tour.fromMap(response.data),
+        );
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<TourForEdit>> getTourForEdit(String tourId) async {
+  Future<ServiceResponse<TourForEdit?>> getTourForEdit(String tourId) async {
     try {
       var response = await _dio.get(
         "$_url/$_tours/$tourId/forEdit",
@@ -64,16 +69,21 @@ class VTService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return VTServiceResponse(data: TourForEdit.fromMap(response.data));
+        return ServiceResponse(
+          data: TourForEdit.fromMap(response.data),
+        );
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<List<TourInfo>>> getMyTours() async {
+  Future<ServiceResponse<List<TourInfo>?>> getMyTours() async {
     try {
       var response = await _dio.get(
         "$_url/$_tours/my",
@@ -83,32 +93,40 @@ class VTService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return VTServiceResponse(
-            data: (response.data as List)
-                .map<TourInfo>((e) => TourInfo.fromMap(e))
-                .toList());
+        return ServiceResponse(
+          data: (response.data as List)
+              .map<TourInfo>((e) => TourInfo.fromMap(e))
+              .toList(),
+        );
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<String?>> postScene(
+  Future<ServiceResponse<String?>> postScene(
       {required String tourId,
       required String parentId,
       required String name}) async {
     try {
-      var response = await _dio.post(
-        "$_url/$_tours/$tourId/$_scenes",
-        data: PostSceneRequest(
-          parentId: parentId,
-          name: name,
-        ).toJson(),
-        options: Options(headers: {
-          HttpHeaders.contentTypeHeader: ContentType.json.value,
-        }),
+      var response = await _dio.fetch(
+        RequestOptions(
+          method: "POST",
+          headers: {
+            HttpHeaders.contentTypeHeader: ContentType.json.value,
+          },
+          baseUrl: _url,
+          path: "/$_tours/$tourId/$_scenes",
+          data: PostSceneRequest(
+            parentId: parentId,
+            name: name,
+          ).toJson(),
+        ),
       );
 
       var id = response.headers.value("location");
@@ -116,16 +134,19 @@ class VTService {
       if ((response.statusCode == StatusCode.OK ||
               response.statusCode == StatusCode.CREATED) &&
           id != null) {
-        return VTServiceResponse(data: id);
+        return ServiceResponse(data: id);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<bool>> deleteScene(
+  Future<ServiceResponse<bool>> deleteScene(
       String tourId, String sceneId) async {
     try {
       var response = await _dio.delete(
@@ -136,22 +157,22 @@ class VTService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return VTServiceResponse(data: true);
+        return ServiceResponse(data: true);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(data: false, error: ErrorType.unknown);
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, false);
     }
   }
 
-  Future<VTServiceResponse<String?>> uploadScenePhoto(
-      String tourId, String sceneId, Uint8List photo) async {
+  Future<ServiceResponse<String?>> uploadScenePhoto(
+      String tourId, String sceneId, Uint8List photo) {
     return _uploadPhoto(
         "$_url/$_tours/$tourId/$_scenes/$sceneId/photo", sceneId, photo);
   }
 
-  Future<VTServiceResponse<String?>> postLink(String tourId, Link link) async {
+  Future<ServiceResponse<String?>> postLink(String tourId, Link link) async {
     try {
       var response = await _dio.post(
         "$_url/$_tours/$tourId/links",
@@ -173,16 +194,19 @@ class VTService {
       if ((response.statusCode == StatusCode.OK ||
               response.statusCode == StatusCode.CREATED) &&
           id != null) {
-        return VTServiceResponse(data: id);
+        return ServiceResponse(data: id);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<bool>> updateLink(String tourId, String linkId,
+  Future<ServiceResponse<bool>> updateLink(String tourId, String linkId,
       {String? destinationId,
       GeoPoint? nextOrientation,
       GeoPoint? position,
@@ -201,27 +225,26 @@ class VTService {
         }),
       );
 
-      return VTServiceResponse(data: response.statusCode == StatusCode.OK);
+      return ServiceResponse(data: response.statusCode == StatusCode.OK);
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, false);
     }
   }
 
-  Future<VTServiceResponse<bool>> deleteLink(
-      String tourId, String linkId) async {
+  Future<ServiceResponse<bool>> deleteLink(String tourId, String linkId) async {
     try {
       var response = await _dio.delete(
         "$_url/$_tours/$tourId/$_links/$linkId",
         options: Options(headers: {}),
       );
 
-      return VTServiceResponse(data: response.statusCode == StatusCode.OK);
+      return ServiceResponse(data: response.statusCode == StatusCode.OK);
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, false);
     }
   }
 
-  Future<VTServiceResponse<String?>> postArea(String tourId,
+  Future<ServiceResponse<String?>> postArea(String tourId,
       {String name = ""}) async {
     try {
       var response = await _dio.post(
@@ -239,16 +262,19 @@ class VTService {
       if ((response.statusCode == StatusCode.OK ||
               response.statusCode == StatusCode.CREATED) &&
           id != null) {
-        return VTServiceResponse(data: id);
+        return ServiceResponse(data: id);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<List<String>>> getAreaPhotos(
+  Future<ServiceResponse<List<String>?>> getAreaPhotos(
       String tourId, String areaId) async {
     try {
       var response = await _dio.get(
@@ -259,27 +285,30 @@ class VTService {
       );
 
       if (response.statusCode == StatusCode.OK) {
-        return VTServiceResponse(
+        return ServiceResponse(
           data: ((response.data as List?)?.map((e) => e as String).toList() ??
               []),
         );
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<String?>> uploadAreaPhoto(
+  Future<ServiceResponse<String?>> uploadAreaPhoto(
       String tourId, String areaId, Uint8List photo,
-      {void Function(int count, int total)? progressCallback}) async {
+      {void Function(int count, int total)? progressCallback}) {
     return _uploadPhoto(
         "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo,
         progressCallback: progressCallback);
   }
 
-  Future<VTServiceResponse<String?>> _uploadPhoto(
+  Future<ServiceResponse<String?>> _uploadPhoto(
       String url, String filename, Uint8List photo,
       {void Function(int count, int total)? progressCallback}) async {
     try {
@@ -295,15 +324,17 @@ class VTService {
         },
       );
 
-      var createdUrl = response.headers.value("location");
-
-      return VTServiceResponse(data: createdUrl);
+      if (response.statusCode == StatusCode.CREATED) {
+        return ServiceResponse(data: response.headers.value("location"));
+      } else {
+        return ServiceResponse(data: null, error: ErrorType.unknown);
+      }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<Uint8List>> downloadFile(String url,
+  Future<ServiceResponse<Uint8List?>> downloadFile(String url,
       {void Function(int count, int total)? progressCallback}) async {
     var fileStream = _fileService.getImageFile(url, withProgress: true);
     Uint8List? downloadedFile;
@@ -318,27 +349,30 @@ class VTService {
 
     await subscription.asFuture();
 
-    return VTServiceResponse(data: downloadedFile);
+    return ServiceResponse(data: downloadedFile);
   }
 
-  Future<VTServiceResponse<String>> postOperation(
+  Future<ServiceResponse<String?>> postOperation(
       String tourId, String areaId) async {
     try {
       final response = await _dio.post<String>(
         "$_url/$_tours/$tourId/$_areas/$areaId/process",
       );
 
-      return VTServiceResponse(data: response.data);
+      return ServiceResponse(data: response.data);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.CONFLICT) {
-        return VTServiceResponse(error: ErrorType.alreadyExists);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.alreadyExists,
+        );
       }
 
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<String>> postTour({required String name}) async {
+  Future<ServiceResponse<String?>> postTour({required String name}) async {
     try {
       var request = PostTourRequest(name: name);
 
@@ -355,17 +389,19 @@ class VTService {
       if ((response.statusCode == StatusCode.OK ||
               response.statusCode == StatusCode.CREATED) &&
           id != null) {
-        return VTServiceResponse(data: id);
+        return ServiceResponse(data: id);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: null,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, null);
     }
   }
 
-  Future<VTServiceResponse<bool>> deleteTours(
-      {required List<String> ids}) async {
+  Future<ServiceResponse<bool>> deleteTours({required List<String> ids}) async {
     try {
       var response = await _dio.delete(
         "$_url/$_tours",
@@ -377,16 +413,19 @@ class VTService {
 
       if ((response.statusCode == StatusCode.OK ||
           response.statusCode == StatusCode.CREATED)) {
-        return VTServiceResponse(data: true);
+        return ServiceResponse(data: true);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: false,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, false);
     }
   }
 
-  Future<VTServiceResponse<bool>> updateTour(String tourId,
+  Future<ServiceResponse<bool>> updateTour(String tourId,
       {String? name, String? primarySceneId}) async {
     try {
       var response = await _dio.put(
@@ -402,26 +441,39 @@ class VTService {
 
       if ((response.statusCode == StatusCode.OK ||
           response.statusCode == StatusCode.CREATED)) {
-        return VTServiceResponse(data: true);
+        return ServiceResponse(data: true);
       } else {
-        return VTServiceResponse(error: ErrorType.unknown);
+        return ServiceResponse(
+          data: false,
+          error: ErrorType.unknown,
+        );
       }
     } on DioException catch (e) {
-      return _catchCommonErrors(e);
+      return _catchCommonErrors(e, false);
     }
   }
 
-  VTServiceResponse<T> _catchCommonErrors<T>(DioException e) {
-    if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
-      return VTServiceResponse(error: ErrorType.unauthorized);
-    } else if (e.response?.statusCode == StatusCode.BAD_REQUEST) {
-      return VTServiceResponse(error: ErrorType.badRequest);
-    } else if (e.response?.statusCode == StatusCode.NOT_FOUND) {
-      return VTServiceResponse(error: ErrorType.notFound);
-    } else if (e.response?.statusCode == StatusCode.GATEWAY_TIMEOUT) {
-      return VTServiceResponse(error: ErrorType.noInternet);
+  ServiceResponse<T> _catchCommonErrors<T>(DioException e, T value) {
+    var response = ServiceResponse(data: value);
+
+    switch (e.response?.statusCode) {
+      case StatusCode.UNAUTHORIZED:
+        response.error = ErrorType.unauthorized;
+        break;
+      case StatusCode.BAD_REQUEST:
+        response.error = ErrorType.badRequest;
+        break;
+      case StatusCode.NOT_FOUND:
+        response.error = ErrorType.notFound;
+        break;
+      case StatusCode.GATEWAY_TIMEOUT:
+        response.error = ErrorType.noInternet;
+        break;
+      default:
+        response.error = ErrorType.unknown;
+        break;
     }
 
-    return VTServiceResponse(error: ErrorType.unknown);
+    return response;
   }
 }
