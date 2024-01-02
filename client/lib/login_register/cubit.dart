@@ -152,6 +152,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> signOut() async {
     await authService.signOut();
+
     user = User.empty();
     emit(NeedsSigningInState());
   }

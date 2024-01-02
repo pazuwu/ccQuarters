@@ -56,30 +56,28 @@ class _AnnouncementListState extends State<AnnouncementList> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: PagedListView<int, House>(
-        scrollDirection: Axis.horizontal,
-        scrollController: widget.scrollController,
-        pagingController: widget.pagingController,
-        builderDelegate: PagedChildBuilderDelegate<House>(
-          noItemsFoundIndicatorBuilder: (context) => const Message(
-            title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
-            subtitle: "Spróbuj ponownie później",
-            imageWidget: Icon(Icons.home),
-            adjustToLandscape: true,
-            padding: EdgeInsets.all(8.0),
-          ),
-          firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
-            "Nie udało się pobrać ogłoszeń",
-            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-          ),
-          newPageErrorIndicatorBuilder: (context) => ErrorMessage(
-            "Nie udało się pobrać ogłoszeń",
-            tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-          ),
-          itemBuilder: (context, item, index) => HouseItem(
-            house: item,
-          ),
+    return PagedListView<int, House>(
+      scrollDirection: Axis.horizontal,
+      scrollController: widget.scrollController,
+      pagingController: widget.pagingController,
+      builderDelegate: PagedChildBuilderDelegate<House>(
+        noItemsFoundIndicatorBuilder: (context) => const Message(
+          title: "Niestety nie znaleziono dla \nCiebie żadnych ogłoszeń",
+          subtitle: "Spróbuj ponownie później",
+          imageWidget: Icon(Icons.home),
+          adjustToLandscape: true,
+          padding: EdgeInsets.all(8.0),
+        ),
+        firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
+          "Nie udało się pobrać ogłoszeń",
+          tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+        ),
+        newPageErrorIndicatorBuilder: (context) => ErrorMessage(
+          "Nie udało się pobrać ogłoszeń",
+          tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+        ),
+        itemBuilder: (context, item, index) => HouseItem(
+          house: item,
         ),
       ),
     );

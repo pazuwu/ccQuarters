@@ -3,6 +3,7 @@ import 'package:ccquarters/main_page/announcements/item.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/model/offer_type.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -39,28 +40,29 @@ class AnnouncementsContainer extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 8.0),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      _scrollController.animateTo(
-                        _scrollController.offset -
-                            HouseItem.getMaxItemWidth(context),
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.decelerate,
-                      );
-                    },
-                    visualDensity: VisualDensity.compact,
-                    constraints:
-                        const BoxConstraints(minHeight: double.infinity),
-                    icon: Icon(
-                      Icons.arrow_left_rounded,
-                      size: HouseItem.getMaxItemWidth(context) * 0.1,
+                if (kIsWeb)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 8.0),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        _scrollController.animateTo(
+                          _scrollController.offset -
+                              HouseItem.getMaxItemWidth(context),
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.decelerate,
+                        );
+                      },
+                      visualDensity: VisualDensity.compact,
+                      constraints:
+                          const BoxConstraints(minHeight: double.infinity),
+                      icon: Icon(
+                        Icons.arrow_left_rounded,
+                        size: HouseItem.getMaxItemWidth(context) * 0.1,
+                      ),
                     ),
                   ),
-                ),
                 Expanded(
                   child: AnnouncementList(
                     scrollController: _scrollController,
@@ -68,27 +70,28 @@ class AnnouncementsContainer extends StatelessWidget {
                     getHouses: getHouses,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12.0, horizontal: 8.0),
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      _scrollController.animateTo(
-                        _scrollController.offset +
-                            HouseItem.getMaxItemWidth(context),
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.decelerate,
-                      );
-                    },
-                    constraints:
-                        const BoxConstraints(minHeight: double.infinity),
-                    icon: Icon(
-                      Icons.arrow_right_rounded,
-                      size: HouseItem.getMaxItemWidth(context) * 0.1,
+                if (kIsWeb)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 8.0),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        _scrollController.animateTo(
+                          _scrollController.offset +
+                              HouseItem.getMaxItemWidth(context),
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.decelerate,
+                        );
+                      },
+                      constraints:
+                          const BoxConstraints(minHeight: double.infinity),
+                      icon: Icon(
+                        Icons.arrow_right_rounded,
+                        size: HouseItem.getMaxItemWidth(context) * 0.1,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),

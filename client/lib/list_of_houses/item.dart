@@ -1,20 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/images/asset_image.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/widgets/always_visible_label.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/list_of_houses/like_button.dart';
 import 'package:ccquarters/list_of_houses/price_info.dart';
 import 'package:ccquarters/model/building_type.dart';
 import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/common/widgets/always_visible_label.dart';
 import 'package:ccquarters/model/location.dart';
-import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/images/image.dart';
-import 'package:ccquarters/common/images/inkwell_with_photo.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class HouseListTile extends StatefulWidget {
-  const HouseListTile({super.key, required this.house});
+  const HouseListTile({
+    Key? key,
+    required this.house,
+  }) : super(key: key);
 
   final House house;
 
@@ -25,58 +29,60 @@ class HouseListTile extends StatefulWidget {
 class _HouseListTileState extends State<HouseListTile> {
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shadowColor: Theme.of(context).colorScheme.secondary,
-      elevation: elevation,
-      margin: const EdgeInsets.only(top: 8, bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(formBorderRadius),
-      ),
-      child: Column(
-        children: [
-          InkWellWithPhoto(
-            imageWidget: _buildPhoto(context),
-            onTap: () {
-              context.go('/houses/${widget.house.id}',
-                  extra:
-                      GoRouter.of(context).routeInformationProvider.value.uri);
-            },
-            onDoubleTap: () {
-              setState(() {
-                if (!widget.house.isLiked) {
-                  widget.house.isLiked = !widget.house.isLiked;
-                }
-              });
-            },
-            inkWellChild: _buildCityAndDistrictLabel(context),
-          ),
-          _buildInfo(context)
-        ],
+    return LayoutBuilder(
+      builder: (context, constraints) => Card(
+        shadowColor: Theme.of(context).colorScheme.secondary,
+        elevation: elevation,
+        margin: const EdgeInsets.only(top: 8, bottom: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(formBorderRadius),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: InkWellWithPhoto(
+                imageWidget: _buildPhoto(context),
+                onTap: () {
+                  context.go('/houses/${widget.house.id}',
+                      extra: GoRouter.of(context)
+                          .routeInformationProvider
+                          .value
+                          .uri);
+                },
+                onDoubleTap: () {
+                  setState(() {
+                    if (!widget.house.isLiked) {
+                      widget.house.isLiked = !widget.house.isLiked;
+                    }
+                  });
+                },
+                inkWellChild: _buildCityAndDistrictLabel(context),
+              ),
+            ),
+            _buildInfo(context)
+          ],
+        ),
       ),
     );
   }
 
-  ConstrainedBox _buildPhoto(BuildContext context) {
-    return ConstrainedBox(
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.3),
-      child: widget.house.photoUrl != null
-          ? ImageWidget(
-              imageUrl: widget.house.photoUrl!,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(formBorderRadius),
-                topRight: Radius.circular(formBorderRadius),
-              ),
-            )
-          : AssetImageWidget(
-              fit: BoxFit.contain,
-              imagePath: widget.house.getFilenameDependOnBuildingType(),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(formBorderRadius),
-                topRight: Radius.circular(formBorderRadius),
-              ),
+  Widget _buildPhoto(BuildContext context) {
+    return widget.house.photoUrl != null
+        ? ImageWidget(
+            imageUrl: widget.house.photoUrl!,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(formBorderRadius),
+              topRight: Radius.circular(formBorderRadius),
             ),
-    );
+          )
+        : AssetImageWidget(
+            fit: BoxFit.contain,
+            imagePath: widget.house.getFilenameDependOnBuildingType(),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(formBorderRadius),
+              topRight: Radius.circular(formBorderRadius),
+            ),
+          );
   }
 
   Column _buildCityAndDistrictLabel(BuildContext context) {
@@ -136,16 +142,14 @@ class _HouseListTileState extends State<HouseListTile> {
       padding: const EdgeInsets.fromLTRB(
           largePaddingSize, paddingSize, largePaddingSize, paddingSize),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              widget.house.details.title.toUpperCase(),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-              overflow: TextOverflow.ellipsis,
-            ),
+          Text(
+            widget.house.details.title.toUpperCase(),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+            overflow: TextOverflow.ellipsis,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

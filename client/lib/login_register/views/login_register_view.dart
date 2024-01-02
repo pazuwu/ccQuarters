@@ -61,7 +61,8 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
       child: ConstrainedBox(
         constraints: BoxConstraints(
             maxWidth:
-                MediaQuery.of(context).orientation == Orientation.landscape
+                MediaQuery.of(context).orientation == Orientation.landscape &&
+                        MediaQuery.of(context).size.width > 700
                     ? MediaQuery.of(context).size.width * 0.5
                     : MediaQuery.of(context).size.width),
         child: Scaffold(
