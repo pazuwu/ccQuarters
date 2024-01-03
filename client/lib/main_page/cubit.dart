@@ -7,10 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPageState {}
 
-class MainPageInitialState extends MainPageState {}
-
 class MainPageCubit extends Cubit<MainPageState> {
-  MainPageCubit(this.houseService) : super(MainPageInitialState());
+  MainPageCubit(this.houseService) : super(MainPageState());
 
   HouseService houseService;
 

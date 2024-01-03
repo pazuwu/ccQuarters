@@ -6,7 +6,7 @@ import 'package:ccquarters/house_details/views/accordion.dart';
 import 'package:ccquarters/house_details/views/contact.dart';
 import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
-import 'package:ccquarters/list_of_houses/like_button.dart';
+import 'package:ccquarters/common/widgets/like_button.dart';
 import 'package:ccquarters/list_of_houses/price_info.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
