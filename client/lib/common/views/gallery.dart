@@ -58,74 +58,81 @@ class _GalleryState extends State<Gallery> {
         ),
         backgroundColor: Colors.transparent,
       ),
-      body: IconButtonTheme(
-        data: const IconButtonThemeData(
-            style: ButtonStyle(
-          iconColor: MaterialStatePropertyAll(Colors.white),
-          iconSize: MaterialStatePropertyAll(32),
-          visualDensity: VisualDensity.compact,
-        )),
-        child: Stack(
-          children: [
-            PhotoViewGallery.builder(
-              scrollPhysics: const ClampingScrollPhysics(),
-              pageController: _pageController,
-              builder: (BuildContext context, int index) {
-                return index >= widget.memoryPhotos.length
-                    ? PhotoViewGalleryPageOptions(
-                        imageProvider:
-                            CachedNetworkImageProvider(widget.imageUrls[index]),
-                      )
-                    : PhotoViewGalleryPageOptions(
-                        imageProvider: MemoryImage(widget.memoryPhotos[index]),
-                      );
-              },
-              itemCount: widget.memoryPhotos.length + widget.imageUrls.length,
-              loadingBuilder: (context, event) => const Center(
-                child: SizedBox(
-                  width: 20.0,
-                  height: 20.0,
-                  child: CircularProgressIndicator(),
+      body: BackButtonListener(
+        onBackButtonPressed: () async {
+          Navigator.of(context).pop();
+          return true;
+        },
+        child: IconButtonTheme(
+          data: const IconButtonThemeData(
+              style: ButtonStyle(
+            iconColor: MaterialStatePropertyAll(Colors.white),
+            iconSize: MaterialStatePropertyAll(32),
+            visualDensity: VisualDensity.compact,
+          )),
+          child: Stack(
+            children: [
+              PhotoViewGallery.builder(
+                scrollPhysics: const ClampingScrollPhysics(),
+                pageController: _pageController,
+                builder: (BuildContext context, int index) {
+                  return index >= widget.memoryPhotos.length
+                      ? PhotoViewGalleryPageOptions(
+                          imageProvider: CachedNetworkImageProvider(
+                              widget.imageUrls[index]),
+                        )
+                      : PhotoViewGalleryPageOptions(
+                          imageProvider:
+                              MemoryImage(widget.memoryPhotos[index]),
+                        );
+                },
+                itemCount: widget.memoryPhotos.length + widget.imageUrls.length,
+                loadingBuilder: (context, event) => const Center(
+                  child: SizedBox(
+                    width: 20.0,
+                    height: 20.0,
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ),
-            ),
-            if (kIsWeb)
-              Positioned.fill(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(width: 12),
-                    Container(
-                      decoration: const BoxDecoration(boxShadow: [
-                        BoxShadow(
-                          color: Colors.black54,
-                          blurRadius: 48,
+              if (kIsWeb)
+                Positioned.fill(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 12),
+                      Container(
+                        decoration: const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                            color: Colors.black54,
+                            blurRadius: 48,
+                          ),
+                        ]),
+                        child: IconButton(
+                          onPressed: () {
+                            _pageController.previousPage(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          icon: const Icon(Icons.arrow_left),
                         ),
-                      ]),
-                      child: IconButton(
-                        onPressed: () {
-                          _pageController.previousPage(
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                        icon: const Icon(Icons.arrow_left),
                       ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () {
-                        _pageController.nextPage(
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeInOut);
-                      },
-                      icon: const Icon(Icons.arrow_right),
-                    ),
-                    const SizedBox(width: 12),
-                  ],
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          _pageController.nextPage(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut);
+                        },
+                        icon: const Icon(Icons.arrow_right),
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
