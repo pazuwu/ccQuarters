@@ -34,47 +34,50 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   @override
   Widget build(BuildContext context) {
     activeStep = _getStepIndex();
-    return Scaffold(
-      appBar: widget.editMode
-          ? AppBar(
-              title: const Text("Edytuj ogłoszenie"),
-              leading: BackButton(
-                onPressed:
-                    context.read<HouseDetailsCubit>().goBackToHouseDetails,
+    return BackButtonListener(
+      onBackButtonPressed: _goBack,
+      child: Scaffold(
+        appBar: widget.editMode
+            ? AppBar(
+                title: const Text("Edytuj ogłoszenie"),
+                leading: BackButton(
+                  onPressed:
+                      context.read<HouseDetailsCubit>().goBackToHouseDetails,
+                ),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      if (_validateAndSaveData(widget.state, false)) {
+                        context.read<AddHouseFormCubit>().updateHouse();
+                      }
+                    },
+                    icon: const Icon(Icons.check),
+                  )
+                ],
+              )
+            : null,
+        body: Column(
+          children: [
+            if (!widget.editMode)
+              Column(
+                children: [
+                  const SizedBox(height: 8),
+                  _buildHeader(),
+                ],
               ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    if (_validateAndSaveData(widget.state, false)) {
-                      context.read<AddHouseFormCubit>().updateHouse();
-                    }
-                  },
-                  icon: const Icon(Icons.check),
-                )
-              ],
-            )
-          : null,
-      body: Column(
-        children: [
-          if (!widget.editMode)
-            Column(
-              children: [
-                const SizedBox(height: 8),
-                _buildHeader(),
-              ],
+            const SizedBox(height: 12),
+            _buildStepper(context),
+            Divider(
+              color: Colors.blueGrey.shade300,
+              thickness: 1,
+              height: 1,
             ),
-          const SizedBox(height: 12),
-          _buildStepper(context),
-          Divider(
-            color: Colors.blueGrey.shade300,
-            thickness: 1,
-            height: 1,
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: _buildView(widget.state),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Expanded(
+              child: _buildView(widget.state),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -173,6 +176,27 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
     }
 
     return 0;
+  }
+
+  Future<bool> _goBack() async {
+    if (activeStep == _getChooseTypeIndex()) {
+      context.read<HouseDetailsCubit>().goBackToHouseDetails();
+    } else if (activeStep == _getDetailsIndex()) {
+      context.read<AddHouseFormCubit>().goToChooseTypeForm();
+    } else if (activeStep ==
+        _getLocationIndex(getDeviceType(context) == DeviceType.mobile)) {
+      context.read<AddHouseFormCubit>().goToDetailsForm();
+    } else if (activeStep == _getMapIndex()) {
+      context.read<AddHouseFormCubit>().goToLocationForm();
+    } else if (activeStep ==
+        _getPhotosIndex(getDeviceType(context) == DeviceType.mobile)) {
+      context.read<AddHouseFormCubit>().goToMap();
+    } else if (activeStep ==
+        _getVirtualTourIndex(getDeviceType(context) == DeviceType.mobile)) {
+      context.read<AddHouseFormCubit>().goToPhotosForm();
+    }
+
+    return true;
   }
 
   void _goToChoosenPage(int index, StepperPageState state) {
