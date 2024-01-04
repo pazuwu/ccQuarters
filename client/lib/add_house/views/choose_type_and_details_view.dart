@@ -3,7 +3,7 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/model/house/new_house.dart';
 import 'package:ccquarters/common/device_type.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:ccquarters/common/views/views_with_vertical_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,8 +31,7 @@ class ChooseTypeMainView extends StatefulWidget {
 class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
   @override
   Widget build(BuildContext context) {
-    return ViewWithHeader(
-      title: "Dodaj ogłoszenie",
+    return ViewWithButtons(
       inBetweenWidget: getDeviceType(context) == DeviceType.web
           ? ViewsWithVerticalDivider(
               firstView: ChooseTypeView(

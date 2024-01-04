@@ -1,5 +1,5 @@
 import 'package:ccquarters/alerts/cubit.dart';
-import 'package:ccquarters/alerts/views/alert_list_item.dart';
+import 'package:ccquarters/alerts/views/list_item.dart';
 import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/model/alert/alert.dart';
 import 'package:ccquarters/model/alert/new_alert.dart';

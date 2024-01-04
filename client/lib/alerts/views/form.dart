@@ -7,8 +7,8 @@ import 'package:ccquarters/model/alert/new_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AlertView extends StatelessWidget {
-  const AlertView({
+class AlertForm extends StatelessWidget {
+  const AlertForm({
     super.key,
     required this.alert,
   });

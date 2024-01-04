@@ -3,7 +3,7 @@ import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/house/photo.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +37,7 @@ class _PhotoViewState extends State<PhotoView> {
           _selectedIndex = null;
         });
       },
-      child: ViewWithHeader(
-        title: "Dodaj zdjęcia",
+      child: ViewWithButtons(
         inBetweenWidget: _buildPageContent(context),
         goBackOnPressed: () {
           context.read<AddHouseFormCubit>().savePhotos(
