@@ -3,7 +3,7 @@
 import 'dart:math';
 
 import 'package:ccquarters/common/images/image.dart';
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/user/user.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';

@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/states.dart';
-import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/house/building_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 import 'package:test/test.dart';

@@ -1,8 +1,8 @@
-import 'package:ccquarters/list_of_houses/filter_query.dart';
+import 'package:ccquarters/list_of_houses/model/filter_query.dart';
 import 'package:ccquarters/main_page/announcements/item.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/house/house.dart';
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/user/user.dart';
 import 'package:ccquarters/services/auth/reset_password_result.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';

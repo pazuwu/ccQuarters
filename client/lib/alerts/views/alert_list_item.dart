@@ -1,9 +1,9 @@
-import 'package:ccquarters/alerts/alert_details.dart';
+import 'package:ccquarters/alerts/views/alert_details.dart';
 import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/messages/delete_dialog.dart';
 import 'package:ccquarters/common/widgets/icon_option_combo.dart';
-import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alert/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';

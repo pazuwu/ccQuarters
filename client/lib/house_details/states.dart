@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/detailed_house.dart';
+import 'package:ccquarters/model/house/detailed_house.dart';
 
 class HouseDetailsState {}
 

@@ -1,6 +1,6 @@
-import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alert/alert.dart';
 import 'package:flutter/material.dart';
-import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/house/building_type.dart';
 
 class AlertDetails extends StatelessWidget {
   const AlertDetails({super.key, required this.alert});

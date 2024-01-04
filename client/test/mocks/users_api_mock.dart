@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/user/user.dart';
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:http_status_code/http_status_code.dart';

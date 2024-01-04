@@ -1,7 +1,7 @@
-import 'package:ccquarters/model/alert_filter_base.dart';
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/alert/alert_filter_base.dart';
+import 'package:ccquarters/model/house/building_type.dart';
+import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
 
 abstract class AlertBase extends AlertFilterBase {
   String? voivodeship;

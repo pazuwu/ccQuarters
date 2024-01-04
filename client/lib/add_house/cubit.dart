@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:ccquarters/add_house/states.dart';
-import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/model/house/photo.dart';
 import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/house/building_type.dart';
+import 'package:ccquarters/model/house/new_house.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
