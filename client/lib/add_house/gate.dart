@@ -1,6 +1,7 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/add_house/views/stepper.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/gate.dart';
@@ -45,27 +46,13 @@ class AddHouseGate extends StatelessWidget {
     if (state is SendingFinishedState) {
       return _buildSendingFinishedView(context, state);
     } else if (state is ErrorState) {
-      return Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                ),
-                TextButton(
-                  child: const Text("Powtórz wysyłanie"),
-                  onPressed: () => house == null
-                      ? context.read<AddHouseFormCubit>().sendData()
-                      : context.read<AddHouseFormCubit>().updateHouse(),
-                )
-              ],
-            ),
-          ),
-        ),
+      return ErrorMessage(
+        state.message,
+        actionButton: true,
+        actionButtonTitle: "Powtórz wysyłanie",
+        onAction: () => () => house == null
+            ? context.read<AddHouseFormCubit>().sendData()
+            : context.read<AddHouseFormCubit>().updateHouse(),
       );
     } else if (state is SendingDataState) {
       return const LoadingView();
