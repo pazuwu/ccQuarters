@@ -182,7 +182,7 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> AddPhoto([FromServices] IHousesService housesService, [FromServices] IHousePhotosService housePhotosService, Guid houseId, IFormFile file, HttpContext context)
+        public static async Task<IResult> AddPhoto([FromServices] IHousesService housesService, [FromServices] IHousePhotosService housePhotosService, Guid houseId, IFormFile file, [FromQuery] int order, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -194,7 +194,7 @@ namespace CCQuartersAPI.Endpoints
             if (houseQueried?.UserId != userId)
                 return Results.Unauthorized();
 
-            await housePhotosService.AddHousePhoto(houseId, file.OpenReadStream());
+            await housePhotosService.AddHousePhoto(houseId, file.OpenReadStream(), order);
 
             return Results.Ok();
         }

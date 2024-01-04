@@ -5,7 +5,7 @@ namespace CCQuartersAPI.Services
     public interface IHousePhotosService
     {
         Task<IEnumerable<PhotoDTO>> GetPhotosForHouse(Guid houseId);
-        Task AddHousePhoto(Guid houseId, Stream fileStream);
+        Task AddHousePhoto(Guid houseId, Stream fileStream, int order);
         Task<IEnumerable<HousePhotoQueried>> GetPhotosInfoByNames(IEnumerable<string> filenames);
         Task DeletePhotosByNames(IEnumerable<string> filenames);
     }
