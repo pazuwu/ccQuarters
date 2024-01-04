@@ -25,6 +25,7 @@ class CCQNavigation {
     routes: [
       ShellRoute(
         builder: (context, state, widget) => Scaffold(
+          resizeToAvoidBottomInset: false,
           body: SafeArea(
             child: ScrollableView(
               child: AuthGate(
