@@ -1,4 +1,5 @@
 import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/virtual_tour_model/tour.dart';
 import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class TourLoaderGate extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircularProgressIndicator(),
+                      const LoadingView(),
                       const SizedBox(
                         height: 32.0,
                       ),
@@ -71,7 +72,7 @@ class TourLoaderGate extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(),
+                    LoadingView(),
                     SizedBox(
                       height: 32.0,
                     ),

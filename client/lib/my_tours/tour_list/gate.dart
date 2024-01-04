@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,9 +37,7 @@ class VTListGate extends StatelessWidget {
             child: BlocBuilder<VTListCubit, VTListState>(
               builder: (context, state) {
                 if (state is VTListLoadingState) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const LoadingView();
                 } else if (state is VTTourProcessingState) {
                   return Stack(
                     children: [
@@ -53,7 +52,7 @@ class VTListGate extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const CircularProgressIndicator(),
+                                const LoadingView(),
                                 const SizedBox(height: 16),
                                 Text(state.prcessingText),
                               ],

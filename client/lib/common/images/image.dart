@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';
 
 class ImageWidget extends StatelessWidget {
@@ -22,7 +23,7 @@ class ImageWidget extends StatelessWidget {
     return CachedNetworkImage(
       fadeInDuration: const Duration(milliseconds: 700),
       placeholder: (context, text) {
-        return const Center(child: CircularProgressIndicator());
+        return const LoadingView();
       },
       imageBuilder: (context, imageProvider) => Container(
         height: height,

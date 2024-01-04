@@ -1,6 +1,7 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/add_house/views/stepper.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/gate.dart';
 import 'package:ccquarters/model/new_house.dart';
@@ -67,11 +68,7 @@ class AddHouseGate extends StatelessWidget {
         ),
       );
     } else if (state is SendingDataState) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const LoadingView();
     }
 
     return Container();
