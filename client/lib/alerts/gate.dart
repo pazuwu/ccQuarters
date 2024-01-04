@@ -1,6 +1,6 @@
 import 'package:ccquarters/alerts/cubit.dart';
-import 'package:ccquarters/alerts/views/alerts_list.dart';
-import 'package:ccquarters/alerts/views/alert_view.dart';
+import 'package:ccquarters/alerts/views/list.dart';
+import 'package:ccquarters/alerts/views/form.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class AlertsGate extends StatelessWidget {
             }
             return const AlertsView();
           } else if (state is AlertPageState) {
-            return AlertView(
+            return AlertForm(
               alert: state.alert,
             );
           } else if (state is SendingDataState) {

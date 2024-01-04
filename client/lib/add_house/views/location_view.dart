@@ -5,7 +5,7 @@ import 'package:ccquarters/model/house/voivodeship.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:ccquarters/common/views/views_with_vertical_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,8 +30,7 @@ class LocationFormView extends StatefulWidget {
 class _LocationFormViewState extends State<LocationFormView> {
   @override
   Widget build(BuildContext context) {
-    return ViewWithHeader(
-        title: "Uzupełnij lokalizację",
+    return ViewWithButtons(
         inBetweenWidget: getDeviceType(context) == DeviceType.web
             ? ViewsWithVerticalDivider(
                 firstView: LocationForm(

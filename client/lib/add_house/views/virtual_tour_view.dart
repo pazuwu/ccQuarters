@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/inputs/radio_list.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 
 class VirtualTourFormView extends StatefulWidget {
@@ -37,8 +37,7 @@ class _VirtualTourFormViewState extends State<VirtualTourFormView> {
 
   @override
   Widget build(BuildContext context) {
-    return ViewWithHeader(
-      title: "Dodaj zdjęcia",
+    return ViewWithButtons(
       inBetweenWidget: _buildPageContent(context),
       goBackOnPressed: () {
         if (_formKey.currentState?.validate() ?? false) {

@@ -1,5 +1,5 @@
-import 'package:ccquarters/alerts/views/alert_details.dart';
 import 'package:ccquarters/alerts/cubit.dart';
+import 'package:ccquarters/alerts/views/details/view.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/messages/delete_dialog.dart';
 import 'package:ccquarters/common/widgets/icon_option_combo.dart';

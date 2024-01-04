@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../widgets/go_back_next_buttons.dart';
 
-class ViewWithHeader extends StatelessWidget {
-  const ViewWithHeader({
+class ViewWithButtons extends StatelessWidget {
+  const ViewWithButtons({
     Key? key,
-    required this.title,
     required this.inBetweenWidget,
     this.scrollable = true,
     this.hasScrollBody = false,
@@ -14,7 +13,6 @@ class ViewWithHeader extends StatelessWidget {
     this.isLastPage = false,
   }) : super(key: key);
 
-  final String title;
   final Widget inBetweenWidget;
   final bool scrollable;
   final bool hasScrollBody;

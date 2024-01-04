@@ -6,16 +6,15 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/map/location_picker.dart';
 import 'package:ccquarters/model/house/new_house.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
 
 class MapView extends StatelessWidget {
   const MapView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ViewWithHeader(
+    return ViewWithButtons(
         scrollable: false,
-        title: "Wybierz lokalizację",
         inBetweenWidget: ChooseLocationOnMap(
           addHouseFormCubit: context.read(),
         ),
