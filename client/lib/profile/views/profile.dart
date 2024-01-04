@@ -115,13 +115,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               ),
               IconButton(
                 onPressed: () {
-                  context.go('/my-alerts');
-                },
-                icon: const Icon(Icons.notifications),
-                tooltip: "Alerty",
-              ),
-              IconButton(
-                onPressed: () {
                   context.read<AuthCubit>().signOut();
                   context.go('/login');
                 },
