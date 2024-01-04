@@ -15,7 +15,7 @@ namespace CCQuartersAPI.Endpoints
         private const int DEFAULT_PAGE_NUMBER = 0;
         private const int DEFAULT_PAGE_SIZE = 50;
 
-        public static async Task<IResult> GetHouses(HttpContext context, [FromServices] IHousesService housesService, [AsParameters] GetHousesQuery query/*, [FromQuery] int? pageNumber, [FromQuery] int? pageSize*/)
+        public static async Task<IResult> GetHouses(HttpContext context, [FromServices] IHousesService housesService, [AsParameters] GetHousesQuery query)
         {
             int pageNumberValue = query.PageNumber ?? DEFAULT_PAGE_NUMBER;
             int pageSizeValue = query.PageSize ?? DEFAULT_PAGE_SIZE;
