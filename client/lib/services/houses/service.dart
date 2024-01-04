@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ccquarters/model/detailed_house.dart';
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/model/house/detailed_house.dart';
+import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/house/house.dart';
+import 'package:ccquarters/model/house/new_house.dart';
+import 'package:ccquarters/model/house/photo.dart';
 import 'package:ccquarters/services/houses/requests/create_house_request.dart';
 import 'package:ccquarters/services/houses/requests/delete_photos_request.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';

@@ -1,7 +1,7 @@
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/model/new_alert.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/house/house.dart';
+import 'package:ccquarters/model/alert/new_alert.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';

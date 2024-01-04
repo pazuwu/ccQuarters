@@ -1,6 +1,6 @@
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/offer_type.dart';
-import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/model/house/building_type.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/house/photo.dart';
 import 'package:ccquarters/services/houses/data/detailed_house.dart';
 import 'package:ccquarters/services/houses/data/simple_house.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';

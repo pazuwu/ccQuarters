@@ -1,14 +1,14 @@
 import 'package:ccquarters/alerts/cubit.dart';
-import 'package:ccquarters/alerts/alert_list_item.dart';
+import 'package:ccquarters/alerts/views/alert_list_item.dart';
 import 'package:ccquarters/common/messages/message.dart';
-import 'package:ccquarters/model/alert.dart';
-import 'package:ccquarters/model/new_alert.dart';
+import 'package:ccquarters/model/alert/alert.dart';
+import 'package:ccquarters/model/alert/new_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../common/messages/error_message.dart';
+import '../../common/messages/error_message.dart';
 
 class AlertsView extends StatefulWidget {
   const AlertsView({super.key});

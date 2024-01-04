@@ -3,7 +3,7 @@ import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/email_and_password_fields.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/user/user.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

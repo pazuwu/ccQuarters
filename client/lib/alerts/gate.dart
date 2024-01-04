@@ -1,6 +1,6 @@
 import 'package:ccquarters/alerts/cubit.dart';
-import 'package:ccquarters/alerts/alerts_list.dart';
-import 'package:ccquarters/alerts/alert_view.dart';
+import 'package:ccquarters/alerts/views/alerts_list.dart';
+import 'package:ccquarters/alerts/views/alert_view.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';

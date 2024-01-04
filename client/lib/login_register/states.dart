@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/user/user.dart';
 
 abstract class AuthState {}
 

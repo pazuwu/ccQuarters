@@ -1,7 +1,7 @@
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/house_details.dart';
-import 'package:ccquarters/model/location.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/house/building_type.dart';
+import 'package:ccquarters/model/house/house_details.dart';
+import 'package:ccquarters/model/house/location.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
 
 class House {
   House({

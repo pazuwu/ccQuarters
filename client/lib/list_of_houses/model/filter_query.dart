@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/offer_type.dart';
-import 'package:ccquarters/model/voivodeship.dart';
+import 'package:ccquarters/model/house/building_type.dart';
+import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/house/voivodeship.dart';
 
 class HouseFilterQuery {
   double? minPrice;

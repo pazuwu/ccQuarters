@@ -1,6 +1,6 @@
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/house/house.dart';
+import 'package:ccquarters/model/house/offer_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
