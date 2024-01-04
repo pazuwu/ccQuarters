@@ -62,27 +62,38 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       key: _formKey,
       child: Padding(
         padding: const EdgeInsets.only(left: 30, right: 30),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/graphics/forgot-password.png",
-                height: MediaQuery.of(context).size.height * 0.2,
-              ),
-              const SizedBox(
-                height: 20,
-                width: double.infinity,
-              ),
-              _buildText(context),
-              _buildEmailTextField(context),
-              widget.error != null
-                  ? _buildError(context)
-                  : const SizedBox(
-                      height: 20,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SizedBox(
+            width: constraints.maxWidth,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/graphics/forgot-password.png",
+                      height: constraints.maxHeight * 0.25,
                     ),
-              _buildButton(context),
-            ]),
+                    const SizedBox(
+                      height: 48,
+                    ),
+                    _buildText(context),
+                  ],
+                ),
+                _buildEmailTextField(context),
+                widget.error != null
+                    ? _buildError(context)
+                    : const SizedBox(
+                        height: 20,
+                      ),
+                _buildButton(context),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
