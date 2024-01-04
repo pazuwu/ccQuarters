@@ -35,6 +35,7 @@ class _MyToursGateState extends State<MyToursGate> {
           )
         : Container();
     _toursList = VTListGate(
+      initialTourId: _openedTourId,
       selectionChanged: (tourInfo) => context.go(
         Uri(
           path: '/my-tours',

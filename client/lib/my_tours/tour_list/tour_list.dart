@@ -13,10 +13,12 @@ import 'package:ccquarters/my_tours/tour_list/tour_form.dart';
 class TourList extends StatefulWidget {
   const TourList({
     super.key,
-    required tours,
+    required List<TourInfo> tours,
     this.selectionChanged,
+    this.initialTourId,
   }) : _tours = tours;
 
+  final String? initialTourId;
   final List<TourInfo> _tours;
   final Function(TourInfo)? selectionChanged;
 
@@ -30,6 +32,12 @@ class _TourListState extends State<TourList> {
   final HashSet<String> _chosenTourIds = HashSet();
   bool _isMultiSelecting = false;
   String? _selectedTourId;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTourId = widget.initialTourId;
+  }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
