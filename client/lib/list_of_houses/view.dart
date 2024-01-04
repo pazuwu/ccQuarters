@@ -70,28 +70,23 @@ class _ListOfHousesState extends State<ListOfHouses> {
         _goBack();
         return true;
       },
-      child: SafeArea(
-        child: Scaffold(
-          body: RefreshIndicator(
-            onRefresh: () async => _pagingController.refresh(),
-            child: LayoutBuilder(
-              builder: (context, constraints) => Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (constraints.maxWidth > constraints.maxHeight &&
-                      MediaQuery.of(context).orientation ==
-                          Orientation.landscape)
-                    _buildFiltersColumn(context),
-                  Expanded(
-                    child: _buildList(
-                        context,
-                        constraints.maxWidth > constraints.maxHeight
-                            ? Orientation.landscape
-                            : Orientation.portrait),
-                  ),
-                ],
+      child: RefreshIndicator(
+        onRefresh: () async => _pagingController.refresh(),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (constraints.maxWidth > constraints.maxHeight &&
+                  MediaQuery.of(context).orientation == Orientation.landscape)
+                _buildFiltersColumn(context),
+              Expanded(
+                child: _buildList(
+                    context,
+                    constraints.maxWidth > constraints.maxHeight
+                        ? Orientation.landscape
+                        : Orientation.portrait),
               ),
-            ),
+            ],
           ),
         ),
       ),
