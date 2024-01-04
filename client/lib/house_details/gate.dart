@@ -44,14 +44,12 @@ class HouseDetailsGate extends StatelessWidget {
     if (state is LoadingState) {
       return const LoadingView();
     } else if (state is ErrorState) {
-      return Scaffold(
-        body: ErrorMessage(
-          state.message,
-          tip: state.tip,
-          actionButton: true,
-          onAction: () => context
-              .go(GoRouterState.of(context).extra?.toString() ?? '/home'),
-        ),
+      return ErrorMessage(
+        state.message,
+        tip: state.tip,
+        actionButton: true,
+        onAction: () =>
+            context.go(GoRouterState.of(context).extra?.toString() ?? '/home'),
       );
     } else if (state is DetailsState) {
       return DetailsView(house: state.house, goBack: _goBack);
