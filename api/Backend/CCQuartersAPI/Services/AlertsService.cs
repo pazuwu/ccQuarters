@@ -13,38 +13,38 @@ namespace CCQuartersAPI.Services
             _rdbRepository = rdbRepository;
         }
 
-        public async Task<AlertDTO[]> GetAlerts(string userId, int pageNumber, int pageSize, IDbTransaction? trans = null)
+        public async Task<AlertDTO[]> GetAlerts(string userId, int pageNumber, int pageSize)
         {
             var query = @$"SELECT * FROM Alerts WHERE UserId = @userId
                            ORDER BY LastUpdateDate DESC
                            OFFSET @pageNumber * @pageSize ROWS
                            FETCH NEXT @pageSize ROWS ONLY";
 
-            var alerts = await _rdbRepository.QueryAsync<AlertDTO>(query, new { userId, pageNumber, pageSize }, trans);
+            var alerts = await _rdbRepository.QueryAsync<AlertDTO>(query, new { userId, pageNumber, pageSize });
 
             if (alerts is null)
                 return Array.Empty<AlertDTO>();
 
             foreach(var alert in alerts)
-                await FillAlertArrayData(alert, trans);
+                await FillAlertArrayData(alert);
 
             return alerts.ToArray();
         }
 
-        public async Task<AlertDTO?> GetAlertById(Guid alertId, IDbTransaction? trans = null)
+        public async Task<AlertDTO?> GetAlertById(Guid alertId)
         {
             var query = @$"SELECT * FROM Alerts WHERE Id = @alertId";
 
-            var alert = await _rdbRepository.QueryFirstOrDefaultAsync<AlertDTO>(query, new { alertId }, trans);
+            var alert = await _rdbRepository.QueryFirstOrDefaultAsync<AlertDTO>(query, new { alertId });
 
             if (alert is null)
                 return null;
 
-            await FillAlertArrayData(alert, trans);
+            await FillAlertArrayData(alert);
             return alert;
         }
 
-        public async Task<Guid?> CreateAlert(CreateAlertRequest alert, string userId, IDbTransaction? trans = null)
+        public async Task<Guid?> CreateAlert(CreateAlertRequest alert, string userId)
         {
             using var transaction = _rdbRepository.BeginTransaction();
             try
@@ -84,7 +84,7 @@ namespace CCQuartersAPI.Services
             }
         }
 
-        public async Task UpdateAlert(UpdateAlertRequest alert, Guid alertId, IDbTransaction? trans = null)
+        public async Task UpdateAlert(UpdateAlertRequest alert, Guid alertId)
         {
             using var transaction = _rdbRepository.BeginTransaction();
             try
@@ -123,7 +123,7 @@ namespace CCQuartersAPI.Services
             }
         }
 
-        public async Task DeleteAlertById(Guid alertId, IDbTransaction? trans = null)
+        public async Task DeleteAlertById(Guid alertId)
         {
             using var transaction = _rdbRepository.BeginTransaction();
             try
@@ -143,21 +143,21 @@ namespace CCQuartersAPI.Services
             }
         }
 
-        private async Task FillAlertArrayData(AlertDTO alert, IDbTransaction? trans)
+        private async Task FillAlertArrayData(AlertDTO alert)
         {
             Guid alertId = alert.Id;
 
             var floorsQuery = $@"SELECT Floor FROM AlertFloors WHERE AlertId = @alertId";
 
-            alert.Floors = (await _rdbRepository.QueryAsync<int>(floorsQuery, new { alertId }, trans))?.ToArray();
+            alert.Floors = (await _rdbRepository.QueryAsync<int>(floorsQuery, new { alertId }))?.ToArray();
 
             var citiesQuery = $@"SELECT City FROM AlertCities WHERE AlertId = @alertId";
 
-            alert.Cities = (await _rdbRepository.QueryAsync<string>(citiesQuery, new { alertId }, trans))?.ToArray();
+            alert.Cities = (await _rdbRepository.QueryAsync<string>(citiesQuery, new { alertId }))?.ToArray();
 
             var districtsQuery = $@"SELECT District FROM AlertDistricts WHERE AlertId = @alertId";
 
-            alert.Districts = (await _rdbRepository.QueryAsync<string>(districtsQuery, new { alertId }, trans))?.ToArray();
+            alert.Districts = (await _rdbRepository.QueryAsync<string>(districtsQuery, new { alertId }))?.ToArray();
         }
 
         private async Task InsertAlertAdditonalTables(BaseAlertRequest alert, Guid alertId, IDbTransaction transaction)
