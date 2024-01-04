@@ -32,6 +32,7 @@ void virtualTourCubit() {
           url,
         ),
       ),
+      wait: const Duration(milliseconds: 500),
       expect: () => [isA<TourLoadedState>()],
     );
 
@@ -47,6 +48,7 @@ void virtualTourCubit() {
           url,
         ),
       ),
+      wait: const Duration(milliseconds: 500),
       expect: () => [isA<TourForEditLoadedState>()],
     );
   });

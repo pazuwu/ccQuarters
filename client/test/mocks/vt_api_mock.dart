@@ -49,6 +49,7 @@ extension VTAPIMock on Dio {
     ];
     final tourMap = <String, dynamic>{
       'name': 'Test tour',
+      'ownerId': 'cb849fa2-1033-4d6b-7c88-08db36d6f10f',
       'id': id,
       'areas': areas.map((x) => x.toMap()).toList(),
       'scenes': scenes.map((x) => x.toMap()).toList(),
