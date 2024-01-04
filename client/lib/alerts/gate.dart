@@ -2,6 +2,7 @@ import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/alerts/alerts_list.dart';
 import 'package:ccquarters/alerts/alert_view.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,9 +37,7 @@ class AlertsGate extends StatelessWidget {
                 context.read<AlertsPageCubit>().goToAlertsMainPage();
                 return true;
               },
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: const LoadingView(),
             );
           }
 

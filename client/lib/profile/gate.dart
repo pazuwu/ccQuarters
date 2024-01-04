@@ -1,4 +1,5 @@
 import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
@@ -55,9 +56,7 @@ class ProfileGate extends StatelessWidget {
         tip: state.tip,
       );
     } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const LoadingView();
     }
   }
 
@@ -67,9 +66,7 @@ class ProfileGate extends StatelessWidget {
         user: state.user,
       );
     } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const LoadingView();
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:ccquarters/common/messages/snack_messenger.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -246,7 +247,7 @@ class _SceneViewerState extends State<SceneViewer> {
             ? Image.memory(widget.scene.photo360!)
             : Image.network(widget.scene.photo360Url!,
                 loadingBuilder: (context, widget, chunkEvent) {
-                return const Center(child: CircularProgressIndicator());
+                return const LoadingView();
               }),
       ),
     );

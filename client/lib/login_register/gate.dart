@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/choose.dart';
 import 'package:ccquarters/login_register/cubit.dart';
@@ -23,19 +24,11 @@ class AuthGate extends StatelessWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           context.go('/home');
         });
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const LoadingView();
       } else if (state is NeedsSigningInState) {
         return const ChooseLoginOrRegisterView();
       } else if (state is LoadingState) {
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const LoadingView();
       } else if (state is LoginState) {
         return LoginRegisterView(
             key: const Key("LoginPage"),

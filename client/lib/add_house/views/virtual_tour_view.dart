@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -131,7 +132,9 @@ class _VirtualTourFormViewState extends State<VirtualTourFormView> {
                 Text("Trwa ładowanie twoich wirtualnych spacerów"),
                 SizedBox(width: 12),
                 SizedBox.square(
-                    dimension: 20, child: CircularProgressIndicator()),
+                  dimension: 20,
+                  child: LoadingView(),
+                ),
               ],
             );
           }

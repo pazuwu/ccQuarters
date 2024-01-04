@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -87,12 +88,10 @@ class _GalleryState extends State<Gallery> {
                         );
                 },
                 itemCount: widget.memoryPhotos.length + widget.imageUrls.length,
-                loadingBuilder: (context, event) => const Center(
-                  child: SizedBox(
-                    width: 20.0,
-                    height: 20.0,
-                    child: CircularProgressIndicator(),
-                  ),
+                loadingBuilder: (context, event) => const SizedBox(
+                  width: 20.0,
+                  height: 20.0,
+                  child: LoadingView(),
                 ),
               ),
               if (kIsWeb)
