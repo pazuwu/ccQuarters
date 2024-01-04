@@ -372,9 +372,11 @@ namespace CCQuartersAPI.Services
 
             var house = houseQueried.Map();
 
-            house.Description = (await _documentRepository.GetAsync($"{DescriptionCollection}/{houseQueried.DescriptionId}"))?.ToDictionary().FirstOrDefault().Value?.ToString() ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(houseQueried.DescriptionId))
+                house.Description = (await _documentRepository.GetAsync($"{DescriptionCollection}/{houseQueried.DescriptionId}"))?.ToDictionary().FirstOrDefault().Value?.ToString() ?? string.Empty;
 
-            house.AdditionalInfo = (await _documentRepository.GetAsync($"{AdditionalInfoCollection}/{houseQueried.AdditionalInfoId}"))?.ToDictionary();
+            if (!string.IsNullOrWhiteSpace(house.AdditionalInfoId))
+                house.AdditionalInfo = (await _documentRepository.GetAsync($"{AdditionalInfoCollection}/{houseQueried.AdditionalInfoId}"))?.ToDictionary();
 
             return house;
         }
