@@ -5,6 +5,7 @@ import 'package:ccquarters/profile/views/edit_profile.dart';
 import 'package:ccquarters/profile/views/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileGate extends StatelessWidget {
   const ProfileGate({super.key});
@@ -19,28 +20,56 @@ class ProfileGate extends StatelessWidget {
       ),
       child: BlocBuilder<ProfilePageCubit, ProfilePageState>(
         builder: (context, state) {
-          if (state is ProfilePageInitialState) {
-            return Profile(
-              user: state.user,
+          if (state is ProfilePageInitialState ||
+              state is ErrorState ||
+              state is LoadingDataState) {
+            return BackButtonListener(
+              onBackButtonPressed: () async {
+                context.go('/home');
+                return true;
+              },
+              child: _getWidgetWithGoBackToHome(state),
             );
-          } else if (state is EditProfileState) {
-            return EditProfileView(
-              user: state.user,
-            );
-          } else if (state is LoadingOrSendingDataState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (state is ErrorState) {
-            return ErrorMessage(
-              state.message,
-              tip: state.tip,
+          } else {
+            return BackButtonListener(
+              onBackButtonPressed: () async {
+                context.read<ProfilePageCubit>().goToProfilePage();
+                return true;
+              },
+              child: _getWidgetWithGoBackToProfile(state),
             );
           }
-
-          return Container();
         },
       ),
     );
+  }
+
+  Widget _getWidgetWithGoBackToHome(ProfilePageState state) {
+    if (state is ProfilePageInitialState) {
+      return Profile(
+        user: state.user,
+      );
+    } else if (state is ErrorState) {
+      return ErrorMessage(
+        state.message,
+        tip: state.tip,
+      );
+    } else {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+  }
+
+  Widget _getWidgetWithGoBackToProfile(ProfilePageState state) {
+    if (state is EditProfileState) {
+      return EditProfileView(
+        user: state.user,
+      );
+    } else {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 }

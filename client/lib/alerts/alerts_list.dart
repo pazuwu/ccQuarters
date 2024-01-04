@@ -55,54 +55,60 @@ class _AlertsViewState extends State<AlertsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Alerty"),
-        leading: MediaQuery.of(context).orientation == Orientation.portrait
-            ? BackButton(
-                onPressed: () => context.go('/profile'),
-              )
-            : null,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              context.read<AlertsPageCubit>().goToAlertPage(NewAlert());
-            },
-          )
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async => _pagingController.refresh(),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width *
-                  (MediaQuery.of(context).orientation == Orientation.landscape
-                      ? 0.5
-                      : 1),
-            ),
-            child: PagedListView<int, Alert>(
-              pagingController: _pagingController,
-              builderDelegate: PagedChildBuilderDelegate<Alert>(
-                noItemsFoundIndicatorBuilder: (context) => const Message(
-                  title: "Nie posiadasz żadnych alertów",
-                  subtitle: "Dodaj je klikając przycisk +",
-                  imageWidget: Icon(Icons.collections_bookmark),
-                  adjustToLandscape: true,
-                  padding: EdgeInsets.all(8.0),
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        context.go('/profile');
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Alerty"),
+          leading: MediaQuery.of(context).orientation == Orientation.portrait
+              ? BackButton(
+                  onPressed: () => context.go('/profile'),
+                )
+              : null,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                context.read<AlertsPageCubit>().goToAlertPage(NewAlert());
+              },
+            )
+          ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: () async => _pagingController.refresh(),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width *
+                    (MediaQuery.of(context).orientation == Orientation.landscape
+                        ? 0.5
+                        : 1),
+              ),
+              child: PagedListView<int, Alert>(
+                pagingController: _pagingController,
+                builderDelegate: PagedChildBuilderDelegate<Alert>(
+                  noItemsFoundIndicatorBuilder: (context) => const Message(
+                    title: "Nie posiadasz żadnych alertów",
+                    subtitle: "Dodaj je klikając przycisk +",
+                    imageWidget: Icon(Icons.collections_bookmark),
+                    adjustToLandscape: true,
+                    padding: EdgeInsets.all(8.0),
+                  ),
+                  firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
+                    "Nie udało się pobrać alertów",
+                    tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+                  ),
+                  newPageErrorIndicatorBuilder: (context) => ErrorMessage(
+                    "Nie udało się pobrać alertów",
+                    tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
+                  ),
+                  itemBuilder: (context, alert, index) {
+                    return AlertListItem(alert: alert);
+                  },
                 ),
-                firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
-                  "Nie udało się pobrać alertów",
-                  tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-                ),
-                newPageErrorIndicatorBuilder: (context) => ErrorMessage(
-                  "Nie udało się pobrać alertów",
-                  tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
-                ),
-                itemBuilder: (context, alert, index) {
-                  return AlertListItem(alert: alert);
-                },
               ),
             ),
           ),

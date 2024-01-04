@@ -11,6 +11,7 @@ import 'package:ccquarters/common/device_type.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewsWithStepper extends StatefulWidget {
   const ViewsWithStepper({
@@ -180,7 +181,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
 
   Future<bool> _goBack() async {
     if (activeStep == _getChooseTypeIndex()) {
-      context.read<HouseDetailsCubit>().goBackToHouseDetails();
+      context.go('/home');
     } else if (activeStep == _getDetailsIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
     } else if (activeStep ==

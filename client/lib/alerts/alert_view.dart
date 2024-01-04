@@ -17,28 +17,34 @@ class AlertView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var filters = HouseFilter.fromAlert(alert);
-    return Scaffold(
-      appBar: AppBar(
-        title: alert is Alert
-            ? const Text("Edytuj alert")
-            : const Text("Dodaj nowy alert"),
-        leading: BackButton(
-          onPressed: context.read<AlertsPageCubit>().goToAlertsMainPage,
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        context.read<AlertsPageCubit>().goToAlertsMainPage();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: alert is Alert
+              ? const Text("Edytuj alert")
+              : const Text("Dodaj nowy alert"),
+          leading: BackButton(
+            onPressed: context.read<AlertsPageCubit>().goToAlertsMainPage,
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                context.read<AlertsPageCubit>().saveAlert(alert is Alert
+                    ? Alert.fromHouseFilter(filters, (alert as Alert).id)
+                    : NewAlert.fromHouseFilter(filters));
+              },
+            )
+          ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              context.read<AlertsPageCubit>().saveAlert(alert is Alert
-                  ? Alert.fromHouseFilter(filters, (alert as Alert).id)
-                  : NewAlert.fromHouseFilter(filters));
-            },
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: FiltersExpansionPanelList(
-          filters: filters,
+        body: SingleChildScrollView(
+          child: FiltersExpansionPanelList(
+            filters: filters,
+          ),
         ),
       ),
     );

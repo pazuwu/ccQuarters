@@ -22,7 +22,7 @@ class AlertPageState extends AlertsState {
   final AlertBase alert;
 }
 
-class LoadingOrSendingDataState extends AlertsState {}
+class SendingDataState extends AlertsState {}
 
 class AlertsPageCubit extends Cubit<AlertsState> {
   AlertsPageCubit({
@@ -45,7 +45,7 @@ class AlertsPageCubit extends Cubit<AlertsState> {
   }
 
   Future<void> saveAlert(AlertBase alert) async {
-    emit(LoadingOrSendingDataState());
+    emit(SendingDataState());
 
     if (alert is Alert) {
       if (!await _updateAlert(alert)) return;
@@ -89,7 +89,7 @@ class AlertsPageCubit extends Cubit<AlertsState> {
   }
 
   Future<void> deleteAlert(Alert alert) async {
-    emit(LoadingOrSendingDataState());
+    emit(SendingDataState());
 
     final response = await alertService.deleteAlert(alert.id);
     if (response.error != ErrorType.none) {
