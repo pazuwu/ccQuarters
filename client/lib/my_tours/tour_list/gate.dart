@@ -72,8 +72,8 @@ class VTListGate extends StatelessWidget {
                   return ErrorMessage(
                     state.message,
                     tip: state.tip,
-                    closeButton: !kIsWeb,
-                    onClose: () {
+                    actionButton: !kIsWeb,
+                    onAction: () {
                       context.go('/profile');
                     },
                   );

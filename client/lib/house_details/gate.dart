@@ -48,8 +48,8 @@ class HouseDetailsGate extends StatelessWidget {
         body: ErrorMessage(
           state.message,
           tip: state.tip,
-          closeButton: true,
-          onClose: () => context
+          actionButton: true,
+          onAction: () => context
               .go(GoRouterState.of(context).extra?.toString() ?? '/home'),
         ),
       );
