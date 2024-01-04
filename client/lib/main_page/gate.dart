@@ -17,11 +17,7 @@ class _MainPageGateState extends State<MainPageGate> {
       create: (_) => MainPageCubit(context.read()),
       child: BlocBuilder<MainPageCubit, MainPageState>(
         builder: (context, state) {
-          if (state is MainPageInitialState) {
-            return const MainPage();
-          }
-
-          return Container();
+          return const MainPage();
         },
       ),
     );

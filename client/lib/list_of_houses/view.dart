@@ -65,24 +65,32 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: () async => _pagingController.refresh(),
-          child: LayoutBuilder(
-            builder: (context, constraints) => Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (constraints.maxWidth > constraints.maxHeight &&
-                    MediaQuery.of(context).orientation == Orientation.landscape)
-                  _buildFiltersColumn(context),
-                Expanded(
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        _goBack();
+        return true;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: RefreshIndicator(
+            onRefresh: () async => _pagingController.refresh(),
+            child: LayoutBuilder(
+              builder: (context, constraints) => Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (constraints.maxWidth > constraints.maxHeight &&
+                      MediaQuery.of(context).orientation ==
+                          Orientation.landscape)
+                    _buildFiltersColumn(context),
+                  Expanded(
                     child: _buildList(
                         context,
                         constraints.maxWidth > constraints.maxHeight
                             ? Orientation.landscape
-                            : Orientation.portrait)),
-              ],
+                            : Orientation.portrait),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -143,26 +151,28 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   IconButton _buildBackButton(BuildContext context) {
     return IconButton(
-      onPressed: () {
-        if (widget.isSearch) {
-          context.go('/home');
-        } else {
-          if (_isSearch) {
-            setState(() {
-              if (_controller.text.isNotEmpty) {
-                context.read<ListOfHousesCubit>().saveSearch("");
-                _controller.clear();
-                _pagingController.refresh();
-              }
-              _isSearch = false;
-            });
-          } else {
-            context.go('/home');
-          }
-        }
-      },
+      onPressed: _goBack,
       icon: const Icon(Icons.arrow_back),
     );
+  }
+
+  _goBack() {
+    if (widget.isSearch) {
+      context.go('/home');
+    } else {
+      if (_isSearch) {
+        setState(() {
+          if (_controller.text.isNotEmpty) {
+            context.read<ListOfHousesCubit>().saveSearch("");
+            _controller.clear();
+            _pagingController.refresh();
+          }
+          _isSearch = false;
+        });
+      } else {
+        context.go('/home');
+      }
+    }
   }
 
   Expanded _buildAppBarMainWidget(BuildContext context) {

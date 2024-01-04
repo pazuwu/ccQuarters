@@ -21,7 +21,9 @@ class EditProfileState extends ProfilePageState {
   final User user;
 }
 
-class LoadingOrSendingDataState extends ProfilePageState {}
+class LoadingDataState extends ProfilePageState {}
+
+class SendingDataState extends ProfilePageState {}
 
 class ErrorState extends ProfilePageState {
   ErrorState({
@@ -32,14 +34,12 @@ class ErrorState extends ProfilePageState {
   final String? tip;
 }
 
-class AlertsState extends ProfilePageState {}
-
 class ProfilePageCubit extends Cubit<ProfilePageState> {
   ProfilePageCubit({
     required this.userService,
     required this.houseService,
     required userId,
-  }) : super(LoadingOrSendingDataState()) {
+  }) : super(LoadingDataState()) {
     setUser(userId);
   }
 
@@ -70,7 +70,7 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
   }
 
   Future<void> updateUser(User user, Uint8List? image, bool deleteImage) async {
-    emit(LoadingOrSendingDataState());
+    emit(SendingDataState());
 
     this.user = user;
     var response = await userService.updateUser(user.id, user);
@@ -136,9 +136,5 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
 
   Future<void> goToProfilePage() async {
     emit(ProfilePageInitialState(user: user));
-  }
-
-  Future<void> goToAlertsPage() async {
-    emit(AlertsState());
   }
 }

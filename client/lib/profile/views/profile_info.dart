@@ -31,7 +31,7 @@ class ProfileInfo extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: constraints.maxWidth * 0.8,
+          height: constraints.maxWidth * 0.7,
           child: Padding(
             padding: const EdgeInsets.all(largePaddingSize),
             child: user.photoUrl != null && user.photoUrl!.isNotEmpty

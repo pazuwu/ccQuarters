@@ -9,8 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListOfHousesState {}
 
-class ListOfHousesInitialState extends ListOfHousesState {}
-
 class ErrorState extends ListOfHousesState {
   ErrorState({required this.message});
 
@@ -24,7 +22,7 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
     OfferType? offerType,
     HouseFilter? filter,
   })  : filter = filter ?? HouseFilter(),
-        super(ListOfHousesInitialState());
+        super(ListOfHousesState());
 
   HouseService houseService;
   AlertService alertService;

@@ -30,9 +30,15 @@ class AlertsGate extends StatelessWidget {
             return AlertView(
               alert: state.alert,
             );
-          } else if (state is LoadingOrSendingDataState) {
-            return const Center(
-              child: CircularProgressIndicator(),
+          } else if (state is SendingDataState) {
+            return BackButtonListener(
+              onBackButtonPressed: () async {
+                context.read<AlertsPageCubit>().goToAlertsMainPage();
+                return true;
+              },
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
 

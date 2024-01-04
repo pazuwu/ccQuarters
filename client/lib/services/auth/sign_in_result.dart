@@ -4,6 +4,7 @@ enum SignInResult {
   userNotFound,
   emailAlreadyInUse,
   wrongPassword,
+  invalidCredential,
   success;
 
   @override
@@ -23,6 +24,8 @@ extension SignInResultEx on SignInResult {
         return "E-mail jest już w użyciu";
       case SignInResult.wrongPassword:
         return "E-mail i hasło nie pasują. Sprawdź wprowadzone dane";
+      case SignInResult.invalidCredential:
+        return "Niepoprawny e-mail lub hasło";
       case SignInResult.success:
         return "Zalogowano";
     }

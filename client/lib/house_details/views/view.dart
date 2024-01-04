@@ -6,7 +6,7 @@ import 'package:ccquarters/house_details/views/accordion.dart';
 import 'package:ccquarters/house_details/views/contact.dart';
 import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
-import 'package:ccquarters/list_of_houses/like_button.dart';
+import 'package:ccquarters/common/widgets/like_button.dart';
 import 'package:ccquarters/list_of_houses/price_info.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
@@ -20,11 +20,13 @@ class DetailsView extends StatelessWidget {
   const DetailsView({
     super.key,
     required this.house,
+    required this.goBack,
     this.isOwnedByCurrentUser = false,
   });
 
   final DetailedHouse house;
   final bool isOwnedByCurrentUser;
+  final Function(BuildContext) goBack;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +36,7 @@ class DetailsView extends StatelessWidget {
         toolbarHeight: 68,
         leading: MediaQuery.of(context).orientation == Orientation.portrait
             ? IconButton(
-                onPressed: () => _goBack(context),
+                onPressed: () => goBack(context),
                 icon: const Icon(Icons.arrow_back),
               )
             : null,
@@ -50,15 +52,6 @@ class DetailsView extends StatelessWidget {
       ),
       body: Inside(house: house),
     );
-  }
-
-  void _goBack(BuildContext context) {
-    var previousRoute = GoRouterState.of(context).extra;
-    if (previousRoute == null) {
-      context.pop();
-    } else {
-      context.go(previousRoute.toString());
-    }
   }
 
   _showVirtualTour(BuildContext context) {
@@ -99,7 +92,7 @@ class DetailsView extends StatelessWidget {
                     showDialogWithMessage(
                       context: context,
                       title: "Ogłoszenie zostało usunięte.",
-                      onOk: () => _goBack(context),
+                      onOk: () => goBack(context),
                     );
                   } else {
                     showDialogWithMessage(

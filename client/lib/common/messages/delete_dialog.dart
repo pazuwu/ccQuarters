@@ -5,23 +5,29 @@ showDeleteDialog(BuildContext context, String whatToDeleteTitle,
   showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text("Usuwanie $whatToDeleteTitle"),
-          content: Text("Czy na pewno chcesz usunąć $whatToDelete?"),
-          actionsAlignment: MainAxisAlignment.spaceEvenly,
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Anuluj"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                onDelete();
-              },
-              child: const Text("Usuń"),
-            ),
-          ],
+        return BackButtonListener(
+          onBackButtonPressed: () async {
+            Navigator.pop(context);
+            return true;
+          },
+          child: AlertDialog(
+            title: Text("Usuwanie $whatToDeleteTitle"),
+            content: Text("Czy na pewno chcesz usunąć $whatToDelete?"),
+            actionsAlignment: MainAxisAlignment.spaceEvenly,
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Anuluj"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onDelete();
+                },
+                child: const Text("Usuń"),
+              ),
+            ],
+          ),
         );
       });
 }

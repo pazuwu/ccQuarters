@@ -86,6 +86,8 @@ class AuthService implements BaseAuthService {
           return SignInResult.userNotFound;
         case 'wrong-password':
           return SignInResult.wrongPassword;
+        case 'invalid-credential':
+          return SignInResult.invalidCredential;
         default:
           rethrow;
       }

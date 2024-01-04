@@ -8,19 +8,26 @@ showDialogWithMessage({
 }) {
   showDialog(
     context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: Text(title),
-      content: content != null ? Text(content) : null,
-      actions: <Widget>[
-        Center(
-          child: TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                onOk?.call();
-              },
-              child: const Text('OK')),
-        )
-      ],
+    builder: (BuildContext context) => BackButtonListener(
+      onBackButtonPressed: () async {
+        Navigator.pop(context);
+        onOk?.call();
+        return true;
+      },
+      child: AlertDialog(
+        title: Text(title),
+        content: content != null ? Text(content) : null,
+        actions: <Widget>[
+          Center(
+            child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onOk?.call();
+                },
+                child: const Text('OK')),
+          )
+        ],
+      ),
     ),
   );
 }

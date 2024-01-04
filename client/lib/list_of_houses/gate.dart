@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/list_of_houses/view.dart';
 import 'package:ccquarters/model/offer_type.dart';
@@ -29,6 +30,10 @@ class ListOfHousesGate extends StatelessWidget {
       ),
       child: BlocBuilder<ListOfHousesCubit, ListOfHousesState>(
         builder: (context, state) {
+          if (state is ErrorState) {
+            SnackMessenger.showError(context, state.message);
+          }
+
           return ListOfHouses(
             isSearch: isSearch,
           );
