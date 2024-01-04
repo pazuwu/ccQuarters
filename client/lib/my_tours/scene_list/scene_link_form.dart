@@ -40,6 +40,8 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
 
   late List<Scene> _scenes = [];
   late SceneLinkFormModel _model;
+  late TextEditingController _nameController;
+  bool userChangedName = false;
 
   @override
   void initState() {
@@ -47,6 +49,18 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
 
     _scenes = widget.scenes;
     _model = widget.initialModel ?? SceneLinkFormModel();
+    _nameController = TextEditingController(
+        text: _model.text.isEmpty ? widget.scenes.first.name : _model.text);
+
+    _nameController.addListener(_watchNameChanges);
+  }
+
+  void _watchNameChanges() {
+    _nameController.addListener(() {
+      setState(() {
+        userChangedName = true;
+      });
+    });
   }
 
   Widget _buildTitle(BuildContext context) {
@@ -71,7 +85,7 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
 
   Widget _buildNameField(BuildContext context) {
     return TextFormField(
-      initialValue: _model.text,
+      controller: _nameController,
       onSaved: (value) {
         _model.text = value ?? "";
       },
@@ -85,6 +99,11 @@ class _SceneLinkFormState extends State<SceneLinkForm> {
   Widget _buildSceneSelectionField(BuildContext context) {
     return Flexible(
       child: RadioListForm(
+        valueChanged: (value) {
+          _nameController.removeListener(_watchNameChanges);
+          if (!userChangedName) _nameController.text = value.name;
+          _nameController.addListener(_watchNameChanges);
+        },
         values: _scenes,
         defaultValue: _scenes.firstWhere(
             (element) => element.id == _model.destinationId,
