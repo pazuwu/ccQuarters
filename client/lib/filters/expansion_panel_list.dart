@@ -116,6 +116,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
             widget.filters.maxPrice = double.tryParse(val);
           },
         ),
+        const SizedBox(height: 16),
         FromToNumberFields(
           title: "Cena za m\u00B2",
           from: widget.filters.minPricePerM2?.toStringAsFixed(2) ?? "",
@@ -128,6 +129,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
           },
           isDecimal: true,
         ),
+        const SizedBox(height: 16),
         FromToNumberFields(
           title: "Powierzchnia",
           from: widget.filters.minArea?.toStringAsFixed(2) ?? "",
@@ -140,6 +142,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
           },
           isDecimal: true,
         ),
+        const SizedBox(height: 16),
         FromToNumberFields(
           title: "Liczba pokoi",
           from: widget.filters.minRoomCount?.toString() ?? "",
@@ -151,6 +154,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
             widget.filters.maxRoomCount = int.tryParse(val);
           },
         ),
+        const SizedBox(height: 16),
         FloorMultiSelectDropdown(
           onChanged: (List<FloorNumber> newValue) {
             setState(() {
