@@ -13,5 +13,11 @@ namespace AuthLibrary
         {
             return identity.FindFirst("user_id")?.Value;
         }
+
+        public static bool IsAnonymous(this ClaimsIdentity identity) 
+        {
+            var provider = identity.FindFirst("provider_id")?.Value;
+            return provider == "anonymous";
+        }
     }
 }
