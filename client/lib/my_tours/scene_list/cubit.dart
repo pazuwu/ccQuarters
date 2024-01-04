@@ -1,28 +1,25 @@
 import 'dart:async';
 
 import 'package:ccquarters/services/service_response.dart';
-import 'package:ccquarters/virtual_tour/model/area.dart';
-import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
-import 'package:ccquarters/virtual_tour/scene_list/states.dart';
+import 'package:ccquarters/virtual_tour_model/area.dart';
+import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
+import 'package:ccquarters/my_tours/scene_list/states.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-import 'package:ccquarters/virtual_tour/model/scene.dart';
+import 'package:ccquarters/virtual_tour_model/scene.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
-class VTScenesCubit extends Cubit<VTScenesState> {
-  VTScenesCubit(
-    this._service,
-    this._tour,
-  ) : super(VTScenesState(tour: _tour));
+class TourEditCubit extends Cubit<TourEditState> {
+  TourEditCubit(this._service, this._tour) : super(TourEditState(tour: _tour));
 
   final VTService _service;
   final TourForEdit _tour;
 
   Future createNewSceneFromPhoto(Uint8List photo,
       {required String name}) async {
-    emit(VTScenesLoadingState(tour: _tour, message: "Tworzenie nowej sceny"));
+    emit(TourEditModifyingState(tour: _tour, message: "Tworzenie nowej sceny"));
     var serviceResponse =
         await _service.postScene(tourId: _tour.id, parentId: "", name: name);
 
@@ -46,7 +43,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       _tour.scenes.add(newScene);
 
       emit(
-        VTScenesSuccessState(
+        TourEditSuccessState(
             tour: _tour, message: "Dodano nową scenę", changedObject: newScene),
       );
     }
@@ -58,7 +55,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     var failedImages = <Uint8List>[];
 
     emit(
-      VTScenesLoadingState(tour: _tour, message: "Przesyłanie zdjęć..."),
+      TourEditModifyingState(tour: _tour, message: "Przesyłanie zdjęć..."),
     );
 
     for (var file in files) {
@@ -81,7 +78,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
 
     if (failedImages.isNotEmpty) {
       emit(
-        VTScenesUploadFailedState(
+        TourEditUploadingFailedState(
           tour: _tour,
           failedImages: failedImages,
           areaId: areaId,
@@ -90,7 +87,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       return false;
     }
 
-    emit(VTScenesSuccessState(
+    emit(TourEditSuccessState(
       tour: _tour,
       message: "Zdjęcia zostały dodane",
       changedObject: areaId,
@@ -124,7 +121,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
 
   Future<bool> createOperation(String areaId, [int attempt = 0]) async {
     var plannedLoading = Timer(const Duration(milliseconds: 500), () {
-      emit(VTScenesLoadingState(
+      emit(TourEditModifyingState(
           tour: _tour, message: "Planowanie przetwarzania"));
     });
     var serviceResponse = await _service.postOperation(_tour.id, areaId);
@@ -132,14 +129,14 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     plannedLoading.cancel();
 
     if (serviceResponse.error != ErrorType.none) {
-      emit(VTScenesCreateOperationFailedState(
+      emit(TourEditCreateOperationFailedState(
           tour: _tour, areaId: areaId, attempt: ++attempt));
       return false;
     }
     _tour.areas.firstWhere((element) => element.id == areaId).operationId =
         serviceResponse.data;
 
-    emit(VTScenesSuccessState(
+    emit(TourEditSuccessState(
         tour: _tour,
         message: "Zaplanowano utworzenie sceny",
         changedObject: areaId));
@@ -165,7 +162,8 @@ class VTScenesCubit extends Cubit<VTScenesState> {
 
   Future setAsPrimaryScene(String sceneId) async {
     var plannedLoading = Timer(const Duration(milliseconds: 500), () {
-      emit(VTScenesLoadingState(tour: _tour, message: "Zmiana sceny głównej"));
+      emit(
+          TourEditModifyingState(tour: _tour, message: "Zmiana sceny głównej"));
     });
 
     var result = await _service.updateTour(_tour.id, primarySceneId: sceneId);
@@ -174,7 +172,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     if (result.data) {
       _tour.primarySceneId = sceneId;
       emit(
-        VTScenesSuccessState(
+        TourEditSuccessState(
           tour: _tour,
           message: "Scena główna została zmieniona",
           changedObject: sceneId,
@@ -185,7 +183,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
 
   Future deleteScene(String sceneId) async {
     var plannedLoading = Timer(const Duration(milliseconds: 500), () {
-      emit(VTScenesLoadingState(tour: _tour, message: "Usuwanie sceny"));
+      emit(TourEditModifyingState(tour: _tour, message: "Usuwanie sceny"));
     });
 
     var result = await _service.deleteScene(_tour.id, sceneId);
@@ -194,7 +192,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
     if (result.data) {
       _tour.scenes.removeWhere((element) => element.id == sceneId);
       emit(
-        VTScenesSuccessState(
+        TourEditSuccessState(
             tour: _tour, message: "Usunięto scenę", changedObject: sceneId),
       );
     }
@@ -202,13 +200,13 @@ class VTScenesCubit extends Cubit<VTScenesState> {
 
   Future showAreaPhotos(Area area) async {
     var plannedLoading = Timer(const Duration(milliseconds: 500), () {
-      emit(VTScenesLoadingState(tour: _tour, message: "Pobieranie zdjęć"));
+      emit(TourEditModifyingState(tour: _tour, message: "Pobieranie zdjęć"));
     });
     var serviceResponse = await _service.getAreaPhotos(_tour.id, area.id!);
     plannedLoading.cancel();
 
     if (serviceResponse.error == ErrorType.none) {
-      emit(ShowAreaPhotosState(
+      emit(TourEditShowAreaPhotosState(
         tour: _tour,
         photoUrls: serviceResponse.data!,
         area: area,
@@ -216,7 +214,7 @@ class VTScenesCubit extends Cubit<VTScenesState> {
       return;
     }
 
-    emit(VTScenesErrorState(
+    emit(TourEditErrorState(
       tour: _tour,
       message:
           "Wystąpił błąd podczas próby pobrania zdjęć. Sprawdź swoje połączenie z Internetem",
@@ -224,6 +222,6 @@ class VTScenesCubit extends Cubit<VTScenesState> {
   }
 
   void closeAreaPhotos() {
-    emit(VTScenesState(tour: _tour));
+    emit(TourEditState(tour: _tour));
   }
 }

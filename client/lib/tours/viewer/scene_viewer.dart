@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 import 'package:ccquarters/common/widgets/always_visible_label.dart';
-import 'package:ccquarters/virtual_tour/model/link.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/scene_list/scene_link_form.dart';
-import 'package:ccquarters/virtual_tour/viewer/cubit.dart';
+import 'package:ccquarters/virtual_tour_model/link.dart';
+import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/my_tours/scene_list/scene_link_form.dart';
+import 'package:ccquarters/tours/viewer/cubit.dart';
 
 enum SceneEditingMode { delete, add, edit, move }
 
@@ -165,6 +166,15 @@ class _SceneViewerState extends State<SceneViewer> {
   }
 
   void _addNewLink(double longitude, double latitude) async {
+    if (widget.cubit.scenes.length == 1) {
+      SnackMessenger.showMessage(
+        context,
+        'Nie można dodać łącznika do samego siebie.'
+        'Utwórz więcej scen, aby dodać nowy łącznik.',
+      );
+      return;
+    }
+
     var linkFormModel = await showForm<SceneLinkFormModel>(
       context: context,
       builder: (context) => Padding(

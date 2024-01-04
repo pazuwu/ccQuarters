@@ -2,10 +2,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/model/geo_point.dart';
-import 'package:ccquarters/virtual_tour/model/link.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour_model/geo_point.dart';
+import 'package:ccquarters/virtual_tour_model/link.dart';
+import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/virtual_tour_model/tour.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
 abstract class VTViewerState extends Equatable {
@@ -38,12 +38,13 @@ class VTViewerCubit extends Cubit<VTViewerState> {
   final VTService _service;
   int index = 1;
 
-  VTViewerCubit(this._tour, this._service, {Scene? initialScene})
+  VTViewerCubit(this._tour, this._service, {String? initialSceneId})
       : super(VTViewingSceneState(
             index: 0,
-            currentScene: initialScene ?? _tour.scenes.first,
+            currentScene: _tour.scenes.firstWhere((s) => s.id == initialSceneId,
+                orElse: () => _tour.scenes.first),
             links: _getLinksForParent(
-                _tour, initialScene?.id ?? _tour.scenes.first.id ?? "")));
+                _tour, initialSceneId ?? _tour.scenes.first.id ?? "")));
 
   List<Scene> get scenes => _tour.scenes;
 

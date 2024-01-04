@@ -1,19 +1,20 @@
 import 'dart:typed_data';
 
-import 'package:ccquarters/virtual_tour/model/area.dart';
-import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
+import 'package:ccquarters/virtual_tour_model/area.dart';
+import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
 import 'package:equatable/equatable.dart';
 
-class VTScenesState extends Equatable {
+class TourEditState extends Equatable {
   final TourForEdit tour;
-  const VTScenesState({required this.tour});
+
+  const TourEditState({required this.tour});
 
   @override
   List<Object?> get props => [tour.scenes.length];
 }
 
-class VTScenesLoadingState extends VTScenesState {
-  const VTScenesLoadingState({
+class TourEditModifyingState extends TourEditState {
+  const TourEditModifyingState({
     required super.tour,
     required this.message,
   });
@@ -24,8 +25,8 @@ class VTScenesLoadingState extends VTScenesState {
   List<Object?> get props => super.props + [message];
 }
 
-class VTScenesSuccessState extends VTScenesState {
-  const VTScenesSuccessState({
+class TourEditSuccessState extends TourEditState {
+  const TourEditSuccessState({
     required super.tour,
     required this.message,
     required this.changedObject,
@@ -38,8 +39,8 @@ class VTScenesSuccessState extends VTScenesState {
   List<Object?> get props => super.props + [message, changedObject];
 }
 
-class VTScenesUploadingState extends VTScenesState {
-  const VTScenesUploadingState({required this.progress, required super.tour});
+class TourEditUploadingState extends TourEditState {
+  const TourEditUploadingState({required this.progress, required super.tour});
 
   final double progress;
 
@@ -47,8 +48,8 @@ class VTScenesUploadingState extends VTScenesState {
   List<Object?> get props => [progress];
 }
 
-class VTScenesUploadFailedState extends VTScenesState {
-  const VTScenesUploadFailedState({
+class TourEditUploadingFailedState extends TourEditState {
+  const TourEditUploadingFailedState({
     required super.tour,
     required this.areaId,
     required this.failedImages,
@@ -60,8 +61,8 @@ class VTScenesUploadFailedState extends VTScenesState {
   List<Object?> get props => [failedImages];
 }
 
-class VTScenesCreateOperationFailedState extends VTScenesState {
-  const VTScenesCreateOperationFailedState({
+class TourEditCreateOperationFailedState extends TourEditState {
+  const TourEditCreateOperationFailedState({
     required super.tour,
     required this.areaId,
     this.attempt = 0,
@@ -73,8 +74,8 @@ class VTScenesCreateOperationFailedState extends VTScenesState {
   List<Object?> get props => [areaId, attempt];
 }
 
-class ShowAreaPhotosState extends VTScenesState {
-  const ShowAreaPhotosState({
+class TourEditShowAreaPhotosState extends TourEditState {
+  const TourEditShowAreaPhotosState({
     required super.tour,
     required this.area,
     required this.photoUrls,
@@ -87,8 +88,8 @@ class ShowAreaPhotosState extends VTScenesState {
   List<Object?> get props => [photoUrls];
 }
 
-class VTScenesErrorState extends VTScenesState {
-  VTScenesErrorState({
+class TourEditErrorState extends TourEditState {
+  TourEditErrorState({
     required super.tour,
     required this.message,
   });
