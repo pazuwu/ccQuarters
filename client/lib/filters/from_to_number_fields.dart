@@ -26,11 +26,16 @@ class FromToNumberFields extends StatelessWidget {
       children: [
         Align(
           alignment: Alignment.topLeft,
-          child: Text(title),
+          child: Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontSize: 20),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(
-            top: smallPaddingSize,
             bottom: smallPaddingSize,
           ),
           child: Row(

@@ -26,7 +26,13 @@ class FloorMultiSelectDropdown extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text("Piętro"),
+          Text(
+            "Piętro",
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontSize: 20),
+          ),
           const SizedBox(width: 10),
           Flexible(
             child: Container(
