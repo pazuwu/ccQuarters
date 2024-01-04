@@ -71,7 +71,15 @@ class _MyToursGateState extends State<MyToursGate> {
   }
 
   Widget _buildPortrait(BuildContext context) {
-    return widget.openedTourId == null ? _toursList : _sceneList;
+    return _openedTourId == null
+        ? _toursList
+        : BackButtonListener(
+            onBackButtonPressed: () async {
+              context.go('/my-tours');
+
+              return true;
+            },
+            child: _sceneList);
   }
 
   Widget _buildLandscape(BuildContext context) {

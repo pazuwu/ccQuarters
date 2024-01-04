@@ -3,6 +3,7 @@ import 'package:ccquarters/tours/tour_loader/gate.dart';
 import 'package:ccquarters/tours/viewer/tour_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class TourViewerGate extends StatelessWidget {
   const TourViewerGate({
@@ -16,13 +17,28 @@ class TourViewerGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TourLoaderGate(
-      tourId: tourId,
-      tourBuilder: (context, tour) => TourViewer(
-        currentSceneId: currentSceneId ?? tour.primarySceneId,
-        readOnly: context.read<AuthCubit>().user?.id != tour.ownerId,
-        tour: tour,
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        _goBack(context);
+        return true;
+      },
+      child: TourLoaderGate(
+        tourId: tourId,
+        tourBuilder: (context, tour) => TourViewer(
+          currentSceneId: currentSceneId ?? tour.primarySceneId,
+          readOnly: context.read<AuthCubit>().user?.id != tour.ownerId,
+          tour: tour,
+        ),
       ),
     );
+  }
+
+  void _goBack(BuildContext context) {
+    var previousRoute = GoRouterState.of(context).extra;
+    if (previousRoute == null) {
+      context.pop();
+    } else {
+      context.go(previousRoute.toString());
+    }
   }
 }

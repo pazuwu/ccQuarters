@@ -62,8 +62,8 @@ class VTListCubit extends Cubit<VTListState> {
         default:
           emit(VTListErrorState(
               message:
-                  "Wystapił niezidentyfikowany błąd podczas próby pobrania wirtualnych spacerów. \n"
-                  "Skonaktuj się z działem technicznym"));
+                  "Wystapił niezidentyfikowany błąd \npodczas próby pobrania wirtualnych spacerów.",
+              tip: "Spróbuj skontaktować się z działem technicznym"));
           return;
       }
     }

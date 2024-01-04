@@ -59,6 +59,7 @@ class TourLoaderGate extends StatelessWidget {
               } else if (state is TourLoadingErrorState) {
                 return ErrorMessage(
                   state.text,
+                  tip: state.tip,
                 );
               } else if (state is TourLoadedState) {
                 return tourBuilder!.call(context, state.virtualTour);
