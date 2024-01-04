@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:ccquarters/services/file_service/download_progress.dart';
 import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/services/service_response.dart';
-import 'package:ccquarters/virtual_tour/model/geo_point.dart';
-import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
-import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/virtual_tour_model/geo_point.dart';
+import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_area_request.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_link_request.dart';
@@ -16,8 +16,8 @@ import 'package:ccquarters/services/virtual_tours/requests/put_link_request.dart
 import 'package:ccquarters/services/virtual_tours/requests/put_tour_request.dart';
 import 'package:dio/dio.dart';
 
-import 'package:ccquarters/virtual_tour/model/link.dart';
-import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour_model/link.dart';
+import 'package:ccquarters/virtual_tour_model/tour.dart';
 import 'package:http_status_code/http_status_code.dart';
 
 class VTService {
@@ -179,9 +179,8 @@ class VTService {
         data: PostLinkRequest(
           parentId: link.parentId,
           destinationId: link.destinationId,
+          position: link.position,
           nextOrientation: link.nextOrientation,
-          longitude: link.position.longitude,
-          latitude: link.position.latitude,
           text: link.text,
         ).toJson(),
         options: Options(headers: {

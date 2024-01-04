@@ -1,8 +1,8 @@
 import 'package:ccquarters/common/messages/delete_dialog.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/widgets/icon_option_combo.dart';
-import 'package:ccquarters/virtual_tour/model/area.dart';
-import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
+import 'package:ccquarters/virtual_tour_model/area.dart';
+import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +11,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/common/widgets/always_visible_label.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/views/show_form.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
-import 'package:ccquarters/virtual_tour/scene_list/scene_form.dart';
+import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/my_tours/scene_list/cubit.dart';
+import 'package:ccquarters/my_tours/scene_list/scene_form.dart';
 import 'package:go_router/go_router.dart';
 
 class SceneList extends StatefulWidget {
@@ -33,7 +33,9 @@ class SceneList extends StatefulWidget {
 class _SceneListState extends State<SceneList> {
   void _showScene(BuildContext context, Scene scene) {
     context.go(
-      '/tours/${widget.tour.id}',
+      Uri(
+          path: '/tours/${widget.tour.id}',
+          queryParameters: {'sceneId': scene.id}).toString(),
       extra: GoRouter.of(context).routeInformationProvider.value.uri,
     );
   }
@@ -47,7 +49,7 @@ class _SceneListState extends State<SceneList> {
     );
   }
 
-  void _importHandler(BuildContext context, VTScenesCubit cubit) async {
+  void _importHandler(BuildContext context, TourEditCubit cubit) async {
     var sceneFormModel = await _showChooseImportTypeDialog(context);
 
     if (sceneFormModel == null) return;
@@ -78,7 +80,7 @@ class _SceneListState extends State<SceneList> {
   }
 
   void _addPhotosToArea(
-      BuildContext context, VTScenesCubit cubit, Area area) async {
+      BuildContext context, TourEditCubit cubit, Area area) async {
     var photos = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       withData: true,
@@ -203,7 +205,7 @@ class _SceneListState extends State<SceneList> {
                         "sceny",
                         "scenę '${scene.name}'",
                         () => context
-                            .read<VTScenesCubit>()
+                            .read<TourEditCubit>()
                             .deleteScene(scene.id!),
                       );
                     },
@@ -216,7 +218,7 @@ class _SceneListState extends State<SceneList> {
                   IconButton(
                     onPressed: () {
                       context
-                          .read<VTScenesCubit>()
+                          .read<TourEditCubit>()
                           .setAsPrimaryScene(scene.id!);
                     },
                     icon: const Icon(
@@ -339,7 +341,7 @@ class _SceneListState extends State<SceneList> {
                                   ?.copyWith(color: Colors.blue),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  context.read<VTScenesCubit>().createOperation(
+                                  context.read<TourEditCubit>().createOperation(
                                         widget.tour.areas[i].id!,
                                       );
                                 },
@@ -362,7 +364,7 @@ class _SceneListState extends State<SceneList> {
                       IconButton(
                         onPressed: () {
                           context
-                              .read<VTScenesCubit>()
+                              .read<TourEditCubit>()
                               .showAreaPhotos(widget.tour.areas[i]);
                         },
                         icon: const Icon(Icons.photo_library_outlined),

@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:ccquarters/common/messages/error_message.dart';
-import 'package:ccquarters/virtual_tour/model/tour_info.dart';
-import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
-import 'package:ccquarters/virtual_tour/tour_list/tour_list.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
+import 'package:ccquarters/my_tours/tour_list/cubit.dart';
+import 'package:ccquarters/my_tours/tour_list/tour_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

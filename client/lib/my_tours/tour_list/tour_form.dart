@@ -1,4 +1,4 @@
-import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 import 'package:flutter/material.dart';
 
 class TourForm extends StatefulWidget {

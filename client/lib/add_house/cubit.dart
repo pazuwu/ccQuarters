@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:ccquarters/add_house/states.dart';
 import 'package:ccquarters/model/photo.dart';
-import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
