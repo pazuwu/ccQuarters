@@ -110,8 +110,8 @@ class TourLoaderCubit extends Cubit<TourLoadingState> {
       case ErrorType.unknown:
       default:
         emit(TourLoadingErrorState(
-            text:
-                "Wystąpił błąd podczas próby pobrania spaceru. Spróbuj później."));
+            text: "Wystąpił błąd podczas próby pobrania spaceru.",
+            tip: "Spróbuj ponownie później."));
     }
   }
 }

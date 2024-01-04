@@ -34,8 +34,9 @@ class _SceneListState extends State<SceneList> {
   void _showScene(BuildContext context, Scene scene) {
     context.go(
       Uri(
-          path: '/tours/${widget.tour.id}',
-          queryParameters: {'sceneId': scene.id}).toString(),
+        path: '/tours/${widget.tour.id}',
+        queryParameters: {'sceneId': scene.id},
+      ).toString(),
       extra: GoRouter.of(context).routeInformationProvider.value.uri,
     );
   }

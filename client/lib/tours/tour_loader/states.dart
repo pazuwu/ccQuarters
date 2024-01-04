@@ -32,7 +32,11 @@ class TourForEditLoadedState extends TourLoadingState {
 }
 
 class TourLoadingErrorState extends TourLoadingState {
-  TourLoadingErrorState({required this.text});
+  TourLoadingErrorState({
+    required this.text,
+    this.tip,
+  });
 
   final String text;
+  final String? tip;
 }
