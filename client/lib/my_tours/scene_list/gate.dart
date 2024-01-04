@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_gallery.dart';
-import 'package:ccquarters/virtual_tour/model/tour_for_edit.dart';
-import 'package:ccquarters/virtual_tour/scene_list/scene_list.dart';
-import 'package:ccquarters/virtual_tour/scene_list/states.dart';
+import 'package:ccquarters/my_tours/scene_list/scene_list.dart';
+import 'package:ccquarters/my_tours/scene_list/states.dart';
+import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/scene_list/cubit.dart';
+import 'package:ccquarters/my_tours/scene_list/cubit.dart';
 
 class SceneListGate extends StatelessWidget {
   const SceneListGate({
@@ -21,34 +21,37 @@ class SceneListGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: VTScenesCubit(context.read(), tour),
-      child: BlocBuilder<VTScenesCubit, VTScenesState>(
+      value: TourEditCubit(
+        context.read(),
+        tour,
+      ),
+      child: BlocBuilder<TourEditCubit, TourEditState>(
         builder: (context, state) {
           SnackMessenger.hide(context);
-          if (state is VTScenesLoadingState) {
+          if (state is TourEditModifyingState) {
             SnackMessenger.showLoading(context, state.message);
-          } else if (state is VTScenesSuccessState) {
+          } else if (state is TourEditSuccessState) {
             SnackMessenger.showSuccess(context, state.message);
-          } else if (state is VTScenesErrorState) {
+          } else if (state is TourEditErrorState) {
             SnackMessenger.showError(context, state.message);
-          } else if (state is VTScenesUploadFailedState) {
+          } else if (state is TourEditUploadingFailedState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showPhotosSendingFailedDialog(context, state);
             });
-          } else if (state is VTScenesCreateOperationFailedState) {
+          } else if (state is TourEditCreateOperationFailedState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showOperationSendFailedDialog(context, state);
             });
           }
 
-          if (state is ShowAreaPhotosState) {
+          if (state is TourEditShowAreaPhotosState) {
             return Scaffold(
               appBar: AppBar(
                 title: Text(state.area.name),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
-                    context.read<VTScenesCubit>().closeAreaPhotos();
+                    context.read<TourEditCubit>().closeAreaPhotos();
                   },
                 ),
               ),
@@ -86,7 +89,7 @@ class SceneListGate extends StatelessWidget {
   }
 
   void _showPhotosSendingFailedDialog(
-      BuildContext context, VTScenesUploadFailedState state) {
+      BuildContext context, TourEditUploadingFailedState state) {
     showDialog(
       context: context,
       builder: (c) {
@@ -107,7 +110,7 @@ class SceneListGate extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(c).pop();
-                context.read<VTScenesCubit>().addPhotosToArea(
+                context.read<TourEditCubit>().addPhotosToArea(
                       state.areaId,
                       state.failedImages,
                     );
@@ -121,7 +124,7 @@ class SceneListGate extends StatelessWidget {
   }
 
   void _showOperationSendFailedDialog(
-      BuildContext context, VTScenesCreateOperationFailedState state) {
+      BuildContext context, TourEditCreateOperationFailedState state) {
     showDialog(
       context: context,
       builder: (c) {
@@ -141,7 +144,7 @@ class SceneListGate extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(c).pop();
-                context.read<VTScenesCubit>().createOperation(
+                context.read<TourEditCubit>().createOperation(
                       state.areaId,
                       state.attempt,
                     );

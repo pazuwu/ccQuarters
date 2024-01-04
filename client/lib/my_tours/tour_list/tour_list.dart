@@ -6,10 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 import 'package:ccquarters/common/views/show_form.dart';
-import 'package:ccquarters/virtual_tour/model/tour_info.dart';
-import 'package:ccquarters/virtual_tour/tour/gate.dart';
-import 'package:ccquarters/virtual_tour/tour_list/cubit.dart';
-import 'package:ccquarters/virtual_tour/tour_list/tour_form.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
+import 'package:ccquarters/my_tours/tour_list/cubit.dart';
+import 'package:ccquarters/my_tours/tour_list/tour_form.dart';
 
 class TourList extends StatefulWidget {
   const TourList({
@@ -131,12 +130,6 @@ class _TourListState extends State<TourList> {
       });
       return;
     }
-
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => VirtualTourGate(
-              tourId: widget._tours[index].id,
-              readOnly: false,
-            )));
   }
 
   void _handleTileLongPress(int index) {

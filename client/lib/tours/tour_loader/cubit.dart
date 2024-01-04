@@ -1,19 +1,25 @@
 import 'package:ccquarters/services/service_response.dart';
-import 'package:ccquarters/virtual_tour/tour/states.dart';
+import 'package:ccquarters/tours/tour_loader/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour_model/tour.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
-class VirtualTourCubit extends Cubit<VTState> {
+class TourLoaderCubit extends Cubit<TourLoadingState> {
   final VTService _service;
   Tour? _tour;
 
-  VirtualTourCubit({required VTState initialState, required VTService service})
-      : _service = service,
+  TourLoaderCubit({
+    required TourLoadingState initialState,
+    required VTService service,
+    required String tourId,
+    required bool readOnly,
+  })  : _service = service,
         super(initialState) {
-    if (initialState is VTLoadingState) {
-      loadVirtualTour(initialState.tourId, initialState.readOnly);
+    if (readOnly) {
+      loadVirtualTourForView(tourId);
+    } else {
+      loadVirtualTourForEdit(tourId);
     }
   }
 
@@ -29,22 +35,33 @@ class VirtualTourCubit extends Cubit<VTState> {
       allTotals += item.total;
     }
 
-    emit(VTLoadingState(
+    emit(TourLoadingProgressState(
       tourId: _tour!.id,
       readOnly: readOnly,
       progress: progress / allTotals,
     ));
   }
 
-  Future loadVirtualTour(String tourId, bool readOnly) async {
-    if (readOnly) {
-      return _loadVirtualTourForView(tourId);
+  Future loadVirtualTourForView(String tourId) async {
+    var serviceResponse = await _service.getTour(tourId);
+
+    if (serviceResponse.error == ErrorType.none &&
+        serviceResponse.data != null) {
+      _tour = serviceResponse.data;
+
+      await _downloadSceneImages(_tour!, true);
+
+      emit(
+        TourLoadedState(
+          virtualTour: _tour!,
+        ),
+      );
     } else {
-      return _loadVirtualTourForEdit(tourId);
+      _handleServiceError(serviceResponse);
     }
   }
 
-  Future _loadVirtualTourForEdit(String tourId) async {
+  Future loadVirtualTourForEdit(String tourId) async {
     var serviceResponse = await _service.getTourForEdit(tourId);
 
     if (serviceResponse.error == ErrorType.none &&
@@ -54,29 +71,8 @@ class VirtualTourCubit extends Cubit<VTState> {
       await _downloadSceneImages(_tour!, false);
 
       emit(
-        VTEditingState(
+        TourForEditLoadedState(
           virtualTour: serviceResponse.data!,
-        ),
-      );
-    } else {
-      _handleServiceError(serviceResponse);
-    }
-  }
-
-  Future _loadVirtualTourForView(String tourId) async {
-    var serviceResponse = await _service.getTour(tourId);
-
-    if (serviceResponse.error == ErrorType.none &&
-        serviceResponse.data != null) {
-      _tour = serviceResponse.data;
-
-      await _downloadSceneImages(_tour!, true);
-
-      var scene = _tour!.scenes.first;
-      emit(
-        VTViewingState(
-          currentScene: scene,
-          virtualTour: _tour!,
         ),
       );
     } else {
@@ -107,13 +103,13 @@ class VirtualTourCubit extends Cubit<VTState> {
   void _handleServiceError<T>(ServiceResponse<T> serviceResponse) {
     switch (serviceResponse.error) {
       case ErrorType.unauthorized:
-        emit(VTErrorState(text: "Nie masz uprawnień do tego spaceru"));
+        emit(TourLoadingErrorState(text: "Nie masz uprawnień do tego spaceru"));
       case ErrorType.notFound:
-        emit(VTErrorState(text: "Spacer nie został odnaleziony"));
+        emit(TourLoadingErrorState(text: "Spacer nie został odnaleziony"));
       case ErrorType.badRequest:
       case ErrorType.unknown:
       default:
-        emit(VTErrorState(
+        emit(TourLoadingErrorState(
             text:
                 "Wystąpił błąd podczas próby pobrania spaceru. Spróbuj później."));
     }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
 import 'package:ccquarters/common/inputs/radio_list.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
+import 'package:ccquarters/virtual_tour_model/scene.dart';
 
 class SceneLinkFormModel {
   String text;

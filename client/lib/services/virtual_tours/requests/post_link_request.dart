@@ -1,21 +1,18 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:ccquarters/virtual_tour/model/geo_point.dart';
+import 'package:ccquarters/virtual_tour_model/geo_point.dart';
 
 class PostLinkRequest {
   final String? parentId;
   final String? text;
   final String? destinationId;
-  final double? latitude;
-  final double? longitude;
+  final GeoPoint? position;
   final GeoPoint? nextOrientation;
   PostLinkRequest({
     this.parentId,
     this.text,
     this.destinationId,
-    this.latitude,
-    this.longitude,
+    this.position,
     this.nextOrientation,
   });
 
@@ -24,8 +21,7 @@ class PostLinkRequest {
       'parentId': parentId,
       'text': text,
       'destinationId': destinationId,
-      'latitude': latitude,
-      'longitude': longitude,
+      'position': position?.toMap(),
       'nextOrientation': nextOrientation?.toMap(),
     };
   }
@@ -36,8 +32,9 @@ class PostLinkRequest {
       text: map['text'] != null ? map['text'] as String : null,
       destinationId:
           map['destinationId'] != null ? map['destinationId'] as String : null,
-      latitude: map['latitude'] != null ? map['latitude'] as double : null,
-      longitude: map['longitude'] != null ? map['longitude'] as double : null,
+      position: map['position'] != null
+          ? GeoPoint.fromMap(map['position'] as Map<String, dynamic>)
+          : null,
       nextOrientation: map['nextOrientation'] != null
           ? GeoPoint.fromMap(map['nextOrientation'] as Map<String, dynamic>)
           : null,

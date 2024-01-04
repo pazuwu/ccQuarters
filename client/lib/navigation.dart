@@ -13,8 +13,8 @@ import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/main_page/gate.dart';
 import 'package:ccquarters/navigation_bar.dart';
 import 'package:ccquarters/profile/gate.dart';
-import 'package:ccquarters/virtual_tour/extended_tour_list/extended_tour_list.dart';
-import 'package:ccquarters/virtual_tour/tour/gate.dart';
+import 'package:ccquarters/my_tours/my_tours_gate.dart';
+import 'package:ccquarters/tours/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -106,8 +106,10 @@ class CCQNavigation {
                 ),
                 GoRoute(
                   path: '/my-tours',
-                  builder: (context, state) => const RequireSignIn(
-                    child: TourListExtendedGate(),
+                  builder: (context, state) => RequireSignIn(
+                    child: MyToursGate(
+                      openedTourId: state.uri.queryParameters['id'],
+                    ),
                   ),
                 ),
                 GoRoute(
@@ -137,11 +139,9 @@ class CCQNavigation {
             path: '/tours/:id',
             builder: (context, state) => Container(
               color: Theme.of(context).scaffoldBackgroundColor,
-              child: VirtualTourGate(
+              child: TourViewerGate(
                 tourId: state.pathParameters['id']!,
-                readOnly: true,
-                showTitle:
-                    MediaQuery.of(context).orientation == Orientation.portrait,
+                currentSceneId: state.uri.queryParameters['sceneId'],
               ),
             ),
           ),

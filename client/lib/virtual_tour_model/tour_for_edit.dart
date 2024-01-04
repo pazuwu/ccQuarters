@@ -2,10 +2,10 @@
 
 import 'dart:convert';
 
-import 'package:ccquarters/virtual_tour/model/area.dart';
-import 'package:ccquarters/virtual_tour/model/link.dart';
-import 'package:ccquarters/virtual_tour/model/scene.dart';
-import 'package:ccquarters/virtual_tour/model/tour.dart';
+import 'package:ccquarters/virtual_tour_model/area.dart';
+import 'package:ccquarters/virtual_tour_model/link.dart';
+import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/virtual_tour_model/tour.dart';
 
 class TourForEdit extends Tour {
   final List<Area> areas;
@@ -13,6 +13,7 @@ class TourForEdit extends Tour {
   TourForEdit({
     required super.id,
     required super.name,
+    required super.ownerId,
     super.primarySceneId,
     super.scenes,
     super.links,
@@ -30,6 +31,7 @@ class TourForEdit extends Tour {
     return TourForEdit(
       name: map['name'] as String,
       id: map['id'] as String,
+      ownerId: map['ownerId'] as String,
       primarySceneId: map['primarySceneId'] != null
           ? map['primarySceneId'] as String
           : null,
