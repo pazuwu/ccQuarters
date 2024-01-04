@@ -1,15 +1,21 @@
 import 'dart:ui';
 
-import 'package:ccquarters/common/messages/error_message.dart';
-import 'package:ccquarters/virtual_tour_model/tour_info.dart';
-import 'package:ccquarters/my_tours/tour_list/cubit.dart';
-import 'package:ccquarters/my_tours/tour_list/tour_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class VTListGate extends StatelessWidget {
-  const VTListGate({super.key, this.selectionChanged});
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/my_tours/tour_list/cubit.dart';
+import 'package:ccquarters/my_tours/tour_list/tour_list.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 
+class VTListGate extends StatelessWidget {
+  const VTListGate({
+    Key? key,
+    this.initialTourId,
+    this.selectionChanged,
+  }) : super(key: key);
+
+  final String? initialTourId;
   final Function(TourInfo)? selectionChanged;
 
   @override
@@ -50,6 +56,7 @@ class VTListGate extends StatelessWidget {
                 );
               } else if (state is VTListLoadedState) {
                 return TourList(
+                  initialTourId: initialTourId,
                   tours: state.tours,
                   selectionChanged: selectionChanged,
                 );
