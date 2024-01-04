@@ -26,42 +26,55 @@ class AddHouseGate extends StatelessWidget {
               state: state,
               editMode: house != null,
             );
-          } else if (state is SendingFinishedState) {
-            return _buildSendingFinishedView(context, state);
-          } else if (state is ErrorState) {
-            return Scaffold(
-              body: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        state.message,
-                        textAlign: TextAlign.center,
-                      ),
-                      TextButton(
-                        child: const Text("Powtórz wysyłanie"),
-                        onPressed: () =>
-                            context.read<AddHouseFormCubit>().sendData(),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          } else if (state is SendingDataState) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
+          } else {
+            return BackButtonListener(
+              onBackButtonPressed: () async {
+                context.read<AddHouseFormCubit>().clear();
+                return true;
+              },
+              child: _getInfoView(state, context),
             );
           }
-
-          return Container();
         },
       ),
     );
+  }
+
+  Widget _getInfoView(HouseFormState state, BuildContext context) {
+    if (state is SendingFinishedState) {
+      return _buildSendingFinishedView(context, state);
+    } else if (state is ErrorState) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  state.message,
+                  textAlign: TextAlign.center,
+                ),
+                TextButton(
+                  child: const Text("Powtórz wysyłanie"),
+                  onPressed: () => house == null
+                      ? context.read<AddHouseFormCubit>().sendData()
+                      : context.read<AddHouseFormCubit>().updateHouse(),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    } else if (state is SendingDataState) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    return Container();
   }
 
   Widget _buildSendingFinishedView(

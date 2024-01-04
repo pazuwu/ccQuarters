@@ -1,4 +1,4 @@
-﻿using Google.Cloud.Firestore;
+﻿using VirtualTourAPI.DTOModel;
 
 namespace VirtualTourAPI.Requests
 {

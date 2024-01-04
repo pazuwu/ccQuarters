@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter Web",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "dev",
+                "--dart-define",
+                "app.flavor=dev",
+                "--web-renderer",
+                "html"
+            ],
+            "flutterMode": "debug"
+        },
+        {
+            "name": "Flutter Android",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "dev",
+                "--dart-define",
+                "app.flavor=dev"
+            ],
+            "flutterMode": "debug"
+        }
+    ]
+}

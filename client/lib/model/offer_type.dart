@@ -2,18 +2,14 @@ import 'package:json_annotation/json_annotation.dart';
 
 enum OfferType {
   rent,
-  sale;
+  sell;
 
   @override
-  toString() => name;
-}
-
-extension OfferTypeEx on OfferType {
-  String get name {
+  toString() {
     switch (this) {
       case OfferType.rent:
         return "Wynajem";
-      case OfferType.sale:
+      case OfferType.sell:
         return "Sprzedaż";
     }
   }

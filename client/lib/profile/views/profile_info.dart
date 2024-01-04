@@ -1,6 +1,6 @@
-import 'package:ccquarters/common_widgets/image.dart';
+import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 class ProfileInfo extends StatelessWidget {
@@ -31,7 +31,7 @@ class ProfileInfo extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: constraints.maxWidth * 0.8,
+          height: constraints.maxWidth * 0.7,
           child: Padding(
             padding: const EdgeInsets.all(largePaddingSize),
             child: user.photoUrl != null && user.photoUrl!.isNotEmpty
@@ -62,6 +62,7 @@ class ProfileInfo extends StatelessWidget {
           Text(
             "${user.name!} ${user.surname!}",
             style: Theme.of(context).textTheme.headlineSmall,
+            textScaler: const TextScaler.linear(0.8),
           ),
         if (user.company != null)
           Text(

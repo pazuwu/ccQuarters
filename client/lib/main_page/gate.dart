@@ -1,4 +1,3 @@
-import 'package:ccquarters/list_of_houses/gate.dart';
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/main_page/view.dart';
 import 'package:flutter/material.dart';
@@ -18,14 +17,7 @@ class _MainPageGateState extends State<MainPageGate> {
       create: (_) => MainPageCubit(context.read()),
       child: BlocBuilder<MainPageCubit, MainPageState>(
         builder: (context, state) {
-          if (state is MainPageInitialState) {
-            return const MainPage();
-          } else if (state is SearchState) {
-            return const ListOfHousesGate(
-              isSearch: true,
-            );
-          }
-          return Container();
+          return const MainPage();
         },
       ),
     );

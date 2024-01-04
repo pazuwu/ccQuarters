@@ -7,28 +7,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPageState {}
 
-class MainPageInitialState extends MainPageState {}
-
-class SearchState extends MainPageState {}
-
 class MainPageCubit extends Cubit<MainPageState> {
-  MainPageCubit(this.houseService) : super(MainPageInitialState());
+  MainPageCubit(this.houseService) : super(MainPageState());
 
   HouseService houseService;
-  void search() {
-    emit(SearchState());
-  }
-
-  void goBack() {
-    emit(MainPageInitialState());
-  }
 
   Future<List<House>?> getHousesToRent(int pageNumber, int pageCount) async {
     return _getHouses(pageNumber, pageCount, OfferType.rent);
   }
 
   Future<List<House>?> getHousesToBuy(int pageNumber, int pageCount) async {
-    return _getHouses(pageNumber, pageCount, OfferType.sale);
+    return _getHouses(pageNumber, pageCount, OfferType.sell);
   }
 
   Future<List<House>?> _getHouses(

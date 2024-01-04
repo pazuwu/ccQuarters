@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:ccquarters/common_widgets/image.dart';
+import 'dart:math';
+
+import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
@@ -31,155 +33,197 @@ class ButtonContactWidget extends StatelessWidget {
         ),
       ),
       child: const Text(
-        "Skontaktuj się z wystawiającym",
+        "Skontaktuj się z wystawiającym!",
         textScaler: TextScaler.linear(1.3),
+        textAlign: TextAlign.center,
       ),
     );
   }
 }
 
 class ContactWidget extends StatelessWidget {
-  const ContactWidget({super.key, required this.user});
+  const ContactWidget({super.key, required this.user, this.additionalWidget});
 
   final User user;
+  final Widget? additionalWidget;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 1,
-      child: Center(
-        child: LayoutBuilder(
-          builder: (context, constraints) => ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: constraints.maxWidth * 0.8,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            const Text(
+              "Skontaktuj się z wystawiającym ogłoszenie!",
+              textScaler: TextScaler.linear(1.25),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 16),
-                  child: Text(
-                    "Skontaktuj się z wystawiającym ogłoszenie!",
-                    textScaler: TextScaler.linear(1.25),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  children: [
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(largePaddingSize),
-                          child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxHeight: constraints.maxHeight * 0.3,
-                              ),
-                              child: user.photoUrl != null
-                                  ? ImageWidget(
-                                      imageUrl: user.photoUrl!,
-                                      shape: BoxShape.circle,
-                                    )
-                                  : Container(
-                                      decoration: const BoxDecoration(
-                                          shape: BoxShape.circle),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Image.asset(
-                                          "assets/graphics/avatar.png"),
-                                    )),
-                        ),
-                        _buildNameTable(context, user),
-                      ],
-                    ),
-                  ],
-                ),
-                _buildContactTable(context, user),
-              ],
+            const SizedBox(height: 16),
+            Flexible(
+              child: _buildContactInfo(),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
-}
 
-Widget _buildNameTable(BuildContext context, User user) {
-  return Padding(
-    padding: const EdgeInsets.all(largePaddingSize),
-    child: Table(
+  Widget _buildContactInfo() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(
+          width: double.infinity,
+          height: 0,
+        ),
+        Flexible(
+          child: LayoutBuilder(
+            builder: (context, constraints) => Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: _getContactPhotoWidth(constraints),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(largePaddingSize),
+                    child: user.photoUrl != null
+                        ? ImageWidget(
+                            imageUrl: user.photoUrl!,
+                            shape: BoxShape.circle,
+                          )
+                        : Container(
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.asset("assets/graphics/avatar.png"),
+                          ),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: _getContactInfoWidth(constraints),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: largePaddingSize,
+                      vertical: 32.0,
+                    ),
+                    child: Column(
+                      children: [
+                        _buildNameTable(context, user),
+                        const SizedBox(height: 16),
+                        _buildContactTable(context, user),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  double _getContactPhotoWidth(BoxConstraints constraints) {
+    return max(constraints.maxWidth * 0.4, 180);
+  }
+
+  double _getContactInfoWidth(BoxConstraints constraints) {
+    var prefereedSizeInRow = max(constraints.maxWidth * 0.6, 200.0);
+
+    return prefereedSizeInRow + _getContactPhotoWidth(constraints) >
+            constraints.maxWidth
+        ? constraints.maxWidth
+        : prefereedSizeInRow;
+  }
+
+  Widget _buildNameTable(BuildContext context, User user) {
+    return Table(
       columnWidths: const {
         0: FlexColumnWidth(2),
-        1: FlexColumnWidth(8),
+        1: FlexColumnWidth(6),
+        2: FlexColumnWidth(2),
       },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
-        if (user.name != null && user.surname != null)
+        if ((user.name?.isNotEmpty ?? false) ||
+            (user.surname?.isNotEmpty ?? false))
           _buildNameTableRow(
             context,
             Icons.person,
             "${user.name!} ${user.surname!}",
           ),
-        if (user.company != null)
+        if (user.company?.isNotEmpty ?? false)
           _buildNameTableRow(
             context,
             Icons.business,
             user.company!,
           ),
       ],
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildContactTable(BuildContext context, User user) {
-  return Table(
-    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-    columnWidths: const {
-      0: FlexColumnWidth(2),
-      1: FlexColumnWidth(6),
-      2: FlexColumnWidth(2),
-    },
-    children: [
-      if (user.phoneNumber != null)
-        _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
-            () => CallUtils.openDialer(user.phoneNumber!, context)),
-      _buildContactTableRow(context, user.email, Icons.email,
-          () => CallUtils.openDialerForEmail(user.email, context)),
-    ],
-  );
-}
+  Widget _buildContactTable(BuildContext context, User user) {
+    return Table(
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      columnWidths: const {
+        0: FlexColumnWidth(2),
+        1: FlexColumnWidth(6),
+        2: FlexColumnWidth(2),
+      },
+      children: [
+        if (user.phoneNumber != null)
+          _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
+              () => CallUtils.openDialer(user.phoneNumber!, context)),
+        _buildContactTableRow(context, user.email, Icons.email,
+            () => CallUtils.openDialerForEmail(user.email, context)),
+      ],
+    );
+  }
 
-TableRow _buildNameTableRow(BuildContext context, IconData icon, String name) {
-  return TableRow(
-    children: [
-      Icon(icon),
-      Text(name),
-    ],
-  );
-}
+  TableRow _buildNameTableRow(
+      BuildContext context, IconData icon, String name) {
+    return TableRow(
+      children: [
+        Icon(icon),
+        Text(name),
+        Container(),
+      ],
+    );
+  }
 
-TableRow _buildContactTableRow(
-  BuildContext context,
-  String text,
-  IconData icon,
-  Function() onPressed,
-) {
-  return TableRow(
-    children: [
-      IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon),
-      ),
-      Text(text),
-      IconButton(
-        icon: const Icon(Icons.copy),
-        onPressed: () async => await Clipboard.setData(
-          ClipboardData(text: text),
+  TableRow _buildContactTableRow(
+    BuildContext context,
+    String text,
+    IconData icon,
+    Function() onPressed,
+  ) {
+    return TableRow(
+      children: [
+        IconButton(
+          onPressed: onPressed,
+          icon: Icon(icon),
         ),
-      ),
-    ],
-  );
+        Text(text),
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: () async => await Clipboard.setData(
+            ClipboardData(text: text),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class CallUtils {

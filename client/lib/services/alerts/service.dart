@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/new_alert.dart';
 import 'package:ccquarters/services/alerts/responses/get_alerts_response.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
@@ -12,18 +13,23 @@ class AlertService {
   final Dio _dio;
   final String _url;
 
-  Future<ServiceResponse<List<Alert>>> getAlerts() async {
+  Future<ServiceResponse<List<Alert>>> getAlerts(
+      {int pageNumber = 0, int pageCount = 10}) async {
     try {
       var response = await _dio.get(
         _url,
         options: Options(headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.value,
         }),
+        queryParameters: {
+          "pageNumber": pageNumber,
+          "pageSize": pageCount,
+        },
       );
 
       return response.statusCode == StatusCode.OK
           ? ServiceResponse(
-              data: GetAlertsResponse.fromJson(response.data).alerts)
+              data: GetAlertsResponse.fromJson(response.data).data)
           : ServiceResponse(data: [], error: ErrorType.unknown);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
@@ -34,8 +40,15 @@ class AlertService {
     }
   }
 
-  Future<ServiceResponse<bool>> createAlert(Alert alert) async {
+  Future<ServiceResponse<bool>> createAlert(NewAlert alert) async {
     try {
+      if (alert.isEmpty()) {
+        return ServiceResponse(
+          data: false,
+          error: ErrorType.emptyRequest,
+        );
+      }
+
       var response = await _dio.post(
         _url,
         data: alert.toJson(),
@@ -44,7 +57,7 @@ class AlertService {
         }),
       );
 
-      return response.statusCode == StatusCode.OK
+      return response.statusCode == StatusCode.CREATED
           ? ServiceResponse(data: true)
           : ServiceResponse(data: false, error: ErrorType.unknown);
     } on DioException catch (e) {

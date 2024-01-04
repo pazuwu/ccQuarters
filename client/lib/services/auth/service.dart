@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ccquarters/services/auth/auth_info.dart';
+import 'package:ccquarters/services/auth/reset_password_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -21,6 +22,7 @@ abstract class BaseAuthService {
     String password,
   );
   Future<void> signOut();
+  Future<ResetPasswordResult> sendPasswordResetEmail(String email);
   Stream<AuthInfo> get authChanges;
 }
 
@@ -41,7 +43,7 @@ class AuthService implements BaseAuthService {
       StreamController.broadcast();
 
   @override
-  bool get isSignedIn => _firebaseAuth.currentUser != null;
+  bool get isSignedIn => !(_firebaseAuth.currentUser?.isAnonymous ?? true);
   @override
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
 
@@ -84,6 +86,8 @@ class AuthService implements BaseAuthService {
           return SignInResult.userNotFound;
         case 'wrong-password':
           return SignInResult.wrongPassword;
+        case 'invalid-credential':
+          return SignInResult.invalidCredential;
         default:
           rethrow;
       }
@@ -120,6 +124,26 @@ class AuthService implements BaseAuthService {
 
   @override
   Future<void> signOut() => _firebaseAuth.signOut();
+
+  @override
+  Future<ResetPasswordResult> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+
+      return ResetPasswordResult.success;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-email':
+          return ResetPasswordResult.invalidEmail;
+        case 'user-not-found':
+          return ResetPasswordResult.userNotFound;
+        default:
+          ResetPasswordResult.unknownError;
+      }
+
+      return ResetPasswordResult.unknownError;
+    }
+  }
 
   @override
   Stream<AuthInfo> get authChanges => _authChangesStreamController.stream;

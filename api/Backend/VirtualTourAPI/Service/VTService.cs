@@ -1,5 +1,9 @@
 ﻿using Google.Cloud.Firestore;
 using RepositoryLibrary;
+using System.Collections.Immutable;
+using VirtualTourAPI.DBOModel;
+using VirtualTourAPI.DTOModel;
+using VirtualTourAPI.Mappers;
 using VirtualTourAPI.Model;
 
 namespace VirtualTourAPI.Service
@@ -35,48 +39,73 @@ namespace VirtualTourAPI.Service
 
             _logger.LogInformation("Get area {Id} from tour {tourId}", tourId, addedArea.Id);
 
-            return addedArea.ConvertTo<AreaDTO>();
+            var areaDB = addedArea.ConvertTo<AreaDBO>();
+
+            return areaDB == null 
+                ? null 
+                : AreaMapper.Map(areaDB);
         }
 
-        public async Task<string?> CreateArea(string tourId, AreaDTO area)
+        public async Task<AreaPhotosInfoDTO> GetAreaPhotosInfo(string tourId, string areaId)
+        {
+            string path = $"{ToursCollection}/{tourId}/{AreasCollection}/{areaId}/photos";
+
+            var areaPhotosTask = _documentRepository.GetCollectionAsync(path);
+
+            _logger.LogInformation("Get area {areaId} photos from tour {tourId}", areaId, tourId);
+
+            await areaPhotosTask;
+            var areaPhotos = ConvertCollection<AreaPhotoDBO>(areaPhotosTask)?.Select(p => p.Id).ToArray();
+
+            return new AreaPhotosInfoDTO
+            {
+                PhotoIds = areaPhotos ?? Array.Empty<string>(),
+            };
+        }
+
+        public async Task<string> CreateArea(string tourId, NewAreaDTO area)
         {
             string path = $"{ToursCollection}/{tourId}/{AreasCollection}";
 
-            var addedAreaId = await _documentRepository.AddAsync(path, area);
+            var newAreaDB = AreaMapper.Map(area);
+            var addedAreaId = await _documentRepository.AddAsync(path, newAreaDB);
 
             _logger.LogInformation("Created new area in tour: {tourId}, id: {Id}", tourId, addedAreaId);
 
             return addedAreaId;
         }
 
-        public async Task<string?> CreateScene(string tourId, SceneDTO scene)
+        public async Task<string> CreateScene(string tourId, NewSceneDTO scene)
         {
             string path = $"{ToursCollection}/{tourId}/{ScenesCollection}";
 
-            var addedSceneId = await _documentRepository.AddAsync(path, scene);
+            var newSceneDB = SceneMapper.Map(scene);
+            string addedSceneId = await _documentRepository.AddAsync(path, newSceneDB);
 
             _logger.LogInformation("Created new scene in tour: {tourId}, id: {Id}", tourId, addedSceneId);
 
             return addedSceneId;
         }
 
-        public async Task<string?> CreateLink(string tourId, LinkDTO link)
+        public async Task<string> CreateLink(string tourId, NewLinkDTO link)
         {
             string path = $"{ToursCollection}/{tourId}/{LinksCollection}";
 
-            var addedLinkId = await _documentRepository.AddAsync(path, link);
+            var newLinkDB = LinkMapper.Map(link);
+            var addedLinkId = await _documentRepository.AddAsync(path, newLinkDB);
 
             _logger.LogInformation("Created new link in tour: {tourId}, id: {Id}", tourId, addedLinkId);
 
             return addedLinkId;
         }
 
-        public async Task AddPhotoToArea(string tourId, string areaId, string photoId)
+        public async Task<string> AddPhotoToArea(string tourId, string areaId)
         {
-            string path = $"{ToursCollection}/{tourId}/{AreasCollection}/{areaId}";
+            string path = $"{ToursCollection}/{tourId}/{AreasCollection}/{areaId}/photos";
 
-            await _documentRepository.UpdateAsync(path, nameof(AreaDTO.PhotoIds), FieldValue.ArrayUnion(photoId));
+            var photoId = await _documentRepository.AddAsync(path, ImmutableDictionary<string, string>.Empty);
             _logger.LogInformation("Photo {photoId} was added to area {areaId} in tour {tourId}", photoId, areaId, tourId);
+            return photoId;
         }
 
 
@@ -116,6 +145,9 @@ namespace VirtualTourAPI.Service
 
             _logger.LogInformation("Created new operation for tour: {tourId}, area: {areaId}", tourId, areaId);
 
+            string areaPath = $"{ToursCollection}/{tourId}/{AreasCollection}/{areaId}";
+            await _documentRepository.UpdateAsync(areaPath, nameof(AreaDTO.OperationId), addedOperationId);
+
             return addedOperationId;
         }
 
@@ -151,14 +183,27 @@ namespace VirtualTourAPI.Service
         {
             string path = $"{ToursCollection}/{tourId}/{LinksCollection}/{link.Id}";
 
-            await _documentRepository.SetAsync(path, link);
+            var updateDictionary = new Dictionary<string, object>();
+
+            if (link.Text != null)
+                updateDictionary[nameof(link.Text)] = link.Text;
+            if (link.DestinationId != null)
+                updateDictionary[nameof(link.DestinationId)] = link.DestinationId;
+            if (link.ParentId != null)
+                updateDictionary[nameof(link.ParentId)] = link.ParentId;
+            if (link.Position != null)
+                updateDictionary[nameof(link.Position)] = link.Position.MapToDBGeoPoint()!;
+            if(link.NextOrientation != null)
+                updateDictionary[nameof(link.NextOrientation)] = link.NextOrientation.MapToDBGeoPoint()!;
+
+            await _documentRepository.SetAsync(path, updateDictionary);
 
             _logger.LogInformation("Link updated in tour: {tourId}, id: {linkId}", tourId, link.Id);
         }
 
-        public async Task<TourDTO?> GetTour(string tourId)
+        public async Task<TourForEditDTO?> GetTourForEdit(string tourId)
         {
-            _logger.LogInformation("Get tour from documents, id: {tourId}", tourId);
+            _logger.LogInformation("Get tour from documents for edit, id: {tourId}", tourId);
 
             string tourPath = $"{ToursCollection}/{tourId}";
 
@@ -169,17 +214,56 @@ namespace VirtualTourAPI.Service
 
             await Task.WhenAll(tourTask, areasTask, scenesTask, linksTask);
 
-            var links = ConvertCollection<LinkDTO>(linksTask)?.ToList();
-            var scenes = ConvertCollection<SceneDTO>(scenesTask)?.ToList();
-            var areas = ConvertCollection<AreaDTO>(areasTask)?.ToList();
-            var tour = tourTask.GetAwaiter().GetResult()?.ConvertTo<TourDTO?>();
+            var links = ConvertCollection<LinkDBO>(linksTask)?.Select(LinkMapper.Map).ToList();
+            var scenes = ConvertCollection<SceneDBO>(scenesTask)?.Select(SceneMapper.Map).ToList();
+            var areas = ConvertCollection<AreaDBO>(areasTask)?.Select(AreaMapper.Map).ToList();
+            var tourDB = tourTask.GetAwaiter().GetResult()?.ConvertTo<TourDBO?>();
 
-            if (tour == null)
+            if (tourDB == null)
                 return null;
 
-            tour.Areas = areas;
-            tour.Scenes = scenes;
-            tour.Links = links;
+            var tour = new TourForEditDTO
+            {
+                Id = tourDB.Id,
+                Name = tourDB.Name,
+                OwnerId = tourDB.OwnerId,
+                PrimarySceneId = tourDB.PrimarySceneId,
+                Areas = areas,
+                Links = links,
+                Scenes = scenes,
+            };
+
+            return tour;
+        }
+
+        public async Task<TourDTO?> GetTour(string tourId)
+        {
+            _logger.LogInformation("Get tour from documents, id: {tourId}", tourId);
+
+            string tourPath = $"{ToursCollection}/{tourId}";
+
+            var tourTask = _documentRepository.GetAsync(tourPath);
+            var scenesTask = _documentRepository.GetCollectionAsync($"{tourPath}/{ScenesCollection}");
+            var linksTask = _documentRepository.GetCollectionAsync($"{tourPath}/{LinksCollection}");
+
+            await Task.WhenAll(tourTask, scenesTask, linksTask);
+
+            var links = ConvertCollection<LinkDBO>(linksTask)?.Select(LinkMapper.Map).ToList();
+            var scenes = ConvertCollection<SceneDBO>(scenesTask)?.Select(SceneMapper.Map).ToList();
+            var tourDB = tourTask.GetAwaiter().GetResult()?.ConvertTo<TourDBO?>();
+
+            if (tourDB == null)
+                return null;
+
+            var tour = new TourDTO
+            {
+                Id = tourDB.Id,
+                Name = tourDB.Name,
+                OwnerId = tourDB.OwnerId,
+                PrimarySceneId = tourDB.PrimarySceneId,
+                Links = links,
+                Scenes = scenes,
+            };
 
             return tour;
         }
@@ -192,21 +276,32 @@ namespace VirtualTourAPI.Service
                 ?.Select(d => d.ConvertTo<T>());
         }
 
-        public async Task<string?> CreateTour(TourDTO tour)
+        public async Task<string?> CreateTour(NewTourDTO tour)
         {
-            string addedTourId = await _documentRepository.AddAsync(ToursCollection, tour);
+            var tourDB = TourMapper.Map(tour);
+            string addedTourId = await _documentRepository.AddAsync(ToursCollection, tourDB);
 
             _logger.LogInformation("Created new tour: {Id}", addedTourId);
 
             return addedTourId;
         }
 
-        public async Task UpdateTour(string tourId, TourUpdate tourUpdate)
+        public async Task UpdateTour(string tourId, TourUpdateDTO tourUpdate)
         {
             string path = $"{ToursCollection}/{tourId}";
-            string addedTourId = await _documentRepository.SetAsync(path, tourUpdate);
 
-            _logger.LogInformation("Changed tour: {Id}", addedTourId);
+            var updateDictionary = new Dictionary<string, object>();
+
+            if(tourUpdate.Name != null)
+                updateDictionary[nameof(tourUpdate.Name)] = tourUpdate.Name;
+            if(tourUpdate.PrimarySceneId != null)
+                updateDictionary[nameof(tourUpdate.PrimarySceneId)] = tourUpdate.PrimarySceneId;
+
+            if(updateDictionary.Any())
+            {
+                string addedTourId = await _documentRepository.SetAsync(path, updateDictionary);
+                _logger.LogInformation("Changed tour: {Id}", addedTourId);
+            }
         }
 
         public async Task DeleteTour(string tourId)
@@ -222,18 +317,18 @@ namespace VirtualTourAPI.Service
         {
             string tourPath = $"{ToursCollection}/{tourId}";
             var tourSnapshot = await _documentRepository.GetAsync(tourPath);
-            var tourOwnerId = tourSnapshot?.GetValue<string>(new FieldPath(nameof(TourDTO.OwnerId)));
+            var tourOwnerId = tourSnapshot?.GetValue<string>(new FieldPath(nameof(TourForEditDTO.OwnerId)));
 
             return tourOwnerId == userId;
         }
 
-        public async Task<TourInfoDTO[]> GetAllUserTourInfos(string userId)
+        public async Task<TourInfoDBO[]> GetAllUserTourInfos(string userId)
         {
-            var allUserToursSnapshotTask = _documentRepository.GetByFieldAsync(ToursCollection, nameof(TourDTO.OwnerId), userId);
+            var allUserToursSnapshotTask = _documentRepository.GetByFieldAsync(ToursCollection, nameof(TourForEditDTO.OwnerId), userId);
             await allUserToursSnapshotTask;
-            var allUserToursIds = ConvertCollection<TourInfoDTO>(allUserToursSnapshotTask)?.ToArray();
+            var allUserToursIds = ConvertCollection<TourInfoDBO>(allUserToursSnapshotTask)?.ToArray();
 
-            return allUserToursIds ?? Array.Empty<TourInfoDTO>();
+            return allUserToursIds ?? Array.Empty<TourInfoDBO>();
         }
     }
 }

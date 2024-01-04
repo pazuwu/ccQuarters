@@ -1,7 +1,9 @@
 import 'package:ccquarters/add_house/gate.dart';
+import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/model/detailed_house.dart';
 import 'package:ccquarters/model/new_house.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditHouseView extends StatefulWidget {
   const EditHouseView({super.key, required this.house});
@@ -23,6 +25,12 @@ class _EditHouseViewState extends State<EditHouseView> {
 
   @override
   Widget build(BuildContext context) {
-    return AddHouseGate(house: _house);
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        context.read<HouseDetailsCubit>().goBackToHouseDetails();
+        return true;
+      },
+      child: AddHouseGate(house: _house),
+    );
   }
 }

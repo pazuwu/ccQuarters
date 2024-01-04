@@ -1,9 +1,10 @@
-import 'package:ccquarters/common_widgets/wide_text_button.dart';
+import 'dart:math';
+
+import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChooseLoginOrRegisterView extends StatelessWidget {
   const ChooseLoginOrRegisterView({super.key});
@@ -17,7 +18,8 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(
               maxWidth:
-                  MediaQuery.of(context).orientation == Orientation.landscape
+                  MediaQuery.of(context).orientation == Orientation.landscape &&
+                          MediaQuery.of(context).size.width > 700
                       ? MediaQuery.of(context).size.width * 0.5
                       : MediaQuery.of(context).size.width),
           child: Padding(
@@ -27,10 +29,9 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _buildCompanyName(),
-                FaIcon(
-                  FontAwesomeIcons.house,
-                  size: 150,
-                  color: Theme.of(context).colorScheme.primary,
+                Image.asset(
+                  "assets/logo/logo.png",
+                  height: min(MediaQuery.of(context).size.width * 0.4, 200),
                 ),
                 _buildWelcome(context),
                 _buildLoginOrRegisterButtons(context),
@@ -83,6 +84,7 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 35, right: 35),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             "Cześć!",

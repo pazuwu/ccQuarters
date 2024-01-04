@@ -7,6 +7,7 @@ import 'package:ccquarters/profile/views/profile_drawer.dart';
 import 'package:ccquarters/profile/views/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class Profile extends StatefulWidget {
@@ -69,58 +70,58 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  NestedScrollView _buildScrollView() {
-    return NestedScrollView(
-      headerSliverBuilder: (context, value) {
-        return [
-          SliverToBoxAdapter(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ProfileInfo(user: widget.user),
-                _buildButtons(context),
-              ],
-            ),
+  CustomScrollView _buildScrollView() {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ProfileInfo(user: widget.user),
+              _buildButtons(context),
+            ],
           ),
-          SliverToBoxAdapter(
-            child: HousesAndLikedHousesTabBar(
-              tabController: _tabController,
-            ),
+        ),
+        SliverToBoxAdapter(
+          child: HousesAndLikedHousesTabBar(
+            tabController: _tabController,
           ),
-        ];
-      },
-      body: HousesTabBarViewWithGrids(
-        pagingControllerForLikedHouses: _pagingControllerForLikedHouses,
-        pagingControllerForMyHouses: _pagingControllerForMyHouses,
-        tabController: _tabController,
-      ),
+        ),
+        SliverFillRemaining(
+          child: HousesTabBarViewWithGrids(
+            pagingControllerForLikedHouses: _pagingControllerForLikedHouses,
+            pagingControllerForMyHouses: _pagingControllerForMyHouses,
+            tabController: _tabController,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildButtons(BuildContext context) {
-    return Row(
-      children: [
-        if (MediaQuery.of(context).orientation == Orientation.portrait)
-          IconButton(
-              onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
-              icon: const Icon(Icons.menu_rounded)),
-        if (MediaQuery.of(context).orientation == Orientation.landscape)
-          IconButton(
-            onPressed: () {
-              context.read<ProfilePageCubit>().goToEditUserPage();
-            },
-            icon: const Icon(Icons.edit),
-            tooltip: "Edytuj profil",
-          ),
-        if (MediaQuery.of(context).orientation == Orientation.landscape)
-          IconButton(
-            onPressed: () {
-              context.read<AuthCubit>().signOut();
-            },
-            icon: const Icon(Icons.logout),
-            tooltip: "Wyloguj się",
-          ),
-      ],
-    );
+    return (MediaQuery.of(context).orientation == Orientation.portrait)
+        ? IconButton(
+            onPressed: () => _scaffoldKey.currentState!.openEndDrawer(),
+            icon: const Icon(Icons.menu_rounded),
+          )
+        : Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  context.read<ProfilePageCubit>().goToEditUserPage();
+                },
+                icon: const Icon(Icons.edit),
+                tooltip: "Edytuj profil",
+              ),
+              IconButton(
+                onPressed: () {
+                  context.read<AuthCubit>().signOut();
+                  context.go('/login');
+                },
+                icon: const Icon(Icons.logout),
+                tooltip: "Wyloguj się",
+              ),
+            ],
+          );
   }
 }

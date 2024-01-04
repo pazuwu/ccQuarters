@@ -1,7 +1,7 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
 import 'package:ccquarters/model/detailed_house.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 const headerStyle = TextStyle(
@@ -33,10 +33,14 @@ class AccordionPage extends StatelessWidget {
       sectionClosingHapticFeedback: SectionHapticFeedback.light,
       disableScrolling: true,
       children: [
-        if (house.details.description != null)
+        if (house.details.description != null &&
+            house.details.description!.isNotEmpty)
           _buildDescriptionAccordionSection(context),
         _buildDetailsAccordionSection(context),
         _buildLocationAccordionSection(context),
+        if (house.details.additionalInfo != null &&
+            house.details.additionalInfo!.isNotEmpty)
+          _buildAdditionalInfoAccordionSection(context),
       ],
     );
   }
@@ -63,20 +67,20 @@ class AccordionPage extends StatelessWidget {
       leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
       header: const Text('Szczegóły ogłoszenia', style: headerStyle),
       content: Column(
-        children: [
-          HouseDetailsRow(title: "Cena", value: '${house.details.price} zł'),
+        children: _buildWidgetsWithDivider([
           HouseDetailsRow(
-              title: "Powierzchnia", value: '${house.details.area} m2'),
-          if (house.details.roomCount != null && house.details.roomCount! > 0)
-            HouseDetailsRow(
-                title: "Liczba pokoi", value: '${house.details.roomCount}'),
+              title: "Typ ogłoszenia",
+              value: house.details.buildingType.toString()),
+          HouseDetailsRow(
+            title: "Typ oferty",
+            value: house.offerType.toString(),
+          ),
           if (house.details.floor != null && house.details.floor! > 0)
             HouseDetailsRow(
               title: "Piętro",
               value: '${house.details.floor}',
-              isLast: true,
             ),
-        ],
+        ]),
       ),
     );
   }
@@ -87,7 +91,7 @@ class AccordionPage extends StatelessWidget {
       leftIcon: const Icon(Icons.location_on_outlined, color: Colors.white),
       header: const Text('Adres', style: headerStyle),
       content: Column(
-        children: [
+        children: _buildWidgetsWithDivider([
           HouseDetailsRow(
               title: "Województwo", value: house.location.voivodeship),
           HouseDetailsRow(title: "Miasto", value: house.location.city),
@@ -109,15 +113,50 @@ class AccordionPage extends StatelessWidget {
           HouseDetailsRow(
             title: "Kod pocztowy",
             value: house.location.zipCode,
-            isLast: true,
           ),
-        ],
+        ]),
+      ),
+    );
+  }
+
+  AccordionSection _buildAdditionalInfoAccordionSection(BuildContext context) {
+    return AccordionSection(
+      contentVerticalPadding: 20,
+      isOpen: _shouldBeOpen(context),
+      leftIcon: const Icon(Icons.add_home_outlined, color: Colors.white),
+      header: const Text('Dodatkowe informacje', style: headerStyle),
+      content: Column(
+        children: _buildWidgetsWithDivider(house.details.additionalInfo!.entries
+            .map((e) => HouseDetailsRow(title: e.key, value: e.value))
+            .toList()),
       ),
     );
   }
 
   bool _shouldBeOpen(BuildContext context) {
     return MediaQuery.of(context).size.height > 600;
+  }
+
+  _buildWidgetsWithDivider(List<Widget> widgets) {
+    List<Widget> result = [];
+
+    for (int i = 0; i < widgets.length; i++) {
+      result.add(widgets[i]);
+
+      if (i != widgets.length - 1) {
+        result.add(
+          const Padding(
+            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+            child: Divider(
+              color: Colors.grey,
+              height: 2,
+            ),
+          ),
+        );
+      }
+    }
+
+    return result;
   }
 }
 
@@ -126,38 +165,28 @@ class HouseDetailsRow extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
-    this.isLast = false,
   });
 
   final String title;
   final String value;
-  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 14),
-            ),
-            Text(
-              value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-          ],
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14),
         ),
-        if (!isLast)
-          const Padding(
-            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-            child: Divider(
-              color: Colors.grey,
-              height: 2,
-            ),
+        const SizedBox(width: 10),
+        Flexible(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.end,
           ),
+        ),
       ],
     );
   }

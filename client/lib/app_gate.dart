@@ -1,5 +1,6 @@
 import 'package:ccquarters/environment.dart';
-import 'package:ccquarters/login_register/gate.dart';
+import 'package:ccquarters/login_register/cubit.dart';
+import 'package:ccquarters/navigation.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/authorized_dio.dart';
 import 'package:ccquarters/services/auth/service.dart';
@@ -7,10 +8,11 @@ import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/users/service.dart';
 import 'package:ccquarters/theme.dart';
-import 'package:ccquarters/virtual_tour/service/service.dart';
+import 'package:ccquarters/services/virtual_tours/service.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class AppMainGate extends StatelessWidget {
@@ -24,7 +26,7 @@ class AppMainGate extends StatelessWidget {
           create: (context) => AuthService(firebaseAuth: FirebaseAuth.instance),
         ),
         Provider<Dio>(
-          create: (context) => AuthorizedDio(context.read()),
+          create: (context) => AuthorizedDio(context.read()).create(),
         ),
         Provider<FileService>(create: (context) => CacheManagerFileService()),
         Provider<UserService>(
@@ -47,17 +49,19 @@ class AppMainGate extends StatelessWidget {
           create: (context) =>
               VTService(context.read(), context.read(), Environment.vtApiUrl),
         ),
+        BlocProvider(
+          create: (context) => AuthCubit(
+            authService: context.read(),
+            userService: context.read(),
+          ),
+        )
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
+        title: "CCQuarters",
         themeMode: ThemeMode.light,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        home: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: const SafeArea(
-            child: AuthGate(),
-          ),
-        ),
+        routerConfig: CCQNavigation.router,
       ),
     );
   }

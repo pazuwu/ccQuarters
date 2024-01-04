@@ -7,11 +7,11 @@ import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
 import 'package:ccquarters/add_house/views/virtual_tour_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
+import 'package:ccquarters/common/device_type.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewsWithStepper extends StatefulWidget {
   const ViewsWithStepper({
@@ -35,33 +35,50 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   @override
   Widget build(BuildContext context) {
     activeStep = _getStepIndex();
-    return Scaffold(
-      appBar: widget.editMode
-          ? AppBar(
-              title: const Text("Edytuj ogłoszenie"),
-              leading: BackButton(
-                onPressed:
-                    context.read<HouseDetailsCubit>().goBackToHouseDetails,
+    return BackButtonListener(
+      onBackButtonPressed: _goBack,
+      child: Scaffold(
+        appBar: widget.editMode
+            ? AppBar(
+                title: const Text("Edytuj ogłoszenie"),
+                leading: BackButton(
+                  onPressed:
+                      context.read<HouseDetailsCubit>().goBackToHouseDetails,
+                ),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      if (_validateAndSaveData(widget.state, false)) {
+                        context.read<AddHouseFormCubit>().updateHouse();
+                      }
+                    },
+                    icon: const Icon(Icons.check),
+                  )
+                ],
+              )
+            : null,
+        body: Column(
+          children: [
+            if (!widget.editMode)
+              Column(
+                children: [
+                  const SizedBox(height: 8),
+                  _buildHeader(),
+                ],
               ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    if (_validateAndSaveData(widget.state, false)) {
-                      context.read<AddHouseFormCubit>().updateHouse();
-                    }
-                  },
-                  icon: const Icon(Icons.check),
-                )
-              ],
-            )
-          : null,
-      body: Column(
-        children: [
-          _buildStepper(context),
-          Expanded(
-            child: _buildView(widget.state),
-          ),
-        ],
+            const SizedBox(height: 12),
+            _buildStepper(context),
+            Divider(
+              color: Colors.blueGrey.shade300,
+              thickness: 1,
+              height: 1,
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: _buildView(widget.state),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -108,31 +125,34 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
 
   Widget _buildStepper(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        smallPaddingSize,
-        largePaddingSize,
-        smallPaddingSize,
-        0,
-      ),
-      color: Colors.grey[200],
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: EasyStepper(
+        padding: EdgeInsetsGeometryTween(
+          begin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          end: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+        )
+            .animate(CurvedAnimation(
+              parent: ModalRoute.of(context)!.animation!,
+              curve: Curves.easeInOut,
+            ))
+            .value,
         steppingEnabled: widget.editMode,
         activeStep: activeStep,
-        lineStyle: const LineStyle(
-          lineLength: 70,
+        lineStyle: LineStyle(
+          lineLength: 90,
           lineSpace: 0,
           lineType: LineType.normal,
-          defaultLineColor: Colors.white,
+          defaultLineColor: Colors.grey.shade300,
           finishedLineColor: Colors.blueGrey,
           lineThickness: 1.5,
         ),
+        unreachedStepBackgroundColor: Colors.blueGrey,
         activeStepTextColor: Colors.black87,
         finishedStepTextColor: Colors.black87,
         internalPadding: 50,
         showLoadingAnimation: false,
         stepAnimationDuration: const Duration(milliseconds: 200),
         stepRadius: 8,
-        showStepBorder: false,
         steps: _getSteps(getDeviceType(context) == DeviceType.mobile),
         onStepReached: (index) => _goToChoosenPage(index, widget.state),
       ),
@@ -157,6 +177,27 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
     }
 
     return 0;
+  }
+
+  Future<bool> _goBack() async {
+    if (activeStep == _getChooseTypeIndex()) {
+      context.go('/home');
+    } else if (activeStep == _getDetailsIndex()) {
+      context.read<AddHouseFormCubit>().goToChooseTypeForm();
+    } else if (activeStep ==
+        _getLocationIndex(getDeviceType(context) == DeviceType.mobile)) {
+      context.read<AddHouseFormCubit>().goToDetailsForm();
+    } else if (activeStep == _getMapIndex()) {
+      context.read<AddHouseFormCubit>().goToLocationForm();
+    } else if (activeStep ==
+        _getPhotosIndex(getDeviceType(context) == DeviceType.mobile)) {
+      context.read<AddHouseFormCubit>().goToMap();
+    } else if (activeStep ==
+        _getVirtualTourIndex(getDeviceType(context) == DeviceType.mobile)) {
+      context.read<AddHouseFormCubit>().goToPhotosForm();
+    }
+
+    return true;
   }
 
   void _goToChoosenPage(int index, StepperPageState state) {
@@ -226,7 +267,6 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       if (isMobile) _buildStep("Mapa", _getMapIndex(), true),
       _buildStep("Zdjęcia", _getPhotosIndex(isMobile), false),
       _buildStep("Wirtualny spacer", _getVirtualTourIndex(isMobile), true),
-      _buildStep("Wysyłanie", _getSendingIndex(isMobile), false),
     ];
   }
 
@@ -236,7 +276,6 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   int _getMapIndex() => 3;
   int _getPhotosIndex(bool isMobile) => isMobile ? 4 : 2;
   int _getVirtualTourIndex(bool isMobile) => isMobile ? 5 : 3;
-  int _getSendingIndex(bool isMobile) => isMobile ? 6 : 4;
 
   EasyStep _buildStep(String title, int index, bool topTitle) {
     return EasyStep(
@@ -250,6 +289,36 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
       ),
       title: title,
       topTitle: topTitle,
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.blueGrey,
+        ),
+        height: 64,
+        child: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(
+                Icons.newspaper,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              "Nowe ogłoszenie",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Colors.white,
+                  ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

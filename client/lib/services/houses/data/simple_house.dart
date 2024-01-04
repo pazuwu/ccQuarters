@@ -3,7 +3,6 @@ import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/house_details.dart';
 import 'package:ccquarters/model/location.dart';
 import 'package:ccquarters/model/offer_type.dart';
-import 'package:ccquarters/model/photo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'simple_house.g.dart';
@@ -56,7 +55,7 @@ class SimpleHouse {
   House toHouse() {
     return House(
       id: id,
-      Location(
+      location: Location(
         city: city,
         voivodeship: voivodeship,
         district: district,
@@ -65,7 +64,7 @@ class SimpleHouse {
         streetNumber: streetNumber,
         flatNumber: flatNumber,
       ),
-      HouseDetails(
+      details: HouseDetails(
         title: title,
         price: price,
         roomCount: roomCount,
@@ -73,13 +72,7 @@ class SimpleHouse {
         floor: floor,
         buildingType: buildingType,
       ),
-      Photo(
-        filename: "",
-        url: photoUrl != null
-            ? photoUrl!
-            : "https://picsum.photos/600/900?=${DateTime.now().millisecondsSinceEpoch}",
-        order: 0,
-      ),
+      photoUrl: photoUrl,
       offerType: offerType,
       isLiked: isLiked,
     );

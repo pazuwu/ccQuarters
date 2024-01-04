@@ -1,4 +1,4 @@
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -67,6 +67,7 @@ class AppTheme {
           color: Colors.black,
         )),
     useMaterial3: true,
+    fontFamily: 'Lato',
   );
 
   static ThemeData dark = ThemeData(

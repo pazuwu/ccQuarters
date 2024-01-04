@@ -3,8 +3,7 @@
 #else
 
 using FluentAssertions;
-using Google.Cloud.Firestore;
-using VirtualTourAPI.Model;
+using VirtualTourAPI.DTOModel;
 
 #nullable disable
 
@@ -20,7 +19,7 @@ namespace VirtualTourAPI.IntegrationTests
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
-            var tour = new TourDTO()
+            var tour = new NewTourDTO()
             {
                 Name = "Name",
                 OwnerId = "UserId"
@@ -29,10 +28,10 @@ namespace VirtualTourAPI.IntegrationTests
             _tourId = await _service.CreateTour(tour);
             _tourId.Should().NotBeNull();
 
-            var firstScene = new SceneDTO() { Name = "First scene" };
+            var firstScene = new NewSceneDTO() { Name = "First scene" };
             _firstSceneId = await _service.CreateScene(_tourId, firstScene);
 
-            var secondScene = new SceneDTO() { Name = "Second scene" };
+            var secondScene = new NewSceneDTO() { Name = "Second scene" };
             _secondSceneId = await _service.CreateScene(_tourId, secondScene);
         }
 
@@ -45,18 +44,28 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task CreateLinkShouldCreateLink()
         {
-            var link = new LinkDTO()
+            var newLink = new NewLinkDTO()
             {
+                Text = "New link",
                 ParentId = _firstSceneId,
                 DestinationId = _secondSceneId,
-                Position = new GeoPoint(10, 20),
-                NextOrientation = new GeoPoint(30, 40),
+                Position = new GeoPointDTO(10, 20),
+                NextOrientation = new GeoPointDTO(30, 40),
             };
 
-            var linkId = await _service.CreateLink(_tourId, link);
-            link.Id = linkId;
+            var linkId = await _service.CreateLink(_tourId, newLink);
 
-            var tour = await _service.GetTour(_tourId);
+            var link = new LinkDTO()
+            {
+                Id = linkId,
+                Text = newLink.Text,
+                ParentId = newLink.ParentId,
+                DestinationId = newLink.DestinationId,
+                Position = newLink.Position,
+                NextOrientation = newLink.NextOrientation,
+            };
+
+            var tour = await _service.GetTourForEdit(_tourId);
 
             tour.Links.Should().Contain(l => SameLinkAs(l, link));
         }
@@ -64,57 +73,76 @@ namespace VirtualTourAPI.IntegrationTests
         [TestMethod]
         public async Task DeleteLinkShouldDeleteLink()
         {
-            var link = new LinkDTO()
+            var newLink = new NewLinkDTO()
             {
+                Text = "New link",
                 ParentId = _firstSceneId,
                 DestinationId = _secondSceneId,
-                Position = new GeoPoint(10, 20),
-                NextOrientation = new GeoPoint(30, 40),
+                Position = new GeoPointDTO(10, 20),
+                NextOrientation = new GeoPointDTO(30, 40),
             };
 
-            var linkId = await _service.CreateLink(_tourId, link);
-            link.Id = linkId;
+            var linkId = await _service.CreateLink(_tourId, newLink);
 
-            var tour = await _service.GetTour(_tourId);
+            var link = new LinkDTO()
+            {
+                Id = linkId,
+                Text = newLink.Text,
+                ParentId = newLink.ParentId,
+                DestinationId = newLink.DestinationId,
+                Position = newLink.Position,
+                NextOrientation = newLink.NextOrientation,
+            };
+
+            var tour = await _service.GetTourForEdit(_tourId);
 
             tour.Links.Should().Contain(l => l.Id == linkId);
 
             await _service.DeleteLink(_tourId, linkId);
-            var tourAfterLinkDelete = await _service.GetTour(_tourId);
+            var tourAfterLinkDelete = await _service.GetTourForEdit(_tourId);
             tourAfterLinkDelete.Links.Should().NotContain(l => SameLinkAs(l, link));
         }
 
         [TestMethod]
         public async Task UpdateLinkShouldUpdateLink()
         {
-            var link = new LinkDTO()
+            var newLink = new NewLinkDTO()
             {
-                Text = "Link text",
+                Text = "New link",
                 ParentId = _firstSceneId,
                 DestinationId = _secondSceneId,
-                Position = new GeoPoint(10, 20),
-                NextOrientation = new GeoPoint(30, 40),
+                Position = new GeoPointDTO(10, 20),
+                NextOrientation = new GeoPointDTO(30, 40),
             };
 
-            var linkId = await _service.CreateLink(_tourId, link);
-            link.Id = linkId;
+            var linkId = await _service.CreateLink(_tourId, newLink);
 
-            var tour = await _service.GetTour(_tourId);
-            
+            var link = new LinkDTO()
+            {
+                Id = linkId,
+                Text = newLink.Text,
+                ParentId = newLink.ParentId,
+                DestinationId = newLink.DestinationId,
+                Position = newLink.Position,
+                NextOrientation = newLink.NextOrientation,
+            };
+
+            var tour = await _service.GetTourForEdit(_tourId);
+
             tour.Links.Should().Contain(l => SameLinkAs(l, link));
 
             var linkAfterModification = new LinkDTO()
             {
                 Id = linkId,
-                Text = "Changed link text",
+                Text = "Changed newLink text",
                 ParentId = _secondSceneId,
                 DestinationId = _firstSceneId,
-                NextOrientation = new GeoPoint(50, 60),
-                Position = new GeoPoint(70, 80),
+                NextOrientation = new GeoPointDTO(50, 60),
+                Position = new GeoPointDTO(70, 80),
             };
 
             await _service.UpdateLink(_tourId, linkAfterModification);
-            var tourAfterLinkUpdate = await _service.GetTour(_tourId);
+            var tourAfterLinkUpdate = await _service.GetTourForEdit(_tourId);
 
             tourAfterLinkUpdate.Links.Should().NotContain(l => SameLinkAs(l, link));
             tourAfterLinkUpdate.Links.Should().Contain(l => SameLinkAs(l, linkAfterModification));
@@ -125,10 +153,12 @@ namespace VirtualTourAPI.IntegrationTests
         {
             return firstLink.Id == secondLink.Id
                 && firstLink.DestinationId == secondLink.DestinationId
-                && firstLink.NextOrientation == secondLink.NextOrientation
+                && firstLink.NextOrientation?.Latitude == secondLink.NextOrientation?.Latitude
+                && firstLink.NextOrientation?.Longitude == secondLink.NextOrientation?.Longitude
                 && firstLink.Text == secondLink.Text
                 && firstLink.ParentId == secondLink.ParentId
-                && firstLink.NextOrientation == secondLink.NextOrientation;
+                && firstLink.Position.Latitude == secondLink.Position.Latitude
+                && firstLink.Position.Longitude == secondLink.Position.Longitude;
         }
     }
 }

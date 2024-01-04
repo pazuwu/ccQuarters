@@ -206,7 +206,7 @@ namespace CCQuartersAPI.Services
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
-                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order] DESC)
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order])
                         WHERE h.DeleteDate IS NULL AND ";
 
             queryBuilder.Append(query);
@@ -220,6 +220,7 @@ namespace CCQuartersAPI.Services
             return await GetSimpleHousesInfoInternal(queryBuilder.ToString(), new
             {
                 userId,
+                title = $"%{housesQuery.Title}%",
                 minPrice = housesQuery.MinPrice,
                 maxPrice = housesQuery.MaxPrice,
                 minPricePerM2 = housesQuery.MinPricePerM2,
@@ -245,6 +246,8 @@ namespace CCQuartersAPI.Services
         {
             var sb = new StringBuilder("1=1");
 
+            if (query.Title is not null)
+                sb.Append($@" AND Title like @title");
             if (query.MinPrice is not null)
                 sb.Append($@" AND Price >= @minPrice");
             if (query.MaxPrice is not null)
@@ -309,7 +312,7 @@ namespace CCQuartersAPI.Services
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
-                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order] DESC)
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order])
                         WHERE UserId = @userId AND h.DeleteDate IS NULL
                         ORDER BY h.UpdateDate DESC
                         OFFSET @pageNumber * @pageSize ROWS
@@ -329,7 +332,7 @@ namespace CCQuartersAPI.Services
                         FROM Houses h
                         JOIN Details d ON h.DetailsId = d.Id
                         JOIN Locations l ON h.LocationId = l.Id
-                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order] DESC) 
+                        LEFT JOIN HousePhotos p ON p.HouseId = h.Id AND [Order] = (SELECT TOP 1 [Order] FROM HousePhotos WHERE HouseId = h.Id ORDER BY [Order]) 
                         WHERE (SELECT COUNT(*) FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId) > 0 AND h.DeleteDate IS NULL
                         ORDER BY (SELECT TOP 1 LikeDate FROM LikedHouses WHERE HouseId = h.Id AND UserId = @userId ORDER BY LikeDate DESC) DESC
                         OFFSET @pageNumber * @pageSize ROWS

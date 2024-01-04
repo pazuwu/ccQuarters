@@ -66,4 +66,5 @@ Map<String, dynamic> _$HouseWithDetailsToJson(HouseWithDetails instance) =>
       'userEmail': instance.userEmail,
       'userPhoneNumber': instance.userPhoneNumber,
       'userPhotoUrl': instance.userPhotoUrl,
+      'virtualTourId': instance.virtualTourId,
     };

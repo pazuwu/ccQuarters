@@ -1,42 +1,69 @@
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/alert_base.dart';
+import 'package:ccquarters/model/alert_filter_base.dart';
 import 'package:ccquarters/model/voivodeship.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-class HouseFilter {
+class HouseFilter extends AlertFilterBase {
   HouseFilter(
       {this.title,
-      this.minPrice,
-      this.maxPrice,
-      this.minPricePerMeter,
-      this.maxPricePerMeter,
-      this.minArea,
-      this.maxArea,
-      this.minRoomCount,
-      this.maxRoomCount,
-      this.floor,
-      this.minFloor,
-      this.buildingType,
-      this.offerType,
-      this.sortBy = SortingMethod.newest});
+      minPrice,
+      maxPrice,
+      minPricePerM2,
+      maxPricePerM2,
+      minArea,
+      maxArea,
+      minRoomCount,
+      maxRoomCount,
+      floors,
+      minFloor,
+      buildingType,
+      offerType,
+      cities,
+      districts,
+      this.voivodeship,
+      this.sortBy = SortingMethod.newest})
+      : super(
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          maxPricePerM2: maxPricePerM2,
+          minPricePerM2: minPricePerM2,
+          minArea: minArea,
+          maxArea: maxArea,
+          minRoomCount: minRoomCount,
+          maxRoomCount: maxRoomCount,
+          floors: floors,
+          minFloor: minFloor,
+          offerType: offerType,
+          buildingType: buildingType,
+          cities: cities ?? [],
+          districts: districts ?? [],
+        );
 
   String? title;
-  double? minPrice;
-  double? maxPrice;
-  double? minPricePerMeter;
-  double? maxPricePerMeter;
-  double? minArea;
-  double? maxArea;
-  int? minRoomCount;
-  int? maxRoomCount;
-  List<int>? floor;
-  int? minFloor;
-  BuildingType? buildingType;
-  OfferType? offerType;
   Voivodeship? voivodeship;
-  List<String> cities = [];
-  List<String> districts = [];
   SortingMethod sortBy;
+
+  HouseFilter.fromAlert(AlertBase alert)
+      : voivodeship = alert.voivodeship != null
+            ? VoivodeshipEx.getFromName(alert.voivodeship!)
+            : null,
+        sortBy = SortingMethod.newest,
+        super(
+          minPrice: alert.minPrice,
+          maxPrice: alert.maxPrice,
+          maxPricePerM2: alert.maxPricePerM2,
+          minPricePerM2: alert.minPricePerM2,
+          minArea: alert.minArea,
+          maxArea: alert.maxArea,
+          minRoomCount: alert.minRoomCount,
+          maxRoomCount: alert.maxRoomCount,
+          floors: alert.floors,
+          minFloor: alert.minFloor,
+          offerType: alert.offerType,
+          buildingType: alert.buildingType,
+          cities: alert.cities ?? [],
+          districts: alert.districts ?? [],
+        );
 }
 
 enum SortingMethod {
@@ -47,7 +74,20 @@ enum SortingMethod {
   highestPricePerMeter;
 
   @override
-  toString() => name;
+  String toString() {
+    switch (this) {
+      case SortingMethod.newest:
+        return "Najnowsze";
+      case SortingMethod.lowestPrice:
+        return "Najtańsze";
+      case SortingMethod.highestPrice:
+        return "Najdroższe";
+      case SortingMethod.lowestPricePerMeter:
+        return "Najtańsze za m2";
+      case SortingMethod.highestPricePerMeter:
+        return "Najdroższe za m2";
+    }
+  }
 }
 
 class SortingMethodConverter implements JsonConverter<SortingMethod, int> {
@@ -68,27 +108,15 @@ class SortingMethodConverter implements JsonConverter<SortingMethod, int> {
   }
 }
 
-extension SortByTypeEx on SortingMethod {
-  String get name {
-    switch (this) {
-      case SortingMethod.newest:
-        return "Najnowsze";
-      case SortingMethod.lowestPrice:
-        return "Najtańsze";
-      case SortingMethod.highestPrice:
-        return "Najdroższe";
-      case SortingMethod.lowestPricePerMeter:
-        return "Najtańsze za m2";
-      case SortingMethod.highestPricePerMeter:
-        return "Najdroższe za m2";
-    }
-  }
-}
-
 class FloorNumber {
   FloorNumber(this.floorNumber);
 
+  FloorNumber.aboveTen() : floorNumber = 11 {
+    isAboveTen = true;
+  }
+
   int floorNumber;
+  bool isAboveTen = false;
 
   @override
   String toString() {
@@ -108,7 +136,8 @@ class FloorNumber {
       identical(this, other) ||
       other is FloorNumber &&
           runtimeType == other.runtimeType &&
-          floorNumber == other.floorNumber;
+          floorNumber == other.floorNumber &&
+          isAboveTen == other.isAboveTen;
 
   @override
   int get hashCode => floorNumber.hashCode;

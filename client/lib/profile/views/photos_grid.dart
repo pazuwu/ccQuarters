@@ -1,10 +1,11 @@
-import 'package:ccquarters/common_widgets/error_message.dart';
-import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
-import 'package:ccquarters/common_widgets/message.dart';
-import 'package:ccquarters/house_details/gate.dart';
+import 'package:ccquarters/common/images/asset_image.dart';
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/model/house.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class PhotosGrid extends StatefulWidget {
@@ -52,33 +53,35 @@ class _PhotosGridState extends State<PhotosGrid> {
       builderDelegate: PagedChildBuilderDelegate<House>(
         noItemsFoundIndicatorBuilder: (context) => const Message(
           title: "W tej zakładce nie masz\n jeszcze żadnych ogłoszeń",
-          icon: Icons.home,
+          imageWidget: Icon(Icons.home),
           adjustToLandscape: true,
           padding: EdgeInsets.all(8.0),
         ),
-        firstPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+        firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
           "Nie udało się pobrać ogłoszeń",
           tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
         ),
-        newPageErrorIndicatorBuilder: (context) => const ErrorMessage(
+        newPageErrorIndicatorBuilder: (context) => ErrorMessage(
           "Nie udało się pobrać ogłoszeń",
           tip: "Sprawdź połączenie z internetem i spróbuj ponownie",
         ),
         itemBuilder: (context, house, index) => Padding(
           padding: const EdgeInsets.all(1.5),
           child: InkWellWithPhoto(
-            imageWidget: ImageWidget(
-              imageUrl: house.photo.url,
-              borderRadius: const BorderRadius.all(Radius.zero),
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => HouseDetailsGate(
-                    houseId: house.id,
+            imageWidget: house.photoUrl != null
+                ? ImageWidget(
+                    imageUrl: house.photoUrl!,
+                    borderRadius: const BorderRadius.all(Radius.zero),
+                  )
+                : AssetImageWidget(
+                    imagePath: house.getFilenameDependOnBuildingType(),
+                    fit: BoxFit.contain,
+                    borderRadius: const BorderRadius.all(Radius.zero),
                   ),
-                ),
-              );
+            onTap: () {
+              context.go('/houses/${house.id}',
+                  extra:
+                      GoRouter.of(context).routeInformationProvider.value.uri);
             },
           ),
         ),

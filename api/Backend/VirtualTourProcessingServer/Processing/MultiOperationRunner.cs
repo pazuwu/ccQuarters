@@ -60,12 +60,6 @@ namespace VirtualTourProcessingServer.Processing
                     case OperationStage.PrepareData:
                         _operations[operation] = PrepareData(operation);
                         break;
-                    case OperationStage.SavingColmap:
-                        _operations[operation] = SaveColmap(operation);
-                        break;
-                    case OperationStage.CleanupTrain:
-                        _operations[operation] = CleanupTrain(operation);
-                        break;
                     case OperationStage.PrepareRender:
                         _operations[operation] = PrepareRender(operation);
                         break;
@@ -103,18 +97,6 @@ namespace VirtualTourProcessingServer.Processing
             var executorResponse = await _downloader.DownloadPhotos(downlaodParameters);
 
             await FinishOperation(operation, executorResponse);
-        }
-
-        private async Task SaveColmap(VTOperation operation)
-        {
-            _logger.LogInformation($"Saving COLMAP transforms for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-            await FinishOperation(operation, new ExecutorResponse());
-        }
-
-        private async Task CleanupTrain(VTOperation operation)
-        {
-            _logger.LogInformation($"Cleaning trainig for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-            await FinishOperation(operation, new ExecutorResponse());
         }
 
         private async Task PrepareRender(VTOperation operation)

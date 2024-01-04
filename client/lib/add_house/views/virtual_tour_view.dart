@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/add_house/cubit.dart';
-import 'package:ccquarters/common_widgets/icon_360.dart';
-import 'package:ccquarters/common_widgets/radio_list.dart';
-import 'package:ccquarters/common_widgets/view_with_header_and_buttons.dart';
-import 'package:ccquarters/virtual_tour/model/tour_info.dart';
+import 'package:ccquarters/common/widgets/icon_360.dart';
+import 'package:ccquarters/common/inputs/radio_list.dart';
+import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/virtual_tour_model/tour_info.dart';
 
 class VirtualTourFormView extends StatefulWidget {
   const VirtualTourFormView({

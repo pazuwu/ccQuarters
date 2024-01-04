@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
-import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
 import 'package:ccquarters/model/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
-import 'package:ccquarters/utils/consts.dart';
+import 'package:ccquarters/common/consts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -191,17 +191,23 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   Widget _buildPersonalInfoFields() {
-    return PersonalInfoFields(
-      company: _companyTextField,
-      name: _nameTextField,
-      surname: _surnameTextField,
-      phoneNumber: _phoneNumberTextField,
-      isBusinessAccount: _isBusinessAccount,
-      saveIsBusinessAcount: (value) {
-        setState(() {
-          _isBusinessAccount = value;
-        });
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) {
+        _deleteImage = false;
       },
+      child: PersonalInfoFields(
+        company: _companyTextField,
+        name: _nameTextField,
+        surname: _surnameTextField,
+        phoneNumber: _phoneNumberTextField,
+        isBusinessAccount: _isBusinessAccount,
+        saveIsBusinessAcount: (value) {
+          setState(() {
+            _isBusinessAccount = value;
+          });
+        },
+      ),
     );
   }
 

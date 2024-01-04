@@ -1,20 +1,32 @@
 import 'package:ccquarters/model/filter.dart';
 import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/new_alert.dart';
+import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListOfHousesState {}
 
-class ListOfHousesInitialState extends ListOfHousesState {}
+class ErrorState extends ListOfHousesState {
+  ErrorState({required this.message});
+
+  String message;
+}
 
 class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   ListOfHousesCubit({
     required this.houseService,
-  }) : super(ListOfHousesInitialState());
+    required this.alertService,
+    OfferType? offerType,
+    HouseFilter? filter,
+  })  : filter = filter ?? HouseFilter(),
+        super(ListOfHousesState());
 
   HouseService houseService;
-  HouseFilter filter = HouseFilter();
+  AlertService alertService;
+  HouseFilter filter;
 
   void saveFilter(HouseFilter filter) {
     this.filter = filter;
@@ -51,5 +63,15 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
     }
 
     return !isLiked;
+  }
+
+  Future<void> createAlert(HouseFilter filter) async {
+    var alert = NewAlert.fromHouseFilter(filter);
+    final response = await alertService.createAlert(alert);
+    if (response.error != ErrorType.none) {
+      emit(ErrorState(
+          message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
+      return;
+    }
   }
 }

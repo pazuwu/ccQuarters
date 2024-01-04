@@ -1,53 +1,68 @@
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/choose.dart';
 import 'package:ccquarters/login_register/cubit.dart';
+import 'package:ccquarters/login_register/views/forgot_password.dart';
 import 'package:ccquarters/login_register/views/login_register_view.dart';
-import 'package:ccquarters/navigation_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AuthGate extends StatelessWidget {
-  const AuthGate({Key? key}) : super(key: key);
+  const AuthGate({Key? key, this.child}) : super(key: key);
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthCubit(
-        authService: context.read(),
-        userService: context.read(),
-      ),
-      child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-        if (state is SignedInState) {
-          return const NavigationGate();
-        } else if (state is NeedsSigningInState) {
-          return const ChooseLoginOrRegisterView();
-        } else if (state is SigningInState) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is LoginState) {
-          return LoginRegisterView(
-              key: const Key("LoginPage"),
-              page: LoginRegisterPageType.login,
-              user: state.user);
-        } else if (state is PersonalInfoRegisterState) {
-          return LoginRegisterView(
-              key: const Key("RegisterFirstPage"),
-              page: LoginRegisterPageType.registerPersonalInfo,
-              user: state.user);
-        } else if (state is RegisterState) {
-          return LoginRegisterView(
-              key: const Key("RegisterSecondPage"),
-              page: LoginRegisterPageType.registerEmailAndPassword,
-              user: state.user);
+    return BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+      if (state is SignedInState) {
+        if (child != null) {
+          return child!;
         }
 
-        return const Center(
-          child: Text("Wystąpił nieoczekiwany błąd. Spróbuj ponownie później"),
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.go('/home');
+        });
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
         );
-      }),
-    );
+      } else if (state is NeedsSigningInState) {
+        return const ChooseLoginOrRegisterView();
+      } else if (state is LoadingState) {
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      } else if (state is LoginState) {
+        return LoginRegisterView(
+            key: const Key("LoginPage"),
+            page: LoginRegisterPageType.login,
+            user: state.user);
+      } else if (state is PersonalInfoRegisterState) {
+        return LoginRegisterView(
+            key: const Key("RegisterFirstPage"),
+            page: LoginRegisterPageType.registerPersonalInfo,
+            user: state.user);
+      } else if (state is RegisterState) {
+        return LoginRegisterView(
+            key: const Key("RegisterSecondPage"),
+            page: LoginRegisterPageType.registerEmailAndPassword,
+            user: state.user);
+      } else if (state is ForgotPasswordState) {
+        return ForgotPasswordPage(
+          email: state.email,
+          error: state.error,
+        );
+      } else if (state is ForgotPasswordSuccessState) {
+        return const ForgotPasswordSuccessPage();
+      }
+
+      return const Center(
+        child: Text("Wystąpił nieoczekiwany błąd. Spróbuj ponownie później"),
+      );
+    });
   }
 }

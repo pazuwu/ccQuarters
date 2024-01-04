@@ -30,8 +30,6 @@ namespace VirtualTourProcessingServer.Processing
                         break;
                     case OperationStage.Waiting:
                     case OperationStage.PrepareData:
-                    case OperationStage.SavingColmap:
-                    case OperationStage.CleanupTrain:
                     case OperationStage.PrepareRender:
                     case OperationStage.SavingRender:
                     case OperationStage.Finished:
@@ -54,8 +52,6 @@ namespace VirtualTourProcessingServer.Processing
                     break;
                 case OperationStage.Waiting:
                 case OperationStage.PrepareData:
-                case OperationStage.SavingColmap:
-                case OperationStage.CleanupTrain:
                 case OperationStage.PrepareRender:
                 case OperationStage.SavingRender:
                 case OperationStage.Finished:

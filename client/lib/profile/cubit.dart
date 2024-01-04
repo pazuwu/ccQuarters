@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/model/house.dart';
 import 'package:ccquarters/model/user.dart';
-import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
@@ -22,7 +21,9 @@ class EditProfileState extends ProfilePageState {
   final User user;
 }
 
-class LoadingOrSendingDataState extends ProfilePageState {}
+class LoadingDataState extends ProfilePageState {}
+
+class SendingDataState extends ProfilePageState {}
 
 class ErrorState extends ProfilePageState {
   ErrorState({
@@ -36,15 +37,13 @@ class ErrorState extends ProfilePageState {
 class ProfilePageCubit extends Cubit<ProfilePageState> {
   ProfilePageCubit({
     required this.userService,
-    required this.alertService,
     required this.houseService,
     required userId,
-  }) : super(LoadingOrSendingDataState()) {
+  }) : super(LoadingDataState()) {
     setUser(userId);
   }
 
   UserService userService;
-  AlertService alertService;
   HouseService houseService;
   late User user;
 
@@ -71,7 +70,7 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
   }
 
   Future<void> updateUser(User user, Uint8List? image, bool deleteImage) async {
-    emit(LoadingOrSendingDataState());
+    emit(SendingDataState());
 
     this.user = user;
     var response = await userService.updateUser(user.id, user);

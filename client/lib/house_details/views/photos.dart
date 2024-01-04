@@ -1,7 +1,8 @@
-import 'package:ccquarters/common_widgets/image.dart';
-import 'package:ccquarters/utils/consts.dart';
-import 'package:ccquarters/utils/device_type.dart';
-import 'package:ccquarters/common_widgets/inkwell_with_photo.dart';
+import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/device_type.dart';
+import 'package:ccquarters/common/images/inkwell_with_photo.dart';
+import 'package:ccquarters/common/views/show_gallery.dart';
 import 'package:flutter/material.dart';
 
 class Photos extends StatefulWidget {
@@ -21,8 +22,8 @@ class _PhotosState extends State<Photos> {
     return Padding(
       padding: const EdgeInsets.all(largePaddingSize),
       child: LayoutBuilder(
-        builder: (context, constraints) => widget.photos.isNotEmpty
-            ? getDeviceType(context) == DeviceType.web
+        builder: (context, constraints) =>
+            getDeviceType(context) == DeviceType.web
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -36,12 +37,7 @@ class _PhotosState extends State<Photos> {
                       _buildMainPhoto(context, constraints, true),
                       _buildPhotoList(context, constraints, true),
                     ],
-                  )
-            : _buildMainPhoto(
-                context,
-                constraints,
-                !(getDeviceType(context) == DeviceType.web),
-              ),
+                  ),
       ),
     );
   }
@@ -70,35 +66,38 @@ class _PhotosState extends State<Photos> {
               isMobile ? 0 : smallPaddingSize,
               isMobile ? smallPaddingSizeForScrollBar : 0,
             ),
-            child: ListView.builder(
+            child: SingleChildScrollView(
               controller: _scrollController,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return PhotoTile(
-                  photo: widget.photos[index],
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                    _scrollController.animateTo(
-                        isMobile
-                            ? index *
-                                (MediaQuery.of(context).size.height * 0.1 -
-                                    smallPaddingSizeForScrollBar +
-                                    extraSmallPaddingSize)
-                            : index *
-                                (constraints.maxWidth * 0.2 -
-                                    paddingSizeForScrollBar +
-                                    smallPaddingSize),
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.ease);
-                  },
-                  isFirst: index == 0,
-                  isMobile: isMobile,
-                );
-              },
-              itemCount: widget.photos.length,
               scrollDirection: isMobile ? Axis.horizontal : Axis.vertical,
+              child: Flex(
+                mainAxisSize: MainAxisSize.min,
+                direction: isMobile ? Axis.horizontal : Axis.vertical,
+                children: [
+                  for (int index = 0; index < widget.photos.length; index++)
+                    PhotoTile(
+                      photo: widget.photos[index],
+                      onTap: () {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                        _scrollController.animateTo(
+                            isMobile
+                                ? index *
+                                    (MediaQuery.of(context).size.height * 0.1 -
+                                        smallPaddingSizeForScrollBar +
+                                        extraSmallPaddingSize)
+                                : index *
+                                    (constraints.maxWidth * 0.2 -
+                                        paddingSizeForScrollBar +
+                                        smallPaddingSize),
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.ease);
+                      },
+                      isFirst: index == 0,
+                      isMobile: isMobile,
+                    )
+                ],
+              ),
             ),
           ),
         ),
@@ -116,16 +115,18 @@ class _PhotosState extends State<Photos> {
       decoration: BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: NetworkImage(widget.photos.isNotEmpty
-              ? widget.photos[_selectedIndex]
-              : "https://picsum.photos/512"),
+          image: NetworkImage(widget.photos[_selectedIndex]),
         ),
       ),
       child: MainPhoto(
-        onTap: () {},
-        photo: widget.photos.isNotEmpty
-            ? widget.photos[_selectedIndex]
-            : "https://picsum.photos/512",
+        onTap: () {
+          showGallery(
+            context,
+            urls: widget.photos,
+            initialIndex: _selectedIndex,
+          );
+        },
+        photo: widget.photos[_selectedIndex],
       ),
     );
   }
