@@ -1,4 +1,4 @@
-import 'package:ccquarters/map/map.dart';
+import 'package:ccquarters/map/map_readonly.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 

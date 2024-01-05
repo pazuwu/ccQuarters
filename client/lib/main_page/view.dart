@@ -51,42 +51,15 @@ class _MainPageState extends State<MainPage> {
                   const SizedBox(
                     height: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: FakeSearchBox(
-                      color: color,
-                      onTap: () => context.go(
-                        '/houses',
-                        extra: HousesExtra(isSearch: true),
-                      ),
-                    ),
-                  ),
+                  _buildFakeSearchBox(color, context),
                   const SizedBox(
                     height: 16,
                   ),
-                  Expanded(
-                    child: AnnouncementsContainer(
-                      title: "Do wynajęcia",
-                      pagingController: _pagingControllerForHousesToRent,
-                      getHouses: (pageNumber, pageCount) async => await context
-                          .read<MainPageCubit>()
-                          .getHousesToRent(pageNumber, pageCount),
-                      offerType: OfferType.rent,
-                    ),
-                  ),
+                  _buildHousesToRent(context),
                   const SizedBox(
                     height: 16,
                   ),
-                  Expanded(
-                    child: AnnouncementsContainer(
-                      title: "Na sprzedaż",
-                      pagingController: _pagingControllerForHousesToBuy,
-                      getHouses: (pageNumber, pageCount) async => await context
-                          .read<MainPageCubit>()
-                          .getHousesToBuy(pageNumber, pageCount),
-                      offerType: OfferType.sell,
-                    ),
-                  ),
+                  _buildHousesToBuy(context),
                   const SizedBox(
                     height: 16,
                   ),
@@ -120,6 +93,45 @@ class _MainPageState extends State<MainPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Padding _buildFakeSearchBox(ColorScheme color, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: FakeSearchBox(
+        color: color,
+        onTap: () => context.go(
+          '/houses',
+          extra: HousesExtra(isSearch: true),
+        ),
+      ),
+    );
+  }
+
+  Expanded _buildHousesToRent(BuildContext context) {
+    return Expanded(
+      child: AnnouncementsContainer(
+        title: "Do wynajęcia",
+        pagingController: _pagingControllerForHousesToRent,
+        getHouses: (pageNumber, pageCount) async => await context
+            .read<MainPageCubit>()
+            .getHousesToRent(pageNumber, pageCount),
+        offerType: OfferType.rent,
+      ),
+    );
+  }
+
+  Expanded _buildHousesToBuy(BuildContext context) {
+    return Expanded(
+      child: AnnouncementsContainer(
+        title: "Na sprzedaż",
+        pagingController: _pagingControllerForHousesToBuy,
+        getHouses: (pageNumber, pageCount) async => await context
+            .read<MainPageCubit>()
+            .getHousesToBuy(pageNumber, pageCount),
+        offerType: OfferType.sell,
       ),
     );
   }

@@ -40,29 +40,7 @@ class AnnouncementsContainer extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                if (kIsWeb)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 8.0),
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        _scrollController.animateTo(
-                          _scrollController.offset -
-                              HouseItem.getMaxItemWidth(context),
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.decelerate,
-                        );
-                      },
-                      visualDensity: VisualDensity.compact,
-                      constraints:
-                          const BoxConstraints(minHeight: double.infinity),
-                      icon: Icon(
-                        Icons.arrow_left_rounded,
-                        size: HouseItem.getMaxItemWidth(context) * 0.1,
-                      ),
-                    ),
-                  ),
+                if (kIsWeb) _buildArrow(context, isLeft: true),
                 Expanded(
                   child: AnnouncementList(
                     scrollController: _scrollController,
@@ -70,32 +48,33 @@ class AnnouncementsContainer extends StatelessWidget {
                     getHouses: getHouses,
                   ),
                 ),
-                if (kIsWeb)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 8.0),
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        _scrollController.animateTo(
-                          _scrollController.offset +
-                              HouseItem.getMaxItemWidth(context),
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.decelerate,
-                        );
-                      },
-                      constraints:
-                          const BoxConstraints(minHeight: double.infinity),
-                      icon: Icon(
-                        Icons.arrow_right_rounded,
-                        size: HouseItem.getMaxItemWidth(context) * 0.1,
-                      ),
-                    ),
-                  ),
+                if (kIsWeb) _buildArrow(context),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Padding _buildArrow(BuildContext context, {bool isLeft = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          _scrollController.animateTo(
+            _scrollController.offset +
+                HouseItem.getMaxItemWidth(context) * (isLeft ? -1 : 1),
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.decelerate,
+          );
+        },
+        constraints: const BoxConstraints(minHeight: double.infinity),
+        icon: Icon(
+          isLeft ? Icons.arrow_left_rounded : Icons.arrow_right_rounded,
+          size: HouseItem.getMaxItemWidth(context) * 0.1,
+        ),
       ),
     );
   }
