@@ -31,7 +31,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   BaseAuthService authService;
   UserService userService;
-
   User? user;
   bool isBusinessAccount = false;
 

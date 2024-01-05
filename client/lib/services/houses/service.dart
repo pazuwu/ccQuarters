@@ -127,6 +127,7 @@ class HouseService {
         return ServiceResponse(
             data: data.house.toDetailedHouse(data.photos, houseId));
       }
+
       return ServiceResponse(data: null, error: ErrorType.unknown);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {

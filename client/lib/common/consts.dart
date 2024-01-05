@@ -16,3 +16,5 @@ const double elevation = 4;
 const double iconSize = 20;
 const double sizedBoxHeight = 10;
 const double inputDecorationBorderSide = 1.5;
+const String emailRegExpString =
+    "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+\$)";

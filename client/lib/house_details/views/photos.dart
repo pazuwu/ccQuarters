@@ -74,34 +74,39 @@ class _PhotosState extends State<Photos> {
                 direction: isMobile ? Axis.horizontal : Axis.vertical,
                 children: [
                   for (int index = 0; index < widget.photos.length; index++)
-                    PhotoTile(
-                      photo: widget.photos[index],
-                      onTap: () {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
-                        _scrollController.animateTo(
-                            isMobile
-                                ? index *
-                                    (MediaQuery.of(context).size.height * 0.1 -
-                                        smallPaddingSizeForScrollBar +
-                                        extraSmallPaddingSize)
-                                : index *
-                                    (constraints.maxWidth * 0.2 -
-                                        paddingSizeForScrollBar +
-                                        smallPaddingSize),
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.ease);
-                      },
-                      isFirst: index == 0,
-                      isMobile: isMobile,
-                    )
+                    _buildPhotoTile(index, isMobile, context, constraints)
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  PhotoTile _buildPhotoTile(int index, bool isMobile, BuildContext context,
+      BoxConstraints constraints) {
+    return PhotoTile(
+      photo: widget.photos[index],
+      onTap: () {
+        setState(() {
+          _selectedIndex = index;
+        });
+        _scrollController.animateTo(
+            isMobile
+                ? index *
+                    (MediaQuery.of(context).size.height * 0.1 -
+                        smallPaddingSizeForScrollBar +
+                        extraSmallPaddingSize)
+                : index *
+                    (constraints.maxWidth * 0.2 -
+                        paddingSizeForScrollBar +
+                        smallPaddingSize),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.ease);
+      },
+      isFirst: index == 0,
+      isMobile: isMobile,
     );
   }
 

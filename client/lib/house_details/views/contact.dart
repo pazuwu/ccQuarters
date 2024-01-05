@@ -2,12 +2,10 @@
 
 import 'dart:math';
 
-import 'package:ccquarters/common/images/image.dart';
+import 'package:ccquarters/house_details/views/contact_info.dart';
+import 'package:ccquarters/house_details/views/contact_photo.dart';
 import 'package:ccquarters/model/user/user.dart';
-import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
 
 class ButtonContactWidget extends StatelessWidget {
   const ButtonContactWidget({super.key, required this.user});
@@ -89,42 +87,13 @@ class ContactWidget extends StatelessWidget {
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: _getContactPhotoWidth(constraints),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(largePaddingSize),
-                    child: user.photoUrl != null
-                        ? ImageWidget(
-                            imageUrl: user.photoUrl!,
-                            shape: BoxShape.circle,
-                          )
-                        : Container(
-                            decoration:
-                                const BoxDecoration(shape: BoxShape.circle),
-                            clipBehavior: Clip.antiAlias,
-                            child: Image.asset("assets/graphics/avatar.png"),
-                          ),
-                  ),
+                ContactPhoto(
+                  width: _getContactPhotoWidth(constraints),
+                  photoUrl: user.photoUrl,
                 ),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: _getContactInfoWidth(constraints),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: largePaddingSize,
-                      vertical: 32.0,
-                    ),
-                    child: Column(
-                      children: [
-                        _buildNameTable(context, user),
-                        const SizedBox(height: 16),
-                        _buildContactTable(context, user),
-                      ],
-                    ),
-                  ),
+                ContactInfo(
+                  width: _getContactInfoWidth(constraints),
+                  user: user,
                 ),
               ],
             ),
@@ -145,119 +114,5 @@ class ContactWidget extends StatelessWidget {
             constraints.maxWidth
         ? constraints.maxWidth
         : prefereedSizeInRow;
-  }
-
-  Widget _buildNameTable(BuildContext context, User user) {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(2),
-        1: FlexColumnWidth(6),
-        2: FlexColumnWidth(2),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: [
-        if ((user.name?.isNotEmpty ?? false) ||
-            (user.surname?.isNotEmpty ?? false))
-          _buildNameTableRow(
-            context,
-            Icons.person,
-            "${user.name!} ${user.surname!}",
-          ),
-        if (user.company?.isNotEmpty ?? false)
-          _buildNameTableRow(
-            context,
-            Icons.business,
-            user.company!,
-          ),
-      ],
-    );
-  }
-
-  Widget _buildContactTable(BuildContext context, User user) {
-    return Table(
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      columnWidths: const {
-        0: FlexColumnWidth(2),
-        1: FlexColumnWidth(6),
-        2: FlexColumnWidth(2),
-      },
-      children: [
-        if (user.phoneNumber != null)
-          _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
-              () => CallUtils.openDialer(user.phoneNumber!, context)),
-        _buildContactTableRow(context, user.email, Icons.email,
-            () => CallUtils.openDialerForEmail(user.email, context)),
-      ],
-    );
-  }
-
-  TableRow _buildNameTableRow(
-      BuildContext context, IconData icon, String name) {
-    return TableRow(
-      children: [
-        Icon(icon),
-        Text(name),
-        Container(),
-      ],
-    );
-  }
-
-  TableRow _buildContactTableRow(
-    BuildContext context,
-    String text,
-    IconData icon,
-    Function() onPressed,
-  ) {
-    return TableRow(
-      children: [
-        IconButton(
-          onPressed: onPressed,
-          icon: Icon(icon),
-        ),
-        Text(text),
-        IconButton(
-          icon: const Icon(Icons.copy),
-          onPressed: () async => await Clipboard.setData(
-            ClipboardData(text: text),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class CallUtils {
-  CallUtils._();
-
-  static Future<void> openDialer(
-      String phoneNumber, BuildContext context) async {
-    Uri callUrl = Uri(scheme: 'tel', path: phoneNumber);
-    open(callUrl, context);
-  }
-
-  static Future<void> openDialerForEmail(
-      String email, BuildContext context) async {
-    Uri callUrl = Uri(scheme: 'mailto', path: email);
-    open(callUrl, context);
-  }
-
-  static Future<void> open(Uri uri, BuildContext context) async {
-    try {
-      await launchUrl(uri);
-    } catch (e) {
-      showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Nie udała się próba połączenia z właścicielem'),
-          content: const Text('Spróbuj ponownie później'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
   }
 }

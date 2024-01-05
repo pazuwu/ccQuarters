@@ -145,7 +145,10 @@ class Inside extends StatelessWidget {
                   ),
                   if (house.location.geoX != null &&
                       house.location.geoY != null)
-                    MapCard(location: house.location),
+                    MapCard(
+                      geoX: house.location.geoX!,
+                      geoY: house.location.geoY!,
+                    ),
                 ],
               ),
             ),

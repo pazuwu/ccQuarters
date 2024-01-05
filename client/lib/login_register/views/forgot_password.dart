@@ -1,5 +1,7 @@
+import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/themed_form_field.dart';
 import 'package:ccquarters/common/messages/message.dart';
+import 'package:ccquarters/common/views/center_view_with_constraints.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,7 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _emailController = TextEditingController();
-  final RegExp _emailRegExp =
-      RegExp("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+\$)");
+  final RegExp _emailRegExp = RegExp(emailRegExpString);
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -173,23 +174,16 @@ class ForgotPasswordSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxWidth:
-                MediaQuery.of(context).orientation == Orientation.landscape
-                    ? MediaQuery.of(context).size.width * 0.5
-                    : MediaQuery.of(context).size.width),
-        child: Scaffold(
-          appBar: AppBar(
-            leading: BackButton(
-              onPressed: () => context.read<AuthCubit>().goToLoginPage(),
-            ),
+    return CenterViewWithConstraints(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: BackButton(
+            onPressed: () => context.read<AuthCubit>().goToLoginPage(),
           ),
-          body: Message(
-            title: "Wysłano link do zmiany hasła!",
-            imageWidget: Image.asset("assets/graphics/check.png"),
-          ),
+        ),
+        body: Message(
+          title: "Wysłano link do zmiany hasła!",
+          imageWidget: Image.asset("assets/graphics/check.png"),
         ),
       ),
     );
