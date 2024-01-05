@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CenterViewWithConstraints extends StatelessWidget {
-  const CenterViewWithConstraints({
+class ConstrainedCenterBox extends StatelessWidget {
+  const ConstrainedCenterBox({
     super.key,
     required this.child,
     this.widthMultiplier = 0.5,
