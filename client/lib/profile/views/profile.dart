@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/house/house.dart';
 import 'package:ccquarters/model/user/user.dart';
@@ -55,16 +56,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           _pagingControllerForLikedHouses.refresh();
           _pagingControllerForMyHouses.refresh();
         },
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width *
-                  (MediaQuery.of(context).orientation == Orientation.landscape
-                      ? 0.5
-                      : 1),
-            ),
-            child: _buildScrollView(),
-          ),
+        child: ConstrainedCenterBox(
+          child: _buildScrollView(),
         ),
       ),
     );

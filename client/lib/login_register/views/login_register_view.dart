@@ -1,4 +1,4 @@
-import 'package:ccquarters/common/views/center_view_with_constraints.dart';
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/states.dart';
@@ -58,7 +58,7 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   Widget build(BuildContext context) {
     var state = context.read<AuthCubit>().state;
 
-    return CenterViewWithConstraints(
+    return ConstrainedCenterBox(
       child: Scaffold(
         appBar: _buildAppBar(context),
         bottomNavigationBar: _buildBottomBar(context),

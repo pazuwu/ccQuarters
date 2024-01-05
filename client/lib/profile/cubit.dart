@@ -1,6 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:typed_data';
 
+import 'package:ccquarters/profile/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/model/house/house.dart';
@@ -8,31 +8,6 @@ import 'package:ccquarters/model/user/user.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';
-
-class ProfilePageState {}
-
-class ProfilePageInitialState extends ProfilePageState {
-  ProfilePageInitialState({required this.user});
-  final User user;
-}
-
-class EditProfileState extends ProfilePageState {
-  EditProfileState({required this.user});
-  final User user;
-}
-
-class LoadingDataState extends ProfilePageState {}
-
-class SendingDataState extends ProfilePageState {}
-
-class ErrorState extends ProfilePageState {
-  ErrorState({
-    required this.message,
-    this.tip,
-  });
-  final String message;
-  final String? tip;
-}
 
 class ProfilePageCubit extends Cubit<ProfilePageState> {
   ProfilePageCubit({

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:ccquarters/common/views/center_view_with_constraints.dart';
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/common/consts.dart';
@@ -15,7 +15,7 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: _buildSkipRegisterAndLoginBottomBar(context),
-      body: CenterViewWithConstraints(
+      body: ConstrainedCenterBox(
         child: Padding(
           padding: const EdgeInsets.all(paddingSize),
           child: Column(

@@ -2,6 +2,7 @@ import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
+import 'package:ccquarters/profile/states.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
 import 'package:ccquarters/profile/views/profile.dart';
 import 'package:flutter/material.dart';

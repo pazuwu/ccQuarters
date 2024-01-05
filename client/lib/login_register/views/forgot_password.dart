@@ -1,7 +1,7 @@
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/themed_form_field.dart';
 import 'package:ccquarters/common/messages/message.dart';
-import 'package:ccquarters/common/views/center_view_with_constraints.dart';
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:flutter/material.dart';
@@ -36,24 +36,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxWidth:
-                MediaQuery.of(context).orientation == Orientation.landscape &&
-                        MediaQuery.of(context).size.width > 700
-                    ? MediaQuery.of(context).size.width * 0.5
-                    : MediaQuery.of(context).size.width),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: BackButton(onPressed: () {
-              context.read<AuthCubit>().saveEmail(_emailController.text);
-              context.read<AuthCubit>().goToLoginPage();
-            }),
-          ),
-          body: _buildInside(context),
+    return ConstrainedCenterBox(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: BackButton(onPressed: () {
+            context.read<AuthCubit>().saveEmail(_emailController.text);
+            context.read<AuthCubit>().goToLoginPage();
+          }),
         ),
+        body: _buildInside(context),
       ),
     );
   }
@@ -174,7 +166,7 @@ class ForgotPasswordSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CenterViewWithConstraints(
+    return ConstrainedCenterBox(
       child: Scaffold(
         appBar: AppBar(
           leading: BackButton(
