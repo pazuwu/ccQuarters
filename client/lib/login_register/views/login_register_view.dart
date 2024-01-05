@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/views/center_view_with_constraints.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/states.dart';
@@ -57,33 +58,25 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   Widget build(BuildContext context) {
     var state = context.read<AuthCubit>().state;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxWidth:
-                MediaQuery.of(context).orientation == Orientation.landscape &&
-                        MediaQuery.of(context).size.width > 700
-                    ? MediaQuery.of(context).size.width * 0.5
-                    : MediaQuery.of(context).size.width),
-        child: Scaffold(
-          appBar: _buildAppBar(context),
-          bottomNavigationBar: _buildBottomBar(context),
-          resizeToAvoidBottomInset: false,
-          body: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildWelcomeText(),
-                  if (state is InputDataState && state.error != null)
-                    _showErrors(state, context),
-                  _buildFields(),
-                  _buildButtons(context),
-                ],
-              ),
+    return CenterViewWithConstraints(
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        bottomNavigationBar: _buildBottomBar(context),
+        resizeToAvoidBottomInset: false,
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildWelcomeText(),
+                if (state is InputDataState && state.error != null)
+                  _showErrors(state, context),
+                _buildFields(),
+                _buildButtons(context),
+              ],
             ),
           ),
         ),

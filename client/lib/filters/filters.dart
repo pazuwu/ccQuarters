@@ -71,14 +71,7 @@ class FilterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (getDeviceType(context) == DeviceType.mobile)
-            _buildButton(context, 'Anuluj', false),
-          _buildButton(context, 'Zapisz', true),
-        ],
-      ),
+      bottomNavigationBar: _buildButtons(context),
       body: ConstrainedBox(
         constraints: const BoxConstraints.expand(),
         child: Padding(
@@ -98,15 +91,7 @@ class FilterForm extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       if (context.read<AuthCubit>().user != null)
-                        IconButton(
-                          icon: const Icon(Icons.add_alert_rounded),
-                          onPressed: () {
-                            context
-                                .read<ListOfHousesCubit>()
-                                .createAlert(filters);
-                          },
-                          tooltip: 'Zapisz jako alert',
-                        ),
+                        _buildSaveAsAlert(context),
                     ],
                   ),
                 ),
@@ -116,6 +101,17 @@ class FilterForm extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Row _buildButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (getDeviceType(context) == DeviceType.mobile)
+          _buildButton(context, 'Anuluj', false),
+        _buildButton(context, 'Zapisz', true),
+      ],
     );
   }
 
@@ -137,6 +133,16 @@ class FilterForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
+    );
+  }
+
+  IconButton _buildSaveAsAlert(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.add_alert_rounded),
+      onPressed: () {
+        context.read<ListOfHousesCubit>().createAlert(filters);
+      },
+      tooltip: 'Zapisz jako alert',
     );
   }
 }

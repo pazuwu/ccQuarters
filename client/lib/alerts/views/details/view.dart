@@ -2,6 +2,7 @@ import 'package:ccquarters/alerts/views/details/house_details.dart';
 import 'package:ccquarters/alerts/views/details/location.dart';
 import 'package:ccquarters/alerts/views/details/price.dart';
 import 'package:ccquarters/alerts/views/details/type.dart';
+import 'package:ccquarters/common/functions.dart';
 import 'package:ccquarters/model/alert/alert.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class AlertDetails extends StatelessWidget {
     return ListTile(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _buildWidgetsWithDivider([
+        children: buildWidgetsWithDivider([
           if (_canBuildType())
             AlertType(
               offerType: alert.offerType,
@@ -36,22 +37,6 @@ class AlertDetails extends StatelessWidget {
         ]),
       ),
     );
-  }
-
-  _buildWidgetsWithDivider(List<Widget> widgets) {
-    List<Widget> result = [];
-
-    for (int i = 0; i < widgets.length; i++) {
-      result.add(widgets[i]);
-
-      if (i != widgets.length - 1) {
-        result.add(const Divider(
-          color: Colors.grey,
-        ));
-      }
-    }
-
-    return result;
   }
 
   bool _canBuildType() => alert.offerType != null || alert.buildingType != null;
