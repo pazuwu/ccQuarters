@@ -99,22 +99,20 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   }
 
   _goBack() {
-    () {
-      switch (widget.page) {
-        case LoginRegisterPageType.login:
-          _saveEmail();
-          context.read<AuthCubit>().goToStartPage();
-          break;
-        case LoginRegisterPageType.registerPersonalInfo:
-          _savePersonalInfo();
-          context.read<AuthCubit>().goToStartPage();
-          break;
-        case LoginRegisterPageType.registerEmailAndPassword:
-          _saveEmail();
-          context.read<AuthCubit>().goToPersonalInfoRegisterPage();
-          break;
-      }
-    };
+    switch (widget.page) {
+      case LoginRegisterPageType.login:
+        _saveEmail();
+        context.read<AuthCubit>().goToStartPage();
+        break;
+      case LoginRegisterPageType.registerPersonalInfo:
+        _savePersonalInfo();
+        context.read<AuthCubit>().goToStartPage();
+        break;
+      case LoginRegisterPageType.registerEmailAndPassword:
+        _saveEmail();
+        context.read<AuthCubit>().goToPersonalInfoRegisterPage();
+        break;
+    }
   }
 
   Padding _buildBottomBar(BuildContext context) {
