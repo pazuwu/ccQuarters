@@ -36,16 +36,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedCenterBox(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          leading: BackButton(onPressed: () {
-            context.read<AuthCubit>().saveEmail(_emailController.text);
-            context.read<AuthCubit>().goToLoginPage();
-          }),
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        context.read<AuthCubit>().saveEmail(_emailController.text);
+        context.read<AuthCubit>().goToLoginPage();
+        return true;
+      },
+      child: ConstrainedCenterBox(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            leading: BackButton(onPressed: () {
+              context.read<AuthCubit>().saveEmail(_emailController.text);
+              context.read<AuthCubit>().goToLoginPage();
+            }),
+          ),
+          body: _buildInside(context),
         ),
-        body: _buildInside(context),
       ),
     );
   }
@@ -112,15 +119,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  ConstrainedBox _buildEmailTextField(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width *
-            (MediaQuery.of(context).orientation == Orientation.landscape &&
-                    MediaQuery.of(context).size.width > 700
-                ? 0.4
-                : 1),
-      ),
+  Widget _buildEmailTextField(BuildContext context) {
+    return ConstrainedCenterBox(
+      widthMultiplier: 0.4,
       child: ThemedFormField(
         controller: _emailController,
         labelText: "E-mail",
@@ -166,16 +167,22 @@ class ForgotPasswordSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedCenterBox(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: BackButton(
-            onPressed: () => context.read<AuthCubit>().goToLoginPage(),
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        context.read<AuthCubit>().goToLoginPage();
+        return true;
+      },
+      child: ConstrainedCenterBox(
+        child: Scaffold(
+          appBar: AppBar(
+            leading: BackButton(
+              onPressed: () => context.read<AuthCubit>().goToLoginPage(),
+            ),
           ),
-        ),
-        body: Message(
-          title: "Wysłano link do zmiany hasła!",
-          imageWidget: Image.asset("assets/graphics/check.png"),
+          body: Message(
+            title: "Wysłano link do zmiany hasła!",
+            imageWidget: Image.asset("assets/graphics/check.png"),
+          ),
         ),
       ),
     );
