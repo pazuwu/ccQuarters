@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:ccquarters/virtual_tour_model/area.dart';
-import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tour/area.dart';
+import 'package:ccquarters/model/virtual_tour/tour_for_edit.dart';
 import 'package:equatable/equatable.dart';
 
 class TourEditState extends Equatable {

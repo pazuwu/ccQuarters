@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:ccquarters/virtual_tour_model/link.dart';
-import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/model/virtual_tour/link.dart';
+import 'package:ccquarters/model/virtual_tour/scene.dart';
 
 class Tour {
   Tour({

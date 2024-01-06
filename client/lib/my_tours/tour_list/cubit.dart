@@ -2,7 +2,7 @@ import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:ccquarters/virtual_tour_model/tour_info.dart';
+import 'package:ccquarters/model/virtual_tour/tour_info.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
 class VTListState {}
