@@ -21,8 +21,8 @@ class ChooseTypeFormState extends StepperPageState {
   final NewHouseDetails houseDetails;
 }
 
-class MobileDetailsFormState extends StepperPageState {
-  MobileDetailsFormState(this.houseDetails, this.buildingType);
+class PortraitDetailsFormState extends StepperPageState {
+  PortraitDetailsFormState(this.houseDetails, this.buildingType);
 
   final NewHouseDetails houseDetails;
   final BuildingType buildingType;

@@ -1,6 +1,6 @@
 import 'package:ccquarters/common/consts.dart';
+import 'package:ccquarters/common/functions.dart';
 import 'package:ccquarters/common/widgets/shadow.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 
 class FakeSearchBox extends StatelessWidget {
@@ -26,9 +26,10 @@ class FakeSearchBox extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             child: IgnorePointer(
               child: TextField(
-                textAlignVertical: getDeviceType(context) == DeviceType.mobile
-                    ? TextAlignVertical.bottom
-                    : TextAlignVertical.center,
+                textAlignVertical:
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? TextAlignVertical.bottom
+                        : TextAlignVertical.center,
                 decoration: buildSearchBoxDecoration(),
               ),
             ),
@@ -76,7 +77,7 @@ class _SearchBoxState extends State<SearchBox> {
       color: widget.color,
       child: TextField(
         autofocus: true,
-        textAlignVertical: getDeviceType(context) == DeviceType.mobile
+        textAlignVertical: MediaQuery.of(context).orientation == Orientation.portrait
             ? TextAlignVertical.bottom
             : TextAlignVertical.center,
         controller: widget.controller,
@@ -111,9 +112,9 @@ class SearchBoxTheme extends StatelessWidget {
       constraints: BoxConstraints(
         maxWidth: maxWidth,
         minHeight: minHeight,
-        maxHeight: getDeviceType(context) == DeviceType.mobile
-            ? mobileSearchBoxHeight
-            : webSearchBoxHeight,
+        maxHeight: MediaQuery.of(context).orientation == Orientation.portrait
+            ? portraitSearchBoxHeight
+            : landscapeSearchBoxHeight,
       ),
       child: Shadow(color: color, child: child),
     );

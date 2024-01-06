@@ -3,7 +3,6 @@ import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/model/houses/new_house.dart';
 import 'package:ccquarters/model/houses/voivodeship.dart';
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
 import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:ccquarters/common/views/views_with_vertical_divider.dart';
@@ -31,7 +30,7 @@ class _LocationFormViewState extends State<LocationFormView> {
   @override
   Widget build(BuildContext context) {
     return ViewWithButtons(
-        inBetweenWidget: getDeviceType(context) == DeviceType.web
+        inBetweenWidget: MediaQuery.of(context).orientation == Orientation.landscape
             ? ViewsWithVerticalDivider(
                 firstView: LocationForm(
                     location: widget.location,
@@ -47,7 +46,7 @@ class _LocationFormViewState extends State<LocationFormView> {
         goBackOnPressed: () {
           widget.formKey.currentState!.save();
           context.read<AddHouseFormCubit>().saveLocation(widget.location);
-          if (getDeviceType(context) == DeviceType.web) {
+          if (MediaQuery.of(context).orientation == Orientation.landscape) {
             context.read<AddHouseFormCubit>().goToChooseTypeForm();
           } else {
             context.read<AddHouseFormCubit>().goToDetailsForm();
@@ -57,7 +56,7 @@ class _LocationFormViewState extends State<LocationFormView> {
           if (widget.formKey.currentState!.validate()) {
             widget.formKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveLocation(widget.location);
-            if (getDeviceType(context) == DeviceType.web) {
+            if (MediaQuery.of(context).orientation == Orientation.landscape) {
               context.read<AddHouseFormCubit>().goToPhotosForm();
             } else {
               context.read<AddHouseFormCubit>().goToMap();

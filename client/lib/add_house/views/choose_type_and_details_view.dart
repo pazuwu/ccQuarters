@@ -2,7 +2,6 @@ import 'package:ccquarters/add_house/views/choose_type.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/details_view.dart';
 import 'package:ccquarters/model/houses/new_house.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:ccquarters/common/views/views_with_vertical_divider.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +31,7 @@ class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
   @override
   Widget build(BuildContext context) {
     return ViewWithButtons(
-      inBetweenWidget: getDeviceType(context) == DeviceType.web
+      inBetweenWidget: MediaQuery.of(context).orientation == Orientation.landscape
           ? ViewsWithVerticalDivider(
               firstView: ChooseTypeView(
                 offerType: widget.offerType,
@@ -47,7 +46,7 @@ class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
               offerType: widget.offerType, buildingType: widget.buildingType),
       goBackOnPressed: null,
       nextOnPressed: () {
-        if (getDeviceType(context) == DeviceType.web) {
+        if (MediaQuery.of(context).orientation == Orientation.landscape) {
           if (widget.detailsFormKey.currentState!.validate()) {
             widget.detailsFormKey.currentState!.save();
             context.read<AddHouseFormCubit>().saveDetails(widget.details);
