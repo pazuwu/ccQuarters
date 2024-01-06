@@ -1,9 +1,9 @@
-import 'package:ccquarters/model/virtual_tour/area.dart';
-import 'package:ccquarters/model/virtual_tour/geo_point.dart';
-import 'package:ccquarters/model/virtual_tour/link.dart';
-import 'package:ccquarters/model/virtual_tour/scene.dart';
-import 'package:ccquarters/model/virtual_tour/tour.dart';
-import 'package:ccquarters/model/virtual_tour/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/area.dart';
+import 'package:ccquarters/model/virtual_tours/geo_point.dart';
+import 'package:ccquarters/model/virtual_tours/link.dart';
+import 'package:ccquarters/model/virtual_tours/scene.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 
 class VirtualTourMock {
   static Tour from360Url(String url) {

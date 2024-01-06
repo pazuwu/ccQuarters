@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:ccquarters/model/alert/alert.dart';
-import 'package:ccquarters/model/alert/new_alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
+import 'package:ccquarters/model/alerts/new_alert.dart';
 import 'package:ccquarters/services/alerts/responses/get_alerts_response.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';

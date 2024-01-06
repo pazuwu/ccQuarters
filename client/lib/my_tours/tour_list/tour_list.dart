@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 import 'package:ccquarters/common/views/show_form.dart';
-import 'package:ccquarters/model/virtual_tour/tour_info.dart';
+import 'package:ccquarters/model/virtual_tours/tour_info.dart';
 import 'package:ccquarters/my_tours/tour_list/cubit.dart';
 import 'package:ccquarters/my_tours/tour_list/tour_form.dart';
 

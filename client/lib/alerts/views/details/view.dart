@@ -3,7 +3,7 @@ import 'package:ccquarters/alerts/views/details/location.dart';
 import 'package:ccquarters/alerts/views/details/price.dart';
 import 'package:ccquarters/alerts/views/details/type.dart';
 import 'package:ccquarters/common/functions.dart';
-import 'package:ccquarters/model/alert/alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
 import 'package:flutter/material.dart';
 
 class AlertDetails extends StatelessWidget {

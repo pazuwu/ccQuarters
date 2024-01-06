@@ -10,9 +10,9 @@ import 'package:ccquarters/common/widgets/always_visible_label.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/common/widgets/like_button.dart';
 import 'package:ccquarters/list_of_houses/views/price_info.dart';
-import 'package:ccquarters/model/house/building_type.dart';
-import 'package:ccquarters/model/house/house.dart';
-import 'package:ccquarters/model/house/location.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/houses/location.dart';
 
 class HouseListTile extends StatefulWidget {
   const HouseListTile({

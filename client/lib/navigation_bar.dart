@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 
 enum NavigationItemVisibility {
   always,

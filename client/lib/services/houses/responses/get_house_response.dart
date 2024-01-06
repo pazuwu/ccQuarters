@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/house/photo.dart';
+import 'package:ccquarters/model/houses/photo.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../data/detailed_house.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';

@@ -1,6 +1,6 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/common/images/image.dart';
-import 'package:ccquarters/model/house/photo.dart';
+import 'package:ccquarters/model/houses/photo.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/views/view_with_buttons.dart';

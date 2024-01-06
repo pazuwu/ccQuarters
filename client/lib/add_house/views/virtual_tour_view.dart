@@ -6,7 +6,7 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/inputs/radio_list.dart';
 import 'package:ccquarters/common/views/view_with_buttons.dart';
-import 'package:ccquarters/model/virtual_tour/tour_info.dart';
+import 'package:ccquarters/model/virtual_tours/tour_info.dart';
 
 class VirtualTourFormView extends StatefulWidget {
   const VirtualTourFormView({

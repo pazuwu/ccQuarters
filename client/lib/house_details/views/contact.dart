@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:ccquarters/house_details/views/contact_info.dart';
 import 'package:ccquarters/house_details/views/contact_photo.dart';
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:flutter/material.dart';
 
 class ButtonContactWidget extends StatelessWidget {

@@ -1,9 +1,9 @@
-import 'package:ccquarters/model/house/photo.dart';
+import 'package:ccquarters/model/houses/photo.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:ccquarters/model/house/building_type.dart';
-import 'package:ccquarters/model/house/new_house.dart';
-import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/new_house.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 
 class HouseFormState {}
 

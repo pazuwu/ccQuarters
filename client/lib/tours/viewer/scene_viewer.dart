@@ -7,8 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 import 'package:ccquarters/common/widgets/always_visible_label.dart';
-import 'package:ccquarters/model/virtual_tour/link.dart';
-import 'package:ccquarters/model/virtual_tour/scene.dart';
+import 'package:ccquarters/model/virtual_tours/link.dart';
+import 'package:ccquarters/model/virtual_tours/scene.dart';
 import 'package:ccquarters/my_tours/scene_list/scene_link_form.dart';
 import 'package:ccquarters/tours/viewer/cubit.dart';
 

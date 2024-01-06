@@ -1,5 +1,5 @@
-import 'package:ccquarters/model/virtual_tour/tour.dart';
-import 'package:ccquarters/model/virtual_tour/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 
 class TourLoadingState {}
 

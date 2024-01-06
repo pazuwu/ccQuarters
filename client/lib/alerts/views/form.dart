@@ -1,9 +1,9 @@
 import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/filters/expansion_panel_list.dart';
-import 'package:ccquarters/model/alert/alert.dart';
-import 'package:ccquarters/model/alert/alert_base.dart';
-import 'package:ccquarters/model/house/filter.dart';
-import 'package:ccquarters/model/alert/new_alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
+import 'package:ccquarters/model/alerts/alert_base.dart';
+import 'package:ccquarters/model/houses/filter.dart';
+import 'package:ccquarters/model/alerts/new_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

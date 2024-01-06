@@ -1,7 +1,7 @@
 import 'package:ccquarters/add_house/gate.dart';
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/model/house/detailed_house.dart';
-import 'package:ccquarters/model/house/new_house.dart';
+import 'package:ccquarters/model/houses/detailed_house.dart';
+import 'package:ccquarters/model/houses/new_house.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

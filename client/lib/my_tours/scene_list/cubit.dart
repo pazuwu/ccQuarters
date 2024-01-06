@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:ccquarters/services/service_response.dart';
-import 'package:ccquarters/model/virtual_tour/area.dart';
-import 'package:ccquarters/model/virtual_tour/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/area.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 import 'package:ccquarters/my_tours/scene_list/states.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-import 'package:ccquarters/model/virtual_tour/scene.dart';
+import 'package:ccquarters/model/virtual_tours/scene.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
 class TourEditCubit extends Cubit<TourEditState> {
