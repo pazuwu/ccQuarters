@@ -23,6 +23,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   late NewHouse house;
   List<Photo> photosToDelete = [];
   String? houseId;
+  List<(Uint8List, int)>? photosToSend;
   (int, int)? photosSendingProgress;
 
   void goToLocationForm() {
@@ -70,7 +71,9 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       }
     }
 
-    if (!await _uploadPhotos(houseId!, house.newPhotos)) {
+    photosToSend ??= _getPhotosToSend();
+
+    if (!await _uploadPhotos(houseId!, photosToSend!)) {
       return;
     }
 
@@ -98,20 +101,33 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       }
     }
 
-    if (!await _uploadPhotos(house.id, house.newPhotos)) {
+    photosToSend ??= _getPhotosToSend(
+        startIndex:
+            house.oldPhotos.isNotEmpty ? house.oldPhotos.last.order + 1 : 0);
+    if (!await _uploadPhotos(house.id, photosToSend!)) {
       return;
     }
 
     emit(SendingFinishedState(houseId: house.id));
   }
 
-  Future<bool> _uploadPhotos(String houseId, List<Uint8List> photos) async {
+  List<(Uint8List, int)> _getPhotosToSend({int startIndex = 0}) {
+    List<(Uint8List, int)> photos = [];
+    for (int i = 0; i < house.newPhotos.length; i++) {
+      photos.add((house.newPhotos[i], startIndex + i));
+    }
+
+    return photos;
+  }
+
+  Future<bool> _uploadPhotos(
+      String houseId, List<(Uint8List, int)> photos) async {
     var futures = <Future<bool>>[];
-    var failedImages = <Uint8List>[];
+    var failedImages = <(Uint8List, int)>[];
 
     for (var file in photos) {
       futures.add(
-        _uploadPhoto(houseId, file).then(
+        _uploadPhoto(houseId, file.$1, file.$2).then(
           (result) {
             if (result == false) {
               failedImages.add(file);
@@ -138,18 +154,22 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
         );
       }
 
-      house.newPhotos = failedImages;
+      photosToSend = failedImages;
       emit(ErrorState(
           "Wystąpił błąd i wysłano ${photosSendingProgress!.$1} z ${photosSendingProgress!.$2} zdjęć"));
       return false;
     }
 
     photosSendingProgress = null;
+    photosToSend = null;
+
     return true;
   }
 
-  Future<bool> _uploadPhoto(String houseId, Uint8List photoBytes) async {
-    var serviceResponse = await houseService.addPhoto(houseId, photoBytes);
+  Future<bool> _uploadPhoto(
+      String houseId, Uint8List photoBytes, int index) async {
+    var serviceResponse =
+        await houseService.addPhoto(houseId, photoBytes, index);
 
     return serviceResponse.data;
   }
@@ -196,6 +216,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   void clear() {
     houseId = null;
     photosSendingProgress = null;
+    photosToSend = null;
     house = NewHouse("", NewLocation(), NewHouseDetails(), []);
     emit(ChooseTypeFormState(NewHouseDetails()));
   }

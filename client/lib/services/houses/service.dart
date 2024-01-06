@@ -248,7 +248,7 @@ class HouseService {
   }
 
   Future<ServiceResponse<bool>> addPhoto(
-      String houseId, Uint8List photo) async {
+      String houseId, Uint8List photo, int index) async {
     try {
       FormData photoData = FormData.fromMap({
         "file": MultipartFile.fromBytes(photo, filename: houseId),
@@ -257,6 +257,9 @@ class HouseService {
       var response = await _dio.post(
         "$_url/$houseId/photo",
         data: photoData,
+        queryParameters: {
+          "order": index,
+        },
       );
 
       return response.statusCode == StatusCode.OK
