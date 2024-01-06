@@ -34,6 +34,11 @@ class _PhotosGridState extends State<PhotosGrid> {
     try {
       List<House> houses =
           await widget.getHouses(pageKey, _numberOfPostsPerRequest);
+
+      if (!mounted) {
+        return;
+      }
+
       final isLastPage = houses.length < _numberOfPostsPerRequest;
       if (isLastPage) {
         widget.pagingController.appendLastPage(houses);
