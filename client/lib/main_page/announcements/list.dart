@@ -41,6 +41,10 @@ class _AnnouncementListState extends State<AnnouncementList> {
         return;
       }
 
+      if (!mounted) {
+        return;
+      }
+
       final isLastPage = houses.length < _numberOfPostsPerRequest;
 
       if (isLastPage) {

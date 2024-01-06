@@ -45,6 +45,11 @@ class _ListOfHousesState extends State<ListOfHouses> {
           .read<ListOfHousesCubit>()
           .getHouses(pageKey, _numberOfPostsPerRequest);
       final isLastPage = houses.length < _numberOfPostsPerRequest;
+
+      if (!mounted) {
+        return;
+      }
+
       if (isLastPage) {
         _pagingController.appendLastPage(houses);
       } else {

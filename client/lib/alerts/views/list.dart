@@ -35,6 +35,11 @@ class _AlertsViewState extends State<AlertsView> {
       var alerts = await context
           .read<AlertsPageCubit>()
           .getAlerts(pageKey, _numberOfPostsPerRequest);
+
+      if (!mounted) {
+        return;
+      }
+
       final isLastPage = alerts.length < _numberOfPostsPerRequest;
       if (isLastPage) {
         _pagingController.appendLastPage(alerts);
