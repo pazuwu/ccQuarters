@@ -1,7 +1,7 @@
-import 'package:ccquarters/virtual_tour_model/area.dart';
-import 'package:ccquarters/virtual_tour_model/geo_point.dart';
-import 'package:ccquarters/virtual_tour_model/link.dart';
-import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/model/virtual_tour/area.dart';
+import 'package:ccquarters/model/virtual_tour/geo_point.dart';
+import 'package:ccquarters/model/virtual_tour/link.dart';
+import 'package:ccquarters/model/virtual_tour/scene.dart';
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:http_status_code/http_status_code.dart';
