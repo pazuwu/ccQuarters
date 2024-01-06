@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/houses/filter.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:multiselect/multiselect.dart';

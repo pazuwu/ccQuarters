@@ -4,7 +4,7 @@ import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:file_picker/file_picker.dart';

@@ -1,6 +1,6 @@
-import 'package:ccquarters/model/alert/alert_base.dart';
-import 'package:ccquarters/model/alert/alert_filter_base.dart';
-import 'package:ccquarters/model/house/voivodeship.dart';
+import 'package:ccquarters/model/alerts/alert_base.dart';
+import 'package:ccquarters/model/alerts/alert_filter_base.dart';
+import 'package:ccquarters/model/houses/voivodeship.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 class HouseFilter extends AlertFilterBase {

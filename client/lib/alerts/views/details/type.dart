@@ -1,6 +1,5 @@
-
-import 'package:ccquarters/model/house/building_type.dart';
-import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:flutter/material.dart';
 
 class AlertType extends StatelessWidget {

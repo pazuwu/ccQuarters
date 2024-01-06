@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 
 class ProfilePageState {}
 

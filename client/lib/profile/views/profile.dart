@@ -1,7 +1,7 @@
 import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/model/house/house.dart';
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/houses_tab_bar_with_grids.dart';
 import 'package:ccquarters/profile/views/profile_drawer.dart';

@@ -2,7 +2,7 @@ import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/tours/tour_loader/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/model/virtual_tour/tour.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
 class TourLoaderCubit extends Cubit<TourLoadingState> {

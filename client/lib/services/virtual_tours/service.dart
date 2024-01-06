@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:ccquarters/services/file_service/download_progress.dart';
 import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/services/service_response.dart';
-import 'package:ccquarters/model/virtual_tour/geo_point.dart';
-import 'package:ccquarters/model/virtual_tour/tour_for_edit.dart';
-import 'package:ccquarters/model/virtual_tour/tour_info.dart';
+import 'package:ccquarters/model/virtual_tours/geo_point.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/tour_info.dart';
 import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_area_request.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_link_request.dart';
@@ -16,8 +16,8 @@ import 'package:ccquarters/services/virtual_tours/requests/put_link_request.dart
 import 'package:ccquarters/services/virtual_tours/requests/put_tour_request.dart';
 import 'package:dio/dio.dart';
 
-import 'package:ccquarters/model/virtual_tour/link.dart';
-import 'package:ccquarters/model/virtual_tour/tour.dart';
+import 'package:ccquarters/model/virtual_tours/link.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
 import 'package:http_status_code/http_status_code.dart';
 
 class VTService {

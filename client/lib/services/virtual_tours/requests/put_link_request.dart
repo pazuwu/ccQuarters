@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ccquarters/model/virtual_tour/geo_point.dart';
+import 'package:ccquarters/model/virtual_tours/geo_point.dart';
 
 class PutLinkRequest {
   final String? text;

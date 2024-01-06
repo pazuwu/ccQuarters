@@ -2,10 +2,10 @@
 
 import 'dart:convert';
 
-import 'package:ccquarters/model/virtual_tour/area.dart';
-import 'package:ccquarters/model/virtual_tour/link.dart';
-import 'package:ccquarters/model/virtual_tour/scene.dart';
-import 'package:ccquarters/model/virtual_tour/tour.dart';
+import 'package:ccquarters/model/virtual_tours/area.dart';
+import 'package:ccquarters/model/virtual_tours/link.dart';
+import 'package:ccquarters/model/virtual_tours/scene.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
 
 class TourForEdit extends Tour {
   final List<Area> areas;

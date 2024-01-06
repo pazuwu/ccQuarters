@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/my_tours/tour_list/cubit.dart';
 import 'package:ccquarters/my_tours/tour_list/tour_list.dart';
-import 'package:ccquarters/model/virtual_tour/tour_info.dart';
+import 'package:ccquarters/model/virtual_tours/tour_info.dart';
 import 'package:go_router/go_router.dart';
 
 class VTListGate extends StatelessWidget {

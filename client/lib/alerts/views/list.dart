@@ -1,8 +1,8 @@
 import 'package:ccquarters/alerts/cubit.dart';
 import 'package:ccquarters/alerts/views/list_item.dart';
 import 'package:ccquarters/common/messages/message.dart';
-import 'package:ccquarters/model/alert/alert.dart';
-import 'package:ccquarters/model/alert/new_alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
+import 'package:ccquarters/model/alerts/new_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/house/house.dart';
+import 'package:ccquarters/model/houses/house.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/views/photos_grid.dart';
 import 'package:flutter/material.dart';

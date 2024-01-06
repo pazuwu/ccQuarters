@@ -1,11 +1,11 @@
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/list_of_houses/views/view.dart';
-import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/model/house/filter.dart';
+import 'package:ccquarters/model/houses/filter.dart';
 
 class ListOfHousesGate extends StatelessWidget {
   const ListOfHousesGate({

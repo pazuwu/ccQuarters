@@ -1,7 +1,6 @@
-
 import 'package:ccquarters/common/functions.dart';
 import 'package:ccquarters/common/widgets/two_parts_rich_text.dart';
-import 'package:ccquarters/model/alert/alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
 import 'package:flutter/material.dart';
 
 class AlertHouseDetails extends StatelessWidget {

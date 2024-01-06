@@ -2,13 +2,13 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/additional_info_form.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_form.dart';
-import 'package:ccquarters/model/house/new_house.dart';
+import 'package:ccquarters/model/houses/new_house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
 import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ccquarters/model/house/building_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
 
 class DetailsFormView extends StatelessWidget {
   const DetailsFormView({

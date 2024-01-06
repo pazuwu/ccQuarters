@@ -1,8 +1,8 @@
-import 'package:ccquarters/model/house/building_type.dart';
-import 'package:ccquarters/model/house/house.dart';
-import 'package:ccquarters/model/house/house_details.dart';
-import 'package:ccquarters/model/house/location.dart';
-import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/houses/house_details.dart';
+import 'package:ccquarters/model/houses/location.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'simple_house.g.dart';

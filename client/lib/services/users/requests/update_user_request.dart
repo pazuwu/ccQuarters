@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'update_user_request.g.dart';

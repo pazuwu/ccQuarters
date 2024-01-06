@@ -1,6 +1,6 @@
-import 'package:ccquarters/model/house/building_type.dart';
-import 'package:ccquarters/model/house/filter.dart';
-import 'package:ccquarters/model/house/offer_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/filter.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_houses_query.g.dart';

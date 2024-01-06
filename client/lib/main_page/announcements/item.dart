@@ -1,6 +1,6 @@
 import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/common/images/image.dart';
-import 'package:ccquarters/model/house/house.dart';
+import 'package:ccquarters/model/houses/house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/device_type.dart';

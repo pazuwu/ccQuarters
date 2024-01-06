@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:ccquarters/profile/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/model/house/house.dart';
-import 'package:ccquarters/model/user/user.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/services/users/service.dart';

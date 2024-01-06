@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/house/house_details.dart';
+import 'package:ccquarters/model/houses/house_details.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
