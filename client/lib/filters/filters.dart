@@ -7,7 +7,6 @@ import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/filters/expansion_panel_list.dart';
 import 'package:ccquarters/filters/sort_by_dropdown.dart';
-import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/houses/filter.dart';
 
@@ -17,11 +16,13 @@ class Filters extends StatefulWidget {
     this.onlySort = false,
     required this.filters,
     required this.onSave,
+    required this.onSaveAsAlert,
   }) : super(key: key);
 
   final HouseFilter filters;
   final bool onlySort;
   final Function(HouseFilter) onSave;
+  final Function(HouseFilter) onSaveAsAlert;
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -42,6 +43,7 @@ class _FiltersState extends State<Filters> {
                     builder: (BuildContext context) => FilterForm(
                       filters: widget.filters,
                       onSave: widget.onSave,
+                      onSaveAsAlert: widget.onSaveAsAlert,
                     ),
                   );
                 },
@@ -62,10 +64,15 @@ class _FiltersState extends State<Filters> {
 }
 
 class FilterForm extends StatelessWidget {
-  const FilterForm({super.key, required this.filters, required this.onSave});
+  const FilterForm(
+      {super.key,
+      required this.filters,
+      required this.onSave,
+      required this.onSaveAsAlert});
 
   final HouseFilter filters;
   final Function(HouseFilter) onSave;
+  final Function(HouseFilter) onSaveAsAlert;
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +146,7 @@ class FilterForm extends StatelessWidget {
   IconButton _buildSaveAsAlert(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.add_alert_rounded),
-      onPressed: () {
-        context.read<ListOfHousesCubit>().createAlert(filters);
-      },
+      onPressed: () => onSaveAsAlert(filters),
       tooltip: 'Zapisz jako alert',
     );
   }

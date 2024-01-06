@@ -69,7 +69,7 @@ class _InfoSnackbar extends SnackBar {
           behavior: SnackBarBehavior.floating,
           margin: MediaQuery.of(context).orientation == Orientation.portrait
               ? EdgeInsets.symmetric(
-                  horizontal: max(MediaQuery.of(context).size.width / 4,
+                  horizontal: max(MediaQuery.of(context).size.width / 5,
                       (MediaQuery.of(context).size.width - 250) / 2),
                   vertical: 20.0)
               : EdgeInsets.only(
