@@ -32,6 +32,10 @@ class ListOfHousesGate extends StatelessWidget {
         builder: (context, state) {
           if (state is ErrorState) {
             SnackMessenger.showError(context, state.message);
+          } else if (state is SuccessState) {
+            SnackMessenger.showSuccess(context, state.message);
+          } else if (state is LoadingState) {
+            SnackMessenger.showLoading(context, state.message);
           }
 
           return ListOfHouses(

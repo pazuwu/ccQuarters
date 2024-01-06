@@ -15,6 +15,17 @@ class ErrorState extends ListOfHousesState {
   String message;
 }
 
+class SuccessState extends ListOfHousesState {
+  SuccessState({required this.message});
+
+  String message;
+}
+
+class LoadingState extends ListOfHousesState {
+  LoadingState({required this.message});
+  String message;
+}
+
 class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   ListOfHousesCubit({
     required this.houseService,
@@ -66,12 +77,22 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   }
 
   Future<void> createAlert(HouseFilter filter) async {
+    emit(LoadingState(message: "Wysyłanie alertu..."));
+
     var alert = NewAlert.fromHouseFilter(filter);
     final response = await alertService.createAlert(alert);
+
     if (response.error != ErrorType.none) {
       emit(ErrorState(
-          message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
+          message: "Nie udało się wysłać alertu.\n"
+              "Spróbuj ponownie później."));
       return;
+    } else {
+      emit(
+        SuccessState(
+            message: "Alert został wysłany. Otrzymasz powiadomienie,\n"
+                "gdy pojawi się nowa oferta spełniająca kryteria."),
+      );
     }
   }
 }
