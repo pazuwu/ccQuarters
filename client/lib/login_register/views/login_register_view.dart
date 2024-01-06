@@ -58,25 +58,31 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   Widget build(BuildContext context) {
     var state = context.read<AuthCubit>().state;
 
-    return ConstrainedCenterBox(
-      child: Scaffold(
-        appBar: _buildAppBar(context),
-        bottomNavigationBar: _buildBottomBar(context),
-        resizeToAvoidBottomInset: false,
-        body: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildWelcomeText(),
-                if (state is InputDataState && state.error != null)
-                  _showErrors(state, context),
-                _buildFields(),
-                _buildButtons(context),
-              ],
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        _goBack();
+        return true;
+      },
+      child: ConstrainedCenterBox(
+        child: Scaffold(
+          appBar: _buildAppBar(context),
+          bottomNavigationBar: _buildBottomBar(context),
+          resizeToAvoidBottomInset: false,
+          body: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 30, right: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildWelcomeText(),
+                  if (state is InputDataState && state.error != null)
+                    _showErrors(state, context),
+                  _buildFields(),
+                  _buildButtons(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -87,24 +93,28 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       leading: BackButton(
-        onPressed: () {
-          switch (widget.page) {
-            case LoginRegisterPageType.login:
-              _saveEmail();
-              context.read<AuthCubit>().goToStartPage();
-              break;
-            case LoginRegisterPageType.registerPersonalInfo:
-              _savePersonalInfo();
-              context.read<AuthCubit>().goToStartPage();
-              break;
-            case LoginRegisterPageType.registerEmailAndPassword:
-              _saveEmail();
-              context.read<AuthCubit>().goToPersonalInfoRegisterPage();
-              break;
-          }
-        },
+        onPressed: _goBack,
       ),
     );
+  }
+
+  _goBack() {
+    () {
+      switch (widget.page) {
+        case LoginRegisterPageType.login:
+          _saveEmail();
+          context.read<AuthCubit>().goToStartPage();
+          break;
+        case LoginRegisterPageType.registerPersonalInfo:
+          _savePersonalInfo();
+          context.read<AuthCubit>().goToStartPage();
+          break;
+        case LoginRegisterPageType.registerEmailAndPassword:
+          _saveEmail();
+          context.read<AuthCubit>().goToPersonalInfoRegisterPage();
+          break;
+      }
+    };
   }
 
   Padding _buildBottomBar(BuildContext context) {

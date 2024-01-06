@@ -37,64 +37,33 @@ class _MainPageState extends State<MainPage> {
       _pagingControllerForHousesToBuy.refresh();
     }, child: LayoutBuilder(
       builder: (context, constraints) {
-        return BackButtonListener(
-          onBackButtonPressed: () async {
-            return !(await _buildDialogWithQuestionIfUserWantsToLeaveApp() ??
-                false);
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: SizedBox(
-              height: constraints.maxHeight,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  _buildFakeSearchBox(color, context),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  _buildHousesToRent(context),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  _buildHousesToBuy(context),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                ],
-              ),
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: constraints.maxHeight,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 16,
+                ),
+                _buildFakeSearchBox(color, context),
+                const SizedBox(
+                  height: 16,
+                ),
+                _buildHousesToRent(context),
+                const SizedBox(
+                  height: 16,
+                ),
+                _buildHousesToBuy(context),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
             ),
           ),
         );
       },
     ));
-  }
-
-  Future<bool?> _buildDialogWithQuestionIfUserWantsToLeaveApp() async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => BackButtonListener(
-        onBackButtonPressed: () async {
-          Navigator.of(context).pop(false);
-          return true;
-        },
-        child: AlertDialog(
-          title: const Text("Czy na pewno chcesz wyjść z aplikacji?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text("Nie"),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text("Tak"),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Padding _buildFakeSearchBox(ColorScheme color, BuildContext context) {
