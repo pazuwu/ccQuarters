@@ -17,6 +17,10 @@ namespace CCQuartersAPI.Endpoints
             int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
 
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -34,6 +38,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> CreateAlert([FromServices] IAlertsService service, CreateAlertRequest alertRequest, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -49,6 +57,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> UpdateAlert([FromServices] IAlertsService alertsService, Guid alertId, UpdateAlertRequest alertRequest, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -69,6 +81,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> DeleteAlert([FromServices] IAlertsService alertsService, Guid alertId, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();

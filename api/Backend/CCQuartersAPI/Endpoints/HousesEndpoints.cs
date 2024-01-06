@@ -15,7 +15,7 @@ namespace CCQuartersAPI.Endpoints
         private const int DEFAULT_PAGE_NUMBER = 0;
         private const int DEFAULT_PAGE_SIZE = 50;
 
-        public static async Task<IResult> GetHouses(HttpContext context, [FromServices] IHousesService housesService, [AsParameters] GetHousesQuery query/*, [FromQuery] int? pageNumber, [FromQuery] int? pageSize*/)
+        public static async Task<IResult> GetHouses(HttpContext context, [FromServices] IHousesService housesService, [AsParameters] GetHousesQuery query)
         {
             int pageNumberValue = query.PageNumber ?? DEFAULT_PAGE_NUMBER;
             int pageSizeValue = query.PageSize ?? DEFAULT_PAGE_SIZE;
@@ -39,6 +39,10 @@ namespace CCQuartersAPI.Endpoints
             int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
 
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -59,6 +63,10 @@ namespace CCQuartersAPI.Endpoints
             int pageSizeValue = pageSize ?? DEFAULT_PAGE_SIZE;
 
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -75,8 +83,11 @@ namespace CCQuartersAPI.Endpoints
 
         public static async Task<IResult> CreateHouse([FromServices] IHousesService housesService, CreateHouseRequest houseRequest, HttpContext context)
         {
-
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -121,6 +132,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> UpdateHouse([FromServices] IHousesService housesService, [FromServices] IDocumentDBRepository documentRepository, Guid houseId, CreateHouseRequest houseRequest, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -141,6 +156,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> DeleteHouse([FromServices] IHousesService housesService, Guid houseId, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -161,6 +180,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> LikeHouse([FromServices] IHousesService housesService, Guid houseId, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -173,6 +196,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> UnlikeHouse([FromServices] IHousesService housesService, Guid houseId, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -182,9 +209,13 @@ namespace CCQuartersAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> AddPhoto([FromServices] IHousesService housesService, [FromServices] IHousePhotosService housePhotosService, Guid houseId, IFormFile file, HttpContext context)
+        public static async Task<IResult> AddPhoto([FromServices] IHousesService housesService, [FromServices] IHousePhotosService housePhotosService, Guid houseId, IFormFile file, [FromQuery] int order, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();
@@ -194,7 +225,7 @@ namespace CCQuartersAPI.Endpoints
             if (houseQueried?.UserId != userId)
                 return Results.Unauthorized();
 
-            await housePhotosService.AddHousePhoto(houseId, file.OpenReadStream());
+            await housePhotosService.AddHousePhoto(houseId, file.OpenReadStream(), order);
 
             return Results.Ok();
         }
@@ -202,6 +233,10 @@ namespace CCQuartersAPI.Endpoints
         public static async Task<IResult> DeletePhotos([FromServices] IHousePhotosService housePhotosService, [FromServices] IStorage storage, HttpContext context, [FromBody] DeletePhotosRequest request)
         {
             var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity?.IsAnonymous() != false)
+                return Results.Unauthorized();
+
             string? userId = identity?.GetUserId();
             if (string.IsNullOrWhiteSpace(userId))
                 return Results.Unauthorized();

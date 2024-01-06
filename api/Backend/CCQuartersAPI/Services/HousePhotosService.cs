@@ -53,14 +53,8 @@ namespace CCQuartersAPI.Services
                 await _storage.DeleteFileAsync("housePhotos", filename);
         }
 
-        public async Task AddHousePhoto(Guid houseId, Stream fileStream)
+        public async Task AddHousePhoto(Guid houseId, Stream fileStream, int order)
         {
-            var selectQuery = $@"SELECT [Order] FROM HousePhotos WHERE HouseId = @houseId ORDER BY [Order] DESC";
-
-            int count = await _rdbRepository.QueryFirstOrDefaultAsync<int?>(selectQuery, new { houseId }) ?? 0;
-
-            int order = count + 1;
-
             string filename = $@"{houseId}_{order}";
 
             var insertQuery = $@"INSERT INTO HousePhotos VALUES (@houseId, @filename, @order)";
