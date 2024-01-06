@@ -55,12 +55,17 @@ class _NumberTextFieldState extends State<NumberTextField> {
         labelText: widget.label,
         suffixIcon: _showClearButton
             ? IconButton(
-                padding: const EdgeInsets.all(largePaddingSize),
+                padding: const EdgeInsets.only(
+                  top: largePaddingSize,
+                  bottom: mediumPaddingSize,
+                ),
+                alignment: Alignment.bottomCenter,
                 icon: const Icon(Icons.clear, size: iconSize),
                 onPressed: () {
                   _controller.clear();
                   widget.onChanged("");
                 },
+                visualDensity: VisualDensity.compact,
               )
             : null,
       ),

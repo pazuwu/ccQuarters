@@ -37,6 +37,10 @@ class ListOfHousesGate extends StatelessWidget {
           } else if (state is LoadingState) {
             SnackMessenger.showLoading(context, state.message);
           }
+          
+          if (state is MessageState) {
+            context.read<ListOfHousesCubit>().clearMessages();
+          }
 
           return ListOfHouses(
             isSearch: isSearch,

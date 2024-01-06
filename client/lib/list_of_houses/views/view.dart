@@ -111,6 +111,9 @@ class _ListOfHousesState extends State<ListOfHouses> {
           _updateUrl(context);
           _pagingController.refresh();
         },
+        onSaveAsAlert: (HouseFilter filter) {
+          context.read<ListOfHousesCubit>().createAlert(filter);
+        },
       ),
     );
   }
@@ -226,6 +229,9 @@ class _ListOfHousesState extends State<ListOfHouses> {
               _updateUrl(context);
             });
             _pagingController.refresh();
+          },
+          onSaveAsAlert: (HouseFilter filter) {
+            context.read<ListOfHousesCubit>().createAlert(filter);
           },
         ),
       ),

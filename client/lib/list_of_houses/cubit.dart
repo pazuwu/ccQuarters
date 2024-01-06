@@ -9,21 +9,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListOfHousesState {}
 
-class ErrorState extends ListOfHousesState {
-  ErrorState({required this.message});
+class MessageState extends ListOfHousesState {
+  MessageState({required this.message});
 
   String message;
 }
 
-class SuccessState extends ListOfHousesState {
-  SuccessState({required this.message});
-
-  String message;
+class ErrorState extends MessageState {
+  ErrorState({required super.message});
 }
 
-class LoadingState extends ListOfHousesState {
-  LoadingState({required this.message});
-  String message;
+class SuccessState extends MessageState {
+  SuccessState({required super.message});
+}
+
+class LoadingState extends MessageState {
+  LoadingState({required super.message});
 }
 
 class ListOfHousesCubit extends Cubit<ListOfHousesState> {
@@ -45,6 +46,10 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
 
   void saveSearch(String search) {
     filter.title = search;
+  }
+
+  void clearMessages() {
+    emit(ListOfHousesState());
   }
 
   Future<List<House>> getHouses(int pageNumber, int pageCount) async {
@@ -83,9 +88,13 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
     final response = await alertService.createAlert(alert);
 
     if (response.error != ErrorType.none) {
-      emit(ErrorState(
-          message: "Nie udało się wysłać alertu.\n"
-              "Spróbuj ponownie później."));
+      if (response.error == ErrorType.emptyRequest) {
+        emit(ErrorState(message: "Nie można wysłać pustego alertu."));
+      } else {
+        emit(ErrorState(
+            message: "Nie udało się wysłać alertu.\n"
+                "Spróbuj ponownie później."));
+      }
       return;
     } else {
       emit(
