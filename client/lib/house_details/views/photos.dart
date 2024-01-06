@@ -1,6 +1,5 @@
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/views/show_gallery.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class _PhotosState extends State<Photos> {
       padding: const EdgeInsets.all(largePaddingSize),
       child: LayoutBuilder(
         builder: (context, constraints) =>
-            getDeviceType(context) == DeviceType.web
+            MediaQuery.of(context).orientation == Orientation.landscape
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -43,38 +42,38 @@ class _PhotosState extends State<Photos> {
   }
 
   Container _buildPhotoList(
-      BuildContext context, BoxConstraints constraints, bool isMobile) {
+      BuildContext context, BoxConstraints constraints, bool isPortrait) {
     return Container(
       constraints: BoxConstraints(
-        maxHeight: isMobile
+        maxHeight: isPortrait
             ? MediaQuery.of(context).size.height * 0.1
             : MediaQuery.of(context).size.height * 0.5,
-        maxWidth: isMobile ? constraints.maxWidth : constraints.maxWidth * 0.2,
+        maxWidth: isPortrait ? constraints.maxWidth : constraints.maxWidth * 0.2,
       ),
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
         child: Scrollbar(
           controller: _scrollController,
           thumbVisibility: true,
-          scrollbarOrientation: isMobile
+          scrollbarOrientation: isPortrait
               ? ScrollbarOrientation.bottom
               : ScrollbarOrientation.left,
           child: Padding(
             padding: EdgeInsets.fromLTRB(
-              isMobile ? 0 : paddingSizeForScrollBar,
-              isMobile ? extraSmallPaddingSize : 0,
-              isMobile ? 0 : smallPaddingSize,
-              isMobile ? smallPaddingSizeForScrollBar : 0,
+              isPortrait ? 0 : paddingSizeForScrollBar,
+              isPortrait ? extraSmallPaddingSize : 0,
+              isPortrait ? 0 : smallPaddingSize,
+              isPortrait ? smallPaddingSizeForScrollBar : 0,
             ),
             child: SingleChildScrollView(
               controller: _scrollController,
-              scrollDirection: isMobile ? Axis.horizontal : Axis.vertical,
+              scrollDirection: isPortrait ? Axis.horizontal : Axis.vertical,
               child: Flex(
                 mainAxisSize: MainAxisSize.min,
-                direction: isMobile ? Axis.horizontal : Axis.vertical,
+                direction: isPortrait ? Axis.horizontal : Axis.vertical,
                 children: [
                   for (int index = 0; index < widget.photos.length; index++)
-                    _buildPhotoTile(index, isMobile, context, constraints)
+                    _buildPhotoTile(index, isPortrait, context, constraints)
                 ],
               ),
             ),
@@ -84,7 +83,7 @@ class _PhotosState extends State<Photos> {
     );
   }
 
-  PhotoTile _buildPhotoTile(int index, bool isMobile, BuildContext context,
+  PhotoTile _buildPhotoTile(int index, bool isPortrait, BuildContext context,
       BoxConstraints constraints) {
     return PhotoTile(
       photo: widget.photos[index],
@@ -93,7 +92,7 @@ class _PhotosState extends State<Photos> {
           _selectedIndex = index;
         });
         _scrollController.animateTo(
-            isMobile
+            isPortrait
                 ? index *
                     (MediaQuery.of(context).size.height * 0.1 -
                         smallPaddingSizeForScrollBar +
@@ -106,16 +105,16 @@ class _PhotosState extends State<Photos> {
             curve: Curves.ease);
       },
       isFirst: index == 0,
-      isMobile: isMobile,
+      isPortrait: isPortrait,
     );
   }
 
   Container _buildMainPhoto(
-      BuildContext context, BoxConstraints constraints, bool isMobile) {
+      BuildContext context, BoxConstraints constraints, bool isPortrait) {
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.5,
-        maxWidth: constraints.maxWidth * (isMobile ? 1 : 0.8),
+        maxWidth: constraints.maxWidth * (isPortrait ? 1 : 0.8),
       ),
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -143,16 +142,16 @@ class PhotoTile extends StatelessWidget {
       required this.photo,
       required this.onTap,
       required this.isFirst,
-      required this.isMobile});
+      required this.isPortrait});
 
   final String photo;
   final Function() onTap;
   final bool isFirst;
-  final bool isMobile;
+  final bool isPortrait;
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: isMobile
+      padding: isPortrait
           ? EdgeInsets.only(left: isFirst ? 0 : extraSmallPaddingSize)
           : EdgeInsets.only(top: isFirst ? 0 : smallPaddingSize),
       child: InkWellWithPhoto(

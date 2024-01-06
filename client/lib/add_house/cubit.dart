@@ -31,7 +31,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void goToDetailsForm() {
-    emit(MobileDetailsFormState(house.houseDetails, house.buildingType));
+    emit(PortraitDetailsFormState(house.houseDetails, house.buildingType));
   }
 
   void goToChooseTypeForm() {

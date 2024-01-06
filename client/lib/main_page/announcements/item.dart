@@ -3,7 +3,6 @@ import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/houses/house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -154,6 +153,8 @@ class HouseItem extends StatelessWidget {
 
   static double getMaxItemWidth(BuildContext context) {
     return MediaQuery.of(context).size.width *
-        (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2);
+        (MediaQuery.of(context).orientation == Orientation.portrait
+            ? 0.4
+            : 0.2);
   }
 }

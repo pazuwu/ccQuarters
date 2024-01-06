@@ -10,7 +10,6 @@ import 'package:ccquarters/common/widgets/like_button.dart';
 import 'package:ccquarters/list_of_houses/views/price_info.dart';
 import 'package:ccquarters/model/houses/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -136,7 +135,8 @@ class Inside extends StatelessWidget {
                     Photos(
                       photos: house.photos.map((e) => e.url).toList(),
                     ),
-                  if (getDeviceType(context) == DeviceType.mobile) ...[
+                  if (MediaQuery.of(context).orientation ==
+                      Orientation.portrait) ...[
                     Divider(
                       height: 1,
                       color: Colors.grey.shade300,
@@ -162,7 +162,7 @@ class Inside extends StatelessWidget {
               ),
             ),
           ),
-          if (getDeviceType(context) == DeviceType.web)
+          if (MediaQuery.of(context).orientation == Orientation.landscape)
             ContactWidget(
               user: house.user,
               additionalWidget: Column(

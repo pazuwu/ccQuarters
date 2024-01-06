@@ -36,7 +36,7 @@ void addHouseFormCubit() {
     );
 
     blocTest<AddHouseFormCubit, HouseFormState>(
-      'emits MobileDetailsFormState when goToDetailsForm is called',
+      'emits PortraitDetailsFormState when goToDetailsForm is called',
       build: () => AddHouseFormCubit(
         houseService: HouseService(
           HousesAPIMock.createHousesApiMock("$url/houses"),
@@ -46,7 +46,7 @@ void addHouseFormCubit() {
             VTService(VTAPIMock.createVTApiMock(url), FileServiceMock(), url),
       ),
       act: (cubit) => cubit.goToDetailsForm(),
-      expect: () => [isA<MobileDetailsFormState>()],
+      expect: () => [isA<PortraitDetailsFormState>()],
     );
 
     blocTest<AddHouseFormCubit, HouseFormState>(

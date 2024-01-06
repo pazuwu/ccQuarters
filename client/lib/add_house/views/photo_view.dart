@@ -1,7 +1,6 @@
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/model/houses/photo.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:file_picker/file_picker.dart';
@@ -42,7 +41,7 @@ class _PhotoViewState extends State<PhotoView> {
         goBackOnPressed: () {
           context.read<AddHouseFormCubit>().savePhotos(
               widget.newPhotos, widget.oldPhotos, widget.deletedPhotos);
-          if (getDeviceType(context) == DeviceType.web) {
+          if (MediaQuery.of(context).orientation == Orientation.landscape) {
             context.read<AddHouseFormCubit>().goToLocationForm();
           } else {
             context.read<AddHouseFormCubit>().goToMap();
@@ -76,7 +75,9 @@ class _PhotoViewState extends State<PhotoView> {
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount:
-              getDeviceTypeForGrid(context) == DeviceType.mobile ? 3 : 4,
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? 3
+                  : 4,
         ),
         itemCount: photosCount + 1,
         itemBuilder: (context, index) {
@@ -106,7 +107,7 @@ class _PhotoViewState extends State<PhotoView> {
       },
       child: Icon(
         Icons.add_a_photo_outlined,
-        size: getDeviceTypeForGrid(context) == DeviceType.mobile ? 56 : 96,
+        size: MediaQuery.of(context).orientation == Orientation.portrait ? 56 : 96,
       ),
     );
   }
@@ -208,7 +209,7 @@ class GridTile extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.2),
                       child: Icon(
                         Icons.delete,
-                        size: getDeviceTypeForGrid(context) == DeviceType.mobile
+                        size: MediaQuery.of(context).orientation == Orientation.portrait
                             ? 64
                             : 96,
                       ),

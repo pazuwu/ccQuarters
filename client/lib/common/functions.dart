@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 String getStringOfListWithCommaDivider(List<String> list) {
@@ -28,4 +29,10 @@ buildWidgetsWithDivider(List<Widget> widgets) {
   }
 
   return result;
+}
+
+double getPaddingSizeForMainPage(BuildContext context) {
+  return MediaQuery.of(context).orientation == Orientation.portrait
+      ? smallPaddingSize
+      : mediumPaddingSize;
 }

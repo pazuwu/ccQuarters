@@ -7,7 +7,6 @@ import 'package:ccquarters/model/houses/filter.dart';
 import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:ccquarters/model/houses/voivodeship.dart';
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 
 class FiltersExpansionPanelList extends StatefulWidget {
@@ -25,7 +24,7 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isExpanded[1] == null && getDeviceType(context) == DeviceType.web) {
+    if (_isExpanded[1] == null && MediaQuery.of(context).orientation == Orientation.landscape) {
       _isExpanded[1] = true;
     }
 

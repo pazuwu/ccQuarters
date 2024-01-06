@@ -2,9 +2,7 @@
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/filters/expansion_panel_list.dart';
 import 'package:ccquarters/filters/sort_by_dropdown.dart';
 import 'package:ccquarters/login_register/cubit.dart';
@@ -115,7 +113,7 @@ class FilterForm extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (getDeviceType(context) == DeviceType.mobile)
+        if (MediaQuery.of(context).orientation == Orientation.portrait)
           _buildButton(context, 'Anuluj', false),
         _buildButton(context, 'Zapisz', true),
       ],
@@ -132,7 +130,7 @@ class FilterForm extends StatelessWidget {
         ),
         onPressed: () => {
           if (doesSave) onSave(filters),
-          if (getDeviceType(context) == DeviceType.mobile)
+          if (MediaQuery.of(context).orientation == Orientation.portrait)
             Navigator.pop(context)
         },
         child: Text(
