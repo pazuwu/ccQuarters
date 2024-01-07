@@ -132,14 +132,23 @@ class Inside extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (getDeviceType(context) == DeviceType.mobile)
-                    _buildPriceInfo(context),
                   if (house.photos.isNotEmpty)
                     Photos(
                       photos: house.photos.map((e) => e.url).toList(),
                     ),
-                  if (getDeviceType(context) == DeviceType.mobile)
-                    ButtonContactWidget(user: house.user),
+                  if (getDeviceType(context) == DeviceType.mobile) ...[
+                    Divider(
+                      height: 1,
+                      color: Colors.grey.shade300,
+                    ),
+                    const SizedBox(
+                      height: largePaddingSize,
+                    ),
+                    _buildPriceAndContactInfo(context),
+                    const SizedBox(
+                      height: smallPaddingSize,
+                    ),
+                  ],
                   AccordionPage(
                     house: house,
                   ),
@@ -158,15 +167,15 @@ class Inside extends StatelessWidget {
               user: house.user,
               additionalWidget: Column(
                 children: [
+                  _buildPriceAndContactInfo(context),
                   const Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
                     child: Divider(
                       thickness: 1,
                       height: 1,
                       color: Colors.grey,
                     ),
                   ),
-                  _buildPriceInfo(context),
                 ],
               ),
             ),
@@ -175,26 +184,48 @@ class Inside extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceInfo(BuildContext context) {
+  Widget _buildPriceAndContactInfo(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
         left: largePaddingSize,
         right: largePaddingSize,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          PriceRoomCountAreaInfo(details: house.details),
-          LikeButtonWithTheme(
-            isLiked: house.isLiked,
-            onTap: (isLiked) async {
-              var newValue = await context
-                  .read<HouseDetailsCubit>()
-                  .likeHouse(house.id, house.isLiked);
-              house.isLiked = newValue;
-              return Future.value(newValue);
-            },
-            size: 40,
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: PriceRoomCountAreaInfo(
+                    details: house.details,
+                    priceTextScale: 2.0,
+                    roomCountTextScale: 1.2,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  if (MediaQuery.of(context).orientation ==
+                      Orientation.portrait)
+                    ButtonContactWidget(user: house.user),
+                  const SizedBox(width: 16.0),
+                  LikeButtonWithTheme(
+                    isLiked: house.isLiked,
+                    onTap: (isLiked) async {
+                      var newValue = await context
+                          .read<HouseDetailsCubit>()
+                          .likeHouse(house.id, house.isLiked);
+                      house.isLiked = newValue;
+                      return Future.value(newValue);
+                    },
+                    size: 40,
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
