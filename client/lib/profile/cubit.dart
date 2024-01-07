@@ -23,7 +23,7 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
   late User user;
 
   Future<void> setUser(String userId) async {
-    final response = await getUser(userId);
+    final response = await _getUser(userId);
     if (response == null) {
       emit(ErrorState(
           message: "Nie udało się pobrać danych \nTwojego profilu.",
@@ -36,7 +36,7 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
     emit(ProfilePageInitialState(user: user));
   }
 
-  Future<User?> getUser(String userId) async {
+  Future<User?> _getUser(String userId) async {
     final response = await userService.getUser(userId);
     if (response.error != ErrorType.none) {
       return null;

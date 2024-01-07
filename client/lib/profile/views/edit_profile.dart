@@ -12,9 +12,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditProfileView extends StatefulWidget {
-  const EditProfileView({super.key, required this.user});
+  const EditProfileView({
+    super.key,
+    required this.user,
+    required this.onSave,
+    this.reEnterUserData = false,
+    this.image,
+  });
 
   final User user;
+  final Function(BuildContext, User, Uint8List?, bool) onSave;
+  final bool reEnterUserData;
+  final Uint8List? image;
+
   @override
   State<EditProfileView> createState() => _EditProfileViewState();
 }
@@ -32,12 +42,14 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   @override
   void initState() {
-    _isBusinessAccount = widget.user.company != null;
+    _isBusinessAccount =
+        widget.user.company != null && widget.user.company!.isNotEmpty;
     _photoUrl = widget.user.photoUrl;
     _companyTextField.text = widget.user.company ?? "";
     _nameTextField.text = widget.user.name ?? "";
     _surnameTextField.text = widget.user.surname ?? "";
     _phoneNumberTextField.text = widget.user.phoneNumber ?? "";
+    _image = widget.image;
     super.initState();
   }
 
@@ -48,15 +60,17 @@ class _EditProfileViewState extends State<EditProfileView> {
         _changeDeleteImageFlag();
       },
       child: Scaffold(
-        appBar: AppBar(
-          leading: BackButton(
-            onPressed: () {
-              context.read<ProfilePageCubit>().goToProfilePage();
-            },
-          ),
-          title: const Text("Edytuj profil"),
-          actions: [_buildSaveButton(context)],
-        ),
+        appBar: !widget.reEnterUserData
+            ? AppBar(
+                leading: BackButton(
+                  onPressed: () {
+                    context.read<ProfilePageCubit>().goToProfilePage();
+                  },
+                ),
+                title: const Text("Edytuj profil"),
+                actions: [_buildSaveButton(context, true)],
+              )
+            : null,
         body: ConstrainedCenterBox(
           child: SingleChildScrollView(
             child: Form(
@@ -65,6 +79,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 children: [
                   _buildPhoto(),
                   _buildPersonalInfoFields(),
+                  if (widget.reEnterUserData) _buildSaveButton(context, false),
                 ],
               ),
             ),
@@ -80,25 +95,32 @@ class _EditProfileViewState extends State<EditProfileView> {
     });
   }
 
-  Widget _buildSaveButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        if (_formKey.currentState?.validate() ?? false) {
-          if (!_isBusinessAccount) {
-            widget.user.company = null;
-          } else {
-            widget.user.company = _companyTextField.text;
-          }
-          widget.user.name = _nameTextField.text;
-          widget.user.surname = _surnameTextField.text;
-          widget.user.phoneNumber = _phoneNumberTextField.text;
+  Widget _buildSaveButton(BuildContext context, bool editUser) {
+    return editUser
+        ? IconButton(
+            onPressed: _onSave,
+            icon: const Icon(Icons.check),
+          )
+        : ElevatedButton(
+            onPressed: _onSave,
+            child: const Text("Zapisz"),
+          );
+  }
 
-          context.read<ProfilePageCubit>().updateUser(
-              widget.user, _image, widget.user.photoUrl != _photoUrl);
-        }
-      },
-      icon: const Icon(Icons.check),
-    );
+  _onSave() {
+    if (_formKey.currentState?.validate() ?? false) {
+      if (!_isBusinessAccount) {
+        widget.user.company = null;
+      } else {
+        widget.user.company = _companyTextField.text;
+      }
+      widget.user.name = _nameTextField.text;
+      widget.user.surname = _surnameTextField.text;
+      widget.user.phoneNumber = _phoneNumberTextField.text;
+
+      widget.onSave(
+          context, widget.user, _image, widget.user.photoUrl != _photoUrl);
+    }
   }
 
   Widget _buildPhoto() {

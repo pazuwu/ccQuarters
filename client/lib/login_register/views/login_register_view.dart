@@ -276,7 +276,7 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
               _saveEmail();
               context
                   .read<AuthCubit>()
-                  .goToForgotPasswordPage(firstTextField.text);
+                  .goToForgotPasswordPage(firstTextField.text.trim());
             },
             child: const Text("Zapomniałeś hasła?"),
           ),
@@ -296,11 +296,11 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   }
 
   _savePersonalInfo() {
-    context.read<AuthCubit>().savePersonalInfo(firstTextField.text,
-        secondTextField.text, thirdTextField.text, fourthTextField.text);
+    context.read<AuthCubit>().savePersonalInfo(firstTextField.text.trim(),
+        secondTextField.text.trim(), thirdTextField.text.trim(), fourthTextField.text.trim());
   }
 
   _saveEmail() {
-    context.read<AuthCubit>().saveEmail(firstTextField.text);
+    context.read<AuthCubit>().saveEmail(firstTextField.text.trim());
   }
 }
