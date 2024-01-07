@@ -296,8 +296,11 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   }
 
   _savePersonalInfo() {
-    context.read<AuthCubit>().savePersonalInfo(firstTextField.text.trim(),
-        secondTextField.text.trim(), thirdTextField.text.trim(), fourthTextField.text.trim());
+    context.read<AuthCubit>().savePersonalInfo(
+        firstTextField.text.trim(),
+        secondTextField.text.trim(),
+        thirdTextField.text.trim(),
+        fourthTextField.text.trim());
   }
 
   _saveEmail() {

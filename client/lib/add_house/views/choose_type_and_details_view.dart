@@ -31,19 +31,21 @@ class _ChooseTypeMainViewState extends State<ChooseTypeMainView> {
   @override
   Widget build(BuildContext context) {
     return ViewWithButtons(
-      inBetweenWidget: MediaQuery.of(context).orientation == Orientation.landscape
-          ? ViewsWithVerticalDivider(
-              firstView: ChooseTypeView(
-                offerType: widget.offerType,
-                buildingType: widget.buildingType,
-              ),
-              secondView: DetailsForm(
-                details: widget.details,
-                buildingType: widget.buildingType,
-                formKey: widget.detailsFormKey,
-              ))
-          : ChooseTypeView(
-              offerType: widget.offerType, buildingType: widget.buildingType),
+      inBetweenWidget:
+          MediaQuery.of(context).orientation == Orientation.landscape
+              ? ViewsWithVerticalDivider(
+                  firstView: ChooseTypeView(
+                    offerType: widget.offerType,
+                    buildingType: widget.buildingType,
+                  ),
+                  secondView: DetailsForm(
+                    details: widget.details,
+                    buildingType: widget.buildingType,
+                    formKey: widget.detailsFormKey,
+                  ))
+              : ChooseTypeView(
+                  offerType: widget.offerType,
+                  buildingType: widget.buildingType),
       goBackOnPressed: null,
       nextOnPressed: () {
         if (MediaQuery.of(context).orientation == Orientation.landscape) {

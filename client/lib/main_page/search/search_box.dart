@@ -77,9 +77,10 @@ class _SearchBoxState extends State<SearchBox> {
       color: widget.color,
       child: TextField(
         autofocus: true,
-        textAlignVertical: MediaQuery.of(context).orientation == Orientation.portrait
-            ? TextAlignVertical.bottom
-            : TextAlignVertical.center,
+        textAlignVertical:
+            MediaQuery.of(context).orientation == Orientation.portrait
+                ? TextAlignVertical.bottom
+                : TextAlignVertical.center,
         controller: widget.controller,
         decoration: buildSearchBoxDecoration(
           onPressed: () {

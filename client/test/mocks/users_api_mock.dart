@@ -16,7 +16,7 @@ extension UsersAPIMock on Dio {
       request.reply(StatusCode.OK, res.toJson());
     }, data: Matchers.any);
 
-    dioAdapter.onPut(url, (request) {
+    dioAdapter.onPut("$url/$id", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 

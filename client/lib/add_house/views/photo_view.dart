@@ -107,7 +107,9 @@ class _PhotoViewState extends State<PhotoView> {
       },
       child: Icon(
         Icons.add_a_photo_outlined,
-        size: MediaQuery.of(context).orientation == Orientation.portrait ? 56 : 96,
+        size: MediaQuery.of(context).orientation == Orientation.portrait
+            ? 56
+            : 96,
       ),
     );
   }
@@ -209,7 +211,8 @@ class GridTile extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.2),
                       child: Icon(
                         Icons.delete,
-                        size: MediaQuery.of(context).orientation == Orientation.portrait
+                        size: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
                             ? 64
                             : 96,
                       ),

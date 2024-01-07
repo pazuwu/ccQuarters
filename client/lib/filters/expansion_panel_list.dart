@@ -24,7 +24,8 @@ class _FiltersExpansionPanelListState extends State<FiltersExpansionPanelList> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isExpanded[1] == null && MediaQuery.of(context).orientation == Orientation.landscape) {
+    if (_isExpanded[1] == null &&
+        MediaQuery.of(context).orientation == Orientation.landscape) {
       _isExpanded[1] = true;
     }
 

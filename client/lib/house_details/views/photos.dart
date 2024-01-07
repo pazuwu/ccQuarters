@@ -48,7 +48,8 @@ class _PhotosState extends State<Photos> {
         maxHeight: isPortrait
             ? MediaQuery.of(context).size.height * 0.1
             : MediaQuery.of(context).size.height * 0.5,
-        maxWidth: isPortrait ? constraints.maxWidth : constraints.maxWidth * 0.2,
+        maxWidth:
+            isPortrait ? constraints.maxWidth : constraints.maxWidth * 0.2,
       ),
       child: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
