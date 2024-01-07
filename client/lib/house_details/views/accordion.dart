@@ -1,6 +1,7 @@
 import 'package:accordion/accordion.dart';
 import 'package:accordion/controllers.dart';
-import 'package:ccquarters/model/detailed_house.dart';
+import 'package:ccquarters/common/functions.dart';
+import 'package:ccquarters/model/houses/detailed_house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -67,7 +68,7 @@ class AccordionPage extends StatelessWidget {
       leftIcon: const Icon(Icons.info_outline_rounded, color: Colors.white),
       header: const Text('Szczegóły ogłoszenia', style: headerStyle),
       content: Column(
-        children: _buildWidgetsWithDivider([
+        children: buildWidgetsWithDivider([
           HouseDetailsRow(
               title: "Typ ogłoszenia",
               value: house.details.buildingType.toString()),
@@ -91,7 +92,7 @@ class AccordionPage extends StatelessWidget {
       leftIcon: const Icon(Icons.location_on_outlined, color: Colors.white),
       header: const Text('Adres', style: headerStyle),
       content: Column(
-        children: _buildWidgetsWithDivider([
+        children: buildWidgetsWithDivider([
           HouseDetailsRow(
               title: "Województwo", value: house.location.voivodeship),
           HouseDetailsRow(title: "Miasto", value: house.location.city),
@@ -126,7 +127,7 @@ class AccordionPage extends StatelessWidget {
       leftIcon: const Icon(Icons.add_home_outlined, color: Colors.white),
       header: const Text('Dodatkowe informacje', style: headerStyle),
       content: Column(
-        children: _buildWidgetsWithDivider(house.details.additionalInfo!.entries
+        children: buildWidgetsWithDivider(house.details.additionalInfo!.entries
             .map((e) => HouseDetailsRow(title: e.key, value: e.value))
             .toList()),
       ),
@@ -134,29 +135,7 @@ class AccordionPage extends StatelessWidget {
   }
 
   bool _shouldBeOpen(BuildContext context) {
-    return MediaQuery.of(context).size.height > 600;
-  }
-
-  _buildWidgetsWithDivider(List<Widget> widgets) {
-    List<Widget> result = [];
-
-    for (int i = 0; i < widgets.length; i++) {
-      result.add(widgets[i]);
-
-      if (i != widgets.length - 1) {
-        result.add(
-          const Padding(
-            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-            child: Divider(
-              color: Colors.grey,
-              height: 2,
-            ),
-          ),
-        );
-      }
-    }
-
-    return result;
+    return MediaQuery.of(context).size.height > 800;
   }
 }
 

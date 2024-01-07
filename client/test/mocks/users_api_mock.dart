@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:http_status_code/http_status_code.dart';
@@ -16,7 +16,7 @@ extension UsersAPIMock on Dio {
       request.reply(StatusCode.OK, res.toJson());
     }, data: Matchers.any);
 
-    dioAdapter.onPut(url, (request) {
+    dioAdapter.onPut("$url/$id", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 

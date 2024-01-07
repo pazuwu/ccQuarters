@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
 import 'package:ccquarters/services/alerts/responses/get_alerts_response.dart';
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';

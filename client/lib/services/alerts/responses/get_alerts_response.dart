@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_alerts_response.g.dart';

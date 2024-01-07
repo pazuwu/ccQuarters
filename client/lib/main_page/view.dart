@@ -1,7 +1,8 @@
-import 'package:ccquarters/list_of_houses/houses_extra.dart';
+import 'package:ccquarters/common/functions.dart';
+import 'package:ccquarters/list_of_houses/model/houses_extra.dart';
 import 'package:ccquarters/main_page/cubit.dart';
-import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -37,13 +38,10 @@ class _MainPageState extends State<MainPage> {
       _pagingControllerForHousesToBuy.refresh();
     }, child: LayoutBuilder(
       builder: (context, constraints) {
-        return BackButtonListener(
-          onBackButtonPressed: () async {
-            return !(await _buildDialogWithQuestionIfUserWantsToLeaveApp() ??
-                false);
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.all(getPaddingSizeForMainPage(context)),
             child: SizedBox(
               height: constraints.maxHeight,
               child: Column(
@@ -51,42 +49,15 @@ class _MainPageState extends State<MainPage> {
                   const SizedBox(
                     height: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: FakeSearchBox(
-                      color: color,
-                      onTap: () => context.go(
-                        '/houses',
-                        extra: HousesExtra(isSearch: true),
-                      ),
-                    ),
-                  ),
+                  _buildFakeSearchBox(color, context),
                   const SizedBox(
                     height: 16,
                   ),
-                  Expanded(
-                    child: AnnouncementsContainer(
-                      title: "Do wynajęcia",
-                      pagingController: _pagingControllerForHousesToRent,
-                      getHouses: (pageNumber, pageCount) async => await context
-                          .read<MainPageCubit>()
-                          .getHousesToRent(pageNumber, pageCount),
-                      offerType: OfferType.rent,
-                    ),
-                  ),
+                  _buildHousesToRent(context),
                   const SizedBox(
                     height: 16,
                   ),
-                  Expanded(
-                    child: AnnouncementsContainer(
-                      title: "Na sprzedaż",
-                      pagingController: _pagingControllerForHousesToBuy,
-                      getHouses: (pageNumber, pageCount) async => await context
-                          .read<MainPageCubit>()
-                          .getHousesToBuy(pageNumber, pageCount),
-                      offerType: OfferType.sell,
-                    ),
-                  ),
+                  _buildHousesToBuy(context),
                   const SizedBox(
                     height: 16,
                   ),
@@ -99,27 +70,41 @@ class _MainPageState extends State<MainPage> {
     ));
   }
 
-  Future<bool?> _buildDialogWithQuestionIfUserWantsToLeaveApp() async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => BackButtonListener(
-        onBackButtonPressed: () async {
-          Navigator.of(context).pop(false);
-          return true;
-        },
-        child: AlertDialog(
-          title: const Text("Czy na pewno chcesz wyjść z aplikacji?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text("Nie"),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text("Tak"),
-            ),
-          ],
+  Padding _buildFakeSearchBox(ColorScheme color, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: FakeSearchBox(
+        color: color,
+        onTap: () => context.go(
+          '/houses',
+          extra: HousesExtra(isSearch: true),
         ),
+      ),
+    );
+  }
+
+  Expanded _buildHousesToRent(BuildContext context) {
+    return Expanded(
+      child: AnnouncementsContainer(
+        title: "Do wynajęcia",
+        pagingController: _pagingControllerForHousesToRent,
+        getHouses: (pageNumber, pageCount) async => await context
+            .read<MainPageCubit>()
+            .getHousesToRent(pageNumber, pageCount),
+        offerType: OfferType.rent,
+      ),
+    );
+  }
+
+  Expanded _buildHousesToBuy(BuildContext context) {
+    return Expanded(
+      child: AnnouncementsContainer(
+        title: "Na sprzedaż",
+        pagingController: _pagingControllerForHousesToBuy,
+        getHouses: (pageNumber, pageCount) async => await context
+            .read<MainPageCubit>()
+            .getHousesToBuy(pageNumber, pageCount),
+        offerType: OfferType.sell,
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_gallery.dart';
 import 'package:ccquarters/my_tours/scene_list/scene_list.dart';
 import 'package:ccquarters/my_tours/scene_list/states.dart';
-import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

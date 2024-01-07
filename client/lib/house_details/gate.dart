@@ -1,4 +1,5 @@
 import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
 import 'package:ccquarters/house_details/states.dart';
 import 'package:ccquarters/house_details/views/edit_house_view.dart';
@@ -41,20 +42,14 @@ class HouseDetailsGate extends StatelessWidget {
 
   Widget _getViewsToBackButton(HouseDetailsState state, BuildContext context) {
     if (state is LoadingState) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const LoadingView();
     } else if (state is ErrorState) {
-      return Scaffold(
-        body: ErrorMessage(
-          state.message,
-          tip: state.tip,
-          closeButton: true,
-          onClose: () => context
-              .go(GoRouterState.of(context).extra?.toString() ?? '/home'),
-        ),
+      return ErrorMessage(
+        state.message,
+        tip: state.tip,
+        actionButton: true,
+        onAction: () =>
+            context.go(GoRouterState.of(context).extra?.toString() ?? '/home'),
       );
     } else if (state is DetailsState) {
       return DetailsView(house: state.house, goBack: _goBack);

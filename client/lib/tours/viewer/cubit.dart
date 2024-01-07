@@ -2,10 +2,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour_model/geo_point.dart';
-import 'package:ccquarters/virtual_tour_model/link.dart';
-import 'package:ccquarters/virtual_tour_model/scene.dart';
-import 'package:ccquarters/virtual_tour_model/tour.dart';
+import 'package:ccquarters/model/virtual_tours/geo_point.dart';
+import 'package:ccquarters/model/virtual_tours/link.dart';
+import 'package:ccquarters/model/virtual_tours/scene.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 
 abstract class VTViewerState extends Equatable {

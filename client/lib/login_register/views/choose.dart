@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/common/consts.dart';
@@ -14,29 +15,21 @@ class ChooseLoginOrRegisterView extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: _buildSkipRegisterAndLoginBottomBar(context),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-              maxWidth:
-                  MediaQuery.of(context).orientation == Orientation.landscape &&
-                          MediaQuery.of(context).size.width > 700
-                      ? MediaQuery.of(context).size.width * 0.5
-                      : MediaQuery.of(context).size.width),
-          child: Padding(
-            padding: const EdgeInsets.all(paddingSize),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildCompanyName(),
-                Image.asset(
-                  "assets/logo/logo.png",
-                  height: min(MediaQuery.of(context).size.width * 0.4, 200),
-                ),
-                _buildWelcome(context),
-                _buildLoginOrRegisterButtons(context),
-              ],
-            ),
+      body: ConstrainedCenterBox(
+        child: Padding(
+          padding: const EdgeInsets.all(paddingSize),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildCompanyName(),
+              Image.asset(
+                "assets/logo/logo.png",
+                height: min(MediaQuery.of(context).size.width * 0.4, 200),
+              ),
+              _buildWelcome(context),
+              _buildLoginOrRegisterButtons(context),
+            ],
           ),
         ),
       ),

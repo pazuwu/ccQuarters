@@ -1,8 +1,12 @@
+import 'package:ccquarters/common/messages/error_message.dart';
+import 'package:ccquarters/common/views/constrained_center_box.dart';
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/choose.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/views/forgot_password.dart';
 import 'package:ccquarters/login_register/views/login_register_view.dart';
+import 'package:ccquarters/login_register/views/user_not_found.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,19 +27,11 @@ class AuthGate extends StatelessWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           context.go('/home');
         });
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const LoadingView();
       } else if (state is NeedsSigningInState) {
         return const ChooseLoginOrRegisterView();
       } else if (state is LoadingState) {
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const LoadingView();
       } else if (state is LoginState) {
         return LoginRegisterView(
             key: const Key("LoginPage"),
@@ -58,6 +54,28 @@ class AuthGate extends StatelessWidget {
         );
       } else if (state is ForgotPasswordSuccessState) {
         return const ForgotPasswordSuccessPage();
+      } else if (state is UserNotFoundState) {
+        return const UserNotFoundPage();
+      } else if (state is ReEnterUserDataState) {
+        return ReEnterUserDataPage(
+          user: state.user,
+          image: state.image,
+          error: state.error,
+        );
+      } else if (state is ErrorState) {
+        return ConstrainedCenterBox(
+            child: ErrorMessage(
+          state.message,
+          actionButton: true,
+          onAction: () {
+            if (state is ErrorStateWhenGettingUser) {
+              context.read<AuthCubit>().setUser();
+            } else if (state is ErrorStateWhenUpdatingUser) {
+              context.read<AuthCubit>().updateUser();
+            }
+          },
+          actionButtonTitle: "Spróbuj ponownie",
+        ));
       }
 
       return const Center(

@@ -1,7 +1,7 @@
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/model/new_alert.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/houses/filter.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/alerts/new_alert.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
@@ -9,10 +9,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListOfHousesState {}
 
-class ErrorState extends ListOfHousesState {
-  ErrorState({required this.message});
+class MessageState extends ListOfHousesState {
+  MessageState({required this.message});
 
   String message;
+}
+
+class ErrorState extends MessageState {
+  ErrorState({required super.message});
+}
+
+class SuccessState extends MessageState {
+  SuccessState({required super.message});
+}
+
+class LoadingState extends MessageState {
+  LoadingState({required super.message});
 }
 
 class ListOfHousesCubit extends Cubit<ListOfHousesState> {
@@ -34,6 +46,10 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
 
   void saveSearch(String search) {
     filter.title = search;
+  }
+
+  void clearMessages() {
+    emit(ListOfHousesState());
   }
 
   Future<List<House>> getHouses(int pageNumber, int pageCount) async {
@@ -66,12 +82,26 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
   }
 
   Future<void> createAlert(HouseFilter filter) async {
+    emit(LoadingState(message: "Wysyłanie alertu..."));
+
     var alert = NewAlert.fromHouseFilter(filter);
     final response = await alertService.createAlert(alert);
+
     if (response.error != ErrorType.none) {
-      emit(ErrorState(
-          message: "Nie udało się wysłać alertu. Spróbuj ponownie później."));
+      if (response.error == ErrorType.emptyRequest) {
+        emit(ErrorState(message: "Nie można wysłać pustego alertu."));
+      } else {
+        emit(ErrorState(
+            message: "Nie udało się wysłać alertu.\n"
+                "Spróbuj ponownie później."));
+      }
       return;
+    } else {
+      emit(
+        SuccessState(
+            message: "Alert został wysłany. Otrzymasz powiadomienie,\n"
+                "gdy pojawi się nowa oferta spełniająca kryteria."),
+      );
     }
   }
 }

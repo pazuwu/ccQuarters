@@ -2,8 +2,8 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 
 class ChooseTypeView extends StatefulWidget {
   const ChooseTypeView({

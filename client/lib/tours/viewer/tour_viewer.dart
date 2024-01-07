@@ -1,7 +1,8 @@
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/virtual_tour_model/tour.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
 import 'package:ccquarters/tours/viewer/cubit.dart';
 import 'package:ccquarters/tours/viewer/scene_viewer.dart';
 
@@ -36,9 +37,7 @@ class TourViewer extends StatelessWidget {
           );
         }
 
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const LoadingView();
       }),
     );
   }

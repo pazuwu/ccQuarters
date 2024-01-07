@@ -1,4 +1,5 @@
 import 'package:ccquarters/common/inputs/themed_form_field.dart';
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:flutter/material.dart';
 
 class PersonalInfoFields extends StatefulWidget {
@@ -36,13 +37,8 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width *
-            (MediaQuery.of(context).orientation == Orientation.landscape
-                ? 0.4
-                : 1),
-      ),
+    return ConstrainedCenterBox(
+      widthMultiplier: 0.4,
       child: Column(
         children: [
           _buildBusinessAccountSwitch(context),

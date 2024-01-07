@@ -1,13 +1,16 @@
-import 'package:ccquarters/map/map.dart';
-import 'package:ccquarters/model/location.dart';
+import 'package:ccquarters/map/map_readonly.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
 class MapCard extends StatelessWidget {
-  const MapCard({super.key, required this.location});
+  const MapCard({
+    super.key,
+    required this.geoX,
+    required this.geoY,
+  });
 
-  final Location location;
-
+  final double geoX;
+  final double geoY;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -43,8 +46,8 @@ class MapCard extends StatelessWidget {
               largePaddingSize,
             ),
             child: MapReadOnly(
-              latitude: location.geoY!,
-              longitude: location.geoX!,
+              latitude: geoY,
+              longitude: geoX,
             ),
           ),
         ),

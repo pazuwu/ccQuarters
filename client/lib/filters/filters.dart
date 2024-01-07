@@ -2,14 +2,11 @@
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:ccquarters/filters/expansion_panel_list.dart';
 import 'package:ccquarters/filters/sort_by_dropdown.dart';
-import 'package:ccquarters/list_of_houses/cubit.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/model/filter.dart';
+import 'package:ccquarters/model/houses/filter.dart';
 
 class Filters extends StatefulWidget {
   const Filters({
@@ -17,11 +14,13 @@ class Filters extends StatefulWidget {
     this.onlySort = false,
     required this.filters,
     required this.onSave,
+    required this.onSaveAsAlert,
   }) : super(key: key);
 
   final HouseFilter filters;
   final bool onlySort;
   final Function(HouseFilter) onSave;
+  final Function(HouseFilter) onSaveAsAlert;
 
   @override
   State<Filters> createState() => _FiltersState();
@@ -42,6 +41,7 @@ class _FiltersState extends State<Filters> {
                     builder: (BuildContext context) => FilterForm(
                       filters: widget.filters,
                       onSave: widget.onSave,
+                      onSaveAsAlert: widget.onSaveAsAlert,
                     ),
                   );
                 },
@@ -62,23 +62,21 @@ class _FiltersState extends State<Filters> {
 }
 
 class FilterForm extends StatelessWidget {
-  const FilterForm({super.key, required this.filters, required this.onSave});
+  const FilterForm(
+      {super.key,
+      required this.filters,
+      required this.onSave,
+      required this.onSaveAsAlert});
 
   final HouseFilter filters;
   final Function(HouseFilter) onSave;
+  final Function(HouseFilter) onSaveAsAlert;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (getDeviceType(context) == DeviceType.mobile)
-            _buildButton(context, 'Anuluj', false),
-          _buildButton(context, 'Zapisz', true),
-        ],
-      ),
+      bottomNavigationBar: _buildButtons(context),
       body: ConstrainedBox(
         constraints: const BoxConstraints.expand(),
         child: Padding(
@@ -98,15 +96,7 @@ class FilterForm extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       if (context.read<AuthCubit>().user != null)
-                        IconButton(
-                          icon: const Icon(Icons.add_alert_rounded),
-                          onPressed: () {
-                            context
-                                .read<ListOfHousesCubit>()
-                                .createAlert(filters);
-                          },
-                          tooltip: 'Zapisz jako alert',
-                        ),
+                        _buildSaveAsAlert(context),
                     ],
                   ),
                 ),
@@ -116,6 +106,17 @@ class FilterForm extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Row _buildButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (MediaQuery.of(context).orientation == Orientation.portrait)
+          _buildButton(context, 'Anuluj', false),
+        _buildButton(context, 'Zapisz', true),
+      ],
     );
   }
 
@@ -129,7 +130,7 @@ class FilterForm extends StatelessWidget {
         ),
         onPressed: () => {
           if (doesSave) onSave(filters),
-          if (getDeviceType(context) == DeviceType.mobile)
+          if (MediaQuery.of(context).orientation == Orientation.portrait)
             Navigator.pop(context)
         },
         child: Text(
@@ -137,6 +138,14 @@ class FilterForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
+    );
+  }
+
+  IconButton _buildSaveAsAlert(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.add_alert_rounded),
+      onPressed: () => onSaveAsAlert(filters),
+      tooltip: 'Zapisz jako alert',
     );
   }
 }

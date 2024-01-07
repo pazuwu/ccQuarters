@@ -1,9 +1,9 @@
-import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/model/houses/photo.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:ccquarters/model/building_type.dart';
-import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
+import 'package:ccquarters/model/houses/new_house.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 
 class HouseFormState {}
 
@@ -21,8 +21,8 @@ class ChooseTypeFormState extends StepperPageState {
   final NewHouseDetails houseDetails;
 }
 
-class MobileDetailsFormState extends StepperPageState {
-  MobileDetailsFormState(this.houseDetails, this.buildingType);
+class PortraitDetailsFormState extends StepperPageState {
+  PortraitDetailsFormState(this.houseDetails, this.buildingType);
 
   final NewHouseDetails houseDetails;
   final BuildingType buildingType;

@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ccquarters/model/detailed_house.dart';
-import 'package:ccquarters/model/filter.dart';
-import 'package:ccquarters/model/house.dart';
-import 'package:ccquarters/model/new_house.dart';
-import 'package:ccquarters/model/photo.dart';
+import 'package:ccquarters/model/houses/detailed_house.dart';
+import 'package:ccquarters/model/houses/filter.dart';
+import 'package:ccquarters/model/houses/house.dart';
+import 'package:ccquarters/model/houses/new_house.dart';
+import 'package:ccquarters/model/houses/photo.dart';
 import 'package:ccquarters/services/houses/requests/create_house_request.dart';
 import 'package:ccquarters/services/houses/requests/delete_photos_request.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';
@@ -127,6 +127,7 @@ class HouseService {
         return ServiceResponse(
             data: data.house.toDetailedHouse(data.photos, houseId));
       }
+
       return ServiceResponse(data: null, error: ErrorType.unknown);
     } on DioException catch (e) {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
@@ -247,7 +248,7 @@ class HouseService {
   }
 
   Future<ServiceResponse<bool>> addPhoto(
-      String houseId, Uint8List photo) async {
+      String houseId, Uint8List photo, int index) async {
     try {
       FormData photoData = FormData.fromMap({
         "file": MultipartFile.fromBytes(photo, filename: houseId),
@@ -256,6 +257,9 @@ class HouseService {
       var response = await _dio.post(
         "$_url/$houseId/photo",
         data: photoData,
+        queryParameters: {
+          "order": index,
+        },
       );
 
       return response.statusCode == StatusCode.OK

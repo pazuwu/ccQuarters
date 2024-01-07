@@ -8,11 +8,13 @@ const double largePaddingSize = 16;
 const double mediumPaddingSize = 12;
 const double paddingSize = 8;
 const double maxWidth = 700;
-const double mobileSearchBoxHeight = 50;
-const double webSearchBoxHeight = 70;
+const double portraitSearchBoxHeight = 50;
+const double landscapeSearchBoxHeight = 70;
 const double maxWidthForGrid = 1200;
 const double minHeight = 30;
 const double elevation = 4;
 const double iconSize = 20;
 const double sizedBoxHeight = 10;
 const double inputDecorationBorderSide = 1.5;
+const String emailRegExpString =
+    "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+\$)";

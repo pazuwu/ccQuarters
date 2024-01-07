@@ -7,7 +7,6 @@ import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
 import 'package:ccquarters/add_house/views/virtual_tour_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,7 +90,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         buildingType: state.buildingType,
         detailsFormKey: _detailsFormKey,
       );
-    } else if (state is MobileDetailsFormState) {
+    } else if (state is PortraitDetailsFormState) {
       return DetailsFormView(
         details: state.houseDetails,
         buildingType: state.buildingType,
@@ -153,47 +152,48 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         showLoadingAnimation: false,
         stepAnimationDuration: const Duration(milliseconds: 200),
         stepRadius: 8,
-        steps: _getSteps(getDeviceType(context) == DeviceType.mobile),
+        steps: _getSteps(
+            MediaQuery.of(context).orientation == Orientation.portrait),
         onStepReached: (index) => _goToChoosenPage(index, widget.state),
       ),
     );
   }
 
   int _getStepIndex() {
-    var isMobile = getDeviceType(context) == DeviceType.mobile;
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     if (widget.state is ChooseTypeFormState) {
       return _getChooseTypeIndex();
-    } else if (widget.state is MobileDetailsFormState) {
+    } else if (widget.state is PortraitDetailsFormState) {
       return _getDetailsIndex();
     } else if (widget.state is LocationFormState) {
-      return _getLocationIndex(isMobile);
+      return _getLocationIndex(isPortrait);
     } else if (widget.state is MapState) {
       return _getMapIndex();
     } else if (widget.state is PhotosFormState) {
-      return _getPhotosIndex(isMobile);
+      return _getPhotosIndex(isPortrait);
     } else if (widget.state is VirtualTourFormState) {
-      return _getVirtualTourIndex(isMobile);
+      return _getVirtualTourIndex(isPortrait);
     }
 
     return 0;
   }
 
   Future<bool> _goBack() async {
+    bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+
     if (activeStep == _getChooseTypeIndex()) {
       context.go('/home');
     } else if (activeStep == _getDetailsIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
-    } else if (activeStep ==
-        _getLocationIndex(getDeviceType(context) == DeviceType.mobile)) {
+    } else if (activeStep == _getLocationIndex(isPortrait)) {
       context.read<AddHouseFormCubit>().goToDetailsForm();
     } else if (activeStep == _getMapIndex()) {
       context.read<AddHouseFormCubit>().goToLocationForm();
-    } else if (activeStep ==
-        _getPhotosIndex(getDeviceType(context) == DeviceType.mobile)) {
+    } else if (activeStep == _getPhotosIndex(isPortrait)) {
       context.read<AddHouseFormCubit>().goToMap();
-    } else if (activeStep ==
-        _getVirtualTourIndex(getDeviceType(context) == DeviceType.mobile)) {
+    } else if (activeStep == _getVirtualTourIndex(isPortrait)) {
       context.read<AddHouseFormCubit>().goToPhotosForm();
     }
 
@@ -201,34 +201,34 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   }
 
   void _goToChoosenPage(int index, StepperPageState state) {
-    var isMobile = getDeviceType(context) == DeviceType.mobile;
+    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
-    if (!_validateAndSaveData(state, isMobile)) return;
+    if (!_validateAndSaveData(state, isPortrait)) return;
 
     if (index == _getChooseTypeIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
-    } else if (isMobile && index == _getDetailsIndex()) {
+    } else if (isPortrait && index == _getDetailsIndex()) {
       context.read<AddHouseFormCubit>().goToDetailsForm();
-    } else if (index == _getLocationIndex(isMobile)) {
+    } else if (index == _getLocationIndex(isPortrait)) {
       context.read<AddHouseFormCubit>().goToLocationForm();
-    } else if (isMobile && index == _getMapIndex()) {
+    } else if (isPortrait && index == _getMapIndex()) {
       context.read<AddHouseFormCubit>().goToMap();
-    } else if (index == _getPhotosIndex(isMobile)) {
+    } else if (index == _getPhotosIndex(isPortrait)) {
       context.read<AddHouseFormCubit>().goToPhotosForm();
-    } else if (index == _getVirtualTourIndex(isMobile)) {
+    } else if (index == _getVirtualTourIndex(isPortrait)) {
       context.read<AddHouseFormCubit>().goToVirtualTourForm();
     }
   }
 
-  bool _validateAndSaveData(StepperPageState state, bool isMobile) {
+  bool _validateAndSaveData(StepperPageState state, bool isPortrait) {
     if (state is ChooseTypeFormState) {
-      if (!isMobile && _detailsFormKey.currentState!.validate()) {
+      if (!isPortrait && _detailsFormKey.currentState!.validate()) {
         _detailsFormKey.currentState!.save();
         context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
-      } else if (!isMobile) {
+      } else if (!isPortrait) {
         return false;
       }
-    } else if (state is MobileDetailsFormState) {
+    } else if (state is PortraitDetailsFormState) {
       if (_detailsFormKey.currentState!.validate()) {
         _detailsFormKey.currentState!.save();
         context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
@@ -259,23 +259,24 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
     return true;
   }
 
-  List<EasyStep> _getSteps(bool isMobile) {
+  List<EasyStep> _getSteps(bool isPortrait) {
     return [
       _buildStep("Wybierz typ", _getChooseTypeIndex(), false),
-      if (isMobile) _buildStep("Uzupełnij szczegóły", _getDetailsIndex(), true),
-      _buildStep("Lokalizacja", _getLocationIndex(isMobile), !isMobile),
-      if (isMobile) _buildStep("Mapa", _getMapIndex(), true),
-      _buildStep("Zdjęcia", _getPhotosIndex(isMobile), false),
-      _buildStep("Wirtualny spacer", _getVirtualTourIndex(isMobile), true),
+      if (isPortrait)
+        _buildStep("Uzupełnij szczegóły", _getDetailsIndex(), true),
+      _buildStep("Lokalizacja", _getLocationIndex(isPortrait), !isPortrait),
+      if (isPortrait) _buildStep("Mapa", _getMapIndex(), true),
+      _buildStep("Zdjęcia", _getPhotosIndex(isPortrait), false),
+      _buildStep("Wirtualny spacer", _getVirtualTourIndex(isPortrait), true),
     ];
   }
 
   int _getChooseTypeIndex() => 0;
   int _getDetailsIndex() => 1;
-  int _getLocationIndex(bool isMobile) => isMobile ? 2 : 1;
+  int _getLocationIndex(bool isPortrait) => isPortrait ? 2 : 1;
   int _getMapIndex() => 3;
-  int _getPhotosIndex(bool isMobile) => isMobile ? 4 : 2;
-  int _getVirtualTourIndex(bool isMobile) => isMobile ? 5 : 3;
+  int _getPhotosIndex(bool isPortrait) => isPortrait ? 4 : 2;
+  int _getVirtualTourIndex(bool isPortrait) => isPortrait ? 5 : 3;
 
   EasyStep _buildStep(String title, int index, bool topTitle) {
     return EasyStep(

@@ -44,62 +44,70 @@ class _AdditionalInfoFormState extends State<AdditionalInfoForm> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Column(
-                children: [
-                  TextFormField(
-                    key: const Key("additionalInfoTitleField"),
-                    initialValue: _title,
-                    onSaved: (newValue) => _title = newValue?.trim() ?? '',
-                    decoration: createInputDecorationForForm(
-                      context,
-                      "Tytuł",
-                      isRequired: true,
-                    ),
-                    validator: (value) => value?.isEmpty ?? false
-                        ? "Wpisz tytuł dodatkowej informacji"
-                        : null,
-                  ),
-                  const SizedBox(height: sizedBoxHeight),
-                  TextFormField(
-                    key: const Key("additionalInfoField"),
-                    initialValue: _info,
-                    onSaved: (newValue) => _info = newValue?.trim() ?? '',
-                    decoration: createInputDecorationForForm(
-                      context,
-                      "Informacja",
-                      isRequired: true,
-                      alignLabelWithHint: true,
-                    ),
-                    minLines: 4,
-                    maxLines: null,
-                    validator: (value) =>
-                        value?.isEmpty ?? false ? "Wpisz informację" : null,
-                  ),
-                ],
+                children: _buildFormFields(),
               ),
               const SizedBox(height: sizedBoxHeight),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Anuluj")),
-                  TextButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.pop(context);
-                          _formKey.currentState!.save();
-                          widget.onSubmit(_title, _info);
-                        }
-                      },
-                      child: const Text("Zapisz")),
-                ],
-              ),
+              _buildButtons(context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  List<Widget> _buildFormFields() {
+    return [
+      TextFormField(
+        key: const Key("additionalInfoTitleField"),
+        initialValue: _title,
+        onSaved: (newValue) => _title = newValue?.trim() ?? '',
+        decoration: createInputDecorationForForm(
+          context,
+          "Tytuł",
+          isRequired: true,
+        ),
+        validator: (value) => value?.isEmpty ?? false
+            ? "Wpisz tytuł dodatkowej informacji"
+            : null,
+      ),
+      const SizedBox(height: sizedBoxHeight),
+      TextFormField(
+        key: const Key("additionalInfoField"),
+        initialValue: _info,
+        onSaved: (newValue) => _info = newValue?.trim() ?? '',
+        decoration: createInputDecorationForForm(
+          context,
+          "Informacja",
+          isRequired: true,
+          alignLabelWithHint: true,
+        ),
+        minLines: 4,
+        maxLines: null,
+        validator: (value) =>
+            value?.isEmpty ?? false ? "Wpisz informację" : null,
+      ),
+    ];
+  }
+
+  Row _buildButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Anuluj")),
+        TextButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                Navigator.pop(context);
+                _formKey.currentState!.save();
+                widget.onSubmit(_title, _info);
+              }
+            },
+            child: const Text("Zapisz")),
+      ],
     );
   }
 }

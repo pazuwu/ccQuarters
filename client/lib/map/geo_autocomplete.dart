@@ -151,30 +151,35 @@ class _GeoAutocompleteState extends State<GeoAutocomplete> {
               itemCount: options.length,
               itemBuilder: (BuildContext context, int index) {
                 final SearchInfo suggestion = options.elementAt(index);
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      enableFeedback: true,
-                      dense: true,
-                      title: Text(_selectedValueToInputString(suggestion)),
-                      onTap: () {
-                        onSelected(suggestion);
-                      },
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                      ),
-                      child: Divider(),
-                    )
-                  ],
-                );
+                return _buildSuggestion(suggestion, onSelected);
               },
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Column _buildSuggestion(
+      SearchInfo suggestion, AutocompleteOnSelected<SearchInfo> onSelected) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          enableFeedback: true,
+          dense: true,
+          title: Text(_selectedValueToInputString(suggestion)),
+          onTap: () {
+            onSelected(suggestion);
+          },
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 8.0,
+          ),
+          child: Divider(),
+        )
+      ],
     );
   }
 
