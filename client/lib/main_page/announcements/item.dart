@@ -21,8 +21,8 @@ class HouseItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) => ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: getMaxItemWidth(context),
+        constraints: BoxConstraints.tightFor(
+          width: getMaxItemWidth(context),
         ),
         child: Card(
           shadowColor: Theme.of(context).colorScheme.secondary,
@@ -61,8 +61,9 @@ class HouseItem extends StatelessWidget {
 
   Widget _buildPhoto(BoxConstraints constraints, BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: constraints.maxHeight - 52,
+      constraints: BoxConstraints.tightFor(
+        height: constraints.maxHeight - 52,
+        width: getMaxItemWidth(context),
       ),
       child: house.photoUrl != null
           ? ImageWidget(
@@ -154,7 +155,7 @@ class HouseItem extends StatelessWidget {
   static double getMaxItemWidth(BuildContext context) {
     return MediaQuery.of(context).size.width *
         (MediaQuery.of(context).orientation == Orientation.portrait
-            ? 0.4
+            ? 0.55
             : 0.2);
   }
 }
