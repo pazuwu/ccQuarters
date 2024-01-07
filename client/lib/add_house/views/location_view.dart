@@ -30,19 +30,20 @@ class _LocationFormViewState extends State<LocationFormView> {
   @override
   Widget build(BuildContext context) {
     return ViewWithButtons(
-        inBetweenWidget: MediaQuery.of(context).orientation == Orientation.landscape
-            ? ViewsWithVerticalDivider(
-                firstView: LocationForm(
+        inBetweenWidget:
+            MediaQuery.of(context).orientation == Orientation.landscape
+                ? ViewsWithVerticalDivider(
+                    firstView: LocationForm(
+                        location: widget.location,
+                        buildingType: widget.buildingType,
+                        formKey: widget.formKey),
+                    secondView:
+                        ChooseLocationOnMap(addHouseFormCubit: context.read()),
+                  )
+                : LocationForm(
                     location: widget.location,
                     buildingType: widget.buildingType,
                     formKey: widget.formKey),
-                secondView:
-                    ChooseLocationOnMap(addHouseFormCubit: context.read()),
-              )
-            : LocationForm(
-                location: widget.location,
-                buildingType: widget.buildingType,
-                formKey: widget.formKey),
         goBackOnPressed: () {
           widget.formKey.currentState!.save();
           context.read<AddHouseFormCubit>().saveLocation(widget.location);
