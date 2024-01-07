@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/functions.dart';
 import 'package:ccquarters/list_of_houses/model/houses_extra.dart';
 import 'package:ccquarters/main_page/cubit.dart';
 import 'package:ccquarters/model/houses/house.dart';
@@ -39,26 +40,29 @@ class _MainPageState extends State<MainPage> {
       builder: (context, constraints) {
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: SizedBox(
-            height: constraints.maxHeight,
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 16,
-                ),
-                _buildFakeSearchBox(color, context),
-                const SizedBox(
-                  height: 16,
-                ),
-                _buildHousesToRent(context),
-                const SizedBox(
-                  height: 16,
-                ),
-                _buildHousesToBuy(context),
-                const SizedBox(
-                  height: 16,
-                ),
-              ],
+          child: Padding(
+            padding: EdgeInsets.all(getPaddingSizeForMainPage(context)),
+            child: SizedBox(
+              height: constraints.maxHeight,
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  _buildFakeSearchBox(color, context),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  _buildHousesToRent(context),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  _buildHousesToBuy(context),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
             ),
           ),
         );

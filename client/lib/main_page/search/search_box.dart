@@ -1,5 +1,4 @@
 import 'package:ccquarters/common/consts.dart';
-import 'package:ccquarters/common/functions.dart';
 import 'package:ccquarters/common/widgets/shadow.dart';
 import 'package:flutter/material.dart';
 
@@ -17,21 +16,18 @@ class FakeSearchBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.all(getPaddingSizeForMainPage(context)),
-        child: SearchBoxTheme(
-          color: color,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: IgnorePointer(
-              child: TextField(
-                textAlignVertical:
-                    MediaQuery.of(context).orientation == Orientation.portrait
-                        ? TextAlignVertical.bottom
-                        : TextAlignVertical.center,
-                decoration: buildSearchBoxDecoration(),
-              ),
+      child: SearchBoxTheme(
+        color: color,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: IgnorePointer(
+            child: TextField(
+              textAlignVertical:
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                      ? TextAlignVertical.bottom
+                      : TextAlignVertical.center,
+              decoration: buildSearchBoxDecoration(),
             ),
           ),
         ),
