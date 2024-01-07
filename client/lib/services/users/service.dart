@@ -30,14 +30,15 @@ class UserService {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
         return ServiceResponse(
             data: User.empty(), error: ErrorType.unauthorized);
+      } else if (e.response?.statusCode == StatusCode.NOT_FOUND) {
+        return ServiceResponse(data: User.empty(), error: ErrorType.notFound);
       }
 
       return ServiceResponse(data: User.empty(), error: ErrorType.unknown);
     }
   }
 
-  Future<ServiceResponse<bool>> updateUser(String userId, User user,
-      {String? token}) async {
+  Future<ServiceResponse<bool>> updateUser(String userId, User user) async {
     try {
       var response = await _dio.put(
         "$_url/$userId",

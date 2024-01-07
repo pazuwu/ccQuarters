@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/login_register/cubit.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:ccquarters/profile/states.dart';
 import 'package:ccquarters/profile/views/edit_profile.dart';
@@ -65,6 +68,10 @@ class ProfileGate extends StatelessWidget {
     if (state is EditProfileState) {
       return EditProfileView(
         user: state.user,
+        onSave: (BuildContext context, User user, Uint8List? image,
+            bool deleteImage) {
+          context.read<ProfilePageCubit>().updateUser(user, image, deleteImage);
+        },
       );
     } else {
       return const LoadingView();

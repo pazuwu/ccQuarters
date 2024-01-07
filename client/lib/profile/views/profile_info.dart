@@ -64,7 +64,7 @@ class ProfileInfo extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall,
             textScaler: const TextScaler.linear(0.8),
           ),
-        if (user.company != null)
+        if (user.company != null && user.company!.isNotEmpty)
           Text(
             user.company!,
             style: user.name != null && user.surname != null

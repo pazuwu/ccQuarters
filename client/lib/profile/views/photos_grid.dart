@@ -56,11 +56,15 @@ class _PhotosGridState extends State<PhotosGrid> {
     return PagedGridView<int, House>(
       pagingController: widget.pagingController,
       builderDelegate: PagedChildBuilderDelegate<House>(
-        noItemsFoundIndicatorBuilder: (context) => const Message(
+        noItemsFoundIndicatorBuilder: (context) => Message(
           title: "W tej zakładce nie masz\n jeszcze żadnych ogłoszeń",
-          imageWidget: Icon(Icons.home),
+          imageWidget: Icon(
+            Icons.home,
+            size: MediaQuery.of(context).size.width * 0.25,
+            color: Theme.of(context).primaryColor,
+          ),
           adjustToLandscape: true,
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
         ),
         firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
           "Nie udało się pobrać ogłoszeń",
