@@ -106,28 +106,23 @@ class _NavigationShellPresenter extends StatelessWidget {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: child),
-        SizedBox(
-          height: 70,
-          child: BottomNavigationBar(
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            selectedItemColor: Theme.of(context).primaryColor,
-            type: BottomNavigationBarType.fixed,
-            iconSize: 35,
-            items: visibleItems
-                .map((i) => BottomNavigationBarItem(
-                      icon: Icon(i.icon),
-                      label: i.label,
-                    ))
-                .toList(),
-            currentIndex: selectedIndex,
-            onTap: (index) => _onItemTapped(context, index),
-          ),
-        ),
-      ],
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: Theme.of(context).primaryColor,
+        type: BottomNavigationBarType.fixed,
+        iconSize: 35,
+        items: visibleItems
+            .map((i) => BottomNavigationBarItem(
+                  icon: Icon(i.icon),
+                  label: i.label,
+                ))
+            .toList(),
+        currentIndex: selectedIndex,
+        onTap: (index) => _onItemTapped(context, index),
+      ),
     );
   }
 
