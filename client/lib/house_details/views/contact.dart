@@ -31,7 +31,7 @@ class ButtonContactWidget extends StatelessWidget {
         ),
       ),
       child: const Text(
-        "Skontaktuj się z wystawiającym!",
+        "Kontakt",
         textScaler: TextScaler.linear(1.3),
         textAlign: TextAlign.center,
       ),
@@ -54,6 +54,7 @@ class ContactWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (additionalWidget != null) additionalWidget!,
             const SizedBox(height: 12),
             const Text(
               "Skontaktuj się z wystawiającym ogłoszenie!",

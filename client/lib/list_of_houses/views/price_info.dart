@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PriceRoomCountAreaInfo extends StatefulWidget {
-  const PriceRoomCountAreaInfo({super.key, required this.details});
+  const PriceRoomCountAreaInfo({
+    super.key,
+    required this.details,
+    this.priceTextScale = 1.4,
+    this.roomCountTextScale = 1.0,
+  });
 
   final HouseDetails details;
+  final double priceTextScale;
+  final double roomCountTextScale;
 
   @override
   State<PriceRoomCountAreaInfo> createState() => _PriceRoomCountAreaInfoState();
@@ -21,11 +28,12 @@ class _PriceRoomCountAreaInfoState extends State<PriceRoomCountAreaInfo> {
       children: [
         Text(
           "${_formatter.format(widget.details.price)} zł",
-          textScaler: const TextScaler.linear(1.4),
+          textScaler: TextScaler.linear(widget.priceTextScale),
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         Text(
           _getAreaAndRoomCount(widget.details),
+          textScaler: TextScaler.linear(widget.roomCountTextScale),
           style: TextStyle(
             color: Colors.grey[700],
           ),
