@@ -9,28 +9,22 @@ using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
 {
+    public delegate IOperationExecutor? MultiExecutorResolver(OperationStage stage);
+
     public class MultiOperationRunner : IMultiOperationRunner
     {
         private readonly ConcurrentDictionary<VTOperation, Task?> _operations = new();
         private readonly ProcessingOptions _options;
         private readonly ILogger _logger;
         private readonly IMediator _mediator;
+        private readonly MultiExecutorResolver _executorResolver;
 
-        private readonly IDownloadExecutor _downloader;
-        private readonly IRenderSettingsGenerator _renderSettingsGenerator;
-        private readonly IUploadExecutor _uploader;
-        private readonly ICleanExecutor _cleaner;
-
-        public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator,
-            IDownloadExecutor downloader, IRenderSettingsGenerator renderSettingsGenerator, IUploadExecutor uploader, ICleanExecutor cleaner)
+        public MultiOperationRunner(ILogger<MultiOperationRunner> logger, IOptions<ProcessingOptions> options, IMediator mediator, MultiExecutorResolver resolver)
         {
             _logger = logger;
             _options = options.Value;
             _mediator = mediator;
-            _downloader = downloader;
-            _renderSettingsGenerator = renderSettingsGenerator;
-            _uploader = uploader;
-            _cleaner = cleaner;
+            _executorResolver = resolver;
         }
 
         public bool TryRegister(VTOperation operation)
@@ -52,94 +46,30 @@ namespace VirtualTourProcessingServer.Processing
         {
             if (_operations.ContainsKey(operation))
             {
-                switch (operation.Stage)
+                var executor = _executorResolver(operation.Stage);
+
+                if(executor != null)
                 {
-                    case OperationStage.Waiting:
-                        _operations[operation] = StartProcessing(operation);
-                        break;
-                    case OperationStage.PrepareData:
-                        _operations[operation] = PrepareData(operation);
-                        break;
-                    case OperationStage.PrepareRender:
-                        _operations[operation] = PrepareRender(operation);
-                        break;
-                    case OperationStage.SavingRender:
-                        _operations[operation] = SaveRender(operation);
-                        break;
-                    case OperationStage.Finished:
-                        _operations[operation] = CleanAll(operation);
-                        break;
-                    default:
-                        break;
+                    _operations[operation] = RunExecutor(operation, executor);
+                    return;
                 }
+
+                _operations.Remove(operation, out _);
             }
 
         }
 
-        private async Task StartProcessing(VTOperation operation)
+        private async Task RunExecutor(VTOperation operation, IOperationExecutor executor)
         {
-            _logger.LogInformation($"Starting processing operation: {operation.OperationId}, areaId: {operation.AreaId}");
-            await FinishOperation(operation, new ExecutorResponse());
-        }
-
-        private async Task PrepareData(VTOperation operation)
-        {
-            _logger.LogInformation($"Downloading data for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var imagesDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId, "images");
-
-            var downlaodParameters = new DownloadParameters()
+            var executorParameters = new ExecutorParameters()
             {
-                TourId = operation.TourId,
-                AreaId = operation.AreaId,
-                OutputDirectory = imagesDirectory,
-            };
-            var executorResponse = await _downloader.DownloadPhotos(downlaodParameters);
-
-            await FinishOperation(operation, executorResponse);
-        }
-
-        private async Task PrepareRender(VTOperation operation)
-        {
-            _logger.LogInformation($"Preparing render settings for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var workingDirectory = GetWorkingDirectory(operation);
-
-            var parameters = new GenerateRenderSettingsParameters()
-            {
-                ColmapTransformsFilePath = Path.Combine(workingDirectory, "transforms.json"),
-                OutputFilePath = Path.Combine(workingDirectory, "render_settings.json")
+                Operation = operation,
+                AreaDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId),
+                TourDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId)
             };
 
-            var response = await _renderSettingsGenerator.GenerateSettings(parameters);
+            var response = await executor.Execute(executorParameters);
             await FinishOperation(operation, response);
-        }
-
-        private async Task SaveRender(VTOperation operation)
-        {
-            _logger.LogInformation($"Saving renders for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var workingDirectory = GetWorkingDirectory(operation);
-
-            var parameters = new UploadExecutorParameters()
-            {
-                AreaId = operation.AreaId,
-                TourId = operation.TourId,
-                DirectoryPath = Path.Combine(workingDirectory, "renders")
-            };
-
-            var response = await _uploader.SaveScenes(parameters);
-            await FinishOperation(operation, response);
-        }
-
-        private async Task CleanAll(VTOperation operation)
-        {
-            _logger.LogInformation($"Cleaning directory after completed operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var workingDirectory = GetWorkingDirectory(operation);
-            var result = await _cleaner.CleanWorkingDirectory(workingDirectory);
-
-            await FinishOperation(operation, result);
         }
 
         private async Task FinishOperation(VTOperation operation, ExecutorResponse response)
@@ -170,11 +100,6 @@ namespace VirtualTourProcessingServer.Processing
             {
                 _operations.Remove(operationToRemove, out _);
             }
-        }
-
-        private string GetWorkingDirectory(VTOperation operation)
-        {
-            return Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
         }
     }
 }
