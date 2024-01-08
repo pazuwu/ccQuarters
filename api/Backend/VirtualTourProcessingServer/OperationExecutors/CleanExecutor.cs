@@ -3,7 +3,7 @@ using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
-    public class CleanExecutor : ICleanExecutor
+    public class CleanExecutor : IOperationExecutor
     {
         private readonly ILogger _logger;
 
@@ -12,11 +12,11 @@ namespace VirtualTourProcessingServer.OperationExecutors
             _logger = logger;
         }
 
-        public Task<ExecutorResponse> CleanWorkingDirectory(string path)
+        public Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
             try
             {
-                Directory.Delete(path, true);
+                Directory.Delete(parameters.AreaDirectory, true);
             }
             catch (Exception ex)
             {

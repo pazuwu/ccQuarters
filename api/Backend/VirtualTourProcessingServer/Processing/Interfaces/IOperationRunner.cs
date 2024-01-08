@@ -1,4 +1,5 @@
 ﻿using VirtualTourProcessingServer.Model;
+using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing.Interfaces
 {

@@ -18,33 +18,23 @@ namespace VirtualTourProcessingServer.UnitTests
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Colmap);
 
-            var mockedColmapExecutor = new Mock<IColmapExecutor>();
-            mockedColmapExecutor.Setup(e => e.Process(It.IsAny<ColmapParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
+            var mockedColmapExecutor = CreateExecutorMock(Times.Once());
+            var mockedTrainExecutor = CreateExecutorMock(Times.Never());
+            var mockedRenderExecutor = CreateExecutorMock(Times.Never());
 
-            var mockedTrainExecutor = new Mock<ITrainExecutor>();
-            mockedTrainExecutor.Setup(e => e.Train(It.IsAny<TrainParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            ExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Colmap => mockedColmapExecutor.Object,
+                OperationStage.Train => mockedTrainExecutor.Object,
+                OperationStage.Render => mockedRenderExecutor.Object,
+                _ => null,
+            };
 
-            var mockedRenderExecutor = new Mock<IRenderExecutor>();
-            mockedRenderExecutor.Setup(e => e.Render(It.IsAny<RenderParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
 
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<OperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, 
-                mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, resolver);
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
@@ -57,33 +47,22 @@ namespace VirtualTourProcessingServer.UnitTests
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Train);
 
-            var mockedColmapExecutor = new Mock<IColmapExecutor>();
-            mockedColmapExecutor.Setup(e => e.Process(It.IsAny<ColmapParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedColmapExecutor = CreateExecutorMock(Times.Never());
+            var mockedTrainExecutor = CreateExecutorMock(Times.Once());
+            var mockedRenderExecutor = CreateExecutorMock(Times.Never());
 
-            var mockedTrainExecutor = new Mock<ITrainExecutor>();
-            mockedTrainExecutor.Setup(e => e.Train(It.IsAny<TrainParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            ExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Colmap => mockedColmapExecutor.Object,
+                OperationStage.Train => mockedTrainExecutor.Object,
+                OperationStage.Render => mockedRenderExecutor.Object,
+                _ => null,
+            };
 
-            var mockedRenderExecutor = new Mock<IRenderExecutor>();
-            mockedRenderExecutor.Setup(e => e.Render(It.IsAny<RenderParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<OperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, 
-                mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, resolver);
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
 
             operationRunner.Run(colmapStageOperation);
@@ -96,38 +75,60 @@ namespace VirtualTourProcessingServer.UnitTests
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Render);
 
-            var mockedColmapExecutor = new Mock<IColmapExecutor>();
-            mockedColmapExecutor.Setup(e => e.Process(It.IsAny<ColmapParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedColmapExecutor = CreateExecutorMock(Times.Never());
+            var mockedTrainExecutor = CreateExecutorMock(Times.Never());
+            var mockedRenderExecutor = CreateExecutorMock(Times.Once());
 
-            var mockedTrainExecutor = new Mock<ITrainExecutor>();
-            mockedTrainExecutor.Setup(e => e.Train(It.IsAny<TrainParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            ExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Colmap => mockedColmapExecutor.Object,
+                OperationStage.Train => mockedTrainExecutor.Object,
+                OperationStage.Render => mockedRenderExecutor.Object,
+                _ => null,
+            };
 
-            var mockedRenderExecutor = new Mock<IRenderExecutor>();
-            mockedRenderExecutor.Setup(e => e.Render(It.IsAny<RenderParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
-
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<OperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, 
-                mockedTrainExecutor.Object, mockedColmapExecutor.Object, mockedRenderExecutor.Object);
+            var operationRunner = new OperationRunner(mockedLogger.Object, mockedMadiator.Object, mockedOptions.Object, resolver);
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
             Mock.Verify(mockedColmapExecutor, mockedTrainExecutor, mockedRenderExecutor, mockedMadiator);
+        }
+
+        private Mock<IOperationExecutor> CreateExecutorMock(Times executiontTimes)
+        {
+            var mockedExecutor = new Mock<IOperationExecutor>();
+            mockedExecutor.Setup(e => e.Execute(It.IsAny<ExecutorParameters>()))
+                .Returns(Task.FromResult(ExecutorResponse.Ok()))
+                .Verifiable(executiontTimes);
+
+            return mockedExecutor;
+        }
+
+        private Mock<IMediator> CreateMediatorMock()
+        {
+            var mockedMadiator = new Mock<IMediator>();
+            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask)
+                .Verifiable(Times.Once());
+
+            return mockedMadiator;
+        }
+
+        private Mock<IOptions<ProcessingOptions>> CreateOptionsMock()
+        {
+            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
+            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
+
+            return mockedOptions;
+        }
+
+        private Mock<ILogger<OperationRunner>> CreateLoggerMock()
+        {
+            return new Mock<ILogger<OperationRunner>>();
         }
     }
 }
