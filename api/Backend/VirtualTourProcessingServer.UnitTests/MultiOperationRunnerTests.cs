@@ -16,40 +16,26 @@ namespace VirtualTourProcessingServer.UnitTests
         [TestMethod]
         public void MultiOperationRunnerRunsDownload()
         {
-            var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.PrepareData);
+            var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Waiting);
 
-            var mockedDownloadExecutor = new Mock<IDownloadExecutor>();
-            mockedDownloadExecutor.Setup(e => e.DownloadPhotos(It.IsAny<DownloadParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
+            var mockedDownloadExecutor = CreateExecutorMock(Times.Once());
+            var mockedSettingsGenerator = CreateExecutorMock(Times.Never());
+            var mockedUploadExecutor = CreateExecutorMock(Times.Never());
+            var mockedCleanExecutor = CreateExecutorMock(Times.Never());
 
-            var mockedSettingsGenerator = new Mock<IRenderSettingsGenerator>();
-            mockedSettingsGenerator.Setup(e => e.GenerateSettings(It.IsAny<GenerateRenderSettingsParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            MultiExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Waiting => mockedDownloadExecutor.Object,
+                OperationStage.PrepareRender => mockedSettingsGenerator.Object,
+                OperationStage.SavingRender => mockedUploadExecutor.Object,
+                OperationStage.Finished => mockedCleanExecutor.Object,
+                _ => null,
+            };
 
-            var mockedUploadExecutor = new Mock<IUploadExecutor>();
-            mockedUploadExecutor.Setup(e => e.SaveScenes(It.IsAny<UploadExecutorParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedCleanExecutor = new Mock<ICleanExecutor>();
-            mockedCleanExecutor.Setup(c => c.CleanWorkingDirectory(It.IsAny<string>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<MultiOperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object, 
-                mockedDownloadExecutor.Object, mockedSettingsGenerator.Object, mockedUploadExecutor.Object, mockedCleanExecutor.Object);
+            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object, resolver);
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
@@ -62,38 +48,24 @@ namespace VirtualTourProcessingServer.UnitTests
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.PrepareRender);
 
-            var mockedDownloadExecutor = new Mock<IDownloadExecutor>();
-            mockedDownloadExecutor.Setup(e => e.DownloadPhotos(It.IsAny<DownloadParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedDownloadExecutor = CreateExecutorMock(Times.Never());
+            var mockedSettingsGenerator = CreateExecutorMock(Times.Once());
+            var mockedUploadExecutor = CreateExecutorMock(Times.Never());
+            var mockedCleanExecutor = CreateExecutorMock(Times.Never());
 
-            var mockedSettingsGenerator = new Mock<IRenderSettingsGenerator>();
-            mockedSettingsGenerator.Setup(e => e.GenerateSettings(It.IsAny<GenerateRenderSettingsParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            MultiExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Waiting => mockedDownloadExecutor.Object,
+                OperationStage.PrepareRender => mockedSettingsGenerator.Object,
+                OperationStage.SavingRender => mockedUploadExecutor.Object,
+                OperationStage.Finished => mockedCleanExecutor.Object,
+                _ => null,
+            };
 
-            var mockedUploadExecutor = new Mock<IUploadExecutor>();
-            mockedUploadExecutor.Setup(e => e.SaveScenes(It.IsAny<UploadExecutorParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedCleanExecutor = new Mock<ICleanExecutor>();
-            mockedCleanExecutor.Setup(c => c.CleanWorkingDirectory(It.IsAny<string>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<MultiOperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object,
-                mockedDownloadExecutor.Object, mockedSettingsGenerator.Object, mockedUploadExecutor.Object, mockedCleanExecutor.Object);
+            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object, resolver);
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
@@ -106,38 +78,24 @@ namespace VirtualTourProcessingServer.UnitTests
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.SavingRender);
 
-            var mockedDownloadExecutor = new Mock<IDownloadExecutor>();
-            mockedDownloadExecutor.Setup(e => e.DownloadPhotos(It.IsAny<DownloadParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedDownloadExecutor = CreateExecutorMock(Times.Never());
+            var mockedSettingsGenerator = CreateExecutorMock(Times.Never());
+            var mockedUploadExecutor = CreateExecutorMock(Times.Once());
+            var mockedCleanExecutor = CreateExecutorMock(Times.Never());
 
-            var mockedSettingsGenerator = new Mock<IRenderSettingsGenerator>();
-            mockedSettingsGenerator.Setup(e => e.GenerateSettings(It.IsAny<GenerateRenderSettingsParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            MultiExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Waiting => mockedDownloadExecutor.Object,
+                OperationStage.PrepareRender => mockedSettingsGenerator.Object,
+                OperationStage.SavingRender => mockedUploadExecutor.Object,
+                OperationStage.Finished => mockedCleanExecutor.Object,
+                _ => null,
+            };
 
-            var mockedUploadExecutor = new Mock<IUploadExecutor>();
-            mockedUploadExecutor.Setup(e => e.SaveScenes(It.IsAny<UploadExecutorParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
-
-            var mockedCleanExecutor = new Mock<ICleanExecutor>();
-            mockedCleanExecutor.Setup(c => c.CleanWorkingDirectory(It.IsAny<string>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<MultiOperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object,
-                mockedDownloadExecutor.Object, mockedSettingsGenerator.Object, mockedUploadExecutor.Object, mockedCleanExecutor.Object);
+            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object, resolver);
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
@@ -150,43 +108,62 @@ namespace VirtualTourProcessingServer.UnitTests
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Finished);
 
-            var mockedDownloadExecutor = new Mock<IDownloadExecutor>();
-            mockedDownloadExecutor.Setup(e => e.DownloadPhotos(It.IsAny<DownloadParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedDownloadExecutor = CreateExecutorMock(Times.Never());
+            var mockedSettingsGenerator = CreateExecutorMock(Times.Never());
+            var mockedUploadExecutor = CreateExecutorMock(Times.Never());
+            var mockedCleanExecutor = CreateExecutorMock(Times.Once());
 
-            var mockedSettingsGenerator = new Mock<IRenderSettingsGenerator>();
-            mockedSettingsGenerator.Setup(e => e.GenerateSettings(It.IsAny<GenerateRenderSettingsParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
+            var mockedMadiator = CreateMediatorMock();
+            var mockedLogger = CreateLoggerMock();
+            var mockedOptions = CreateOptionsMock();
+            MultiExecutorResolver resolver = operationStage => operationStage switch
+            {
+                OperationStage.Waiting => mockedDownloadExecutor.Object,
+                OperationStage.PrepareRender => mockedSettingsGenerator.Object,
+                OperationStage.SavingRender => mockedUploadExecutor.Object,
+                OperationStage.Finished => mockedCleanExecutor.Object,
+                _ => null,
+            };
 
-            var mockedUploadExecutor = new Mock<IUploadExecutor>();
-            mockedUploadExecutor.Setup(e => e.SaveScenes(It.IsAny<UploadExecutorParameters>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Never());
-
-            var mockedCleanExecutor = new Mock<ICleanExecutor>();
-            mockedCleanExecutor.Setup(c => c.CleanWorkingDirectory(It.IsAny<string>()))
-                .Returns(Task.FromResult(ExecutorResponse.Ok()))
-                .Verifiable(Times.Once());
-
-            var mockedMadiator = new Mock<IMediator>();
-            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask)
-                .Verifiable(Times.Once());
-
-            var mockedLogger = new Mock<ILogger<MultiOperationRunner>>();
-
-            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
-            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
-
-            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object,
-                mockedDownloadExecutor.Object, mockedSettingsGenerator.Object, mockedUploadExecutor.Object, mockedCleanExecutor.Object);
+            var operationRunner = new MultiOperationRunner(mockedLogger.Object, mockedOptions.Object, mockedMadiator.Object, resolver);
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
             Mock.Verify(mockedDownloadExecutor, mockedSettingsGenerator, mockedUploadExecutor, mockedCleanExecutor, mockedMadiator);
+        }
+
+        private Mock<IOperationExecutor> CreateExecutorMock(Times executiontTimes)
+        {
+            var mockedExecutor = new Mock<IOperationExecutor>();
+            mockedExecutor.Setup(e => e.Execute(It.IsAny<ExecutorParameters>()))
+                .Returns(Task.FromResult(ExecutorResponse.Ok()))
+                .Verifiable(executiontTimes);
+
+            return mockedExecutor;
+        }
+
+        private Mock<IMediator> CreateMediatorMock()
+        {
+            var mockedMadiator = new Mock<IMediator>();
+            mockedMadiator.Setup(m => m.Publish(It.IsAny<OperationFinishedNotification>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask)
+                .Verifiable(Times.Once());
+
+            return mockedMadiator;
+        }
+
+        private Mock<IOptions<ProcessingOptions>> CreateOptionsMock()
+        {
+            var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
+            mockedOptions.Setup(o => o.Value).Returns(new ProcessingOptions() { StorageDirectory = "" });
+
+            return mockedOptions;
+        }
+
+        private Mock<ILogger<MultiOperationRunner>> CreateLoggerMock()
+        {
+            return new Mock<ILogger<MultiOperationRunner>>();
         }
     }
 }

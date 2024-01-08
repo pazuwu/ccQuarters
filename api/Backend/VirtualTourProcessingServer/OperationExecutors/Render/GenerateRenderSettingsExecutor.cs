@@ -5,26 +5,29 @@ using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors.Render
 {
-    public class RenderSettingsGenerator : IRenderSettingsGenerator
+    public class GenerateRenderSettingsExecutor : IOperationExecutor
     {
         private readonly RenderOptions _renderOptions;
 
-        public RenderSettingsGenerator(IOptions<RenderOptions> renderOptions)
+        public GenerateRenderSettingsExecutor(IOptions<RenderOptions> renderOptions)
         {
             _renderOptions = renderOptions.Value;
         }
 
-        public async Task<ExecutorResponse> GenerateSettings(GenerateRenderSettingsParameters parameters)
+        public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
-            if (!File.Exists(parameters.ColmapTransformsFilePath))
-                return ExecutorResponse.Problem($"Provided colmap file doesn't exist: {parameters.OutputFilePath}");
+            var colmapTransformsPath = Path.Combine(parameters.AreaDirectory, "transforms.json");
+            var outputPath = Path.Combine(parameters.AreaDirectory, "render_settings.json");
 
-            var transforms = await File.ReadAllTextAsync(parameters.ColmapTransformsFilePath);
+            if (!File.Exists(colmapTransformsPath))
+                return ExecutorResponse.Problem($"Provided colmap file doesn't exist: {colmapTransformsPath}");
+
+            var transforms = await File.ReadAllTextAsync(colmapTransformsPath);
 
             var cameraModel = JsonSerializer.Deserialize<NSCamera>(transforms);
 
             if (cameraModel == null)
-                return ExecutorResponse.Problem($"Provided colmap file is in wrong format: {parameters.OutputFilePath}");
+                return ExecutorResponse.Problem($"Provided colmap file is in wrong format: {outputPath}");
 
 
             var meanPosition = new Vector3();
@@ -84,7 +87,7 @@ namespace VirtualTourProcessingServer.OperationExecutors.Render
 
             var serializedSettings = JsonSerializer.Serialize(renderSettings);
 
-            await File.WriteAllTextAsync(parameters.OutputFilePath, serializedSettings);
+            await File.WriteAllTextAsync(outputPath, serializedSettings);
             return ExecutorResponse.Ok();
         }
 

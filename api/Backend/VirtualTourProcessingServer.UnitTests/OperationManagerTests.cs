@@ -28,7 +28,24 @@ namespace VirtualTourProcessingServer.UnitTests
             var mockedOptions = new Mock<IOptions<ProcessingOptions>>();
             mockedOptions.Setup(o => o.Value).Returns(options);
 
-            _manager = new OperationManager(loggerMock.Object, mockedOptions.Object, _multiRunner, _runner);
+            HubResolver hubResolver = (operationStage, hub, multiHub) =>
+            {
+                return operationStage switch
+                {
+                    OperationStage.Colmap
+                    or OperationStage.Train
+                    or OperationStage.Render => hub,
+
+                    OperationStage.Waiting
+                    or OperationStage.PrepareRender
+                    or OperationStage.SavingRender
+                    or OperationStage.Finished => multiHub,
+
+                    _ => null,
+                };
+            };
+
+            _manager = new OperationManager(loggerMock.Object, mockedOptions.Object, _multiRunner, _runner, hubResolver);
         }
 
         [TestMethod]

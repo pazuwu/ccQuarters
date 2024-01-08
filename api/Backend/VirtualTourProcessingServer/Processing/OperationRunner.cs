@@ -8,27 +8,24 @@ using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
 {
+    public delegate IOperationExecutor? ExecutorResolver(OperationStage stage);
+
     public class OperationRunner : IOperationRunner
     {
         private readonly IMediator _mediator;
         private readonly ILogger<OperationRunner> _logger;
-        private readonly ITrainExecutor _trainExecutor;
-        private readonly IColmapExecutor _colmapExecutor;
-        private readonly IRenderExecutor _renderExecutor;
         private readonly ProcessingOptions _options;
+        private readonly ExecutorResolver _executorResolver;
 
         private VTOperation? _runningOperation;
         private Task? _runningTask;
 
-        public OperationRunner(ILogger<OperationRunner> logger, IMediator mediator, IOptions<ProcessingOptions> options,
-            ITrainExecutor trainExecutor, IColmapExecutor colmapExecutor, IRenderExecutor exportExecutor)
+        public OperationRunner(ILogger<OperationRunner> logger, IMediator mediator, IOptions<ProcessingOptions> options, ExecutorResolver resolver)
         {
             _mediator = mediator;
             _logger = logger;
-            _trainExecutor = trainExecutor;
-            _colmapExecutor = colmapExecutor;
-            _renderExecutor = exportExecutor;
             _options = options.Value;
+            _executorResolver = resolver;
         }
 
         public bool TryRegister(VTOperation operation)
@@ -48,18 +45,28 @@ namespace VirtualTourProcessingServer.Processing
             if (_runningOperation == null)
                 return;
 
-            switch (_runningOperation.Stage)
+            var executor = _executorResolver(operation.Stage);
+
+            if(executor != null)
             {
-                case OperationStage.Colmap:
-                    _runningTask = RunColmap(_runningOperation);
-                    break;
-                case OperationStage.Train:
-                    _runningTask = RunTrain(_runningOperation);
-                    break;
-                case OperationStage.Render:
-                    _runningTask = RunRender(_runningOperation);
-                    break;
+                _runningTask = RunExecutor(operation, executor);
+                return;
             }
+
+            _runningOperation = null;
+        }
+
+        private async Task RunExecutor(VTOperation operation, IOperationExecutor executor)
+        {
+            var executorParameters = new ExecutorParameters()
+            {
+                Operation = operation,
+                AreaDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId),
+                TourDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId)
+            };
+
+            var response = await executor.Execute(executorParameters);
+            await FinishOperation(operation, response);
         }
 
         private Task FinishOperation(VTOperation operation, ExecutorResponse response)
@@ -71,66 +78,6 @@ namespace VirtualTourProcessingServer.Processing
 
             _runningOperation = null;
             return _mediator.Publish(new OperationFinishedNotification(operation, response.Status));
-        }
-
-        private async Task RunColmap(VTOperation operation)
-        {
-            _logger.LogInformation($"Running COLMAP for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var areaDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
-            var imagesDirectory = Path.Combine(areaDirectory, "images");
-
-            var colmapParameters = new ColmapParameters()
-            {
-                InputDataPath = imagesDirectory,
-                OutputDirectoryPath = areaDirectory,
-            };
-            var response = await _colmapExecutor.Process(colmapParameters);
-
-            _logger.LogInformation($"COLMAP has been finished for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            await FinishOperation(operation, response);
-        }
-
-        private async Task RunTrain(VTOperation operation)
-        {
-            _logger.LogInformation($"Running training for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var tourDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId);
-            var trainParameters = new TrainParameters()
-            {
-                DataDirectoryPath = Path.Combine(tourDirectory, operation.AreaId),
-                OutputDirectoryPath = tourDirectory,
-            };
-            var response = await _trainExecutor.Train(trainParameters);
-
-            _logger.LogInformation($"Training has been finished for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            await FinishOperation(operation, response);
-        }
-
-        private async Task RunRender(VTOperation operation)
-        {
-            _logger.LogInformation($"Running render for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            var workingDirectory = GetWorkingDirectory(operation);
-
-            var renderParameters = new RenderParameters()
-            {
-                CameraConfigPath = Path.Combine(workingDirectory, "render_settings.json"),
-                OutputPath = Path.Combine(workingDirectory, "renders"),
-                WorkingDirectory = workingDirectory,
-            };
-            var response = await _renderExecutor.Render(renderParameters);
-
-            _logger.LogInformation($"Render has been finished for operation: {operation.OperationId}, areaId: {operation.AreaId}");
-
-            await FinishOperation(operation, response);
-        }
-
-        private string GetWorkingDirectory(VTOperation operation)
-        {
-            return Path.Combine(_options.StorageDirectory!, operation.TourId, operation.AreaId);
         }
     }
 }
