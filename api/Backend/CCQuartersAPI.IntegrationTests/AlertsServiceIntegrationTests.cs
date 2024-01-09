@@ -1,5 +1,6 @@
 ﻿using CCQuartersAPI.IntegrationTests.Mocks;
 using CCQuartersAPI.Services;
+using Microsoft.Extensions.Configuration;
 using RepositoryLibrary;
 using System.Transactions;
 
@@ -12,6 +13,7 @@ namespace CCQuartersAPI.IntegrationTests
         private const decimal eps = 1e-3m;
 
         private readonly IRelationalDBRepository _rdbRepository;
+        private readonly IDocumentDBRepository _documentRepository;
         private readonly IAlertsService _alertsService;
 
         private readonly AsyncLocal<TransactionScope?> _transactionScope = new();
@@ -20,8 +22,11 @@ namespace CCQuartersAPI.IntegrationTests
 
         public AlertsServiceIntegrationTests() 
         {
+            var configBuilder = new ConfigurationBuilder();
+
             _rdbRepository = new RelationalDBRepository(connectionString);
-            _alertsService = new AlertsService(_rdbRepository);
+            _documentRepository = new DocumentDBRepositoryMock();
+            _alertsService = new AlertsService(configBuilder.Build(), _rdbRepository, _documentRepository);
         }
 
         [TestMethod]

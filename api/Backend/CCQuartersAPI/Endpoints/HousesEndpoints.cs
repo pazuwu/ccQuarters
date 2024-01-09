@@ -81,7 +81,7 @@ namespace CCQuartersAPI.Endpoints
             });
         }
 
-        public static async Task<IResult> CreateHouse([FromServices] IHousesService housesService, CreateHouseRequest houseRequest, HttpContext context)
+        public static async Task<IResult> CreateHouse([FromServices] IHousesService housesService, [FromServices] IAlertsService alertsService, [FromServices] IUsersService usersService, CreateHouseRequest houseRequest, HttpContext context)
         {
             var identity = context.User.Identity as ClaimsIdentity;
 
@@ -93,6 +93,31 @@ namespace CCQuartersAPI.Endpoints
                 return Results.Unauthorized();
 
             var houseId = await housesService.CreateHouse(userId, houseRequest);
+
+
+            try
+            {
+                var userIds = await alertsService.GetUserIdsWithAlertsMatchingWithHouse(houseId);
+
+                var emails = new List<string>(userIds.Length);
+                foreach (var userToSendId in userIds)
+                {
+                    if (userToSendId == userId)
+                        continue;
+
+                    var user = await usersService.GetUser(userToSendId);
+
+                    var email = user?.Email;
+
+                    if (string.IsNullOrWhiteSpace(email))
+                        continue;
+
+                    emails.Add(email);
+                }
+
+                await alertsService.SendAlertEmails(emails, houseId);
+            }
+            catch { }
 
             return Results.Created(houseId.ToString(), null);
         }
