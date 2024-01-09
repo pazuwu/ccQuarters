@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AuthLibrary\AuthLibrary.csproj" />
     <ProjectReference Include="..\CloudStorageLibrary\CloudStorageLibrary.csproj" />
+    <ProjectReference Include="..\EmailLibrary\EmailLibrary.csproj" />
     <ProjectReference Include="..\RepositoryLibrary\RepositoryLibrary.csproj" />
   </ItemGroup>
 

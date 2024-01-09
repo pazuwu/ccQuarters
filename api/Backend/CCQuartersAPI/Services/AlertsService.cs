@@ -1,4 +1,5 @@
 ﻿using CCQuartersAPI.AlertsDTOs;
+using EmailLibrary;
 using RepositoryLibrary;
 using System.Data;
 
@@ -6,11 +7,15 @@ namespace CCQuartersAPI.Services
 {
     public class AlertsService : IAlertsService
     {
+        private readonly IConfiguration _configuration;
         private readonly IRelationalDBRepository _rdbRepository;
+        private readonly IDocumentDBRepository _documentRepository;
 
-        public AlertsService(IRelationalDBRepository rdbRepository)
+        public AlertsService(IConfiguration configuration, IRelationalDBRepository rdbRepository, IDocumentDBRepository documentRepository)
         {
+            _configuration = configuration;
             _rdbRepository = rdbRepository;
+            _documentRepository = documentRepository;
         }
 
         public async Task<AlertDTO[]> GetAlerts(string userId, int pageNumber, int pageSize)
@@ -141,6 +146,43 @@ namespace CCQuartersAPI.Services
                 _rdbRepository.RollbackTransaction(transaction);
                 throw;
             }
+        }
+
+        public async Task<string[]> GetUserIdsWithAlertsMatchingWithHouse(Guid houseId)
+        {
+            var userIdsQuery = $@" SELECT DISTINCT UserId FROM Alerts a
+                            LEFT JOIN AlertCities ac ON a.Id = ac.AlertId
+                            LEFT JOIN AlertDistricts ad ON a.Id = ad.AlertId
+                            LEFT JOIN AlertFloors af ON a.Id = af.AlertId
+                            WHERE EXISTS 
+	                            (
+		                            SELECT * FROM Houses h
+		                            LEFT JOIN Details d ON h.DetailsId = d.Id
+		                            LEFT JOIN Locations l ON h.LocationId = l.Id
+		                            WHERE h.Id = @houseId
+			                            AND (a.MinPrice IS NULL OR a.MinPrice <= d.Price) AND (a.MaxPrice IS NULL OR a.MaxPrice >= d.Price)
+			                            AND (a.MinPricePerM2 IS NULL OR a.MinPricePerM2 <= d.Price / d.Area) AND (a.MaxPricePerM2 IS NULL OR a.MaxPricePerM2 >= d.Price / d.Area)
+			                            AND (a.MinArea IS NULL OR a.MinArea <= d.Area) AND (a.MaxArea IS NULL OR a.MaxArea >= d.Area)
+			                            AND (a.MinRoomCount IS NULL OR a.MinRoomCount <= d.RoomCount) AND (a.MaxRoomCount IS NULL OR a.MaxRoomCount >= d.RoomCount)
+			                            AND (a.MinFloor IS NULL OR a.MinFloor <= d.[Floor]) AND (a.MaxFloor IS NULL OR a.MaxFloor >= d.[Floor]) 
+			                            AND (a.OfferType IS NULL OR a.OfferType = h.OfferType) AND (a.BuildingType IS NULL OR a.BuildingType = d.BuildingType)
+			                            AND (a.Voivodeship IS NULL OR a.Voivodeship = l.Voivodeship) AND (ac.City IS NULL OR ac.City = l.City)
+			                            AND (ad.District IS NULL OR ad.District = l.District) AND (af.[Floor] IS NULL OR af.[Floor] = d.[Floor]) 
+	                            )";
+
+            var userIds = await _rdbRepository.QueryAsync<string>(userIdsQuery, new { houseId });
+
+            return userIds?.ToArray() ?? Array.Empty<string>();
+        }
+
+        public async Task SendAlertEmails(IEnumerable<string> emails, Guid houseId)
+        {
+            var emailSender = new AlertEmailSender(_configuration, houseId.ToString());
+            var tasks = new List<Task>();
+            foreach(var email in emails) 
+                tasks.Add(emailSender.Send(email));
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task FillAlertArrayData(AlertDTO alert)
