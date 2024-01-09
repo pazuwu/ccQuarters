@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
@@ -7,11 +8,13 @@ namespace VirtualTourProcessingServer.OperationExecutors
     {
         private readonly ILogger<RenderExecutor> _logger;
         private readonly IProcessRunner _processRunner;
+        private readonly NerfStudioOptions _options;
 
-        public RenderExecutor(ILogger<RenderExecutor> logger, IProcessRunner processRunner)
+        public RenderExecutor(ILogger<RenderExecutor> logger, IProcessRunner processRunner, IOptions<NerfStudioOptions> options)
         {
             _logger = logger;
             _processRunner = processRunner;
+            _options = options.Value;
         }
 
         public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)

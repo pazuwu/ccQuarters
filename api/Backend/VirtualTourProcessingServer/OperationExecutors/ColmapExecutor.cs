@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
@@ -7,16 +8,18 @@ namespace VirtualTourProcessingServer.OperationExecutors
     {
         private readonly ILogger<ColmapExecutor> _logger;
         private readonly IProcessRunner _processRunner;
+        private readonly NerfStudioOptions _options;
 
-        public ColmapExecutor(ILogger<ColmapExecutor> logger, IProcessRunner processRunner)
+        public ColmapExecutor(ILogger<ColmapExecutor> logger, IProcessRunner processRunner, IOptions<NerfStudioOptions> options)
         {
             _logger = logger;
             _processRunner = processRunner;
+            _options = options.Value;
         }
 
         public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
-            var imagesDirectory = Path.Combine(parameters.AreaDirectory, "images");
+            var imagesDirectory = Path.Combine(parameters.AreaDirectory, "download");
 
             var nsCommand = "ns-process-data";
             var arguments = $"images --data {imagesDirectory} --output-dir {parameters.AreaDirectory}";

@@ -1,8 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:ccquarters/model/virtual_tours/area.dart';
 import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 import 'package:equatable/equatable.dart';
+import 'package:file_picker/file_picker.dart';
 
 class TourEditState extends Equatable {
   final TourForEdit tour;
@@ -56,7 +55,7 @@ class TourEditUploadingFailedState extends TourEditState {
   });
 
   final String areaId;
-  final List<Uint8List> failedImages;
+  final List<PlatformFile> failedImages;
   @override
   List<Object?> get props => [failedImages];
 }

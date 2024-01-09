@@ -17,7 +17,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
 
         public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
-            var outputDirectory = Path.Combine(parameters.AreaDirectory, "images");
+            var outputDirectory = Path.Combine(parameters.AreaDirectory, "download");
 
             try
             {
@@ -61,6 +61,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
         private async Task<DownloadStatus> DownloadAndSavePhoto(string photoUrl, string outputDirectory)
         {
             var photoPath = Path.Combine(outputDirectory, Guid.NewGuid().ToString());
+            photoPath = Path.ChangeExtension(photoPath, "png");
 
             if (File.Exists(photoPath))
                 return DownloadStatus.Ok;

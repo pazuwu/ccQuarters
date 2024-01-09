@@ -167,9 +167,17 @@ class VTService {
   }
 
   Future<ServiceResponse<String?>> uploadScenePhoto(
-      String tourId, String sceneId, Uint8List photo) {
+    String tourId,
+    String sceneId,
+    Stream<List<int>> photo,
+    int length,
+  ) {
     return _uploadPhoto(
-        "$_url/$_tours/$tourId/$_scenes/$sceneId/photo", sceneId, photo);
+      "$_url/$_tours/$tourId/$_scenes/$sceneId/photo",
+      sceneId,
+      photo,
+      length,
+    );
   }
 
   Future<ServiceResponse<String?>> postLink(String tourId, Link link) async {
@@ -300,19 +308,23 @@ class VTService {
   }
 
   Future<ServiceResponse<String?>> uploadAreaPhoto(
-      String tourId, String areaId, Uint8List photo,
+      String tourId, String areaId, Stream<List<int>> photo, int length,
       {void Function(int count, int total)? progressCallback}) {
     return _uploadPhoto(
-        "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo,
+        "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo, length,
         progressCallback: progressCallback);
   }
 
   Future<ServiceResponse<String?>> _uploadPhoto(
-      String url, String filename, Uint8List photo,
+      String url, String filename, Stream<List<int>> photo, int length,
       {void Function(int count, int total)? progressCallback}) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(photo, filename: filename),
+        "file": MultipartFile.fromStream(
+          () => photo,
+          length,
+          filename: filename,
+        ),
       });
 
       var response = await _dio.post(

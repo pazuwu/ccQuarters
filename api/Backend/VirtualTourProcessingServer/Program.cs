@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RepositoryLibrary;
 using System.Net.Http.Headers;
 using System.Reflection;
 using VirtualTourAPI.Client;
@@ -32,6 +33,7 @@ builder.Services.AddHttpClient<VTClient>((sp, http) =>
     http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 });
 
+builder.Services.AddTransient<IDocumentDBRepository,  DocumentDBRepository>();
 builder.Services.AddSingleton<IOperationService, OperationService>();
 
 builder.Services.AddSingleton<IOperationManager, OperationManager>();

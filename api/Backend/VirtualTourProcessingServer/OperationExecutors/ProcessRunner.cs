@@ -30,12 +30,12 @@ namespace VirtualTourProcessingServer.OperationExecutors
             while (!process.StandardOutput.EndOfStream)
             {
                 var line = process.StandardOutput.ReadLine();
-                logger.LogDebug(line);
+                logger.LogCritical(line);
             }
             while (!process.StandardError.EndOfStream)
             {
                 var line = process.StandardError.ReadLine();
-                logger.LogError(line);
+                logger.LogCritical(line);
             }
         }
     }

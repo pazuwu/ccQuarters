@@ -4,9 +4,8 @@ import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/model/virtual_tours/area.dart';
 import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 import 'package:ccquarters/my_tours/scene_list/states.dart';
-import 'package:flutter/foundation.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:ccquarters/model/virtual_tours/scene.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
@@ -17,29 +16,20 @@ class TourEditCubit extends Cubit<TourEditState> {
   final VTService _service;
   final TourForEdit _tour;
 
-  Future createNewSceneFromPhoto(Uint8List photo,
+  Future createNewSceneFromPhoto(PlatformFile photo,
       {required String name}) async {
     emit(TourEditModifyingState(tour: _tour, message: "Tworzenie nowej sceny"));
     var serviceResponse =
         await _service.postScene(tourId: _tour.id, parentId: "", name: name);
 
     if (serviceResponse.data != null) {
-      var result = kIsWeb
-          ? photo
-          : await FlutterImageCompress.compressWithList(
-              photo,
-              minHeight: 1920,
-              minWidth: 1080,
-              format: CompressFormat.jpeg,
-            );
-
-      var url = await _uploadScenePhoto(serviceResponse.data!, result);
+      var url = await _uploadScenePhoto(serviceResponse.data!, photo.readStream!, photo.size);
 
       var newScene = Scene(
           name: name,
           photo360Url: url,
           id: serviceResponse.data!,
-          photo360: result);
+          photo360: photo.bytes);
       _tour.scenes.add(newScene);
 
       emit(
@@ -49,29 +39,34 @@ class TourEditCubit extends Cubit<TourEditState> {
     }
   }
 
-  Future<bool> addPhotosToArea(String areaId, List<Uint8List?> files,
-      {bool createOperationFlag = true}) async {
+  Future<bool> addPhotosToArea(
+    String areaId,
+    List<PlatformFile> files, {
+    bool createOperationFlag = true,
+  }) async {
     var futures = <Future<bool>>[];
-    var failedImages = <Uint8List>[];
+    var failedImages = <PlatformFile>[];
 
     emit(
       TourEditModifyingState(tour: _tour, message: "Przesyłanie zdjęć..."),
     );
 
     for (var file in files) {
-      if (file != null) {
-        futures.add(
-          _uploadAreaPhoto(areaId, file).then(
-            (result) {
-              if (result == false) {
-                failedImages.add(file);
-              }
-
-              return result;
-            },
-          ),
-        );
+      if (file.readStream == null) {
+        continue;
       }
+
+      futures.add(
+        _uploadAreaPhoto(areaId, file.readStream!, file.size).then(
+          (result) {
+            if (result == false) {
+              failedImages.add(file);
+            }
+
+            return result;
+          },
+        ),
+      );
     }
 
     await Future.wait(futures);
@@ -97,7 +92,7 @@ class TourEditCubit extends Cubit<TourEditState> {
   }
 
   Future<bool> createNewArea({
-    required List<Uint8List?> images,
+    required List<PlatformFile> images,
     required String name,
     bool createOperation = true,
   }) async {
@@ -144,16 +139,27 @@ class TourEditCubit extends Cubit<TourEditState> {
     return true;
   }
 
-  Future _uploadScenePhoto(String sceneId, Uint8List photoBytes) async {
-    await _service.uploadScenePhoto(_tour.id, sceneId, photoBytes);
+  Future _uploadScenePhoto(
+    String sceneId,
+    Stream<List<int>> photo,
+    int lenght,
+  ) async {
+    await _service.uploadScenePhoto(
+      _tour.id,
+      sceneId,
+      photo,
+      lenght,
+    );
   }
 
-  Future<bool> _uploadAreaPhoto(String areaId, Uint8List photoBytes,
+  Future<bool> _uploadAreaPhoto(
+      String areaId, Stream<List<int>> photo, int lenght,
       {void Function(int count, int total)? progressCallback}) async {
     var serviceResponse = await _service.uploadAreaPhoto(
       _tour.id,
       areaId,
-      photoBytes,
+      photo,
+      lenght,
       progressCallback: progressCallback,
     );
 

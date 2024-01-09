@@ -7,7 +7,7 @@ using VirtualTourProcessingServer.Processing.Interfaces;
 
 namespace VirtualTourProcessingServer.Processing
 {
-    internal class OperationFinishedHandler : INotificationHandler<OperationFinishedNotification>
+    public class OperationFinishedHandler : INotificationHandler<OperationFinishedNotification>
     {
         private readonly ILogger _logger;
         private readonly IOperationManager _operationManager;
