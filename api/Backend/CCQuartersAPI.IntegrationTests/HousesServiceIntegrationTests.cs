@@ -375,9 +375,9 @@ namespace CCQuartersAPI.IntegrationTests
                     if (query.Voivodeship is not null)
                         Assert.IsTrue(house.Voivodeship == query.Voivodeship);
                     if (query.Cities is not null && query.Cities.Any())
-                        Assert.IsTrue(query.Cities!.Any(city => city == house.City!));
+                        Assert.IsTrue(query.Cities!.Any(city => city.ToLower() == house.City!.ToLower()));
                     if (query.Districts is not null && query.Districts.Any())
-                        Assert.IsTrue(query.Districts!.Any(dist => dist == house.District!));
+                        Assert.IsTrue(query.Districts!.Any(dist => dist.ToLower() == house.District!.ToLower()));
                 }
             }
             finally
