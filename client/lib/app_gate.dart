@@ -62,6 +62,7 @@ class AppMainGate extends StatelessWidget {
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         routerConfig: CCQNavigation.router,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

@@ -82,7 +82,7 @@ class ContactInfo extends StatelessWidget {
         2: FlexColumnWidth(2),
       },
       children: [
-        if (user.phoneNumber != null)
+        if (user.phoneNumber != null && user.phoneNumber!.isNotEmpty)
           _buildContactTableRow(context, user.phoneNumber!, Icons.phone,
               () => CallUtils.openDialer(user.phoneNumber!, context)),
         _buildContactTableRow(context, user.email, Icons.email,
