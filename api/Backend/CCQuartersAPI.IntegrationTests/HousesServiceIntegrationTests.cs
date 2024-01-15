@@ -3,6 +3,7 @@ using CCQuartersAPI.IntegrationTests.Mocks;
 using CCQuartersAPI.Services;
 using CloudStorageLibrary;
 using RepositoryLibrary;
+using System.Transactions;
 
 namespace CCQuartersAPI.IntegrationTests
 {
@@ -17,6 +18,8 @@ namespace CCQuartersAPI.IntegrationTests
         private readonly IStorage _storage;
         private readonly IHousesService _housesService;
 
+        private readonly AsyncLocal<TransactionScope?> _transactionScope = new();
+
         private readonly string userId = "testUser";
 
         public HousesServiceIntegrationTests() 
@@ -30,14 +33,14 @@ namespace CCQuartersAPI.IntegrationTests
         [TestMethod]
         public async Task CreateHouseShouldCreateHouse()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(houseInfo);
                 Assert.IsTrue(Math.Abs(createHouseRequest.Area!.Value - houseInfo.Area) < eps);
@@ -59,21 +62,25 @@ namespace CCQuartersAPI.IntegrationTests
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task UpdateHouseShouldModifyProvidedFieldsAndKeepTheRestUnchanged()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                var unmodifiedHouseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var unmodifiedHouseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(unmodifiedHouseInfo);
 
@@ -85,7 +92,7 @@ namespace CCQuartersAPI.IntegrationTests
 
                 await _housesService.UpdateHouse(houseId, updateHouseRequest, unmodifiedHouseInfo);
 
-                var modifiedHouseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var modifiedHouseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(modifiedHouseInfo);
 
@@ -108,118 +115,138 @@ namespace CCQuartersAPI.IntegrationTests
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task DeleteHouseShouldDeleteHouse()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(houseInfo);
 
-                await _housesService.DeleteHouse(houseId, trans);
+                await _housesService.DeleteHouse(houseId);
 
-                houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNull(houseInfo);
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task CreateHouseShouldCreateUnlikedHouse()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(houseInfo);
                 Assert.IsFalse(houseInfo.IsLiked);
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task LikeHouseShouldLikeHouse()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                await _housesService.LikeHouse(userId, houseId, trans);
+                await _housesService.LikeHouse(userId, houseId);
 
-                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(houseInfo);
                 Assert.IsTrue(houseInfo.IsLiked);
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task UnlikeHouseShouldUnlikePreviouslyLikedHouse()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                await _housesService.LikeHouse(userId, houseId, trans);
-                await _housesService.UnlikeHouse(userId, houseId, trans);
+                await _housesService.LikeHouse(userId, houseId);
+                await _housesService.UnlikeHouse(userId, houseId);
 
-                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
+                var houseInfo = await _housesService.GetDetailedHouseInfo(houseId, userId);
 
                 Assert.IsNotNull(houseInfo);
                 Assert.IsFalse(houseInfo.IsLiked);
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task LikeHouseShouldOnlyLikeHouseForUserSpecified()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createHouseRequest = HousesServiceTestCases.CreateHouses.First();
 
                 var houseId = await _housesService.CreateHouse(userId, createHouseRequest);
 
-                await _housesService.LikeHouse(userId, houseId, trans);
+                await _housesService.LikeHouse(userId, houseId);
 
-                var houseInfoUserWhoLiked = await _housesService.GetDetailedHouseInfo(houseId, userId, trans);
-                var houseInfoUserWhoDidntLike = await _housesService.GetDetailedHouseInfo(houseId, $"{userId}v2", trans);
+                var houseInfoUserWhoLiked = await _housesService.GetDetailedHouseInfo(houseId, userId);
+                var houseInfoUserWhoDidntLike = await _housesService.GetDetailedHouseInfo(houseId, $"{userId}v2");
 
                 Assert.IsNotNull(houseInfoUserWhoLiked);
                 Assert.IsNotNull(houseInfoUserWhoDidntLike);
@@ -228,7 +255,11 @@ namespace CCQuartersAPI.IntegrationTests
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
@@ -241,7 +272,7 @@ namespace CCQuartersAPI.IntegrationTests
         [DynamicData(nameof(GetSortingMethods), DynamicDataSourceType.Method)]
         public async Task GetHousesWithSortingMethodShouldSortResults(SortingMethod sortingMethod)
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var houseIds = new List<Guid?>();
@@ -253,7 +284,7 @@ namespace CCQuartersAPI.IntegrationTests
                 var houses = await _housesService.GetSimpleHousesInfo(new GetHousesQuery()
                 {
                     SortMethod = sortingMethod
-                }, userId, 0, 50, trans);
+                }, userId, 0, 50);
 
                 Assert.IsNotNull(houses);
 
@@ -283,7 +314,11 @@ namespace CCQuartersAPI.IntegrationTests
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
@@ -296,7 +331,7 @@ namespace CCQuartersAPI.IntegrationTests
         [DynamicData(nameof(GetGetHousesQueries), DynamicDataSourceType.Method)]
         public async Task GetHousesShouldBeFilteredAccordingToQuery(GetHousesQuery query)
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var houseIds = new List<Guid?>();
@@ -305,7 +340,7 @@ namespace CCQuartersAPI.IntegrationTests
 
                 Assert.IsTrue(houseIds.All(id => id is not null));
 
-                var houses = await _housesService.GetSimpleHousesInfo(query, userId, 0, 50, trans);
+                var houses = await _housesService.GetSimpleHousesInfo(query, userId, 0, 50);
 
                 Assert.IsNotNull(houses);
 
@@ -340,14 +375,18 @@ namespace CCQuartersAPI.IntegrationTests
                     if (query.Voivodeship is not null)
                         Assert.IsTrue(house.Voivodeship == query.Voivodeship);
                     if (query.Cities is not null && query.Cities.Any())
-                        Assert.IsTrue(query.Cities!.Any(city => city == house.City!));
+                        Assert.IsTrue(query.Cities!.Any(city => city.ToLower() == house.City!.ToLower()));
                     if (query.Districts is not null && query.Districts.Any())
-                        Assert.IsTrue(query.Districts!.Any(dist => dist == house.District!));
+                        Assert.IsTrue(query.Districts!.Any(dist => dist.ToLower() == house.District!.ToLower()));
                 }
             }
             finally
             {
-                trans.Rollback();
+                if(_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
     }

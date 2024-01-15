@@ -112,6 +112,7 @@ namespace VirtualTourAPI.Client
         {
             var request = new PostSceneRequest()
             {
+                Name = parameters.Name,
                 ParentId = parameters.ParentId,
             };
 

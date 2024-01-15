@@ -1,15 +1,13 @@
-﻿using Google.LongRunning;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationService;
 using VirtualTourProcessingServer.Processing.Interfaces;
-using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace VirtualTourProcessingServer.Processing
 {
-    internal class OperationFinishedHandler : INotificationHandler<OperationFinishedNotification>
+    public class OperationFinishedHandler : INotificationHandler<OperationFinishedNotification>
     {
         private readonly ILogger _logger;
         private readonly IOperationManager _operationManager;

@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/states.dart';
-import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/virtual_tours/service.dart';
 import 'package:test/test.dart';
@@ -36,7 +36,7 @@ void addHouseFormCubit() {
     );
 
     blocTest<AddHouseFormCubit, HouseFormState>(
-      'emits MobileDetailsFormState when goToDetailsForm is called',
+      'emits PortraitDetailsFormState when goToDetailsForm is called',
       build: () => AddHouseFormCubit(
         houseService: HouseService(
           HousesAPIMock.createHousesApiMock("$url/houses"),
@@ -46,7 +46,7 @@ void addHouseFormCubit() {
             VTService(VTAPIMock.createVTApiMock(url), FileServiceMock(), url),
       ),
       act: (cubit) => cubit.goToDetailsForm(),
-      expect: () => [isA<MobileDetailsFormState>()],
+      expect: () => [isA<PortraitDetailsFormState>()],
     );
 
     blocTest<AddHouseFormCubit, HouseFormState>(

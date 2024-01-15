@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:ccquarters/services/file_service/download_progress.dart';
 import 'package:ccquarters/services/file_service/file_info.dart';
 import 'package:ccquarters/services/service_response.dart';
-import 'package:ccquarters/virtual_tour_model/geo_point.dart';
-import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
-import 'package:ccquarters/virtual_tour_model/tour_info.dart';
+import 'package:ccquarters/model/virtual_tours/geo_point.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/tour_info.dart';
 import 'package:ccquarters/services/file_service/file_service.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_area_request.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_link_request.dart';
@@ -16,8 +16,8 @@ import 'package:ccquarters/services/virtual_tours/requests/put_link_request.dart
 import 'package:ccquarters/services/virtual_tours/requests/put_tour_request.dart';
 import 'package:dio/dio.dart';
 
-import 'package:ccquarters/virtual_tour_model/link.dart';
-import 'package:ccquarters/virtual_tour_model/tour.dart';
+import 'package:ccquarters/model/virtual_tours/link.dart';
+import 'package:ccquarters/model/virtual_tours/tour.dart';
 import 'package:http_status_code/http_status_code.dart';
 
 class VTService {
@@ -167,9 +167,17 @@ class VTService {
   }
 
   Future<ServiceResponse<String?>> uploadScenePhoto(
-      String tourId, String sceneId, Uint8List photo) {
+    String tourId,
+    String sceneId,
+    Stream<List<int>> photo,
+    int length,
+  ) {
     return _uploadPhoto(
-        "$_url/$_tours/$tourId/$_scenes/$sceneId/photo", sceneId, photo);
+      "$_url/$_tours/$tourId/$_scenes/$sceneId/photo",
+      sceneId,
+      photo,
+      length,
+    );
   }
 
   Future<ServiceResponse<String?>> postLink(String tourId, Link link) async {
@@ -300,19 +308,23 @@ class VTService {
   }
 
   Future<ServiceResponse<String?>> uploadAreaPhoto(
-      String tourId, String areaId, Uint8List photo,
+      String tourId, String areaId, Stream<List<int>> photo, int length,
       {void Function(int count, int total)? progressCallback}) {
     return _uploadPhoto(
-        "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo,
+        "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo, length,
         progressCallback: progressCallback);
   }
 
   Future<ServiceResponse<String?>> _uploadPhoto(
-      String url, String filename, Uint8List photo,
+      String url, String filename, Stream<List<int>> photo, int length,
       {void Function(int count, int total)? progressCallback}) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(photo, filename: filename),
+        "file": MultipartFile.fromStream(
+          () => photo,
+          length,
+          filename: filename,
+        ),
       });
 
       var response = await _dio.post(

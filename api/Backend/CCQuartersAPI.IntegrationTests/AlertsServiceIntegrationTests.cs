@@ -1,8 +1,8 @@
-﻿using CCQuartersAPI.CommonClasses;
-using CCQuartersAPI.IntegrationTests.Mocks;
+﻿using CCQuartersAPI.IntegrationTests.Mocks;
 using CCQuartersAPI.Services;
-using CloudStorageLibrary;
+using Microsoft.Extensions.Configuration;
 using RepositoryLibrary;
+using System.Transactions;
 
 namespace CCQuartersAPI.IntegrationTests
 {
@@ -13,29 +13,35 @@ namespace CCQuartersAPI.IntegrationTests
         private const decimal eps = 1e-3m;
 
         private readonly IRelationalDBRepository _rdbRepository;
+        private readonly IDocumentDBRepository _documentRepository;
         private readonly IAlertsService _alertsService;
+
+        private readonly AsyncLocal<TransactionScope?> _transactionScope = new();
 
         private readonly string userId = "testUser";
 
         public AlertsServiceIntegrationTests() 
         {
+            var configBuilder = new ConfigurationBuilder();
+
             _rdbRepository = new RelationalDBRepository(connectionString);
-            _alertsService = new AlertsService(_rdbRepository);
+            _documentRepository = new DocumentDBRepositoryMock();
+            _alertsService = new AlertsService(configBuilder.Build(), _rdbRepository, _documentRepository);
         }
 
         [TestMethod]
         public async Task CreateAlertShouldCreateAlert()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createAlert = AlertsServiceTestCases.ExampleCreateAlert;
 
-                var id = await _alertsService.CreateAlert(createAlert, userId, trans);
+                var id = await _alertsService.CreateAlert(createAlert, userId);
 
                 Assert.IsNotNull(id);
 
-                var getAlert = await _alertsService.GetAlertById(id.Value, trans);
+                var getAlert = await _alertsService.GetAlertById(id.Value);
 
                 Assert.IsNotNull(getAlert);
                 Assert.AreEqual(id, getAlert.Id);
@@ -58,19 +64,23 @@ namespace CCQuartersAPI.IntegrationTests
             }
             finally
             {
-                trans.Rollback();
+                if (_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task UpdateAlertShouldModifyProvidedFieldsAndKeepTheRestUnchanged()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createAlert = AlertsServiceTestCases.ExampleCreateAlert;
 
-                var id = await _alertsService.CreateAlert(createAlert, userId, trans);
+                var id = await _alertsService.CreateAlert(createAlert, userId);
 
                 Assert.IsNotNull(id);
 
@@ -79,9 +89,9 @@ namespace CCQuartersAPI.IntegrationTests
                 modifyRequest.Cities = new[] { "Gostynin", "Białystok" };
                 modifyRequest.Districts = new[] { "Centrum" };
 
-                await _alertsService.UpdateAlert(modifyRequest, id.Value, trans);
+                await _alertsService.UpdateAlert(modifyRequest, id.Value);
 
-                var getAlert = await _alertsService.GetAlertById(id.Value, trans);
+                var getAlert = await _alertsService.GetAlertById(id.Value);
 
                 Assert.IsNotNull(getAlert);
                 Assert.AreEqual(id, getAlert.Id);
@@ -104,31 +114,39 @@ namespace CCQuartersAPI.IntegrationTests
             }
             finally
             {
-                trans.Rollback();
+                if (_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
 
         [TestMethod]
         public async Task DeleteAlertShouldDeleteAlert()
         {
-            var trans = _rdbRepository.BeginTransaction();
+            _transactionScope.Value = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 var createAlert = AlertsServiceTestCases.ExampleCreateAlert;
 
-                var id = await _alertsService.CreateAlert(createAlert, userId, trans);
+                var id = await _alertsService.CreateAlert(createAlert, userId);
 
                 Assert.IsNotNull(id);
 
-                await _alertsService.DeleteAlertById(id.Value, trans);
+                await _alertsService.DeleteAlertById(id.Value);
 
-                var gotAlert = await _alertsService.GetAlertById(id.Value, trans);
+                var gotAlert = await _alertsService.GetAlertById(id.Value);
 
                 Assert.IsNull(gotAlert);
             }
             finally
             {
-                trans.Rollback();
+                if (_transactionScope.Value != null)
+                {
+                    _transactionScope.Value.Dispose();
+                    _transactionScope.Value = null;
+                }
             }
         }
     }

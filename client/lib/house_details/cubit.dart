@@ -1,15 +1,12 @@
 import 'package:ccquarters/house_details/states.dart';
-import 'package:ccquarters/model/detailed_house.dart';
+import 'package:ccquarters/model/houses/detailed_house.dart';
 import 'package:ccquarters/services/houses/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HouseDetailsCubit extends Cubit<HouseDetailsState> {
-  HouseDetailsCubit(
-    this.houseId,
-    this.houseService,
-    initialState,
-  ) : super(initialState) {
+  HouseDetailsCubit(this.houseId, this.houseService, initialState)
+      : super(initialState) {
     if (initialState is LoadingState) {
       loadHouseDetails();
     }
@@ -37,14 +34,6 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
     return response.data;
   }
 
-  Future<void> goBackToHouseDetails() async {
-    emit(DetailsState(house));
-  }
-
-  Future<void> goToEditHouse() async {
-    emit(EditHouseState(house));
-  }
-
   Future<bool> likeHouse(String houseId, bool isLiked) async {
     ServiceResponse<bool> response;
     if (isLiked) {
@@ -58,5 +47,13 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
     }
 
     return !isLiked;
+  }
+
+  Future<void> goBackToHouseDetails() async {
+    emit(DetailsState(house));
+  }
+
+  Future<void> goToEditHouse() async {
+    emit(EditHouseState(house));
   }
 }

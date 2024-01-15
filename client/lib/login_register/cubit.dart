@@ -1,4 +1,4 @@
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/services/auth/reset_password_result.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
@@ -31,7 +31,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   BaseAuthService authService;
   UserService userService;
-
   User? user;
   bool isBusinessAccount = false;
 
@@ -42,19 +41,22 @@ class AuthCubit extends Cubit<AuthState> {
     emit(SignedInState());
   }
 
-  Future<void> register({
-    required String password,
-  }) async {
+  Future<void> register({required String password}) async {
     emit(LoadingState());
     if (user == null) {
       user = User.empty();
       emit(InputDataState(user: user!));
       return;
     }
+
     final registerState = RegisterState(user: user, password: password);
     if (!kIsWeb && !await InternetConnectionChecker().hasConnection) {
       emit(registerState..error = "Brak Internetu!");
       return;
+    }
+
+    if (!isBusinessAccount) {
+      user!.company = null;
     }
 
     try {
@@ -62,8 +64,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       switch (result) {
         case SignUpResult.success:
-          await userService.updateUser(authService.currentUserId!, user!);
-          emit(SignedInState());
+          await updateUser();
           break;
         default:
           emit(registerState..error = result.toString());
@@ -71,19 +72,18 @@ class AuthCubit extends Cubit<AuthState> {
       }
     } catch (e) {
       emit(registerState
-        ..error = 'Wystąpił niespodziewany błąd. Spróbuj ponownie później');
+        ..error = 'Wystąpił niespodziewany błąd.\n Spróbuj ponownie później');
     }
   }
 
-  Future<void> signIn({
-    required String password,
-  }) async {
+  Future<void> signIn({required String password}) async {
     emit(LoadingState());
     if (user == null) {
       user = User.empty();
       emit(InputDataState(user: user!));
       return;
     }
+
     final loginState = LoginState(user: user, password: password);
     if (!kIsWeb && !await InternetConnectionChecker().hasConnection) {
       emit(loginState..error = "Brak Internetu!");
@@ -122,14 +122,77 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> setUser() async {
-    user = await getUser(authService.currentUserId!);
-    emit(SignedInState());
+  Future<void> reEnterUserData(User user, Uint8List? photo) async {
+    emit(LoadingState());
+    if (!kIsWeb && !await InternetConnectionChecker().hasConnection) {
+      emit(ReEnterUserDataState(
+        user: user,
+        image: photo,
+        error: "Brak Internetu!",
+      ));
+      return;
+    }
+
+    if ((!await _updateUser(user)) ||
+        (photo != null && !await _sendPhoto(photo))) {
+      emit(ReEnterUserDataState(
+        user: user,
+        image: photo,
+        error: "Nie udało się wysłać danych.\n Spróbuj ponownie później!",
+      ));
+      return;
+    }
+
+    setUser();
   }
 
-  Future<User?> getUser(String userId) async {
+  Future<void> updateUser() async {
+    if (await _updateUser(user!)) {
+      user!.id = authService.currentUserId!;
+      emit(SignedInState());
+    } else {
+      emit(ErrorStateWhenUpdatingUser(
+          message: "Nie udało się wysłać danych.\n Spróbuj ponownie później!"));
+    }
+  }
+
+  Future<bool> _updateUser(User user) async {
+    var response =
+        await userService.updateUser(authService.currentUserId!, user);
+    if (response.error != ErrorType.none) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> _sendPhoto(Uint8List photo) async {
+    var response =
+        await userService.changePhoto(authService.currentUserId!, photo);
+    if (response.error != ErrorType.none) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<void> setUser() async {
+    user = await _getUser(authService.currentUserId!);
+    if (user != null) {
+      emit(SignedInState());
+    }
+  }
+
+  Future<User?> _getUser(String userId) async {
     final response = await userService.getUser(userId);
     if (response.error != ErrorType.none) {
+      if (response.error == ErrorType.notFound) {
+        emit(UserNotFoundState());
+      } else {
+        emit(ErrorStateWhenGettingUser(
+            message: "Nie udało się połączyć z usługą.\n"
+                "Spróbuj ponownie później"));
+      }
       return null;
     }
     return response.data;
@@ -175,5 +238,9 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> goToForgotPasswordPage(String email) async {
     emit(ForgotPasswordState(email: email));
+  }
+
+  Future<void> goToReEnterUserDataPage() async {
+    emit(ReEnterUserDataState(user: User.empty()));
   }
 }

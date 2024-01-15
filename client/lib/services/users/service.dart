@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -30,14 +30,15 @@ class UserService {
       if (e.response?.statusCode == StatusCode.UNAUTHORIZED) {
         return ServiceResponse(
             data: User.empty(), error: ErrorType.unauthorized);
+      } else if (e.response?.statusCode == StatusCode.NOT_FOUND) {
+        return ServiceResponse(data: User.empty(), error: ErrorType.notFound);
       }
 
       return ServiceResponse(data: User.empty(), error: ErrorType.unknown);
     }
   }
 
-  Future<ServiceResponse<bool>> updateUser(String userId, User user,
-      {String? token}) async {
+  Future<ServiceResponse<bool>> updateUser(String userId, User user) async {
     try {
       var response = await _dio.put(
         "$_url/$userId",

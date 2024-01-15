@@ -1,9 +1,10 @@
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:ccquarters/common/widgets/wide_text_button.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/states.dart';
 import 'package:ccquarters/login_register/views/email_and_password_fields.dart';
 import 'package:ccquarters/login_register/views/personal_info_fields.dart';
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,14 +58,12 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   Widget build(BuildContext context) {
     var state = context.read<AuthCubit>().state;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxWidth:
-                MediaQuery.of(context).orientation == Orientation.landscape &&
-                        MediaQuery.of(context).size.width > 700
-                    ? MediaQuery.of(context).size.width * 0.5
-                    : MediaQuery.of(context).size.width),
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        _goBack();
+        return true;
+      },
+      child: ConstrainedCenterBox(
         child: Scaffold(
           appBar: _buildAppBar(context),
           bottomNavigationBar: _buildBottomBar(context),
@@ -94,24 +93,26 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       leading: BackButton(
-        onPressed: () {
-          switch (widget.page) {
-            case LoginRegisterPageType.login:
-              _saveEmail();
-              context.read<AuthCubit>().goToStartPage();
-              break;
-            case LoginRegisterPageType.registerPersonalInfo:
-              _savePersonalInfo();
-              context.read<AuthCubit>().goToStartPage();
-              break;
-            case LoginRegisterPageType.registerEmailAndPassword:
-              _saveEmail();
-              context.read<AuthCubit>().goToPersonalInfoRegisterPage();
-              break;
-          }
-        },
+        onPressed: _goBack,
       ),
     );
+  }
+
+  _goBack() {
+    switch (widget.page) {
+      case LoginRegisterPageType.login:
+        _saveEmail();
+        context.read<AuthCubit>().goToStartPage();
+        break;
+      case LoginRegisterPageType.registerPersonalInfo:
+        _savePersonalInfo();
+        context.read<AuthCubit>().goToStartPage();
+        break;
+      case LoginRegisterPageType.registerEmailAndPassword:
+        _saveEmail();
+        context.read<AuthCubit>().goToPersonalInfoRegisterPage();
+        break;
+    }
   }
 
   Padding _buildBottomBar(BuildContext context) {
@@ -275,7 +276,7 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
               _saveEmail();
               context
                   .read<AuthCubit>()
-                  .goToForgotPasswordPage(firstTextField.text);
+                  .goToForgotPasswordPage(firstTextField.text.trim());
             },
             child: const Text("Zapomniałeś hasła?"),
           ),
@@ -295,11 +296,14 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   }
 
   _savePersonalInfo() {
-    context.read<AuthCubit>().savePersonalInfo(firstTextField.text,
-        secondTextField.text, thirdTextField.text, fourthTextField.text);
+    context.read<AuthCubit>().savePersonalInfo(
+        firstTextField.text.trim(),
+        secondTextField.text.trim(),
+        thirdTextField.text.trim(),
+        fourthTextField.text.trim());
   }
 
   _saveEmail() {
-    context.read<AuthCubit>().saveEmail(firstTextField.text);
+    context.read<AuthCubit>().saveEmail(firstTextField.text.trim());
   }
 }

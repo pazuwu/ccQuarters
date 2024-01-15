@@ -1,6 +1,6 @@
-import 'package:ccquarters/model/alert.dart';
-import 'package:ccquarters/model/alert_base.dart';
-import 'package:ccquarters/model/new_alert.dart';
+import 'package:ccquarters/model/alerts/alert.dart';
+import 'package:ccquarters/model/alerts/alert_base.dart';
+import 'package:ccquarters/model/alerts/new_alert.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/service_response.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

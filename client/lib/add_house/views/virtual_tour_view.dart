@@ -1,11 +1,12 @@
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/inputs/radio_list.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
-import 'package:ccquarters/virtual_tour_model/tour_info.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
+import 'package:ccquarters/model/virtual_tours/tour_info.dart';
 
 class VirtualTourFormView extends StatefulWidget {
   const VirtualTourFormView({
@@ -36,8 +37,7 @@ class _VirtualTourFormViewState extends State<VirtualTourFormView> {
 
   @override
   Widget build(BuildContext context) {
-    return ViewWithHeader(
-      title: "Dodaj zdjęcia",
+    return ViewWithButtons(
       inBetweenWidget: _buildPageContent(context),
       goBackOnPressed: () {
         if (_formKey.currentState?.validate() ?? false) {
@@ -131,7 +131,9 @@ class _VirtualTourFormViewState extends State<VirtualTourFormView> {
                 Text("Trwa ładowanie twoich wirtualnych spacerów"),
                 SizedBox(width: 12),
                 SizedBox.square(
-                    dimension: 20, child: CircularProgressIndicator()),
+                  dimension: 20,
+                  child: LoadingView(),
+                ),
               ],
             );
           }

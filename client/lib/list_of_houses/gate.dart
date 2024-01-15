@@ -1,11 +1,11 @@
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/list_of_houses/cubit.dart';
-import 'package:ccquarters/list_of_houses/view.dart';
-import 'package:ccquarters/model/offer_type.dart';
+import 'package:ccquarters/list_of_houses/views/view.dart';
+import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ccquarters/model/filter.dart';
+import 'package:ccquarters/model/houses/filter.dart';
 
 class ListOfHousesGate extends StatelessWidget {
   const ListOfHousesGate({
@@ -32,6 +32,14 @@ class ListOfHousesGate extends StatelessWidget {
         builder: (context, state) {
           if (state is ErrorState) {
             SnackMessenger.showError(context, state.message);
+          } else if (state is SuccessState) {
+            SnackMessenger.showSuccess(context, state.message);
+          } else if (state is LoadingState) {
+            SnackMessenger.showLoading(context, state.message);
+          }
+
+          if (state is MessageState) {
+            context.read<ListOfHousesCubit>().clearMessages();
           }
 
           return ListOfHouses(

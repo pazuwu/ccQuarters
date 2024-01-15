@@ -1,4 +1,6 @@
+import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/themed_form_field.dart';
+import 'package:ccquarters/common/views/constrained_center_box.dart';
 import 'package:flutter/material.dart';
 
 class EmailAndPasswordFields extends StatelessWidget {
@@ -17,19 +19,11 @@ class EmailAndPasswordFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final RegExp emailRegExp =
-        RegExp("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+\$)");
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width *
-            (MediaQuery.of(context).orientation == Orientation.landscape &&
-                    MediaQuery.of(context).size.width > 700
-                ? 0.4
-                : 1),
-      ),
+    return ConstrainedCenterBox(
+      widthMultiplier: 0.4,
       child: Column(
         children: [
-          _buildEmailField(emailRegExp),
+          _buildEmailField(),
           const SizedBox(
             height: 20,
           ),
@@ -40,7 +34,9 @@ class EmailAndPasswordFields extends StatelessWidget {
     );
   }
 
-  ThemedFormField _buildEmailField(RegExp emailRegExp) {
+  ThemedFormField _buildEmailField() {
+    final RegExp emailRegExp = RegExp(emailRegExpString);
+
     return ThemedFormField(
       controller: email,
       labelText: 'E-mail',

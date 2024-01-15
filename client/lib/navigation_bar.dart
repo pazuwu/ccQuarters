@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 
 enum NavigationItemVisibility {
   always,
@@ -48,8 +48,7 @@ class NavigationShell extends StatelessWidget {
     var selectedIndex = visibleItems.indexWhere((i) => i.path == path);
 
     return _NavigationShellPresenter(
-      selectedIndex:
-          selectedIndex == -1 ? visibleItems.length - 1 : selectedIndex,
+      selectedIndex: selectedIndex == -1 ? 0 : selectedIndex,
       visibleItems: visibleItems,
       child: child,
     );
@@ -106,28 +105,23 @@ class _NavigationShellPresenter extends StatelessWidget {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: child),
-        SizedBox(
-          height: 70,
-          child: BottomNavigationBar(
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            selectedItemColor: Theme.of(context).primaryColor,
-            type: BottomNavigationBarType.fixed,
-            iconSize: 35,
-            items: visibleItems
-                .map((i) => BottomNavigationBarItem(
-                      icon: Icon(i.icon),
-                      label: i.label,
-                    ))
-                .toList(),
-            currentIndex: selectedIndex,
-            onTap: (index) => _onItemTapped(context, index),
-          ),
-        ),
-      ],
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedItemColor: Theme.of(context).primaryColor,
+        type: BottomNavigationBarType.fixed,
+        iconSize: 35,
+        items: visibleItems
+            .map((i) => BottomNavigationBarItem(
+                  icon: Icon(i.icon),
+                  label: i.label,
+                ))
+            .toList(),
+        currentIndex: selectedIndex,
+        onTap: (index) => _onItemTapped(context, index),
+      ),
     );
   }
 

@@ -4,7 +4,7 @@ using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
-    public class UploadExecutor : IUploadExecutor
+    public class UploadExecutor : IOperationExecutor
     {
         private readonly VTClient _vtClient;
 
@@ -13,9 +13,10 @@ namespace VirtualTourProcessingServer.OperationExecutors
             _vtClient = vtClient;
         }
 
-        public async Task<ExecutorResponse> SaveScenes(UploadExecutorParameters parameters)
+        public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
-            var files = Directory.GetFiles(parameters.DirectoryPath);
+            var outputDirectory = Path.Combine(parameters.AreaDirectory, "renders");
+            var files = Directory.GetFiles(outputDirectory);
 
             try
             {
@@ -23,15 +24,16 @@ namespace VirtualTourProcessingServer.OperationExecutors
                 {
                     var createSceneParameters = new CreateSceneParameters()
                     {
-                        TourId = parameters.TourId,
-                        ParentId = parameters.AreaId
+                        TourId = parameters.Operation.TourId,
+                        ParentId = parameters.Operation.AreaId,
+                        Name = "50 photos",
                     };
 
                     var result = await _vtClient.Service.CreateScene(createSceneParameters);
 
                     var addPhotoParameters = new AddPhotoToSceneParameters()
                     {
-                        TourId = parameters.TourId,
+                        TourId = parameters.Operation.TourId,
                         PhotoPath = file,
                         SceneId = result.Scene!.Id!
                     };

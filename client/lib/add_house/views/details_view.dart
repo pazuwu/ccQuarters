@@ -2,13 +2,13 @@ import 'package:ccquarters/add_house/cubit.dart';
 import 'package:ccquarters/add_house/views/additional_info_form.dart';
 import 'package:ccquarters/common/messages/snack_messenger.dart';
 import 'package:ccquarters/common/views/show_form.dart';
-import 'package:ccquarters/model/new_house.dart';
+import 'package:ccquarters/model/houses/new_house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/inputs/input_decorator_form.dart';
-import 'package:ccquarters/common/views/view_with_header_and_buttons.dart';
+import 'package:ccquarters/common/views/view_with_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ccquarters/model/building_type.dart';
+import 'package:ccquarters/model/houses/building_type.dart';
 
 class DetailsFormView extends StatelessWidget {
   const DetailsFormView({
@@ -24,8 +24,7 @@ class DetailsFormView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewWithHeader(
-      title: "Uzupełnij szczegóły ogłoszenia",
+    return ViewWithButtons(
       inBetweenWidget: DetailsForm(
         details: details,
         buildingType: buildingType,
@@ -242,35 +241,42 @@ class _DetailsFormState extends State<DetailsForm> {
           ],
         ),
         if (items != null && items.isNotEmpty)
-          Wrap(
-            spacing: 4,
-            children: [
-              for (final item in items)
-                InputChip(
-                  onPressed: () {
-                    _buildAdditionalInfoForm(
-                      context,
-                      title: item.key,
-                      info: item.value,
-                      isEdit: true,
-                    );
-                  },
-                  label: Text("${item.key}: ${item.value}"),
-                  onDeleted: () {
-                    setState(() {
-                      widget.details.additionalInfo!.remove(item.key);
-                    });
-                  },
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(formBorderRadius / 1.5),
-                    side: const BorderSide(
-                      color: Colors.blueGrey,
-                      width: inputDecorationBorderSide,
-                    ),
-                  ),
-                ),
-            ],
+          _buildAdditionalInfoList(items, context),
+      ],
+    );
+  }
+
+  Wrap _buildAdditionalInfoList(
+    List<MapEntry<String, String>> items,
+    BuildContext context,
+  ) {
+    return Wrap(
+      spacing: 4,
+      children: [
+        for (final item in items)
+          InputChip(
+            onPressed: () {
+              _buildAdditionalInfoForm(
+                context,
+                title: item.key,
+                info: item.value,
+                isEdit: true,
+              );
+            },
+            label: Text("${item.key}: ${item.value}"),
+            onDeleted: () {
+              setState(() {
+                widget.details.additionalInfo!.remove(item.key);
+              });
+            },
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(formBorderRadius / 1.5),
+              side: const BorderSide(
+                color: Colors.blueGrey,
+                width: inputDecorationBorderSide,
+              ),
+            ),
           ),
       ],
     );

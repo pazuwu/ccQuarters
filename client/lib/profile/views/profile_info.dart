@@ -1,5 +1,5 @@
 import 'package:ccquarters/common/images/image.dart';
-import 'package:ccquarters/model/user.dart';
+import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -64,7 +64,7 @@ class ProfileInfo extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall,
             textScaler: const TextScaler.linear(0.8),
           ),
-        if (user.company != null)
+        if (user.company != null && user.company!.isNotEmpty)
           Text(
             user.company!,
             style: user.name != null && user.surname != null

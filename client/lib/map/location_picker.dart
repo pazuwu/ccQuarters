@@ -1,3 +1,4 @@
+import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -173,7 +174,7 @@ class _LocationPickerState extends State<LocationPicker> {
               onMapIsReady: (_) async {
                 await _goToInitLocation();
               },
-              mapIsLoading: const Center(child: CircularProgressIndicator()),
+              mapIsLoading: const LoadingView(),
               controller: _mapController,
               osmOption: OSMOption(
                 enableRotationByGesture: false,

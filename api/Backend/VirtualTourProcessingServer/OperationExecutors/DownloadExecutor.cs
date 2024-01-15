@@ -4,7 +4,7 @@ using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 
 namespace VirtualTourProcessingServer.OperationExecutors
 {
-    public class DownloadExecutor : IDownloadExecutor
+    public class DownloadExecutor : IOperationExecutor
     {
         private readonly VTClient _vtClient;
         private readonly IHttpClientFactory _httpFactory;
@@ -15,17 +15,19 @@ namespace VirtualTourProcessingServer.OperationExecutors
             _httpFactory = httpFactory;
         }
 
-        public async Task<ExecutorResponse> DownloadPhotos(DownloadParameters parameters)
+        public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
+            var outputDirectory = Path.Combine(parameters.AreaDirectory, "download");
+
             try
             {
-                if (!Directory.Exists(parameters.OutputDirectory))
-                    Directory.CreateDirectory(parameters.OutputDirectory);
+                if (!Directory.Exists(outputDirectory))
+                    Directory.CreateDirectory(outputDirectory);
 
                 var getAreaPhotosparameters = new GetAreaPhotosParameters()
                 {
-                    TourId = parameters.TourId,
-                    AreaId = parameters.AreaId,
+                    TourId = parameters.Operation.TourId,
+                    AreaId = parameters.Operation.AreaId,
                 };
                 var res = await _vtClient.Service.GetAreaPhotos(getAreaPhotosparameters);
 
@@ -35,7 +37,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
                 var downloadTasks = new List<Task<DownloadStatus>>();
                 foreach (var photoUrl in res.PhotoUrls)
                 {
-                    downloadTasks.Add(DownloadAndSavePhoto(photoUrl, parameters.OutputDirectory));
+                    downloadTasks.Add(DownloadAndSavePhoto(photoUrl, outputDirectory));
                 }
 
                 await Task.WhenAll(downloadTasks);
@@ -59,6 +61,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
         private async Task<DownloadStatus> DownloadAndSavePhoto(string photoUrl, string outputDirectory)
         {
             var photoPath = Path.Combine(outputDirectory, Guid.NewGuid().ToString());
+            photoPath = Path.ChangeExtension(photoPath, "png");
 
             if (File.Exists(photoPath))
                 return DownloadStatus.Ok;

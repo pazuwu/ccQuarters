@@ -3,7 +3,7 @@ import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/images/image.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/messages/message.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/houses/house.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -34,6 +34,11 @@ class _PhotosGridState extends State<PhotosGrid> {
     try {
       List<House> houses =
           await widget.getHouses(pageKey, _numberOfPostsPerRequest);
+
+      if (!mounted) {
+        return;
+      }
+
       final isLastPage = houses.length < _numberOfPostsPerRequest;
       if (isLastPage) {
         widget.pagingController.appendLastPage(houses);
@@ -51,11 +56,15 @@ class _PhotosGridState extends State<PhotosGrid> {
     return PagedGridView<int, House>(
       pagingController: widget.pagingController,
       builderDelegate: PagedChildBuilderDelegate<House>(
-        noItemsFoundIndicatorBuilder: (context) => const Message(
+        noItemsFoundIndicatorBuilder: (context) => Message(
           title: "W tej zakładce nie masz\n jeszcze żadnych ogłoszeń",
-          imageWidget: Icon(Icons.home),
+          imageWidget: Icon(
+            Icons.home,
+            size: MediaQuery.of(context).size.width * 0.25,
+            color: Theme.of(context).primaryColor,
+          ),
           adjustToLandscape: true,
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
         ),
         firstPageErrorIndicatorBuilder: (context) => ErrorMessage(
           "Nie udało się pobrać ogłoszeń",

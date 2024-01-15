@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryLibrary", "Reposi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCQuartersAPI.IntegrationTests", "CCQuartersAPI.IntegrationTests\CCQuartersAPI.IntegrationTests.csproj", "{A4835A4F-D2BC-45FC-B56D-A120CBAF6308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualTourAPI.IntegrationTests", "VirtualTourAPI.IntegrationTests\VirtualTourAPI.IntegrationTests.csproj", "{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualTourAPI.IntegrationTests", "VirtualTourAPI.IntegrationTests\VirtualTourAPI.IntegrationTests.csproj", "{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailLibrary", "EmailLibrary\EmailLibrary.csproj", "{2B21BEF0-CEB4-4B7D-BD06-6A258CE112AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EAF729F-ACF5-4A5F-A407-5AFBDC4D6DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B21BEF0-CEB4-4B7D-BD06-6A258CE112AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B21BEF0-CEB4-4B7D-BD06-6A258CE112AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B21BEF0-CEB4-4B7D-BD06-6A258CE112AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B21BEF0-CEB4-4B7D-BD06-6A258CE112AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

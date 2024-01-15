@@ -1,9 +1,8 @@
 import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/common/images/image.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/houses/house.dart';
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
-import 'package:ccquarters/common/device_type.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -22,8 +21,8 @@ class HouseItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) => ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: getMaxItemWidth(context),
+        constraints: BoxConstraints.tightFor(
+          width: getMaxItemWidth(context),
         ),
         child: Card(
           shadowColor: Theme.of(context).colorScheme.secondary,
@@ -62,8 +61,9 @@ class HouseItem extends StatelessWidget {
 
   Widget _buildPhoto(BoxConstraints constraints, BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: constraints.maxHeight - 52,
+      constraints: BoxConstraints.tightFor(
+        height: constraints.maxHeight - 52,
+        width: getMaxItemWidth(context),
       ),
       child: house.photoUrl != null
           ? ImageWidget(
@@ -154,6 +154,8 @@ class HouseItem extends StatelessWidget {
 
   static double getMaxItemWidth(BuildContext context) {
     return MediaQuery.of(context).size.width *
-        (getDeviceType(context) == DeviceType.mobile ? 0.4 : 0.2);
+        (MediaQuery.of(context).orientation == Orientation.portrait
+            ? 0.55
+            : 0.2);
   }
 }

@@ -1,8 +1,8 @@
 import 'package:ccquarters/common/messages/delete_dialog.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:ccquarters/common/widgets/icon_option_combo.dart';
-import 'package:ccquarters/virtual_tour_model/area.dart';
-import 'package:ccquarters/virtual_tour_model/tour_for_edit.dart';
+import 'package:ccquarters/model/virtual_tours/area.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/common/widgets/always_visible_label.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/views/show_form.dart';
-import 'package:ccquarters/virtual_tour_model/scene.dart';
+import 'package:ccquarters/model/virtual_tours/scene.dart';
 import 'package:ccquarters/my_tours/scene_list/cubit.dart';
 import 'package:ccquarters/my_tours/scene_list/scene_form.dart';
 import 'package:go_router/go_router.dart';
@@ -56,23 +56,28 @@ class _SceneListState extends State<SceneList> {
     if (sceneFormModel == null) return;
 
     if (sceneFormModel.importType == ImportType.photos360) {
-      FilePickerResult? result = await FilePicker.platform
-          .pickFiles(type: FileType.image, withData: true);
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true,
+        withReadStream: true,
+      );
 
       if (result?.files.single.bytes != null) {
-        await cubit.createNewSceneFromPhoto(result!.files.single.bytes!,
-            name: sceneFormModel.name);
+        await cubit.createNewSceneFromPhoto(
+          result!.files.single,
+          name: sceneFormModel.name,
+        );
       }
     } else if (sceneFormModel.importType == ImportType.photos) {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
-        withData: true,
+        withReadStream: true,
         type: FileType.image,
       );
 
       if (result != null) {
         await cubit.createNewArea(
-          images: result.files.map((e) => e.bytes!).toList(),
+          images: result.files,
           name: sceneFormModel.name,
           createOperation: !sceneFormModel.draft,
         );
@@ -84,7 +89,7 @@ class _SceneListState extends State<SceneList> {
       BuildContext context, TourEditCubit cubit, Area area) async {
     var photos = await FilePicker.platform.pickFiles(
       allowMultiple: true,
-      withData: true,
+      withReadStream: true,
       allowCompression: true,
       type: FileType.image,
     );
@@ -92,7 +97,7 @@ class _SceneListState extends State<SceneList> {
     if (photos != null) {
       cubit.addPhotosToArea(
         area.id!,
-        photos.files.map((e) => e.bytes!).toList(),
+        photos.files,
         createOperationFlag: false,
       );
     }

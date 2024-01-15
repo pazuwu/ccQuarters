@@ -5,9 +5,9 @@ import 'package:ccquarters/common/views/gallery.dart';
 import 'package:ccquarters/common/views/require_sign_in.dart';
 import 'package:ccquarters/common/views/scrollable_view.dart';
 import 'package:ccquarters/house_details/gate.dart';
-import 'package:ccquarters/list_of_houses/filter_query.dart';
+import 'package:ccquarters/list_of_houses/model/filter_query.dart';
 import 'package:ccquarters/list_of_houses/gate.dart';
-import 'package:ccquarters/list_of_houses/houses_extra.dart';
+import 'package:ccquarters/list_of_houses/model/houses_extra.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/main_page/gate.dart';
@@ -24,12 +24,19 @@ class CCQNavigation {
     initialLocation: '/home',
     routes: [
       ShellRoute(
-        builder: (context, state, widget) => Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SafeArea(
-            child: ScrollableView(
-              child: AuthGate(
-                child: widget,
+        builder: (context, state, widget) => BackButtonListener(
+          onBackButtonPressed: () async {
+            return !(await _buildDialogWithQuestionIfUserWantsToLeaveApp(
+                    context) ??
+                false);
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: SafeArea(
+              child: ScrollableView(
+                child: AuthGate(
+                  child: widget,
+                ),
               ),
             ),
           ),
@@ -170,4 +177,30 @@ class CCQNavigation {
   );
 
   static RouterConfig<Object> get router => _router;
+
+  static Future<bool?> _buildDialogWithQuestionIfUserWantsToLeaveApp(
+      BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => BackButtonListener(
+        onBackButtonPressed: () async {
+          Navigator.of(context).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          title: const Text("Czy na pewno chcesz wyjść z aplikacji?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Nie"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Tak"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

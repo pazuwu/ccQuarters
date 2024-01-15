@@ -1,6 +1,6 @@
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/messages/message.dart';
-import 'package:ccquarters/model/house.dart';
+import 'package:ccquarters/model/houses/house.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'item.dart';
@@ -38,6 +38,10 @@ class _AnnouncementListState extends State<AnnouncementList> {
 
       if (houses == null) {
         widget.pagingController.error = true;
+        return;
+      }
+
+      if (!mounted) {
         return;
       }
 
