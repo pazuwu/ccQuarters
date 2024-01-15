@@ -23,7 +23,8 @@ class TourEditCubit extends Cubit<TourEditState> {
         await _service.postScene(tourId: _tour.id, parentId: "", name: name);
 
     if (serviceResponse.data != null) {
-      var url = await _uploadScenePhoto(serviceResponse.data!, photo.readStream!, photo.size);
+      var url = await _uploadScenePhoto(
+          serviceResponse.data!, photo.readStream!, photo.size);
 
       var newScene = Scene(
           name: name,

@@ -51,7 +51,7 @@ class AddHouseGate extends StatelessWidget {
         state.message,
         actionButton: true,
         actionButtonTitle: "Powtórz wysyłanie",
-        onAction: () => () => house == null
+        onAction: () => house == null
             ? context.read<AddHouseFormCubit>().sendData()
             : context.read<AddHouseFormCubit>().updateHouse(),
       );

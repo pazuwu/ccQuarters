@@ -48,8 +48,7 @@ class NavigationShell extends StatelessWidget {
     var selectedIndex = visibleItems.indexWhere((i) => i.path == path);
 
     return _NavigationShellPresenter(
-      selectedIndex:
-          selectedIndex == -1 ? visibleItems.length - 1 : selectedIndex,
+      selectedIndex: selectedIndex == -1 ? 0 : selectedIndex,
       visibleItems: visibleItems,
       child: child,
     );
