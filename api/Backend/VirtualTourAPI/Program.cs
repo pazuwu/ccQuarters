@@ -2,6 +2,7 @@ using AuthLibrary;
 using CloudStorageLibrary;
 using RepositoryLibrary;
 using VirtualTourAPI.Endpoints;
+using VirtualTourAPI.Repository;
 using VirtualTourAPI.Services;
 using VirtualTourAPI.Services.Interfaces;
 

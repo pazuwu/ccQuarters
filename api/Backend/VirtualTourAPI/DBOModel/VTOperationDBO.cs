@@ -2,14 +2,15 @@
 
 namespace VirtualTourAPI.DBOModel
 {
+    [FirestoreData]
     public class VTOperationDBO
     {
         [FirestoreProperty]
-        public string? AreaId { get; set; }
-
+        public required string AreaId { get; set; }
         [FirestoreProperty]
-        public string? TourId { get; set; }
-
+        public required string TourId { get; set; }
+        [FirestoreProperty]
+        public required string UserEmail { get; set; }
         [FirestoreProperty]
         public int ProcessingAttempts { get; set; } = 0;
 

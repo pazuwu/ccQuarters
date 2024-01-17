@@ -1,16 +1,16 @@
 ﻿using CloudStorageLibrary;
 using AuthLibrary;
 using System.Security.Claims;
-using VirtualTourAPI.Services;
 using VirtualTourAPI.Requests;
 using Microsoft.AspNetCore.Mvc;
 using VirtualTourAPI.DTOModel;
+using VirtualTourAPI.Services.Interfaces;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class TourEndpoints
     {
-        public static async Task<IResult> Get(string tourId, IVTService service, IStorage storage)
+        public static async Task<IResult> Get(string tourId, ITourService service, IStorage storage)
         {
             var tour = await service.GetTour(tourId);
 
@@ -29,7 +29,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(tour);
         }
 
-        public static async Task<IResult> GetForEdit(string tourId, IVTService service, IStorage storage)
+        public static async Task<IResult> GetForEdit(string tourId, ITourService service, IStorage storage)
         {
             var tour = await service.GetTourForEdit(tourId);
 
@@ -48,7 +48,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(tour);
         }
 
-        public static async Task<IResult> GetMy(HttpContext context, IVTService service)
+        public static async Task<IResult> GetMy(HttpContext context, ITourService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -60,7 +60,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(tours);
         }
 
-        public static async Task<IResult> Post(PostTourRequest postTourRequest, HttpContext context, IVTService service)
+        public static async Task<IResult> Post(PostTourRequest postTourRequest, HttpContext context, ITourService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -82,7 +82,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(tourId, null);
         }
 
-        public static async Task<IResult> Put(string tourId, TourUpdateDTO tourUpdate, HttpContext context, IVTService service)
+        public static async Task<IResult> Put(string tourId, TourUpdateDTO tourUpdate, HttpContext context, ITourService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
@@ -95,7 +95,7 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok();
         }
 
-        public static async Task<IResult> Delete([FromBody]string[] tourIds, HttpContext context, IVTService service)
+        public static async Task<IResult> Delete([FromBody]string[] tourIds, HttpContext context, ITourService service)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();

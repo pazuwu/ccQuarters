@@ -1,5 +1,6 @@
 ﻿using VirtualTourAPI.DBOModel;
 using VirtualTourAPI.DTOModel;
+using VirtualTourAPI.Model;
 
 namespace VirtualTourAPI.Mappers
 {
@@ -25,5 +26,14 @@ namespace VirtualTourAPI.Mappers
                 PrimarySceneId = tour.PrimarySceneId,
             };
         } 
+
+        public static TourInfoDTO Map(this TourInfoDBO tour)
+        {
+            return new TourInfoDTO()
+            {
+                Name = tour.Name,
+                Id = tour.Id,
+            };
+        }
     }
 }

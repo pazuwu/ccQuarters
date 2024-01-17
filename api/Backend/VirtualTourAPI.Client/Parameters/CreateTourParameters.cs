@@ -2,5 +2,6 @@
 {
     public class CreateTourParameters
     {
+        public required string Name { get; set; }
     }
 }
