@@ -1,4 +1,5 @@
 ﻿using RepositoryLibrary;
+using VirtualTourAPI.DBOModel;
 using VirtualTourAPI.DTOModel;
 using VirtualTourAPI.Services.Interfaces;
 
@@ -9,10 +10,18 @@ namespace VirtualTourAPI.Services
         private readonly IDocumentDBRepository _documentRepository;
         private readonly ILogger _logger;
 
-        public OperationService(IDocumentDBRepository documentRepository, ILogger<OperationService> logger)
+        private readonly ITourService _tourService;
+        private readonly IAreaService _areaService;
+        private readonly IConfiguration _configuration;
+
+        public OperationService(IDocumentDBRepository documentRepository, ILogger<OperationService> logger, 
+            ITourService tourService, IAreaService areaService, IConfiguration configuration)
         {
             _documentRepository = documentRepository;
             _logger = logger;
+            _tourService = tourService;
+            _areaService = areaService;
+            _configuration = configuration;
         }
 
         public async Task<string?> CreateOperation(string tourId, string areaId)
@@ -38,9 +47,47 @@ namespace VirtualTourAPI.Services
             return addedOperationId;
         }
 
-        public Task UpdateOperation(string tourId, VTOperationUpdateDTO operationUpdate)
+        public async Task DeleteOperation(string operationId)
         {
-            throw new NotImplementedException();
+            var path = $"{DBCollections.Operations}/{operationId}";
+            var operationSnapshot = await _documentRepository.GetAsync(path);
+            var operation = operationSnapshot?.ConvertTo<VTOperationDBO>();
+
+            if (operation is null) return;
+
+            var tourInfo = await _tourService.GetTourInfo(operation.TourId);
+            
+            if (tourInfo is null) return;
+            
+            var area = await _areaService.GetArea(operation.TourId, operation.AreaId!);
+
+            if (area is null) return;
+
+            var emailSender = new OperationFinishedEmailSender(_configuration, tourInfo.Name, area.Name);
+            await emailSender.Send(operation.UserEmail);
+
+            _logger.LogInformation("Operation finished mail sent, id: {operationId}", operationId);
+
+            //await _documentRepository.DeleteAsync(path);
+        }
+
+        public async Task UpdateOperation(string operationId, VTOperationUpdateDTO operationUpdate)
+        {
+            var path = $"{DBCollections.Operations}/{operationId}";
+
+            var updateDictionary = new Dictionary<string, object>();
+
+            if (operationUpdate.Status != null)
+                updateDictionary[nameof(operationUpdate.Status)] = operationUpdate.Status;
+            if (operationUpdate.ProcessingAttempts != null)
+                updateDictionary[nameof(operationUpdate.ProcessingAttempts)] = operationUpdate.ProcessingAttempts;
+            if (operationUpdate.Stage != null)
+                updateDictionary[nameof(operationUpdate.Stage)] = operationUpdate.Stage;
+
+
+            await _documentRepository.SetAsync(path, updateDictionary);
+
+            _logger.LogInformation("Operation updated, id: {operationId}", operationId);
         }
     }
 }

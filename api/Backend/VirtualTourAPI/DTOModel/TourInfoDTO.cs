@@ -6,7 +6,7 @@ namespace VirtualTourAPI.DTOModel
     public class TourInfoDTO
     {
         [FirestoreDocumentId]
-        public string? Id { get; set; }
+        public required string Id { get; set; }
         [FirestoreProperty]
         public required string Name { get; set; }
     }

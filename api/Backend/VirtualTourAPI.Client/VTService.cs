@@ -82,8 +82,7 @@ namespace VirtualTourAPI.Client
             var request = new PostLinkRequest()
             {
                 DestinationId = parameters.DestinationId,
-                Latitude = parameters.Position?.Latitude,
-                Longitude = parameters.Position?.Longitude,
+                Position = parameters.Position,
                 NextOrientation = parameters.NextOrientation,
                 ParentId = parameters.ParentId,
                 Text = parameters.Text
@@ -132,7 +131,12 @@ namespace VirtualTourAPI.Client
 
         public async Task<CreateTourResult> CreateTour(CreateTourParameters parameters)
         {
-            var response = await _http.PostAsync("tours", null);
+            var request = new PostTourRequest()
+            {
+                Name = parameters.Name,
+            };
+
+            var response = await _http.PostAsJsonAsync("tours", request);
 
             response.EnsureSuccessStatusCode();
             var tourid = response.Headers?.Location?.OriginalString;
@@ -142,13 +146,23 @@ namespace VirtualTourAPI.Client
                 Tour = new TourDTO()
                 {
                     Id = tourid,
+                    Name = parameters.Name,
                 },
             };
         }
 
         public async Task<DeleteTourResult> DeleteTour(DeleteTourParameters parameters)
         {
-            var response = await _http.DeleteAsync($"tours/{parameters.TourId}");
+            var request = new[] { parameters.TourId };
+
+            var requestMessage = new HttpRequestMessage()
+            {
+                RequestUri = new Uri($"tours", UriKind.Relative),
+                Method = HttpMethod.Delete,
+                Content = JsonContent.Create(request),
+            };
+
+            var response = await _http.SendAsync(requestMessage);
 
             response.EnsureSuccessStatusCode();
             return new();
@@ -182,7 +196,7 @@ namespace VirtualTourAPI.Client
         {
             try
             {
-                var response = await _http.GetFromJsonAsync<TourDTO>($"tours/{parameters.TourId}");
+                var response = await _http.GetFromJsonAsync<TourDTO>($"tours/{parameters.TourId}/forEdit");
                 return new() { Tour = response };
             }
             catch (HttpRequestException ex)
