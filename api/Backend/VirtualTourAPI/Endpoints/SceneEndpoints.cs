@@ -1,9 +1,8 @@
 ﻿using AuthLibrary;
 using CloudStorageLibrary;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using VirtualTourAPI.DTOModel;
-using VirtualTourAPI.Service;
+using VirtualTourAPI.Services;
 
 namespace VirtualTourAPI.Endpoints
 {

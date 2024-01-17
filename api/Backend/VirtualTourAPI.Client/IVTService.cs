@@ -21,5 +21,8 @@ namespace VirtualTourAPI.Client
         Task<CreateLinkResult> CreateLink(CreateLinkParameters parameters);
         Task<DeleteLinkResult> DeleteLink(DeleteLinkParameters parameters);
         Task<UpdateLinkResult> UpdateLink(UpdateLinkParameters parameters);
+
+        Task<UpdateOperationResult> UpdateOperation(UpdateOperationParameters parameters);
+        Task<DeleteOperationResult> DeleteOperation(DeleteOperationParameters parameters);
     }
 }

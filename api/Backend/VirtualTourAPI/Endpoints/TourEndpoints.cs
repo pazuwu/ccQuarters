@@ -1,7 +1,7 @@
 ﻿using CloudStorageLibrary;
 using AuthLibrary;
 using System.Security.Claims;
-using VirtualTourAPI.Service;
+using VirtualTourAPI.Services;
 using VirtualTourAPI.Requests;
 using Microsoft.AspNetCore.Mvc;
 using VirtualTourAPI.DTOModel;
