@@ -5,19 +5,20 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryLibrary;
-using VirtualTourAPI.Service;
+using VirtualTourAPI.Services;
+using VirtualTourAPI.Services.Interfaces;
 
 namespace VirtualTourAPI.IntegrationTests
 {
     public class BaseVTServiceTests
     {
-        protected static readonly IVTService _service;
+        protected static readonly ITourService _tourService;
 
         static BaseVTServiceTests()
         {
-            var loogerMock = new Mock<ILogger<VTService>>();
+            var loogerMock = new Mock<ILogger<TourService>>();
             var repository = new DocumentDBRepository();
-            _service = new VTService(repository, loogerMock.Object);
+            _tourService = new TourService(repository, loogerMock.Object);
         }
     }
 }

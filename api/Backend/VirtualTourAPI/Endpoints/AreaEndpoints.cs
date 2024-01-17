@@ -2,21 +2,22 @@
 using CloudStorageLibrary;
 using System.Security.Claims;
 using VirtualTourAPI.DTOModel;
-using VirtualTourAPI.Service;
+using VirtualTourAPI.Services.Interfaces;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class AreaEndpoints
     {
-        public static async Task<IResult> Post(string tourId, HttpContext context, NewAreaDTO newArea, IVTService service)
+        public static async Task<IResult> Post(string tourId, HttpContext context, NewAreaDTO newArea, 
+            ITourService tourService, IAreaService areaService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
-            var createdAreaId = await service.CreateArea(tourId, newArea);
+            var createdAreaId = await areaService.CreateArea(tourId, newArea);
 
             if (string.IsNullOrWhiteSpace(createdAreaId))
                 return Results.Problem("DB error occured while creating object.");
@@ -24,38 +25,40 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(createdAreaId, null);
         }
 
-        public static async Task<IResult> Delete(string tourId, string areaId, HttpContext context, IVTService service)
+        public static async Task<IResult> Delete(string tourId, string areaId, HttpContext context, 
+            ITourService tourService, IAreaService areaService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
-            await service.DeleteArea(tourId, areaId);
+            await areaService.DeleteArea(tourId, areaId);
             return Results.Ok();
         }
 
-        public static async Task<IResult> PostPhotos(string tourId, string areaId, HttpContext context, IFormFile file, IStorage storage, IVTService service)
+        public static async Task<IResult> PostPhotos(string tourId, string areaId, HttpContext context, 
+            IFormFile file, IStorage storage, ITourService tourService, IAreaService areaService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
             using var fileStream = file.OpenReadStream();
             var collectionName = $"tours/{tourId}/{areaId}";
 
-            var photoId = await service.AddPhotoToArea(tourId, areaId);
+            var photoId = await areaService.AddPhotoToArea(tourId, areaId);
             await storage.UploadFileAsync(collectionName, fileStream, photoId);
 
             return Results.Created(photoId, null);
         }
 
-        public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IVTService service)
+        public static async Task<IResult> GetPhotos(string tourId, string areaId, IStorage storage, IAreaService areaService)
         {
-            var areaPhotosInfo = await service.GetAreaPhotosInfo(tourId, areaId);
+            var areaPhotosInfo = await areaService.GetAreaPhotosInfo(tourId, areaId);
             var collectionName = $"tours/{tourId}/{areaId}";
 
             if (areaPhotosInfo == null)
@@ -70,15 +73,16 @@ namespace VirtualTourAPI.Endpoints
             return Results.Ok(Array.Empty<string>());
         }
 
-        public static async Task<IResult> Process(string tourId, string areaId, HttpContext context, IVTService service)
+        public static async Task<IResult> Process(string tourId, string areaId, HttpContext context, 
+            ITourService tourService, IOperationService operationService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
-            var operationId = await service.CreateOperation(tourId, areaId);
+            var operationId = await operationService.CreateOperation(tourId, areaId);
 
             if (operationId == null)
                 return Results.Conflict();

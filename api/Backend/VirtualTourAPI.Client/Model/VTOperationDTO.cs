@@ -12,10 +12,17 @@
     public enum OperationStage
     {
         Waiting,
+        Colmap,
+        Train,
+        PrepareRender,
+        Render,
+        SavingRender,
+        Finished,
     }
 
     public enum OperationStatus
     {
         Ok,
+        Error,
     }
 }

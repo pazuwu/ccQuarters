@@ -1,33 +1,29 @@
-﻿using Google.Cloud.Firestore;
-
+﻿
 namespace VirtualTourAPI.DTOModel
 {
-    [FirestoreData]
     public class VTOperationDTO
     {
-        [FirestoreProperty]
         public string? AreaId { get; set; }
-
-        [FirestoreProperty]
         public string? TourId { get; set; }
-
-        [FirestoreProperty]
-        public int ProcessingAttempts { get; set; } = 0;
-        
-        [FirestoreProperty(ConverterType = typeof(FirestoreEnumNameConverter<OperationStage>))]
-        public OperationStage Stage { get; set; } = OperationStage.Waiting;
-
-        [FirestoreProperty(ConverterType = typeof(FirestoreEnumNameConverter<OperationStatus>))]
-        public OperationStatus Status { get; set; } = OperationStatus.Ok;
+        public int ProcessingAttempts { get; set; }
+        public OperationStageDTO Stage { get; set; }
+        public OperationStatusDTO Status { get; set; }
     }
 
-    public enum OperationStage
+    public enum OperationStageDTO
     {
         Waiting,
+        Colmap,
+        Train,
+        PrepareRender,
+        Render,
+        SavingRender,
+        Finished,
     }
 
-    public enum OperationStatus
+    public enum OperationStatusDTO
     {
         Ok,
+        Error,
     }
 }

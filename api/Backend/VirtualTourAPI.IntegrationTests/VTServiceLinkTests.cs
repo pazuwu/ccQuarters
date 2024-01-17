@@ -3,7 +3,12 @@
 #else
 
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
+using RepositoryLibrary;
 using VirtualTourAPI.DTOModel;
+using VirtualTourAPI.Services.Interfaces;
+using VirtualTourAPI.Services;
 
 #nullable disable
 
@@ -16,6 +21,15 @@ namespace VirtualTourAPI.IntegrationTests
         private static string _firstSceneId;
         private static string _secondSceneId;
 
+        private readonly ILinkService _linkService;
+
+        public VTServiceLinkTests() : base()
+        {
+            var loogerMock = new Mock<ILogger<LinkService>>();
+            var repository = new DocumentDBRepository();
+            _linkService = new LinkService(repository, loogerMock.Object);
+        }
+
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
@@ -25,20 +39,24 @@ namespace VirtualTourAPI.IntegrationTests
                 OwnerId = "UserId"
             };
 
-            _tourId = await _service.CreateTour(tour);
+            _tourId = await _tourService.CreateTour(tour);
             _tourId.Should().NotBeNull();
 
+            var loogerMock = new Mock<ILogger<SceneService>>();
+            var repository = new DocumentDBRepository();
+            var sceneService = new SceneService(repository, loogerMock.Object);
+
             var firstScene = new NewSceneDTO() { Name = "First scene" };
-            _firstSceneId = await _service.CreateScene(_tourId, firstScene);
+            _firstSceneId = await sceneService.CreateScene(_tourId, firstScene);
 
             var secondScene = new NewSceneDTO() { Name = "Second scene" };
-            _secondSceneId = await _service.CreateScene(_tourId, secondScene);
+            _secondSceneId = await sceneService.CreateScene(_tourId, secondScene);
         }
 
         [ClassCleanup]
         public static async Task Cleanup()
         {
-            await _service.DeleteTour(_tourId);
+            await _tourService.DeleteTour(_tourId);
         }
 
         [TestMethod]
@@ -53,7 +71,7 @@ namespace VirtualTourAPI.IntegrationTests
                 NextOrientation = new GeoPointDTO(30, 40),
             };
 
-            var linkId = await _service.CreateLink(_tourId, newLink);
+            var linkId = await _linkService.CreateLink(_tourId, newLink);
 
             var link = new LinkDTO()
             {
@@ -65,7 +83,7 @@ namespace VirtualTourAPI.IntegrationTests
                 NextOrientation = newLink.NextOrientation,
             };
 
-            var tour = await _service.GetTourForEdit(_tourId);
+            var tour = await _tourService.GetTourForEdit(_tourId);
 
             tour.Links.Should().Contain(l => SameLinkAs(l, link));
         }
@@ -82,7 +100,7 @@ namespace VirtualTourAPI.IntegrationTests
                 NextOrientation = new GeoPointDTO(30, 40),
             };
 
-            var linkId = await _service.CreateLink(_tourId, newLink);
+            var linkId = await _linkService.CreateLink(_tourId, newLink);
 
             var link = new LinkDTO()
             {
@@ -94,12 +112,12 @@ namespace VirtualTourAPI.IntegrationTests
                 NextOrientation = newLink.NextOrientation,
             };
 
-            var tour = await _service.GetTourForEdit(_tourId);
+            var tour = await _tourService.GetTourForEdit(_tourId);
 
             tour.Links.Should().Contain(l => l.Id == linkId);
 
-            await _service.DeleteLink(_tourId, linkId);
-            var tourAfterLinkDelete = await _service.GetTourForEdit(_tourId);
+            await _linkService.DeleteLink(_tourId, linkId);
+            var tourAfterLinkDelete = await _tourService.GetTourForEdit(_tourId);
             tourAfterLinkDelete.Links.Should().NotContain(l => SameLinkAs(l, link));
         }
 
@@ -115,7 +133,7 @@ namespace VirtualTourAPI.IntegrationTests
                 NextOrientation = new GeoPointDTO(30, 40),
             };
 
-            var linkId = await _service.CreateLink(_tourId, newLink);
+            var linkId = await _linkService.CreateLink(_tourId, newLink);
 
             var link = new LinkDTO()
             {
@@ -127,7 +145,7 @@ namespace VirtualTourAPI.IntegrationTests
                 NextOrientation = newLink.NextOrientation,
             };
 
-            var tour = await _service.GetTourForEdit(_tourId);
+            var tour = await _tourService.GetTourForEdit(_tourId);
 
             tour.Links.Should().Contain(l => SameLinkAs(l, link));
 
@@ -141,8 +159,8 @@ namespace VirtualTourAPI.IntegrationTests
                 Position = new GeoPointDTO(70, 80),
             };
 
-            await _service.UpdateLink(_tourId, linkAfterModification);
-            var tourAfterLinkUpdate = await _service.GetTourForEdit(_tourId);
+            await _linkService.UpdateLink(_tourId, linkAfterModification);
+            var tourAfterLinkUpdate = await _tourService.GetTourForEdit(_tourId);
 
             tourAfterLinkUpdate.Links.Should().NotContain(l => SameLinkAs(l, link));
             tourAfterLinkUpdate.Links.Should().Contain(l => SameLinkAs(l, linkAfterModification));

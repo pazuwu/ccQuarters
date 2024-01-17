@@ -1,21 +1,20 @@
 ﻿using AuthLibrary;
-using Google.Cloud.Firestore;
 using System.Security.Claims;
 using VirtualTourAPI.DTOModel;
-using VirtualTourAPI.Model;
 using VirtualTourAPI.Requests;
-using VirtualTourAPI.Service;
+using VirtualTourAPI.Services.Interfaces;
 
 namespace VirtualTourAPI.Endpoints
 {
     public static class LinkEndpoints
     {
-        public static async Task<IResult> Post(string tourId, HttpContext context, PostLinkRequest request, IVTService service)
+        public static async Task<IResult> Post(string tourId, HttpContext context, PostLinkRequest request, 
+            ITourService tourService, ILinkService linkService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
             Dictionary<string, string[]> errors = new();
@@ -37,7 +36,7 @@ namespace VirtualTourAPI.Endpoints
                 NextOrientation = request.NextOrientation,
             };
 
-            var createdLinkId = await service.CreateLink(tourId, newLink);
+            var createdLinkId = await linkService.CreateLink(tourId, newLink);
 
             if (string.IsNullOrWhiteSpace(createdLinkId))
                 return Results.Problem("DB error occured while creating object.");
@@ -45,12 +44,13 @@ namespace VirtualTourAPI.Endpoints
             return Results.Created(createdLinkId, null);
         }
 
-        public static async Task<IResult> Put(string tourId, string linkId, HttpContext context, PutLinkRequest request, IVTService service)
+        public static async Task<IResult> Put(string tourId, string linkId, HttpContext context, PutLinkRequest request, 
+            ITourService tourService, ILinkService linkService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
             var link = new LinkDTO()
@@ -62,19 +62,20 @@ namespace VirtualTourAPI.Endpoints
                 Text = request.Text,
             };
 
-            await service.UpdateLink(tourId, link);
+            await linkService.UpdateLink(tourId, link);
             return Results.Ok();
         }
 
-        public static async Task<IResult> Delete(string tourId, string linkId, HttpContext context, IVTService service)
+        public static async Task<IResult> Delete(string tourId, string linkId, HttpContext context, 
+            ITourService tourService, ILinkService linkService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
-            if (userId == null || !await service.HasUserPermissionToModifyTour(tourId, userId))
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
-            await service.DeleteLink(tourId, linkId);
+            await linkService.DeleteLink(tourId, linkId);
             return Results.Ok();
         }
     }

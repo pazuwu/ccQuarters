@@ -2,8 +2,8 @@ using AuthLibrary;
 using CloudStorageLibrary;
 using RepositoryLibrary;
 using VirtualTourAPI.Endpoints;
-using VirtualTourAPI.Repository;
-using VirtualTourAPI.Service;
+using VirtualTourAPI.Services;
+using VirtualTourAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,14 +13,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.AddFirebaseSecurityDefinition());
 builder.Services.AddCors(c => c.AddLocationHeaderCorsOptions());
 
-builder.Services.Configure<DocumentDBOptions>(options =>
-    builder.Configuration.GetSection(nameof(DocumentDBOptions)).Bind(options));
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ITokenProvider, TokenProvider>();
-builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
 builder.Services.AddTransient<IDocumentDBRepository, DocumentDBRepository>();
-builder.Services.AddTransient<IVTService, VTService>();
+builder.Services.AddTransient<IStorage, FirebaseCloudStorage>();
+
+builder.Services.AddSingleton<ITourService, TourService>();
+builder.Services.AddSingleton<ISceneService, SceneService>();
+builder.Services.AddSingleton<ILinkService, LinkService>();
+builder.Services.AddSingleton<IAreaService, AreaService>();
+builder.Services.AddSingleton<IOperationService, OperationService>();
 
 var app = builder.Build();
 
@@ -63,5 +65,7 @@ app.MapPost("/tours/{tourId}/links", LinkEndpoints.Post).WithOpenApi().RequireFB
 app.MapPut("/tours/{tourId}/links/{linkId}", LinkEndpoints.Put).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("/tours/{tourId}/links/{linkId}", LinkEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
 
+app.MapPut("/operations/{operationId}", OperationEndpoints.Put).WithOpenApi().RequireFBAuthorization();
+app.MapDelete("/operations/{operationId}", OperationEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
 
 app.Run();
