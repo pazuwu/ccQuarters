@@ -17,13 +17,13 @@ namespace VirtualTourAPI.Client.IntegrationTests
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
-            CreateTourParameters parameters = new();
+            CreateTourParameters parameters = new() { Name = "TourName" };
             var result = await _service.CreateTour(parameters);
             result.Tour.Should().NotBeNull();
             result.Tour!.Id.Should().NotBeNull();
             _tour = result.Tour;
 
-            CreateSceneParameters createSceneParameters = new() { TourId = _tour.Id };
+            CreateSceneParameters createSceneParameters = new() { TourId = _tour.Id, Name = "Name" };
             await _service.CreateScene(createSceneParameters);
             await _service.CreateScene(createSceneParameters);
 

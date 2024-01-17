@@ -132,13 +132,22 @@ namespace VirtualTourAPI.Services
             return tourOwnerId == userId;
         }
 
-        public async Task<TourInfoDBO[]> GetAllUserTourInfos(string userId)
+        public async Task<TourInfoDTO[]> GetAllUserTourInfos(string userId)
         {
             var allUserToursSnapshotTask = _documentRepository.GetByFieldAsync(DBCollections.Tours, nameof(TourForEditDTO.OwnerId), userId);
             await allUserToursSnapshotTask;
             var allUserToursIds = ConvertCollection<TourInfoDBO>(allUserToursSnapshotTask)?.ToArray();
 
-            return allUserToursIds ?? Array.Empty<TourInfoDBO>();
+            return allUserToursIds?.Select(t => t.Map()).ToArray() ?? Array.Empty<TourInfoDTO>();
+        }
+
+        public async Task<TourInfoDTO?> GetTourInfo(string tourId)
+        {
+            var path = $"{DBCollections.Tours}/{tourId}";
+            var tourSnapshot = await _documentRepository.GetAsync(path);
+            var tourInfo = tourSnapshot?.ConvertTo<TourInfoDBO>();
+
+            return tourInfo?.Map();
         }
 
         private IEnumerable<T>? ConvertCollection<T>(Task<IEnumerable<DocumentSnapshot>?> queryTask)

@@ -17,7 +17,7 @@ namespace VirtualTourAPI.Client.IntegrationTests
         [ClassInitialize]
         public static async Task Initialize(TestContext testContext)
         {
-            CreateTourParameters parameters = new();
+            CreateTourParameters parameters = new() { Name = "TourName" };
             var result = await _service.CreateTour(parameters);
 
             result.Tour.Should().NotBeNull();

@@ -12,7 +12,7 @@ namespace VirtualTourAPI.Client.IntegrationTests
         [TestMethod]
         public async Task CreateTourShouldCreateTour()
         {
-            CreateTourParameters parameters = new();
+            CreateTourParameters parameters = new() { Name = "TourName" };
             var result = await _service.CreateTour(parameters);
 
             result.Tour.Should().NotBeNull();
@@ -30,7 +30,7 @@ namespace VirtualTourAPI.Client.IntegrationTests
         [TestMethod]
         public async Task DeleteTourShouldDeleteTour()
         {
-            CreateTourParameters parameters = new();
+            CreateTourParameters parameters = new() { Name = "TourName" };
             var result = await _service.CreateTour(parameters);
 
             result.Tour.Should().NotBeNull();
