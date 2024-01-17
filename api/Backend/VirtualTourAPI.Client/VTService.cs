@@ -219,5 +219,26 @@ namespace VirtualTourAPI.Client
                 PhotoUrls = response
             };
         }
+
+        public async Task<UpdateOperationResult> UpdateOperation(UpdateOperationParameters parameters)
+        {
+            var request = new PutOperationRequest()
+            {
+                Stage = parameters.Stage
+            };
+
+            var response = await _http.PutAsJsonAsync($"tours/{parameters.TourId}/operations/{parameters.OperationId}", request);
+            response.EnsureSuccessStatusCode();
+
+            return new();
+        }
+
+        public async Task<DeleteOperationResult> DeleteOperation(DeleteOperationParameters parameters)
+        {
+            var response = await _http.DeleteAsync($"tours/{parameters.TourId}/operations/{parameters.OperationId}");
+            response.EnsureSuccessStatusCode();
+
+            return new();
+        }
     }
 }
