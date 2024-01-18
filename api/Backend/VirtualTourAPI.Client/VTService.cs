@@ -238,10 +238,12 @@ namespace VirtualTourAPI.Client
         {
             var request = new PutOperationRequest()
             {
-                Stage = parameters.Stage
+                Stage = parameters.Stage,
+                Status = parameters.Status,
+                ProcessingAttempts = parameters.ProcessingAttempts,
             };
 
-            var response = await _http.PutAsJsonAsync($"tours/{parameters.TourId}/operations/{parameters.OperationId}", request);
+            var response = await _http.PutAsJsonAsync($"operations/{parameters.OperationId}", request);
             response.EnsureSuccessStatusCode();
 
             return new();
@@ -249,7 +251,7 @@ namespace VirtualTourAPI.Client
 
         public async Task<DeleteOperationResult> DeleteOperation(DeleteOperationParameters parameters)
         {
-            var response = await _http.DeleteAsync($"tours/{parameters.TourId}/operations/{parameters.OperationId}");
+            var response = await _http.DeleteAsync($"operations/{parameters.OperationId}");
             response.EnsureSuccessStatusCode();
 
             return new();

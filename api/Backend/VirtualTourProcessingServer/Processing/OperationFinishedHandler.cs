@@ -1,9 +1,13 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using VirtualTourProcessingServer.Model;
+using VirtualTourAPI.Client;
+using VirtualTourAPI.Client.Parameters;
 using VirtualTourProcessingServer.OperationExecutors;
-using VirtualTourProcessingServer.OperationService;
 using VirtualTourProcessingServer.Processing.Interfaces;
+using OperationStage = VirtualTourProcessingServer.Model.OperationStage;
+using VTAPIOperationStage = VirtualTourAPI.Client.Model.OperationStage;
+using OperationStatus = VirtualTourProcessingServer.Model.OperationStatus;
+using VTAPIOperationStatus = VirtualTourAPI.Client.Model.OperationStatus;
 
 namespace VirtualTourProcessingServer.Processing
 {
@@ -11,13 +15,13 @@ namespace VirtualTourProcessingServer.Processing
     {
         private readonly ILogger _logger;
         private readonly IOperationManager _operationManager;
-        private readonly IOperationService _operationRepository;
+        private readonly VTClient _client;
 
-        public OperationFinishedHandler(ILogger<OperationFinishedHandler> logger, IOperationManager operationHub, IOperationService repository)
+        public OperationFinishedHandler(ILogger<OperationFinishedHandler> logger, IOperationManager operationHub, VTClient client)
         {
             _logger = logger;
             _operationManager = operationHub;
-            _operationRepository = repository;
+            _client = client;
         }
 
         public async Task Handle(OperationFinishedNotification notification, CancellationToken cancellationToken)
@@ -37,14 +41,28 @@ namespace VirtualTourProcessingServer.Processing
 
                 if (notification.Operation.Stage != OperationStage.Finished)
                     notification.Operation.Stage++;
-                else
-                {
-                    await _operationRepository.DeleteOperation(operation);
-                    return;
-                }
             }
 
-            await _operationRepository.UpdateOperation(notification.Operation);
+
+            var updateOperationParameters = new UpdateOperationParameters()
+            {
+                OperationId = notification.Operation.OperationId,
+                Stage = MapStage(notification.Operation.Stage),
+                ProcessingAttempts = notification.Operation.ProcessingAttempts,
+                Status = notification.Operation.Status == OperationStatus.Ok ? VTAPIOperationStatus.Ok : VTAPIOperationStatus.Error,
+            };
+
+            await _client.Service.UpdateOperation(updateOperationParameters);
+        }
+
+        private static VTAPIOperationStage MapStage(OperationStage stage)
+        {
+            if(Enum.TryParse<VTAPIOperationStage>(stage.ToString(), out var operationStage))
+            {
+                return operationStage;
+            }
+
+            return VTAPIOperationStage.Finished;
         }
     }
 }
