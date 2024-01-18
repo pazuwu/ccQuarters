@@ -24,17 +24,18 @@ namespace VirtualTourAPI.Services
             _configuration = configuration;
         }
 
-        public async Task<string?> CreateOperation(string tourId, string areaId)
+        public async Task<string?> CreateOperation(string tourId, string areaId, string userEmail)
         {
             long? operationsCount = await _documentRepository.GetCountByFieldAsync(DBCollections.Operations, nameof(VTOperationDTO.AreaId), areaId);
 
             if (operationsCount is not null && operationsCount > 0)
                 return null;
 
-            var operation = new VTOperationDTO()
+            var operation = new VTOperationDBO()
             {
                 AreaId = areaId,
-                TourId = tourId
+                TourId = tourId,
+                UserEmail = userEmail
             };
 
             string addedOperationId = await _documentRepository.AddAsync(DBCollections.Operations, operation);

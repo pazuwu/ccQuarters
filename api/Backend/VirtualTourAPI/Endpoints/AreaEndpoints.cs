@@ -82,7 +82,12 @@ namespace VirtualTourAPI.Endpoints
             if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
 
-            var operationId = await operationService.CreateOperation(tourId, areaId);
+            var userEmail = identity?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+
+            if(userEmail == null) 
+                return Results.BadRequest("User email not found in user token");
+
+            var operationId = await operationService.CreateOperation(tourId, areaId, userEmail);
 
             if (operationId == null)
                 return Results.Conflict();
