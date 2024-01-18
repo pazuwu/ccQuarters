@@ -68,7 +68,7 @@ namespace VirtualTourAPI.Services
 
             _logger.LogInformation("Operation finished mail sent, id: {operationId}", operationId);
 
-            //await _documentRepository.DeleteAsync(path);
+            await _documentRepository.DeleteAsync(path);
         }
 
         public async Task UpdateOperation(string operationId, VTOperationUpdateDTO operationUpdate)
@@ -78,11 +78,11 @@ namespace VirtualTourAPI.Services
             var updateDictionary = new Dictionary<string, object>();
 
             if (operationUpdate.Status != null)
-                updateDictionary[nameof(operationUpdate.Status)] = operationUpdate.Status;
+                updateDictionary[nameof(operationUpdate.Status)] = operationUpdate.Status.ToString()!;
             if (operationUpdate.ProcessingAttempts != null)
                 updateDictionary[nameof(operationUpdate.ProcessingAttempts)] = operationUpdate.ProcessingAttempts;
             if (operationUpdate.Stage != null)
-                updateDictionary[nameof(operationUpdate.Stage)] = operationUpdate.Stage;
+                updateDictionary[nameof(operationUpdate.Stage)] = operationUpdate.Stage.ToString()!;
 
 
             await _documentRepository.SetAsync(path, updateDictionary);

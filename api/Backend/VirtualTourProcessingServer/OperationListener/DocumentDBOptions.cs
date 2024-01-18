@@ -1,5 +1,4 @@
-﻿
-namespace VirtualTourProcessingServer.OperationRepository
+﻿namespace VirtualTourProcessingServer.OperationListener
 {
     public class DocumentDBOptions
     {

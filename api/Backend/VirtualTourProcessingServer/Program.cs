@@ -11,8 +11,7 @@ using VirtualTourProcessingServer.Model;
 using VirtualTourProcessingServer.OperationExecutors;
 using VirtualTourProcessingServer.OperationExecutors.Interfaces;
 using VirtualTourProcessingServer.OperationExecutors.Render;
-using VirtualTourProcessingServer.OperationRepository;
-using VirtualTourProcessingServer.OperationService;
+using VirtualTourProcessingServer.OperationListener;
 using VirtualTourProcessingServer.Processing;
 using VirtualTourProcessingServer.Processing.Interfaces;
 using VirtualTourProcessingServer.Services;
@@ -34,7 +33,6 @@ builder.Services.AddHttpClient<VTClient>((sp, http) =>
 });
 
 builder.Services.AddTransient<IDocumentDBRepository,  DocumentDBRepository>();
-builder.Services.AddSingleton<IOperationService, OperationService>();
 
 builder.Services.AddSingleton<IOperationManager, OperationManager>();
 builder.Services.AddTransient<HubResolver>(sp => (operationStage, hub, multiHub) =>
