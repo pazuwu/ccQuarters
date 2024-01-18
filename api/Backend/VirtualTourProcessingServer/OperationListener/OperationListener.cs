@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using VirtualTourProcessingServer.Model;
-using VirtualTourProcessingServer.OperationRepository;
+using VirtualTourProcessingServer.OperationListener;
 
 namespace VirtualTourProcessingServer.Services
 {
