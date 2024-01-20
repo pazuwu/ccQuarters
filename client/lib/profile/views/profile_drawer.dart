@@ -1,7 +1,7 @@
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/profile/cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:provider/provider.dart';
 
 class ProfileDrawer extends StatelessWidget {
@@ -49,7 +49,7 @@ class ProfileDrawer extends StatelessWidget {
                 : 'Wyloguj się'),
             onTap: () {
               context.read<AuthCubit>().signOut();
-              GoRouter.of(context).refresh();
+              context.refresh();
             },
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:ccquarters/environment.dart';
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/navigation.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
+import 'package:ccquarters/navigation/navigation_config.dart';
 import 'package:ccquarters/services/alerts/service.dart';
 import 'package:ccquarters/services/auth/authorized_dio.dart';
 import 'package:ccquarters/services/auth/service.dart';
@@ -54,14 +55,17 @@ class AppMainGate extends StatelessWidget {
             authService: context.read(),
             userService: context.read(),
           ),
-        )
+        ),
+        Provider.value(
+          value: HistoryStack('/home'),
+        ),
       ],
       child: MaterialApp.router(
         title: "CCQuarters",
         themeMode: ThemeMode.light,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        routerConfig: CCQNavigation.router,
+        routerConfig: CCQNavigationConfig.router,
         debugShowCheckedModeBanner: false,
       ),
     );

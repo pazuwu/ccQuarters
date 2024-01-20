@@ -8,7 +8,7 @@ import 'package:ccquarters/profile/views/profile_drawer.dart';
 import 'package:ccquarters/profile/views/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class Profile extends StatefulWidget {

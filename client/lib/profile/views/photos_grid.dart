@@ -5,7 +5,7 @@ import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:ccquarters/common/messages/message.dart';
 import 'package:ccquarters/model/houses/house.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class PhotosGrid extends StatefulWidget {
@@ -88,9 +88,7 @@ class _PhotosGridState extends State<PhotosGrid> {
                     borderRadius: const BorderRadius.all(Radius.zero),
                   ),
             onTap: () {
-              context.go('/houses/${house.id}',
-                  extra:
-                      GoRouter.of(context).routeInformationProvider.value.uri);
+              context.go('/houses/${house.id}');
             },
           ),
         ),

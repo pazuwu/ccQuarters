@@ -14,7 +14,7 @@ import 'package:ccquarters/common/views/show_form.dart';
 import 'package:ccquarters/model/virtual_tours/scene.dart';
 import 'package:ccquarters/my_tours/scene_list/cubit.dart';
 import 'package:ccquarters/my_tours/scene_list/scene_form.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 class SceneList extends StatefulWidget {
   const SceneList({
@@ -37,7 +37,6 @@ class _SceneListState extends State<SceneList> {
         path: '/tours/${widget.tour.id}',
         queryParameters: {'sceneId': scene.id},
       ).toString(),
-      extra: GoRouter.of(context).routeInformationProvider.value.uri,
     );
   }
 

@@ -7,10 +7,10 @@ import 'package:ccquarters/add_house/views/map_view.dart';
 import 'package:ccquarters/add_house/views/photo_view.dart';
 import 'package:ccquarters/add_house/views/virtual_tour_view.dart';
 import 'package:ccquarters/house_details/cubit.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:easy_stepper/easy_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class ViewsWithStepper extends StatefulWidget {
   const ViewsWithStepper({
@@ -184,7 +184,7 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
         MediaQuery.of(context).orientation == Orientation.portrait;
 
     if (activeStep == _getChooseTypeIndex()) {
-      context.go('/home');
+      context.goBack();
     } else if (activeStep == _getDetailsIndex()) {
       context.read<AddHouseFormCubit>().goToChooseTypeForm();
     } else if (activeStep == _getLocationIndex(isPortrait)) {

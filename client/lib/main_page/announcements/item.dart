@@ -5,7 +5,7 @@ import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/images/inkwell_with_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:intl/intl.dart';
 
 class HouseItem extends StatelessWidget {
@@ -46,11 +46,7 @@ class HouseItem extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                context.go('/houses/${house.id}',
-                    extra: GoRouter.of(context)
-                        .routeInformationProvider
-                        .value
-                        .uri);
+                context.go('/houses/${house.id}');
               },
             ),
           ),

@@ -2,7 +2,7 @@ import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 class SignInWidget extends StatelessWidget {
   const SignInWidget({super.key});
