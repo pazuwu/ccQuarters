@@ -1,10 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/users/user.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 enum NavigationItemVisibility {
   always,
@@ -15,12 +16,14 @@ enum NavigationItemVisibility {
 class NavigationItem {
   final String path;
   final String label;
+  final String? parentPath;
   final IconData icon;
   final NavigationItemVisibility isVisible;
   final void Function(BuildContext context)? onTap;
 
   NavigationItem({
     required this.path,
+    this.parentPath,
     required this.label,
     required this.icon,
     this.isVisible = NavigationItemVisibility.always,
@@ -50,6 +53,7 @@ class NavigationShell extends StatelessWidget {
     return _NavigationShellPresenter(
       selectedIndex: selectedIndex == -1 ? 0 : selectedIndex,
       visibleItems: visibleItems,
+      dontShowSelection: selectedIndex == -1,
       child: child,
     );
   }
@@ -90,11 +94,13 @@ class _NavigationShellPresenter extends StatelessWidget {
     Key? key,
     required this.visibleItems,
     required this.selectedIndex,
+    required this.dontShowSelection,
     required this.child,
   }) : super(key: key);
 
   final List<NavigationItem> visibleItems;
   final int selectedIndex;
+  final bool dontShowSelection;
   final Widget child;
 
   @override
@@ -110,7 +116,9 @@ class _NavigationShellPresenter extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: Theme.of(context).primaryColor,
+        selectedItemColor: dontShowSelection
+            ? Colors.grey.shade600
+            : Theme.of(context).primaryColor,
         type: BottomNavigationBarType.fixed,
         iconSize: 35,
         items: visibleItems

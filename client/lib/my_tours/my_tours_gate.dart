@@ -1,6 +1,6 @@
 import 'package:ccquarters/my_tours/scene_list/gate.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 import 'package:ccquarters/my_tours/tour_list/gate.dart';
 import 'package:ccquarters/tours/tour_loader/gate.dart';
@@ -71,15 +71,7 @@ class _MyToursGateState extends State<MyToursGate> {
   }
 
   Widget _buildPortrait(BuildContext context) {
-    return _openedTourId == null
-        ? _toursList
-        : BackButtonListener(
-            onBackButtonPressed: () async {
-              context.go('/my-tours');
-
-              return true;
-            },
-            child: _sceneList);
+    return _openedTourId == null ? _toursList : _sceneList;
   }
 
   Widget _buildLandscape(BuildContext context) {

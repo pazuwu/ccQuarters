@@ -10,7 +10,6 @@ import 'package:ccquarters/profile/views/edit_profile.dart';
 import 'package:ccquarters/profile/views/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class ProfileGate extends StatelessWidget {
   const ProfileGate({super.key});
@@ -28,13 +27,7 @@ class ProfileGate extends StatelessWidget {
           if (state is ProfilePageInitialState ||
               state is ErrorState ||
               state is LoadingDataState) {
-            return BackButtonListener(
-              onBackButtonPressed: () async {
-                context.go('/home');
-                return true;
-              },
-              child: _getWidgetWithGoBackToHome(state),
-            );
+            return _getWidgetWithGoBackToHome(state);
           } else {
             return BackButtonListener(
               onBackButtonPressed: () async {

@@ -12,7 +12,7 @@ import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ListOfHouses extends StatefulWidget {
@@ -70,29 +70,23 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   @override
   Widget build(BuildContext context) {
-    return BackButtonListener(
-      onBackButtonPressed: () async {
-        _goBack();
-        return true;
-      },
-      child: RefreshIndicator(
-        onRefresh: () async => _pagingController.refresh(),
-        child: LayoutBuilder(
-          builder: (context, constraints) => Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (constraints.maxWidth > constraints.maxHeight &&
-                  MediaQuery.of(context).orientation == Orientation.landscape)
-                _buildFiltersColumn(context),
-              Expanded(
-                child: _buildList(
-                    context,
-                    constraints.maxWidth > constraints.maxHeight
-                        ? Orientation.landscape
-                        : Orientation.portrait),
-              ),
-            ],
-          ),
+    return RefreshIndicator(
+      onRefresh: () async => _pagingController.refresh(),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (constraints.maxWidth > constraints.maxHeight &&
+                MediaQuery.of(context).orientation == Orientation.landscape)
+              _buildFiltersColumn(context),
+            Expanded(
+              child: _buildList(
+                  context,
+                  constraints.maxWidth > constraints.maxHeight
+                      ? Orientation.landscape
+                      : Orientation.portrait),
+            ),
+          ],
         ),
       ),
     );
@@ -161,7 +155,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
 
   _goBack() {
     if (widget.isSearch) {
-      context.go('/home');
+      context.goBack();
     } else {
       if (_isSearch) {
         setState(() {
@@ -173,7 +167,7 @@ class _ListOfHousesState extends State<ListOfHouses> {
           _isSearch = false;
         });
       } else {
-        context.go('/home');
+        context.goBack();
       }
     }
   }

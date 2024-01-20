@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 import 'package:ccquarters/common/views/show_form.dart';
@@ -44,7 +44,7 @@ class _TourListState extends State<TourList> {
       leading: MediaQuery.of(context).orientation == Orientation.portrait
           ? IconButton(
               onPressed: () {
-                context.go('/profile');
+                context.goBack();
               },
               icon: const Icon(Icons.arrow_back_ios),
             )

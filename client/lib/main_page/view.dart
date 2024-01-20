@@ -5,7 +5,7 @@ import 'package:ccquarters/model/houses/house.dart';
 import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'announcements/container.dart';
 import 'search/search_box.dart';

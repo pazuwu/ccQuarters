@@ -58,31 +58,25 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
   Widget build(BuildContext context) {
     var state = context.read<AuthCubit>().state;
 
-    return BackButtonListener(
-      onBackButtonPressed: () async {
-        _goBack();
-        return true;
-      },
-      child: ConstrainedCenterBox(
-        child: Scaffold(
-          appBar: _buildAppBar(context),
-          bottomNavigationBar: _buildBottomBar(context),
-          resizeToAvoidBottomInset: false,
-          body: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildWelcomeText(),
-                  if (state is InputDataState && state.error != null)
-                    _showErrors(state, context),
-                  _buildFields(),
-                  _buildButtons(context),
-                ],
-              ),
+    return ConstrainedCenterBox(
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        bottomNavigationBar: _buildBottomBar(context),
+        resizeToAvoidBottomInset: false,
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildWelcomeText(),
+                if (state is InputDataState && state.error != null)
+                  _showErrors(state, context),
+                _buildFields(),
+                _buildButtons(context),
+              ],
             ),
           ),
         ),
