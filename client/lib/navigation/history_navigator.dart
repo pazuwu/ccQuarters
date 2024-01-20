@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,6 +38,8 @@ class HistoryStack {
   RouteInfo _peek() {
     return _stack.last;
   }
+
+  int get size => _stack.length;
 }
 
 extension HistoryNavigatorContextExtensions on BuildContext {
@@ -46,12 +49,53 @@ extension HistoryNavigatorContextExtensions on BuildContext {
   }
 
   void goBack() {
-    read<HistoryStack>()._pop();
-    var currentRoute = read<HistoryStack>()._peek();
+    var historyStack = read<HistoryStack>();
+
+    if (historyStack.size == 1) {
+      _buildDialogWithQuestionIfUserWantsToLeaveApp(this)
+          .then((userWantsToLeaveApp) {
+        if (userWantsToLeaveApp ?? false) {
+          _closeApp();
+        }
+      });
+    }
+
+    historyStack._pop();
+    var currentRoute = historyStack._peek();
     GoRouter.of(this).go(currentRoute.path, extra: currentRoute.extra);
   }
 
   void refresh() {
     GoRouter.of(this).refresh();
+  }
+
+  void _closeApp() {
+    SystemNavigator.pop();
+  }
+
+  Future<bool?> _buildDialogWithQuestionIfUserWantsToLeaveApp(
+      BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => BackButtonListener(
+        onBackButtonPressed: () async {
+          Navigator.of(context).pop(false);
+          return true;
+        },
+        child: AlertDialog(
+          title: const Text("Czy na pewno chcesz wyjść z aplikacji?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Nie"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Tak"),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
