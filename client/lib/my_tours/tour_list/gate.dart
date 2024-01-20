@@ -9,7 +9,7 @@ import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/my_tours/tour_list/cubit.dart';
 import 'package:ccquarters/my_tours/tour_list/tour_list.dart';
 import 'package:ccquarters/model/virtual_tours/tour_info.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 class VTListGate extends StatelessWidget {
   const VTListGate({
@@ -25,7 +25,7 @@ class VTListGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return BackButtonListener(
       onBackButtonPressed: () async {
-        context.go('/profile');
+        context.goBack();
         return true;
       },
       child: BlocProvider<VTListCubit>(
@@ -73,7 +73,7 @@ class VTListGate extends StatelessWidget {
                 tip: state.tip,
                 actionButton: !kIsWeb,
                 onAction: () {
-                  context.go('/profile');
+                  context.goBack();
                 },
               );
             }

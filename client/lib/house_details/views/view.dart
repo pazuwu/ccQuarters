@@ -12,7 +12,7 @@ import 'package:ccquarters/model/houses/detailed_house.dart';
 import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:provider/provider.dart';
 
 class DetailsView extends StatelessWidget {
@@ -54,10 +54,7 @@ class DetailsView extends StatelessWidget {
   }
 
   _showVirtualTour(BuildContext context) {
-    context.go(
-      '/tours/${house.details.virtualTourId}',
-      extra: GoRouter.of(context).routeInformationProvider.value.uri,
-    );
+    context.go('/tours/${house.details.virtualTourId}');
   }
 
   PopupMenuButton _buildPopUpMenuButton(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:ccquarters/common/views/loading_view.dart';
 import 'package:ccquarters/common/views/show_form.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 import 'package:panorama_viewer/panorama_viewer.dart';
 
 import 'package:ccquarters/common/widgets/always_visible_label.dart';
@@ -224,16 +224,9 @@ class _SceneViewerState extends State<SceneViewer> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: _buildAlwaysVisibleButton(
-            icon: Icons.arrow_back,
-            onPressed: () {
-              var previousUrl = GoRouterState.of(context).extra?.toString();
-
-              if (previousUrl != null) {
-                context.go(previousUrl);
-              } else {
-                context.pop();
-              }
-            }),
+          icon: Icons.arrow_back,
+          onPressed: () => context.goBack(),
+        ),
         backgroundColor: Colors.transparent,
         title: _buildAddHint(context),
       ),

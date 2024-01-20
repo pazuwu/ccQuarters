@@ -11,24 +11,25 @@ import 'package:ccquarters/list_of_houses/model/houses_extra.dart';
 import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/login_register/gate.dart';
 import 'package:ccquarters/main_page/gate.dart';
-import 'package:ccquarters/navigation_bar.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
+import 'package:ccquarters/navigation/navigation_bar.dart';
 import 'package:ccquarters/profile/gate.dart';
 import 'package:ccquarters/my_tours/my_tours_gate.dart';
 import 'package:ccquarters/tours/gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-class CCQNavigation {
+class CCQNavigationConfig {
   static final RouterConfig<Object> _router = GoRouter(
     initialLocation: '/home',
     routes: [
       ShellRoute(
         builder: (context, state, widget) => BackButtonListener(
           onBackButtonPressed: () async {
-            return !(await _buildDialogWithQuestionIfUserWantsToLeaveApp(
-                    context) ??
-                false);
+            context.goBack();
+            return true;
           },
           child: Scaffold(
             resizeToAvoidBottomInset: false,
@@ -177,30 +178,4 @@ class CCQNavigation {
   );
 
   static RouterConfig<Object> get router => _router;
-
-  static Future<bool?> _buildDialogWithQuestionIfUserWantsToLeaveApp(
-      BuildContext context) async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => BackButtonListener(
-        onBackButtonPressed: () async {
-          Navigator.of(context).pop(false);
-          return true;
-        },
-        child: AlertDialog(
-          title: const Text("Czy na pewno chcesz wyjść z aplikacji?"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text("Nie"),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text("Tak"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

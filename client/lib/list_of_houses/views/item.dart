@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 import 'package:ccquarters/common/consts.dart';
 import 'package:ccquarters/common/images/asset_image.dart';
@@ -43,11 +43,7 @@ class _HouseListTileState extends State<HouseListTile> {
               child: InkWellWithPhoto(
                 imageWidget: _buildPhoto(context),
                 onTap: () {
-                  context.go('/houses/${widget.house.id}',
-                      extra: GoRouter.of(context)
-                          .routeInformationProvider
-                          .value
-                          .uri);
+                  context.go('/houses/${widget.house.id}');
                 },
                 onDoubleTap: () {
                   setState(() {

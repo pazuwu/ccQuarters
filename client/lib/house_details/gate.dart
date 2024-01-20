@@ -6,7 +6,7 @@ import 'package:ccquarters/house_details/views/edit_house_view.dart';
 import 'package:ccquarters/house_details/views/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
+import 'package:ccquarters/navigation/history_navigator.dart';
 
 class HouseDetailsGate extends StatelessWidget {
   const HouseDetailsGate({super.key, required this.houseId});
@@ -27,13 +27,7 @@ class HouseDetailsGate extends StatelessWidget {
               house: state.house,
             );
           } else {
-            return BackButtonListener(
-              onBackButtonPressed: () async {
-                _goBack(context);
-                return true;
-              },
-              child: _getViewsToBackButton(state, context),
-            );
+            return _getViewsToBackButton(state, context);
           }
         },
       ),
@@ -48,22 +42,15 @@ class HouseDetailsGate extends StatelessWidget {
         state.message,
         tip: state.tip,
         actionButton: true,
-        onAction: () =>
-            context.go(GoRouterState.of(context).extra?.toString() ?? '/home'),
+        onAction: () => context.goBack(),
       );
     } else if (state is DetailsState) {
-      return DetailsView(house: state.house, goBack: _goBack);
+      return DetailsView(
+        house: state.house,
+        goBack: (context) => context.goBack(),
+      );
     }
 
     return Container();
-  }
-
-  void _goBack(BuildContext context) {
-    var previousRoute = GoRouterState.of(context).extra;
-    if (previousRoute == null) {
-      context.pop();
-    } else {
-      context.go(previousRoute.toString());
-    }
   }
 }
