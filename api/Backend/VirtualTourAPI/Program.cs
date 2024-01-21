@@ -60,7 +60,7 @@ app.MapGet("/tours/{tourId}/areas/{areaId}/photos", AreaEndpoints.GetPhotos).Wit
 app.MapPost("/tours/{tourId}/scenes", SceneEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapDelete("/tours/{tourId}/scenes/{sceneId}", SceneEndpoints.Delete).WithOpenApi().RequireFBAuthorization();
 app.MapPost("/tours/{tourId}/scenes/{sceneId}/photo", SceneEndpoints.PostPhoto).WithOpenApi().RequireFBAuthorization();
-app.MapPut("/tours/{tourId}/scenes/{sceneId}/photo", SceneEndpoints.Put).WithOpenApi().RequireFBAuthorization();
+app.MapPut("/tours/{tourId}/scenes/{sceneId}", SceneEndpoints.Put).WithOpenApi().RequireFBAuthorization();
 
 app.MapPost("/tours/{tourId}/links", LinkEndpoints.Post).WithOpenApi().RequireFBAuthorization();
 app.MapPut("/tours/{tourId}/links/{linkId}", LinkEndpoints.Put).WithOpenApi().RequireFBAuthorization();
