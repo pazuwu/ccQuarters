@@ -205,6 +205,34 @@ class TourEditCubit extends Cubit<TourEditState> {
     }
   }
 
+  Future updateScene(String sceneId, {String? name}) async {
+    var plannedLoading = Timer(const Duration(milliseconds: 500), () {
+      emit(TourEditModifyingState(
+        tour: _tour,
+        message: "Zmiana nazwy sceny",
+      ));
+    });
+
+    var result = await _service.putScene(
+      _tour.id,
+      sceneId,
+      name: name,
+    );
+    plannedLoading.cancel();
+
+    if (result.data && name != null) {
+      var scene = _tour.scenes.firstWhere((element) => element.id == sceneId);
+      scene.name = name;
+      emit(
+        TourEditSuccessState(
+          tour: _tour,
+          message: "Nazwa została zmieniona",
+          changedObject: sceneId,
+        ),
+      );
+    }
+  }
+
   Future showAreaPhotos(Area area) async {
     var plannedLoading = Timer(const Duration(milliseconds: 500), () {
       emit(TourEditModifyingState(tour: _tour, message: "Pobieranie zdjęć"));
@@ -229,6 +257,10 @@ class TourEditCubit extends Cubit<TourEditState> {
   }
 
   void closeAreaPhotos() {
+    emit(TourEditState(tour: _tour));
+  }
+
+  void clearMessages() {
     emit(TourEditState(tour: _tour));
   }
 }

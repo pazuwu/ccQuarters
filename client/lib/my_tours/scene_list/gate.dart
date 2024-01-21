@@ -27,20 +27,30 @@ class SceneListGate extends StatelessWidget {
       ),
       child: BlocBuilder<TourEditCubit, TourEditState>(
         builder: (context, state) {
-          SnackMessenger.hide(context);
           if (state is TourEditModifyingState) {
             SnackMessenger.showLoading(context, state.message);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<TourEditCubit>().clearMessages();
+            });
           } else if (state is TourEditSuccessState) {
             SnackMessenger.showSuccess(context, state.message);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<TourEditCubit>().clearMessages();
+            });
           } else if (state is TourEditErrorState) {
             SnackMessenger.showError(context, state.message);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<TourEditCubit>().clearMessages();
+            });
           } else if (state is TourEditUploadingFailedState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showPhotosSendingFailedDialog(context, state);
+              context.read<TourEditCubit>().clearMessages();
             });
           } else if (state is TourEditCreateOperationFailedState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _showOperationSendFailedDialog(context, state);
+              context.read<TourEditCubit>().clearMessages();
             });
           }
 
