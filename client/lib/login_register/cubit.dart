@@ -136,12 +136,13 @@ class AuthCubit extends Cubit<AuthState> {
       return;
     }
 
+    user.email = authService.currentUserEmail!;
     if ((!await _updateUser(user)) ||
         (photo != null && !await _sendPhoto(photo))) {
       emit(ReEnterUserDataState(
         user: user,
         image: photo,
-        error: "Nie udało się wysłać danych.\n Spróbuj ponownie później!",
+        error: "Nie udało się wysłać danych. Spróbuj ponownie później!",
       ));
       return;
     }
@@ -151,7 +152,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> updateUser() async {
     if (await _updateUser(_user!)) {
-      _user!.id = authService.currentUserId!;
+      _user!.id = currentUserId;
       emit(SignedInState());
     } else {
       emit(ErrorStateWhenUpdatingUser(
@@ -214,6 +215,13 @@ class AuthCubit extends Cubit<AuthState> {
     _user ??= User.empty();
     email = email.trim();
     _user!.email = email;
+  }
+
+  Future<void> clearMessageForReEnterUserDataState(
+    User user,
+    Uint8List? photo,
+  ) async {
+    emit(ReEnterUserDataState(user: user, image: photo));
   }
 
   Future<void> signOut() async {

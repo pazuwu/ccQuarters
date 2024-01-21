@@ -86,7 +86,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
     var response = await houseService.updateHouse(house.id, house);
     if (!response.data) {
       emit(
-          ErrorState("Nie udało się zapisać zmian. Spróbuj ponownie pózniej!"));
+          ErrorState("Nie udało się zapisać zmian.\n Spróbuj ponownie pózniej!"));
       return;
     }
 
@@ -94,7 +94,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
       var responsePhotos = await houseService.deletePhotos(photosToDelete);
       if (!responsePhotos.data) {
         emit(ErrorState(
-            "Nie udało się usunąć zdjęć. Spróbuj ponownie później!"));
+            "Nie udało się usunąć zdjęć.\n Spróbuj ponownie później!"));
         return;
       } else {
         photosToDelete = [];
@@ -156,7 +156,7 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
 
       photosToSend = failedImages;
       emit(ErrorState(
-          "Wystąpił błąd i wysłano ${photosSendingProgress!.$1} z ${photosSendingProgress!.$2} zdjęć"));
+          "Wystąpił błąd i wysłano\n ${photosSendingProgress!.$1} z ${photosSendingProgress!.$2} zdjęć"));
       return false;
     }
 
