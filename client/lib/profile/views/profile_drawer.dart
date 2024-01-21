@@ -44,9 +44,9 @@ class ProfileDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: Text(context.read<AuthCubit>().user == null
-                ? "Zaloguj się lub zarejestruj"
-                : 'Wyloguj się'),
+            title: Text(context.read<AuthCubit>().isUserLoggedIn
+                ? 'Wyloguj się'
+                : 'Zaloguj się lub zarejestruj'),
             onTap: () {
               context.read<AuthCubit>().signOut();
               context.refresh();

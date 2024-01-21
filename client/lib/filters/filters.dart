@@ -95,7 +95,7 @@ class FilterForm extends StatelessWidget {
                         'Filtry',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      if (context.read<AuthCubit>().user != null)
+                      if (context.read<AuthCubit>().isUserLoggedIn)
                         _buildSaveAsAlert(context),
                     ],
                   ),

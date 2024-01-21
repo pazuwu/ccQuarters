@@ -77,7 +77,12 @@ class _SceneViewerState extends State<SceneViewer> {
         const SizedBox(
           height: 3.0,
         ),
-        text != null ? AlwaysVisibleTextLabel(text: text) : Container(),
+        text != null
+            ? AlwaysVisibleTextLabel(
+                text: text,
+                fontSize: 11,
+              )
+            : Container(),
       ],
     );
   }
