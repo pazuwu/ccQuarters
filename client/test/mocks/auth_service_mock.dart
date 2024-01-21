@@ -13,6 +13,8 @@ class AuthServiceMock extends BaseAuthService {
   bool get isSignedIn => _isSignedIn;
   @override
   String? get currentUserId => "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
+  @override
+  String? get currentUserEmail => "jan.kowalski@gmail.com";
 
   @override
   Future<String?> getToken() async {

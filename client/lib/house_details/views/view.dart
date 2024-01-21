@@ -8,8 +8,8 @@ import 'package:ccquarters/house_details/views/map.dart';
 import 'package:ccquarters/house_details/views/photos.dart';
 import 'package:ccquarters/common/widgets/like_button.dart';
 import 'package:ccquarters/list_of_houses/views/price_info.dart';
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/model/houses/detailed_house.dart';
-import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/common/widgets/icon_360.dart';
 import 'package:flutter/material.dart';
 import 'package:ccquarters/navigation/history_navigator.dart';
@@ -45,7 +45,7 @@ class DetailsView extends StatelessWidget {
             Icon360(
               onPressed: () => _showVirtualTour(context),
             ),
-          if (house.user.id == context.read<BaseAuthService>().currentUserId)
+          if (house.user.id == context.read<AuthCubit>().currentUserId)
             _buildPopUpMenuButton(context),
         ],
       ),
@@ -209,17 +209,18 @@ class Inside extends StatelessWidget {
                       Orientation.portrait)
                     ButtonContactWidget(user: house.user),
                   const SizedBox(width: 16.0),
-                  LikeButtonWithTheme(
-                    isLiked: house.isLiked,
-                    onTap: (isLiked) async {
-                      var newValue = await context
-                          .read<HouseDetailsCubit>()
-                          .likeHouse(house.id, house.isLiked);
-                      house.isLiked = newValue;
-                      return Future.value(newValue);
-                    },
-                    size: 40,
-                  ),
+                  if (context.read<AuthCubit>().isUserLoggedIn)
+                    LikeButtonWithTheme(
+                      isLiked: house.isLiked,
+                      onTap: (isLiked) async {
+                        var newValue = await context
+                            .read<HouseDetailsCubit>()
+                            .likeHouse(house.id, house.isLiked);
+                        house.isLiked = newValue;
+                        return Future.value(newValue);
+                      },
+                      size: 40,
+                    ),
                 ],
               ),
             ],

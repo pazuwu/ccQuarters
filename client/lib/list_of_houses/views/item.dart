@@ -1,3 +1,4 @@
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ccquarters/navigation/history_navigator.dart';
@@ -151,17 +152,18 @@ class _HouseListTileState extends State<HouseListTile> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               PriceRoomCountAreaInfo(details: widget.house.details),
-              LikeButtonWithTheme(
-                isLiked: widget.house.isLiked,
-                onTap: (isLiked) async {
-                  var newValue = await context
-                      .read<ListOfHousesCubit>()
-                      .likeHouse(widget.house.id, widget.house.isLiked);
-                  widget.house.isLiked = newValue;
+              if (context.read<AuthCubit>().isUserLoggedIn)
+                LikeButtonWithTheme(
+                  isLiked: widget.house.isLiked,
+                  onTap: (isLiked) async {
+                    var newValue = await context
+                        .read<ListOfHousesCubit>()
+                        .likeHouse(widget.house.id, widget.house.isLiked);
+                    widget.house.isLiked = newValue;
 
-                  return Future.value(newValue);
-                },
-              ),
+                    return Future.value(newValue);
+                  },
+                ),
             ],
           ),
         ],

@@ -46,16 +46,21 @@ class ReEnterUserDataPage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (error != null) {
       SnackMessenger.showError(context, error!);
-      // tutaj trzeba jakoś wyczyścić message
+      context
+          .read<AuthCubit>()
+          .clearMessageForReEnterUserDataState(user, image);
     }
 
-    return EditProfileView(
-      user: user,
-      image: image,
-      onSave: (BuildContext context, User user, Uint8List? image, _) {
-        context.read<AuthCubit>().reEnterUserData(user, image);
-      },
-      reEnterUserData: true,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: EditProfileView(
+        user: user,
+        image: image,
+        onSave: (BuildContext context, User user, Uint8List? image, _) {
+          context.read<AuthCubit>().reEnterUserData(user, image);
+        },
+        reEnterUserData: true,
+      ),
     );
   }
 }

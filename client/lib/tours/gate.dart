@@ -20,7 +20,7 @@ class TourViewerGate extends StatelessWidget {
       tourId: tourId,
       tourBuilder: (context, tour) => TourViewer(
         currentSceneId: currentSceneId ?? tour.primarySceneId,
-        readOnly: context.read<AuthCubit>().user?.id != tour.ownerId,
+        readOnly: context.read<AuthCubit>().currentUserId != tour.ownerId,
         tour: tour,
       ),
     );

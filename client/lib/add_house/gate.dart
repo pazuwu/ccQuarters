@@ -84,7 +84,7 @@ class AddHouseGate extends StatelessWidget {
 
     return Message(
       title: house != null
-          ? "Ogłoszenie zostało zaktualizowane"
+          ? "Ogłoszenie zostało\n zaktualizowane"
           : "Ogłoszenie zostało dodane",
       imageWidget: Image.asset("assets/graphics/check.png"),
     );

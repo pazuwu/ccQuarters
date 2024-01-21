@@ -64,18 +64,15 @@ class AuthGate extends StatelessWidget {
         );
       } else if (state is ErrorState) {
         return ConstrainedCenterBox(
-            child: ErrorMessage(
-          state.message,
-          actionButton: true,
-          onAction: () {
-            if (state is ErrorStateWhenGettingUser) {
-              context.read<AuthCubit>().setUser();
-            } else if (state is ErrorStateWhenUpdatingUser) {
-              context.read<AuthCubit>().updateUser();
-            }
-          },
-          actionButtonTitle: "Spróbuj ponownie",
-        ));
+          child: ErrorMessage(
+            state.message,
+            actionButton: true,
+            onAction: state is ErrorStateWhenGettingUser
+                ? () => context.read<AuthCubit>().setUser()
+                : () => context.read<AuthCubit>().updateUser(),
+            actionButtonTitle: "Spróbuj ponownie",
+          ),
+        );
       }
 
       return const Center(

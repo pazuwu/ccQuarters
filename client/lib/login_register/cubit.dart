@@ -24,43 +24,46 @@ class AuthCubit extends Cubit<AuthState> {
       if (kIsWeb) {
         skipRegisterAndLogin();
       } else {
-        user = User.empty();
+        _user = User.empty();
       }
     }
   }
 
   BaseAuthService authService;
   UserService userService;
-  User? user;
+  User? _user;
   bool isBusinessAccount = false;
+
+  bool get isUserLoggedIn => authService.isSignedIn;
+  String get currentUserId => authService.currentUserId!;
 
   Future<void> skipRegisterAndLogin() async {
     emit(LoadingState());
-    user = null;
+    _user = null;
     await authService.signInAnnonymously();
     emit(SignedInState());
   }
 
   Future<void> register({required String password}) async {
     emit(LoadingState());
-    if (user == null) {
-      user = User.empty();
-      emit(InputDataState(user: user!));
+    if (_user == null) {
+      _user = User.empty();
+      emit(InputDataState(user: _user!));
       return;
     }
 
-    final registerState = RegisterState(user: user, password: password);
+    final registerState = RegisterState(user: _user, password: password);
     if (!kIsWeb && !await InternetConnectionChecker().hasConnection) {
       emit(registerState..error = "Brak Internetu!");
       return;
     }
 
     if (!isBusinessAccount) {
-      user!.company = null;
+      _user!.company = null;
     }
 
     try {
-      final result = await authService.signUp(user!.email, password);
+      final result = await authService.signUp(_user!.email, password);
 
       switch (result) {
         case SignUpResult.success:
@@ -78,20 +81,20 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> signIn({required String password}) async {
     emit(LoadingState());
-    if (user == null) {
-      user = User.empty();
-      emit(InputDataState(user: user!));
+    if (_user == null) {
+      _user = User.empty();
+      emit(InputDataState(user: _user!));
       return;
     }
 
-    final loginState = LoginState(user: user, password: password);
+    final loginState = LoginState(user: _user, password: password);
     if (!kIsWeb && !await InternetConnectionChecker().hasConnection) {
       emit(loginState..error = "Brak Internetu!");
       return;
     }
 
     try {
-      final result = await authService.signInWithEmail(user!.email, password);
+      final result = await authService.signInWithEmail(_user!.email, password);
       switch (result) {
         case SignInResult.success:
           await setUser();
@@ -133,12 +136,13 @@ class AuthCubit extends Cubit<AuthState> {
       return;
     }
 
+    user.email = authService.currentUserEmail!;
     if ((!await _updateUser(user)) ||
         (photo != null && !await _sendPhoto(photo))) {
       emit(ReEnterUserDataState(
         user: user,
         image: photo,
-        error: "Nie udało się wysłać danych.\n Spróbuj ponownie później!",
+        error: "Nie udało się wysłać danych. Spróbuj ponownie później!",
       ));
       return;
     }
@@ -147,8 +151,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> updateUser() async {
-    if (await _updateUser(user!)) {
-      user!.id = authService.currentUserId!;
+    if (await _updateUser(_user!)) {
+      _user!.id = currentUserId;
       emit(SignedInState());
     } else {
       emit(ErrorStateWhenUpdatingUser(
@@ -177,8 +181,8 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> setUser() async {
-    user = await _getUser(authService.currentUserId!);
-    if (user != null) {
+    _user = await _getUser(authService.currentUserId!);
+    if (_user != null) {
       emit(SignedInState());
     }
   }
@@ -191,7 +195,7 @@ class AuthCubit extends Cubit<AuthState> {
       } else {
         emit(ErrorStateWhenGettingUser(
             message: "Nie udało się połączyć z usługą.\n"
-                "Spróbuj ponownie później"));
+                "Sprawdź połączenie z internetem\n i spróbuj ponownie później!"));
       }
       return null;
     }
@@ -200,36 +204,43 @@ class AuthCubit extends Cubit<AuthState> {
 
   void savePersonalInfo(
       String company, String name, String surname, String phoneNumber) {
-    user ??= User.empty();
-    user!.company = company;
-    user!.name = name;
-    user!.surname = surname;
-    user!.phoneNumber = phoneNumber;
+    _user ??= User.empty();
+    _user!.company = company;
+    _user!.name = name;
+    _user!.surname = surname;
+    _user!.phoneNumber = phoneNumber;
   }
 
   void saveEmail(String email) {
-    user ??= User.empty();
+    _user ??= User.empty();
     email = email.trim();
-    user!.email = email;
+    _user!.email = email;
+  }
+
+  Future<void> clearMessageForReEnterUserDataState(
+    User user,
+    Uint8List? photo,
+  ) async {
+    emit(ReEnterUserDataState(user: user, image: photo));
   }
 
   Future<void> signOut() async {
     await authService.signOut();
 
-    user = User.empty();
+    _user = User.empty();
     emit(NeedsSigningInState());
   }
 
   Future<void> goToLoginPage() async {
-    emit(LoginState(user: user));
+    emit(LoginState(user: _user));
   }
 
   Future<void> goToPersonalInfoRegisterPage() async {
-    emit(PersonalInfoRegisterState(user: user));
+    emit(PersonalInfoRegisterState(user: _user));
   }
 
   Future<void> goToEmailAndPasswordRegisterPage() async {
-    emit(RegisterState(user: user));
+    emit(RegisterState(user: _user));
   }
 
   Future<void> goToStartPage() async {

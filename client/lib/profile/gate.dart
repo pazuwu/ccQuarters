@@ -20,7 +20,7 @@ class ProfileGate extends StatelessWidget {
       create: (_) => ProfilePageCubit(
         userService: context.read(),
         houseService: context.read(),
-        userId: context.read<AuthCubit>().user!.id,
+        userId: context.read<AuthCubit>().currentUserId,
       ),
       child: BlocBuilder<ProfilePageCubit, ProfilePageState>(
         builder: (context, state) {
