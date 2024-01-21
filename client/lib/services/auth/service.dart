@@ -11,6 +11,7 @@ import 'sign_up_result.dart';
 abstract class BaseAuthService {
   bool get isSignedIn;
   String? get currentUserId;
+  String? get currentUserEmail;
   Future<String?> getToken();
   Future<SignInResult> signInAnnonymously();
   Future<SignInResult> signInWithEmail(
@@ -46,6 +47,8 @@ class AuthService implements BaseAuthService {
   bool get isSignedIn => !(_firebaseAuth.currentUser?.isAnonymous ?? true);
   @override
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
+  @override
+  String? get currentUserEmail => _firebaseAuth.currentUser?.email;
 
   @override
   Future<String?> getToken() async {
