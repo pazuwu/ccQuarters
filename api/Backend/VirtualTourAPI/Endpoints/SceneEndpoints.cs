@@ -55,5 +55,19 @@ namespace VirtualTourAPI.Endpoints
             var url = await storage.GetDownloadUrl(collectionName, filename);
             return Results.Created(url, null);
         }
+
+        public static async Task<IResult> Put(string tourId, string sceneId, HttpContext context, 
+            ISceneService sceneService, ITourService tourService, SceneUpdateDTO sceneUpdate)
+        {
+            var identity = context.User.Identity as ClaimsIdentity;
+            string? userId = identity?.GetUserId();
+
+            if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
+                Results.Unauthorized();
+
+            await sceneService.UpdateScene(tourId, sceneId, sceneUpdate);
+
+            return Results.Ok();
+        }
     }
 }

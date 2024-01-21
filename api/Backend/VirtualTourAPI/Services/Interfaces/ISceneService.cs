@@ -6,5 +6,6 @@ namespace VirtualTourAPI.Services.Interfaces
     {
         Task<string> CreateScene(string tourId, NewSceneDTO scene);
         Task DeleteScene(string tourId, string sceneId);
+        Task UpdateScene(string tourId, string sceneId, SceneUpdateDTO sceneUpdate);
     }
 }
