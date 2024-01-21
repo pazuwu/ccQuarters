@@ -354,5 +354,3 @@ MigrationBackup/
 
 # Visual Studio Code file
 # .vscode/
-client/env/.env.dev
-client/android/app/google-services.json
