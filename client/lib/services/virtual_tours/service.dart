@@ -147,8 +147,8 @@ class VTService {
     }
   }
 
-  Future<ServiceResponse<bool>> putScene(
-      String tourId, String sceneId, {String? name}) async {
+  Future<ServiceResponse<bool>> putScene(String tourId, String sceneId,
+      {String? name}) async {
     try {
       var response = await _dio.put(
         "$_url/$_tours/$tourId/$_scenes/$sceneId",
