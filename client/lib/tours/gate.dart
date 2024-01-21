@@ -1,4 +1,4 @@
-import 'package:ccquarters/services/auth/service.dart';
+import 'package:ccquarters/login_register/cubit.dart';
 import 'package:ccquarters/tours/tour_loader/gate.dart';
 import 'package:ccquarters/tours/viewer/tour_viewer.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class TourViewerGate extends StatelessWidget {
       tourId: tourId,
       tourBuilder: (context, tour) => TourViewer(
         currentSceneId: currentSceneId ?? tour.primarySceneId,
-        readOnly: context.read<BaseAuthService>().currentUserId != tour.ownerId,
+        readOnly: context.read<AuthCubit>().currentUserId != tour.ownerId,
         tour: tour,
       ),
     );

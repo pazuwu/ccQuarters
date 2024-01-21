@@ -35,6 +35,7 @@ class AuthCubit extends Cubit<AuthState> {
   bool isBusinessAccount = false;
 
   bool get isUserLoggedIn => authService.isSignedIn;
+  String get currentUserId => authService.currentUserId!;
 
   Future<void> skipRegisterAndLogin() async {
     emit(LoadingState());

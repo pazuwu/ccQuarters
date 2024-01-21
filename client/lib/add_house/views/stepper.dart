@@ -47,7 +47,10 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
                 actions: [
                   IconButton(
                     onPressed: () {
-                      if (_validateAndSaveData(widget.state, false)) {
+                      if (_validateAndSaveData(
+                          widget.state,
+                          MediaQuery.of(context).orientation ==
+                              Orientation.portrait)) {
                         context.read<AddHouseFormCubit>().updateHouse();
                       }
                     },
@@ -221,11 +224,11 @@ class _ViewsWithStepperState extends State<ViewsWithStepper> {
   }
 
   bool _validateAndSaveData(StepperPageState state, bool isPortrait) {
-    if (state is ChooseTypeFormState) {
-      if (!isPortrait && _detailsFormKey.currentState!.validate()) {
+    if (state is ChooseTypeFormState && !isPortrait) {
+      if (_detailsFormKey.currentState!.validate()) {
         _detailsFormKey.currentState!.save();
         context.read<AddHouseFormCubit>().saveDetails(state.houseDetails);
-      } else if (!isPortrait) {
+      } else {
         return false;
       }
     } else if (state is PortraitDetailsFormState) {
