@@ -1,7 +1,9 @@
-import 'package:ccquarters/model/virtual_tours/area.dart';
-import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
+
+import 'package:ccquarters/model/virtual_tours/area.dart';
+import 'package:ccquarters/model/virtual_tours/tour_for_edit.dart';
 
 class TourEditState extends Equatable {
   final TourForEdit tour;
