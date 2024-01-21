@@ -85,8 +85,8 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
 
     var response = await houseService.updateHouse(house.id, house);
     if (!response.data) {
-      emit(
-          ErrorState("Nie udało się zapisać zmian.\n Spróbuj ponownie pózniej!"));
+      emit(ErrorState(
+          "Nie udało się zapisać zmian.\n Spróbuj ponownie pózniej!"));
       return;
     }
 
