@@ -13,7 +13,7 @@ class RequireSignIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return context.read<AuthCubit>().user != null
+    return context.read<AuthCubit>().isUserLoggedIn
         ? child
         : const SignInWidget();
   }

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 import 'package:ccquarters/login_register/cubit.dart';
-import 'package:ccquarters/model/users/user.dart';
 import 'package:ccquarters/navigation/history_navigator.dart';
 
 enum NavigationItemVisibility {
@@ -59,19 +58,19 @@ class NavigationShell extends StatelessWidget {
   }
 
   List<NavigationItem> _getOnlyVisibleItems(BuildContext context) {
-    var user = context.read<AuthCubit>().user;
+    var isUserLoggedIn = context.read<AuthCubit>().isUserLoggedIn;
 
     var visibleItems = <NavigationItem>[];
 
     for (var item in items) {
-      if (_isItemVisible(item, user)) {
+      if (_isItemVisible(item, isUserLoggedIn)) {
         visibleItems.add(item);
       }
     }
 
     if (MediaQuery.of(context).orientation == Orientation.landscape) {
       for (var item in additionalItems) {
-        if (_isItemVisible(item, user)) {
+        if (_isItemVisible(item, isUserLoggedIn)) {
           visibleItems.add(item);
         }
       }
@@ -80,12 +79,12 @@ class NavigationShell extends StatelessWidget {
     return visibleItems;
   }
 
-  bool _isItemVisible(NavigationItem item, User? user) {
+  bool _isItemVisible(NavigationItem item, bool isUserLoggedIn) {
     return item.isVisible == NavigationItemVisibility.always ||
         (item.isVisible == NavigationItemVisibility.whenSignedIn &&
-            user != null) ||
+            isUserLoggedIn) ||
         (item.isVisible == NavigationItemVisibility.whenSignedOut &&
-            user == null);
+            !isUserLoggedIn);
   }
 }
 

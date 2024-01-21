@@ -82,7 +82,9 @@ class SceneListGate extends StatelessWidget {
             );
           }
 
-          return SceneList(tour: state.tour);
+          return SceneList(
+            tour: state.tour,
+          );
         },
       ),
     );
