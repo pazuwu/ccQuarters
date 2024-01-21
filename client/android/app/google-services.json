@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "642205480758",
+    "firebase_url": "https://ccquartersmini-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ccquartersmini",
+    "storage_bucket": "ccquartersmini.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642205480758:android:0fcc7883ea8913f2e8a597",
+        "android_client_info": {
+          "package_name": "com.example.ccquarters"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-lIQR7r8WcbvE3ZHT7x7B5gRWCYldY2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
