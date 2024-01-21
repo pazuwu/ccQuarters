@@ -1,5 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using RepositoryLibrary;
+using System.IO;
+using VirtualTourAPI.DBOModel;
 using VirtualTourAPI.DTOModel;
 using VirtualTourAPI.Mappers;
 using VirtualTourAPI.Services.Interfaces;
@@ -50,6 +52,22 @@ namespace VirtualTourAPI.Services
                 await _documentRepository.DeleteAsync($"{DBCollections.Tours}/{tourId}/{DBCollections.Links}/{link.Id}");
 
             _logger.LogInformation("All scene links deleted in tour: {tourId}, id: {sceneId}", tourId, sceneId);
+        }
+
+        public async Task UpdateScene(string tourId, string sceneId, SceneUpdateDTO sceneUpdate)
+        {
+            string updatePath = $"{DBCollections.Tours}/{tourId}/{DBCollections.Scenes}/{sceneId}";
+
+            var updateDictionary = new Dictionary<string, object>();
+
+            if (sceneUpdate.Name != null)
+                updateDictionary[nameof(SceneDBO.Name)] = sceneUpdate.Name;
+
+            if (updateDictionary.Any())
+            {
+                await _documentRepository.SetAsync(updatePath, updateDictionary);
+                _logger.LogInformation("Changed scene {sceneId} in tour {tourId}", sceneId, tourId);
+            }
         }
     }
 }
