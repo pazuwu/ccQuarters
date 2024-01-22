@@ -2,22 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter Web",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "args": [
-                "--flavor",
-                "dev",
-                "--dart-define",
-                "app.flavor=dev",
-                "--web-renderer",
-                "html"
-            ],
-            "flutterMode": "debug"
-        },
-        {
-            "name": "Flutter Android",
+            "name": "Flutter",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
