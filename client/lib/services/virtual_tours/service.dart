@@ -13,6 +13,7 @@ import 'package:ccquarters/services/virtual_tours/requests/post_link_request.dar
 import 'package:ccquarters/services/virtual_tours/requests/post_scene_request.dart';
 import 'package:ccquarters/services/virtual_tours/requests/post_tour_request.dart';
 import 'package:ccquarters/services/virtual_tours/requests/put_link_request.dart';
+import 'package:ccquarters/services/virtual_tours/requests/put_scene_request.dart';
 import 'package:ccquarters/services/virtual_tours/requests/put_tour_request.dart';
 import 'package:dio/dio.dart';
 
@@ -143,6 +144,27 @@ class VTService {
       }
     } on DioException catch (e) {
       return _catchCommonErrors(e, null);
+    }
+  }
+
+  Future<ServiceResponse<bool>> putScene(String tourId, String sceneId,
+      {String? name}) async {
+    try {
+      var response = await _dio.put(
+        "$_url/$_tours/$tourId/$_scenes/$sceneId",
+        data: PutSceneRequest(name: name).toJson(),
+        options: Options(headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        }),
+      );
+
+      if (response.statusCode == StatusCode.OK) {
+        return ServiceResponse(data: true);
+      } else {
+        return ServiceResponse(data: false, error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e, false);
     }
   }
 

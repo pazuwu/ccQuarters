@@ -18,16 +18,22 @@ class ButtonContactWidget extends StatelessWidget {
         context: context,
         enableDrag: true,
         showDragHandle: true,
-        builder: (BuildContext context) => Column(
-          children: [
-            ContactWidget(user: user),
-            TextButton(
-              child: const Text(
-                "Zamknij",
+        isScrollControlled: true,
+        builder: (BuildContext context) => Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Wrap(
+            children: [
+              ContactWidget(user: user),
+              Center(
+                child: TextButton(
+                  child: const Text(
+                    "Zamknij",
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       child: const Text(

@@ -12,8 +12,8 @@ class Scene {
 
   final String? id;
   final String? parentId;
-  final String name;
   final String? photo360Url;
+  String name;
   Uint8List? photo360;
 
   @override

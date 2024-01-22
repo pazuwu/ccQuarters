@@ -189,13 +189,20 @@ class _SceneListState extends State<SceneList> {
               child: IconOptionCombo(
                 children: [
                   IconButton(
-                    onPressed: () async {
-                      await showForm<SceneFormModel>(
+                    onPressed: () {
+                      showForm<SceneFormModel>(
                         context: context,
                         builder: (context) => SceneForm(
                           scene: scene,
                         ),
-                      );
+                      ).then((sceneFormModel) {
+                        if (sceneFormModel != null) {
+                          context.read<TourEditCubit>().updateScene(
+                                scene.id!,
+                                name: sceneFormModel.name,
+                              );
+                        }
+                      });
                     },
                     icon: const Icon(
                       Icons.edit,

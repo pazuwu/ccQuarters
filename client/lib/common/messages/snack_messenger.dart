@@ -6,6 +6,7 @@ class SnackMessenger {
   static void showMessage(BuildContext context, String message,
       {Duration? duration, Widget? icon}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      SnackMessenger.hide(context);
       ScaffoldMessenger.of(context).showSnackBar(
         _InfoSnackbar(
           context: context,
