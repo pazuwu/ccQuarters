@@ -21,7 +21,7 @@ jobs:
         run: flutter pub get
       - name: Flutter build
         working-directory: ./client
-        run: flutter build web
+        run: flutter build web --release --web-renderer canvaskit
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           entryPoint: ./client
