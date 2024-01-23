@@ -27,7 +27,7 @@ class LocationPickerController implements Listenable {
 
   Future setLocation(osm.SearchInfo location) async {
     if (location.point != null) {
-      return _setLocationInner(location);
+      return _setLocationInner(location.point!);
     }
 
     if (location.address == null) return;
@@ -36,32 +36,26 @@ class LocationPickerController implements Listenable {
         limitInformation: 1);
 
     if (suggestions.isNotEmpty && suggestions.first.point != null) {
-      location = osm.SearchInfo(
-          address: location.address, point: suggestions.first.point);
-      _setLocationInner(location);
+      _setLocationInner(suggestions.first.point!);
     }
   }
 
-  Future _setLocationInner(osm.SearchInfo location,
+  Future _setLocationInner(osm.GeoPoint point,
       {bool updateAutocomplete = true, bool goToLocation = true}) async {
-    if (location.point != null) {
-      if (goToLocation) {
-        _mapController.move(
-            LatLng(location.point!.latitude, location.point!.longitude), 18.0);
-      }
-
-      if (updateAutocomplete) {
-        _autocompleteController.location = location.point;
-      }
-
-      _publishNewLocation(location);
+    if (goToLocation) {
+      _mapController.move(LatLng(point.latitude, point.longitude), 18.0);
     }
+
+    if (updateAutocomplete) {
+      _autocompleteController.location = point;
+    }
+
+    _publishNewLocation(point);
   }
 
-  void _publishNewLocation(osm.SearchInfo? newValue) {
-    _latLng = newValue != null && newValue.point != null
-        ? LatLng(newValue.point!.latitude, newValue.point!.longitude)
-        : null;
+  void _publishNewLocation(osm.GeoPoint? newValue) {
+    _latLng =
+        newValue != null ? LatLng(newValue.latitude, newValue.longitude) : null;
     for (var listener in _listeners) {
       listener();
     }
@@ -94,7 +88,7 @@ class LocationPicker extends StatefulWidget {
 
 class _LocationPickerState extends State<LocationPicker> {
   late LocationPickerController _controller;
-  late MapController _mapController;
+  final MapController _mapController = MapControllerImpl();
   final GeoAutocompleteController _autocompleteController =
       GeoAutocompleteController();
 
@@ -108,8 +102,6 @@ class _LocationPickerState extends State<LocationPicker> {
   void initState() {
     super.initState();
 
-    _mapController = MapControllerImpl();
-
     _controller = widget.controller ?? LocationPickerController();
     _controller._initialize(
         autocompleteController: _autocompleteController,
@@ -118,11 +110,14 @@ class _LocationPickerState extends State<LocationPicker> {
     _autocompleteController.addListener(() async {
       var searchInfo = _autocompleteController.searchInfo;
 
-      if (searchInfo != null) {
-        _controller._setLocationInner(searchInfo, updateAutocomplete: false);
+      if (searchInfo != null && searchInfo.point != null) {
+        _controller._setLocationInner(searchInfo.point!,
+            updateAutocomplete: false);
+      } else {
+        _controller._latLng = null;
       }
 
-      _controller._publishNewLocation(searchInfo);
+      _controller._publishNewLocation(searchInfo?.point);
     });
 
     _controller.addListener(() {
@@ -144,15 +139,13 @@ class _LocationPickerState extends State<LocationPicker> {
                   return;
                 }
 
-                var newlocation = osm.SearchInfo(
-                  point: osm.GeoPoint(
-                    latitude: latlng.latitude,
-                    longitude: latlng.longitude,
-                  ),
+                var newPoint = osm.GeoPoint(
+                  latitude: latlng.latitude,
+                  longitude: latlng.longitude,
                 );
 
-                _controller._setLocationInner(newlocation, goToLocation: false);
-                _controller._publishNewLocation(newlocation);
+                _controller._setLocationInner(newPoint, goToLocation: false);
+                _controller._publishNewLocation(newPoint);
               },
               onMapReady: () async {
                 await _goToInitLocation();
@@ -166,6 +159,8 @@ class _LocationPickerState extends State<LocationPicker> {
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.example.app',
+                retinaMode: true,
+                maxZoom: 20,
               ),
               MarkerLayer(markers: [
                 if (_controller.latLng != null)
