@@ -61,7 +61,7 @@ class _SceneListState extends State<SceneList> {
         withReadStream: true,
       );
 
-      if (result?.files.single.bytes != null) {
+      if (result?.files.single.readStream != null) {
         await cubit.createNewSceneFromPhoto(
           result!.files.single,
           name: sceneFormModel.name,
