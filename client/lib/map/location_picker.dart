@@ -92,9 +92,11 @@ class _LocationPickerState extends State<LocationPicker> {
   final GeoAutocompleteController _autocompleteController =
       GeoAutocompleteController();
 
-  Future _goToInitLocation() async {
+  void _goToInitLocation() {
     if (widget.initPosition != null) {
-      await _controller.setLocation(widget.initPosition!);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _controller.setLocation(widget.initPosition!);
+      });
     }
   }
 
@@ -147,13 +149,14 @@ class _LocationPickerState extends State<LocationPicker> {
                 _controller._setLocationInner(newPoint, goToLocation: false);
                 _controller._publishNewLocation(newPoint);
               },
-              onMapReady: () async {
-                await _goToInitLocation();
-              },
+              onMapReady: _goToInitLocation,
               initialCenter: const LatLng(52.230053, 21.011445),
               initialZoom: 6,
               minZoom: 3,
               maxZoom: 19,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              ),
             ),
             children: [
               TileLayer(
@@ -162,19 +165,26 @@ class _LocationPickerState extends State<LocationPicker> {
                 retinaMode: true,
                 maxZoom: 20,
               ),
-              MarkerLayer(markers: [
-                if (_controller.latLng != null)
-                  Marker(
-                    point: _controller.latLng!,
-                    child: const osm.MarkerIcon(
-                      icon: Icon(
-                        Icons.location_on,
-                        color: Colors.red,
-                        size: 56,
+              MarkerLayer(
+                alignment: Alignment.topCenter,
+                markers: [
+                  if (_controller.latLng != null)
+                    Marker(
+                      height: 40.0,
+                      width: 40.0,
+                      point: _controller.latLng!,
+                      child: const osm.MarkerIcon(
+                        iconWidget: Center(
+                          child: Icon(
+                            Icons.location_on,
+                            color: Colors.red,
+                            size: 40.0,
+                          ),
+                        ),
                       ),
-                    ),
-                  )
-              ]),
+                    )
+                ],
+              ),
               RichAttributionWidget(
                 attributions: [
                   TextSourceAttribution(
