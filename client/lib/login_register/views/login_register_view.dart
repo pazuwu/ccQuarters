@@ -62,7 +62,7 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
       child: Scaffold(
         appBar: _buildAppBar(context),
         bottomNavigationBar: _buildBottomBar(context),
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Form(
           key: _formKey,
           child: Padding(
@@ -74,7 +74,7 @@ class _LoginRegisterViewState extends State<LoginRegisterView> {
                 _buildWelcomeText(),
                 if (state is InputDataState && state.error != null)
                   _showErrors(state, context),
-                _buildFields(),
+                Flexible(child: SingleChildScrollView(child: _buildFields())),
                 _buildButtons(context),
               ],
             ),
