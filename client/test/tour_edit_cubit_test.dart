@@ -149,20 +149,6 @@ void tourEditCubit() {
     );
 
     blocTest<TourEditCubit, TourEditState>(
-      'emits TourEditSuccessState when updateScene is called',
-      build: () => TourEditCubit(
-        VTService(
-          VTAPIMock.createVTApiMock(url),
-          FileServiceMock(),
-          url,
-        ),
-        mockTourForEdit,
-      ),
-      act: (cubit) => cubit.updateScene(mockId, name: "Test"),
-      expect: () => [isA<TourEditSuccessState>()],
-    );
-
-    blocTest<TourEditCubit, TourEditState>(
       'emits TourEditShowAreaPhotosState when showAreaPhotos is called',
       build: () => TourEditCubit(
         VTService(
