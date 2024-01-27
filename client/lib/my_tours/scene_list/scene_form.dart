@@ -109,7 +109,8 @@ class _SceneFormState extends State<SceneForm> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if (_selectedImport == ImportType.photos) ...[
+                  if (_selectedImport == ImportType.photos &&
+                      widget.scene == null) ...[
                     TextButton(
                       onPressed: () {
                         Navigator.of(context).pop(
