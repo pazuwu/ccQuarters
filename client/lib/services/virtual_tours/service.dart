@@ -338,7 +338,10 @@ class VTService {
       {void Function(int count, int total)? progressCallback}) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(bytes),
+        "file": MultipartFile.fromBytes(
+          bytes,
+          filename: filename,
+        ),
       });
 
       var response = await _dio.post(
