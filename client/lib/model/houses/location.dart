@@ -3,9 +3,9 @@ class Location {
     required this.city,
     required this.voivodeship,
     required this.zipCode,
+    required this.streetNumber,
     this.district,
     this.streetName,
-    this.streetNumber,
     this.flatNumber,
     this.geoX,
     this.geoY,
@@ -16,7 +16,7 @@ class Location {
   String? district;
   String? streetName;
   String zipCode;
-  String? streetNumber;
+  String streetNumber;
   String? flatNumber;
   double? geoX;
   double? geoY;

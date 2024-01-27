@@ -71,6 +71,13 @@ class AlertService {
 
   Future<ServiceResponse<bool>> updateAlert(Alert alert) async {
     try {
+      if (alert.isEmpty()) {
+        return ServiceResponse(
+          data: false,
+          error: ErrorType.emptyRequest,
+        );
+      }
+
       var response = await _dio.put(
         "$_url/${alert.id}",
         data: alert.toJson(),

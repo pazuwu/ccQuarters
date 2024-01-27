@@ -61,7 +61,7 @@ class SimpleHouse {
         district: district,
         streetName: streetName,
         zipCode: zipCode,
-        streetNumber: streetNumber,
+        streetNumber: streetNumber ?? "",
         flatNumber: flatNumber,
       ),
       details: HouseDetails(

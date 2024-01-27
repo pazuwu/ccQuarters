@@ -115,19 +115,17 @@ class VTService {
       required String parentId,
       required String name}) async {
     try {
-      var response = await _dio.fetch(
-        RequestOptions(
-          method: "POST",
+      var response = await _dio.post(
+        "$_url/$_tours/$tourId/$_scenes",
+        options: Options(
           headers: {
             HttpHeaders.contentTypeHeader: ContentType.json.value,
           },
-          baseUrl: _url,
-          path: "/$_tours/$tourId/$_scenes",
-          data: PostSceneRequest(
-            parentId: parentId,
-            name: name,
-          ).toJson(),
         ),
+        data: PostSceneRequest(
+          parentId: parentId,
+          name: name,
+        ).toJson(),
       );
 
       var id = response.headers.value("location");
