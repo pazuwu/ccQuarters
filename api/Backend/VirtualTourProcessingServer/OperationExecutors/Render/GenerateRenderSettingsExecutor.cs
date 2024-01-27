@@ -16,41 +16,9 @@ namespace VirtualTourProcessingServer.OperationExecutors.Render
 
         public async Task<ExecutorResponse> Execute(ExecutorParameters parameters)
         {
-            var colmapTransformsPath = Path.Combine(parameters.AreaDirectory, "transforms.json");
             var outputPath = Path.Combine(parameters.AreaDirectory, "render_settings.json");
 
-            if (!File.Exists(colmapTransformsPath))
-                return ExecutorResponse.Problem($"Provided colmap file doesn't exist: {colmapTransformsPath}");
-
-            var transforms = await File.ReadAllTextAsync(colmapTransformsPath);
-
-            var cameraModel = JsonSerializer.Deserialize<NSCamera>(transforms);
-
-            if (cameraModel == null)
-                return ExecutorResponse.Problem($"Provided colmap file is in wrong format: {outputPath}");
-
-
-            var meanPosition = new Vector3();
-            var framesCount = 0;
-
-            foreach (var frame in cameraModel.Frames)
-            {
-                if (frame.TransformMatrix.Count >= 3
-                    && frame.TransformMatrix[0].Count >= 3
-                    && frame.TransformMatrix[1].Count >= 3
-                    && frame.TransformMatrix[2].Count >= 3)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        meanPosition[i] += frame.TransformMatrix[i][3];
-                    }
-
-                    framesCount++;
-                }
-            };
-
-            for (int i = 0; i < 3; i++)
-                meanPosition[i] /= framesCount;
+            var meanPosition = new Vector3(0, 0, 0);
 
             var meanPositionMatrix = Matrix4x4.CreateRotationX(-(float)Math.PI / 2) * Matrix4x4.CreateTranslation(meanPosition);
             var transposedMeanPositionMatrix = MatrixToArray(Matrix4x4.Transpose(meanPositionMatrix));
