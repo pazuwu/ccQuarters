@@ -18,7 +18,7 @@ namespace VirtualTourProcessingServer.Processing
         private readonly ExecutorResolver _executorResolver;
 
         private VTOperation? _runningOperation;
-        private Task? _runningTask;
+        private Task<ExecutorResponse>? _runningTask;
 
         public OperationRunner(ILogger<OperationRunner> logger, IMediator mediator, IOptions<ProcessingOptions> options, ExecutorResolver resolver)
         {
@@ -49,14 +49,13 @@ namespace VirtualTourProcessingServer.Processing
 
             if(executor != null)
             {
-                _runningTask = RunExecutor(operation, executor);
+                _runningTask = Task.Run(() => RunExecutor(operation, executor));
+                _runningTask.ContinueWith((task) => FinishOperation(operation, task.Result));
                 return;
             }
-
-            _runningOperation = null;
         }
 
-        private async Task RunExecutor(VTOperation operation, IOperationExecutor executor)
+        private async Task<ExecutorResponse> RunExecutor(VTOperation operation, IOperationExecutor executor)
         {
             var executorParameters = new ExecutorParameters()
             {
@@ -65,8 +64,7 @@ namespace VirtualTourProcessingServer.Processing
                 TourDirectory = Path.Combine(_options.StorageDirectory!, operation.TourId)
             };
 
-            var response = await executor.Execute(executorParameters);
-            await FinishOperation(operation, response);
+            return await executor.Execute(executorParameters);
         }
 
         private Task FinishOperation(VTOperation operation, ExecutorResponse response)
