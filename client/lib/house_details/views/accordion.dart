@@ -103,10 +103,9 @@ class AccordionPage extends StatelessWidget {
           if (house.location.streetName != null &&
               house.location.streetName!.isNotEmpty)
             HouseDetailsRow(title: "Ulica", value: house.location.streetName!),
-          if (house.location.streetNumber != null &&
-              house.location.streetNumber!.isNotEmpty)
+          if (house.location.streetNumber.isNotEmpty)
             HouseDetailsRow(
-                title: "Numer domu", value: house.location.streetNumber!),
+                title: "Numer domu", value: house.location.streetNumber),
           if (house.location.flatNumber != null &&
               house.location.flatNumber!.isNotEmpty)
             HouseDetailsRow(

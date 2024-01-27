@@ -6,26 +6,26 @@ import 'package:flutter_test/flutter_test.dart' as test;
 import 'package:test/test.dart';
 
 import 'mocks/file_service_mock.dart';
+import 'mocks/mock_data.dart';
 import 'mocks/vt_api_mock.dart';
 
 const url = "http://ccquarters.com";
 
-class VTTestingState extends TourLoadingState {}
+class TourLoaderTestingState extends TourLoadingState {}
 
 void main() {
   test.TestWidgetsFlutterBinding.ensureInitialized();
-  virtualTourCubit();
+  tourLoaderCubit();
 }
 
-void virtualTourCubit() {
-  const id = "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
-  group('VirtualTourCubit', () {
+void tourLoaderCubit() {
+  group('TourLoaderCubit', () {
     blocTest<TourLoaderCubit, TourLoadingState>(
       'emits VTViewingState when loadVirtualTour is called with readOnly=true flag',
       build: () => TourLoaderCubit(
-        tourId: id,
+        tourId: mockId,
         readOnly: true,
-        initialState: VTTestingState(),
+        initialState: TourLoaderTestingState(),
         service: VTService(
           VTAPIMock.createVTApiMock(url),
           FileServiceMock(),
@@ -40,8 +40,8 @@ void virtualTourCubit() {
       'emits VTEditingState when loadVirtualTour is called with readOnly=false flag',
       build: () => TourLoaderCubit(
         readOnly: false,
-        tourId: id,
-        initialState: VTTestingState(),
+        tourId: mockId,
+        initialState: TourLoaderTestingState(),
         service: VTService(
           VTAPIMock.createVTApiMock(url),
           FileServiceMock(),

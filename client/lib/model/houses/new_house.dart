@@ -68,7 +68,7 @@ class NewLocation {
           district: location.district,
           streetName: location.streetName,
           zipCode: location.zipCode,
-          streetNumber: location.streetNumber ?? "",
+          streetNumber: location.streetNumber,
           flatNumber: location.flatNumber,
           geoX: location.geoX,
           geoY: location.geoY,
