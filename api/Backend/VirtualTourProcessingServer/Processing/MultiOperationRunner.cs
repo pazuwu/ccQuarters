@@ -50,11 +50,9 @@ namespace VirtualTourProcessingServer.Processing
 
                 if(executor != null)
                 {
-                    _operations[operation] = RunExecutor(operation, executor);
+                    _operations[operation] = Task.Run(() => RunExecutor(operation, executor));
                     return;
                 }
-
-                _operations.Remove(operation, out _);
             }
 
         }
