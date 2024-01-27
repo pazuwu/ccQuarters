@@ -9,6 +9,8 @@ class HouseDetailsCubit extends Cubit<HouseDetailsState> {
       : super(initialState) {
     if (initialState is LoadingState) {
       loadHouseDetails();
+    } else {
+      house = (initialState as DetailsState).house;
     }
   }
 

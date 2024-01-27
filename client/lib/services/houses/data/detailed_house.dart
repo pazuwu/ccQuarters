@@ -83,7 +83,7 @@ class HouseWithDetails {
         district: district,
         streetName: streetName,
         zipCode: zipCode,
-        streetNumber: streetNumber,
+        streetNumber: streetNumber ?? "",
         flatNumber: flatNumber,
         geoX: geoX,
         geoY: geoY,

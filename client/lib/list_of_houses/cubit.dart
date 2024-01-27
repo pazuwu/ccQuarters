@@ -81,7 +81,7 @@ class ListOfHousesCubit extends Cubit<ListOfHousesState> {
     return !isLiked;
   }
 
-  Future<void> createAlert(HouseFilter filter) async {
+  Future<void> createAlertFromHouseFilter(HouseFilter filter) async {
     emit(LoadingState(message: "Wysyłanie alertu..."));
 
     var alert = NewAlert.fromHouseFilter(filter);

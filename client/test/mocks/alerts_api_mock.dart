@@ -1,23 +1,18 @@
-import 'package:ccquarters/model/alerts/alert.dart';
 import 'package:ccquarters/services/alerts/responses/get_alerts_response.dart';
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:http_status_code/http_status_code.dart';
 
+import 'mock_data.dart';
+
 extension AlertsAPIMock on Dio {
   static Dio createAlertsApiMock(String url) {
     Dio dio = Dio();
     final dioAdapter = DioAdapter(dio: dio);
-    const id = "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
-    var alert = Alert(
-      id: id,
-      cities: ["Warszawa"],
-      maxPrice: 1000000,
-    );
 
-    dioAdapter.onGet("$url/$id", (request) {
+    dioAdapter.onGet("$url/$mockId", (request) {
       var res = GetAlertsResponse(
-        data: [alert, alert, alert],
+        data: [mockAlert, mockAlert, mockAlert],
         pageNumber: 1,
         pageSize: 10,
       );
@@ -25,14 +20,14 @@ extension AlertsAPIMock on Dio {
     }, data: Matchers.any);
 
     dioAdapter.onPost(url, (request) {
+      request.reply(StatusCode.CREATED, null);
+    }, data: Matchers.any);
+
+    dioAdapter.onPut("$url/$mockId", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
-    dioAdapter.onPut("$url/$id", (request) {
-      request.reply(StatusCode.OK, null);
-    }, data: Matchers.any);
-
-    dioAdapter.onDelete("$url/$id", (request) {
+    dioAdapter.onDelete("$url/$mockId", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
