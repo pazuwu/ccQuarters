@@ -51,8 +51,7 @@ class _ChooseLocationOnMapState extends State<ChooseLocationOnMap> {
       var latLng = _locationPickerController.latLng;
 
       widget.addHouseFormCubit.saveCoordinates(
-          longitute: latLng?.longitude,
-          latitude: latLng?.latitude);
+          longitute: latLng?.longitude, latitude: latLng?.latitude);
     });
   }
 
