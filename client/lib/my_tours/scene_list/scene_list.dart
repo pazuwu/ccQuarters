@@ -58,7 +58,6 @@ class _SceneListState extends State<SceneList> {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         withData: true,
-        withReadStream: true,
       );
 
       if (result?.files.single.bytes != null) {

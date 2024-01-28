@@ -14,7 +14,7 @@ namespace VirtualTourProcessingServer.UnitTests
     public class MultiOperationRunnerTests
     {
         [TestMethod]
-        public void MultiOperationRunnerRunsDownload()
+        public async Task MultiOperationRunnerRunsDownload()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Waiting);
 
@@ -40,11 +40,13 @@ namespace VirtualTourProcessingServer.UnitTests
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
             Mock.Verify(mockedDownloadExecutor, mockedSettingsGenerator, mockedUploadExecutor, mockedCleanExecutor, mockedMadiator);
         }
 
         [TestMethod]
-        public void MultiOperationRunnerRunsPrepareRender()
+        public async Task MultiOperationRunnerRunsPrepareRender()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.PrepareRender);
 
@@ -70,11 +72,13 @@ namespace VirtualTourProcessingServer.UnitTests
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
             Mock.Verify(mockedDownloadExecutor, mockedSettingsGenerator, mockedUploadExecutor, mockedCleanExecutor, mockedMadiator);
         }
 
         [TestMethod]
-        public void MultiOperationRunnerRunsSavingRender()
+        public async Task MultiOperationRunnerRunsSavingRender()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.SavingRender);
 
@@ -100,11 +104,13 @@ namespace VirtualTourProcessingServer.UnitTests
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
             Mock.Verify(mockedDownloadExecutor, mockedSettingsGenerator, mockedUploadExecutor, mockedCleanExecutor, mockedMadiator);
         }
 
         [TestMethod]
-        public void MultiOperationRunnerRunsCleaning()
+        public async Task MultiOperationRunnerRunsCleaning()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Finished);
 
@@ -129,6 +135,8 @@ namespace VirtualTourProcessingServer.UnitTests
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
             Mock.Verify(mockedDownloadExecutor, mockedSettingsGenerator, mockedUploadExecutor, mockedCleanExecutor, mockedMadiator);
         }

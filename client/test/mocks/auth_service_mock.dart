@@ -4,6 +4,8 @@ import 'package:ccquarters/services/auth/service.dart';
 import 'package:ccquarters/services/auth/sign_in_result.dart';
 import 'package:ccquarters/services/auth/sign_up_result.dart';
 
+import 'mock_data.dart';
+
 class AuthServiceMock extends BaseAuthService {
   AuthServiceMock({required bool isSignedIn}) : _isSignedIn = isSignedIn;
 
@@ -12,9 +14,9 @@ class AuthServiceMock extends BaseAuthService {
   @override
   bool get isSignedIn => _isSignedIn;
   @override
-  String? get currentUserId => "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
+  String? get currentUserId => mockId;
   @override
-  String? get currentUserEmail => "jan.kowalski@gmail.com";
+  String? get currentUserEmail => mockEmail;
 
   @override
   Future<String?> getToken() async {

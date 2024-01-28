@@ -26,20 +26,20 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   List<(Uint8List, int)>? photosToSend;
   (int, int)? photosSendingProgress;
 
-  void goToLocationForm() {
-    emit(LocationFormState(house.location, house.buildingType));
-  }
-
-  void goToDetailsForm() {
-    emit(PortraitDetailsFormState(house.houseDetails, house.buildingType));
-  }
-
   void goToChooseTypeForm() {
     emit(ChooseTypeFormState(
       house.houseDetails,
       offerType: house.offerType,
       buildingType: house.buildingType,
     ));
+  }
+
+  void goToDetailsForm() {
+    emit(PortraitDetailsFormState(house.houseDetails, house.buildingType));
+  }
+
+  void goToLocationForm() {
+    emit(LocationFormState(house.location, house.buildingType));
   }
 
   void goToMap() {
@@ -188,8 +188,8 @@ class AddHouseFormCubit extends Cubit<HouseFormState> {
   }
 
   void saveCoordinates({double? longitute, double? latitude}) {
-    house.location.geoX = longitute ?? house.location.geoX;
-    house.location.geoY = latitude ?? house.location.geoX;
+    house.location.geoX = longitute;
+    house.location.geoY = latitude;
   }
 
   void saveOfferType(OfferType offerType) {

@@ -21,24 +21,34 @@ class MapReadOnly extends StatelessWidget {
             initialZoom: 18,
             minZoom: 3,
             maxZoom: 20,
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+            ),
           ),
           children: [
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.example.app',
             ),
-            MarkerLayer(markers: [
-              Marker(
-                point: LatLng(latitude, longitude),
-                child: const MarkerIcon(
-                  icon: Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 56,
+            MarkerLayer(
+              alignment: Alignment.topCenter,
+              markers: [
+                Marker(
+                  point: LatLng(latitude, longitude),
+                  width: 40,
+                  height: 40,
+                  child: const MarkerIcon(
+                    iconWidget: Center(
+                      child: Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                        size: 40,
+                      ),
+                    ),
                   ),
-                ),
-              )
-            ]),
+                )
+              ],
+            ),
             RichAttributionWidget(
               attributions: [
                 TextSourceAttribution(

@@ -45,6 +45,24 @@ class Alert extends AlertBase {
           districts: districts,
         );
 
+  bool isEmpty() {
+    return !(offerType != null ||
+        buildingType != null ||
+        (voivodeship?.isNotEmpty ?? false) ||
+        (cities?.isNotEmpty ?? false) ||
+        (districts?.isNotEmpty ?? false) ||
+        minPrice != null ||
+        maxPrice != null ||
+        minPricePerM2 != null ||
+        maxPricePerM2 != null ||
+        minArea != null ||
+        maxArea != null ||
+        minRoomCount != null ||
+        maxRoomCount != null ||
+        minFloor != null ||
+        floors != null);
+  }
+
   Alert.fromHouseFilter(HouseFilter filters, this.id)
       : super.fromHouseFilter(filters);
 

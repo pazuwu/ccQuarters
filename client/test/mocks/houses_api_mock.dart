@@ -2,59 +2,44 @@ import 'package:ccquarters/model/houses/building_type.dart';
 import 'package:ccquarters/model/houses/offer_type.dart';
 import 'package:ccquarters/model/houses/photo.dart';
 import 'package:ccquarters/services/houses/data/detailed_house.dart';
-import 'package:ccquarters/services/houses/data/simple_house.dart';
 import 'package:ccquarters/services/houses/responses/get_house_response.dart';
 import 'package:ccquarters/services/houses/responses/get_houses_response.dart';
 import 'package:dio/dio.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 import 'package:http_status_code/http_status_code.dart';
 
+import 'mock_data.dart';
+
 extension HousesAPIMock on Dio {
   static Dio createHousesApiMock(String url) {
     Dio dio = Dio();
     final dioAdapter = DioAdapter(dio: dio);
-    final simpleHouse = SimpleHouse(
-        "1",
-        "title",
-        10000,
-        3,
-        50,
-        3,
-        "Warszawa",
-        "Mazowieckie",
-        "02-656",
-        "Mokotów",
-        "Puławska",
-        "10",
-        "15",
-        OfferType.rent,
-        BuildingType.apartment,
-        false,
-        "photoUrl");
-    const id = "cb849fa2-1033-4d6b-7c88-08db36d6f10f";
 
     dioAdapter.onGet(url, (request) {
       request.reply(
           StatusCode.OK,
-          GetHousesResponse(0, 10, [simpleHouse, simpleHouse, simpleHouse])
+          GetHousesResponse(
+                  0, 10, [mockSimpleHouse, mockSimpleHouse, mockSimpleHouse])
               .toJson());
     }, data: Matchers.any);
 
     dioAdapter.onGet("$url/liked", (request) {
       request.reply(
           StatusCode.OK,
-          GetHousesResponse(0, 10, [simpleHouse, simpleHouse, simpleHouse])
+          GetHousesResponse(
+                  0, 10, [mockSimpleHouse, mockSimpleHouse, mockSimpleHouse])
               .toJson());
     }, data: Matchers.any);
 
     dioAdapter.onGet("$url/my", (request) {
       request.reply(
           StatusCode.OK,
-          GetHousesResponse(0, 10, [simpleHouse, simpleHouse, simpleHouse])
+          GetHousesResponse(
+                  0, 10, [mockSimpleHouse, mockSimpleHouse, mockSimpleHouse])
               .toJson());
     }, data: Matchers.any);
 
-    dioAdapter.onGet("$url/$id", (request) {
+    dioAdapter.onGet("$url/$mockId", (request) {
       var res = HouseWithDetails(
         "title",
         "description",
@@ -75,7 +60,7 @@ extension HousesAPIMock on Dio {
         OfferType.rent,
         BuildingType.apartment,
         true,
-        id,
+        mockId,
         "Jan",
         "Kowalski",
         null,
@@ -95,30 +80,34 @@ extension HousesAPIMock on Dio {
       request.reply(
         StatusCode.CREATED,
         null,
-        headers: const {
+        headers: {
           Headers.contentTypeHeader: [Headers.jsonContentType],
-          "location": [id]
+          "location": [mockId]
         },
       );
     }, data: Matchers.any);
 
-    dioAdapter.onPut("$url/$id/photo", (request) {
+    dioAdapter.onPut("$url/$mockId", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
-    dioAdapter.onPut("$url/$id/delete", (request) {
+    dioAdapter.onPut("$url/$mockId/photo", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
-    dioAdapter.onPut("$url/$id/like", (request) {
+    dioAdapter.onPut("$url/$mockId/delete", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
-    dioAdapter.onPut("$url/$id/unlike", (request) {
+    dioAdapter.onPut("$url/$mockId/like", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 
-    dioAdapter.onPost("$url/$id/photo", (request) {
+    dioAdapter.onPut("$url/$mockId/unlike", (request) {
+      request.reply(StatusCode.OK, null);
+    }, data: Matchers.any);
+
+    dioAdapter.onPost("$url/$mockId/photo", (request) {
       request.reply(StatusCode.OK, null);
     }, data: Matchers.any);
 

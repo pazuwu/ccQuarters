@@ -160,20 +160,22 @@ class Inside extends StatelessWidget {
             ),
           ),
           if (MediaQuery.of(context).orientation == Orientation.landscape)
-            ContactWidget(
-              user: house.user,
-              additionalWidget: Column(
-                children: [
-                  _buildPriceAndContactInfo(context),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16.0),
-                    child: Divider(
-                      thickness: 1,
-                      height: 1,
-                      color: Colors.grey,
+            Expanded(
+              child: ContactWidget(
+                user: house.user,
+                additionalWidget: Column(
+                  children: [
+                    _buildPriceAndContactInfo(context),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Divider(
+                        thickness: 1,
+                        height: 1,
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
         ],

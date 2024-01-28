@@ -115,19 +115,17 @@ class VTService {
       required String parentId,
       required String name}) async {
     try {
-      var response = await _dio.fetch(
-        RequestOptions(
-          method: "POST",
+      var response = await _dio.post(
+        "$_url/$_tours/$tourId/$_scenes",
+        options: Options(
           headers: {
             HttpHeaders.contentTypeHeader: ContentType.json.value,
           },
-          baseUrl: _url,
-          path: "/$_tours/$tourId/$_scenes",
-          data: PostSceneRequest(
-            parentId: parentId,
-            name: name,
-          ).toJson(),
         ),
+        data: PostSceneRequest(
+          parentId: parentId,
+          name: name,
+        ).toJson(),
       );
 
       var id = response.headers.value("location");
@@ -191,14 +189,12 @@ class VTService {
   Future<ServiceResponse<String?>> uploadScenePhoto(
     String tourId,
     String sceneId,
-    Stream<List<int>> photo,
-    int length,
+    Uint8List photo,
   ) {
-    return _uploadPhoto(
+    return _uploadPhotoFromBytes(
       "$_url/$_tours/$tourId/$_scenes/$sceneId/photo",
       sceneId,
       photo,
-      length,
     );
   }
 
@@ -332,12 +328,41 @@ class VTService {
   Future<ServiceResponse<String?>> uploadAreaPhoto(
       String tourId, String areaId, Stream<List<int>> photo, int length,
       {void Function(int count, int total)? progressCallback}) {
-    return _uploadPhoto(
+    return _uploadPhotoFromStream(
         "$_url/$_tours/$tourId/$_areas/$areaId/photos", areaId, photo, length,
         progressCallback: progressCallback);
   }
 
-  Future<ServiceResponse<String?>> _uploadPhoto(
+  Future<ServiceResponse<String?>> _uploadPhotoFromBytes(
+      String url, String filename, Uint8List bytes,
+      {void Function(int count, int total)? progressCallback}) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(
+          bytes,
+          filename: filename,
+        ),
+      });
+
+      var response = await _dio.post(
+        url,
+        data: formData,
+        onSendProgress: (int sent, int total) {
+          progressCallback?.call(sent, total);
+        },
+      );
+
+      if (response.statusCode == StatusCode.CREATED) {
+        return ServiceResponse(data: response.headers.value("location"));
+      } else {
+        return ServiceResponse(data: null, error: ErrorType.unknown);
+      }
+    } on DioException catch (e) {
+      return _catchCommonErrors(e, null);
+    }
+  }
+
+  Future<ServiceResponse<String?>> _uploadPhotoFromStream(
       String url, String filename, Stream<List<int>> photo, int length,
       {void Function(int count, int total)? progressCallback}) async {
     try {

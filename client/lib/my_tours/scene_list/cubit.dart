@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:ccquarters/services/service_response.dart';
 import 'package:ccquarters/model/virtual_tours/area.dart';
@@ -23,14 +24,14 @@ class TourEditCubit extends Cubit<TourEditState> {
         await _service.postScene(tourId: _tour.id, parentId: "", name: name);
 
     if (serviceResponse.data != null) {
-      var url = await _uploadScenePhoto(
-          serviceResponse.data!, photo.readStream!, photo.size);
+      var url = await _uploadScenePhoto(serviceResponse.data!, photo.bytes!);
 
       var newScene = Scene(
-          name: name,
-          photo360Url: url,
-          id: serviceResponse.data!,
-          photo360: photo.bytes);
+        name: name,
+        photo360Url: url,
+        id: serviceResponse.data!,
+        photo360: photo.bytes,
+      );
       _tour.scenes.add(newScene);
 
       emit(
@@ -142,14 +143,12 @@ class TourEditCubit extends Cubit<TourEditState> {
 
   Future _uploadScenePhoto(
     String sceneId,
-    Stream<List<int>> photo,
-    int lenght,
+    Uint8List photo,
   ) async {
     await _service.uploadScenePhoto(
       _tour.id,
       sceneId,
       photo,
-      lenght,
     );
   }
 

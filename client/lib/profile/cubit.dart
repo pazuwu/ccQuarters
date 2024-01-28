@@ -22,9 +22,10 @@ class ProfilePageCubit extends Cubit<ProfilePageState> {
   HouseService houseService;
   late User user;
 
-  Future<void> setUser(String userId) async {
-    final response = await _getUser(userId);
+  Future<void> setUser(String? userId) async {
+    final response = userId != null ? await _getUser(userId) : null;
     if (response == null) {
+      user = User.empty();
       emit(ErrorState(
           message: "Nie udało się pobrać danych \nTwojego profilu.",
           tip:

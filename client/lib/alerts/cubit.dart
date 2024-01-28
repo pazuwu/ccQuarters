@@ -78,11 +78,18 @@ class AlertsPageCubit extends Cubit<AlertsState> {
   Future<bool> _updateAlert(Alert alert) async {
     final response = await alertService.updateAlert(alert);
     if (response.error != ErrorType.none) {
-      emit(AlertsMainPageState(
-        message:
-            "Nie udało się zaktualizować alertu. Spróbuj ponownie później.",
-        isSuccess: false,
-      ));
+      if (response.error == ErrorType.emptyRequest) {
+        emit(AlertsMainPageState(
+          message: "Nie można wysłać pustego alertu.",
+          isSuccess: false,
+        ));
+      } else {
+        emit(AlertsMainPageState(
+          message:
+              "Nie udało się zaktualizować alertu. Spróbuj ponownie później.",
+          isSuccess: false,
+        ));
+      }
       return false;
     }
     return true;

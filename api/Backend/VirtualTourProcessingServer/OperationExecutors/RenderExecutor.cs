@@ -31,7 +31,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
             var configPath = Path.Combine(configDirectory!, "config.yml");
 
             var nsCommand = "ns-render";
-            var arguments = $"camera-path --load-config {configPath} --camera-path-filename {cameraConfigPath} --output-format images --image-format png --output-path {outputPath}";
+            var arguments = $"camera-path --load-config {configPath} --camera-path-filename {cameraConfigPath} --output-format images --image-format jpeg --jpeg-quality 98 --output-path {outputPath}";
 
             var nsProcess = _processRunner.Start(nsCommand, arguments);
             _processRunner.ReadAllLogs(nsProcess, _logger);

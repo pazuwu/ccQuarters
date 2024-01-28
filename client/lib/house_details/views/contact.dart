@@ -53,29 +53,27 @@ class ContactWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (additionalWidget != null) additionalWidget!,
-            const SizedBox(height: 12),
-            const Text(
-              "Skontaktuj się z wystawiającym ogłoszenie!",
-              textScaler: TextScaler.linear(1.25),
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (additionalWidget != null) additionalWidget!,
+          const SizedBox(height: 12),
+          const Text(
+            "Skontaktuj się z wystawiającym ogłoszenie!",
+            textScaler: TextScaler.linear(1.25),
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 16),
-            Flexible(
-              child: _buildContactInfo(),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Flexible(
+            child: _buildContactInfo(),
+          ),
+        ],
       ),
     );
   }

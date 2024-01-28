@@ -14,7 +14,7 @@ namespace VirtualTourProcessingServer.UnitTests
     public class OperationRunnerTests
     {
         [TestMethod]
-        public void OperationRunnerRunsColmap()
+        public async Task OperationRunnerRunsColmap()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Colmap);
 
@@ -39,11 +39,13 @@ namespace VirtualTourProcessingServer.UnitTests
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
             Mock.Verify(mockedColmapExecutor, mockedTrainExecutor, mockedRenderExecutor, mockedMadiator);
         }
 
         [TestMethod]
-        public void OperationRunnerRunsTrain()
+        public async Task OperationRunnerRunsTrain()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Train);
 
@@ -67,11 +69,13 @@ namespace VirtualTourProcessingServer.UnitTests
 
             operationRunner.Run(colmapStageOperation);
 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
             Mock.Verify(mockedColmapExecutor, mockedTrainExecutor, mockedRenderExecutor, mockedMadiator);
         }
 
         [TestMethod]
-        public void OperationRunnerRunsRender()
+        public async Task OperationRunnerRunsRender()
         {
             var colmapStageOperation = OperationsFactory.CreateOperation(OperationStage.Render);
 
@@ -94,6 +98,8 @@ namespace VirtualTourProcessingServer.UnitTests
 
             operationRunner.TryRegister(colmapStageOperation).Should().Be(true);
             operationRunner.Run(colmapStageOperation);
+
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
             Mock.Verify(mockedColmapExecutor, mockedTrainExecutor, mockedRenderExecutor, mockedMadiator);
         }
