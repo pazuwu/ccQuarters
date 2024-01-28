@@ -34,9 +34,7 @@ namespace VirtualTourAPI.Services
 
             var areaDB = addedArea.ConvertTo<AreaDBO>();
 
-            return areaDB == null
-                ? null
-                : AreaMapper.Map(areaDB);
+            return AreaMapper.Map(areaDB);
         }
 
         public async Task<AreaPhotosInfoDTO> GetAreaPhotosInfo(string tourId, string areaId)

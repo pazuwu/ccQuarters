@@ -9,13 +9,19 @@ namespace VirtualTourAPI.Endpoints
     public static class SceneEndpoints
     {
         public static async Task<IResult> Post(string tourId, HttpContext context, NewSceneDTO newScene, 
-            ITourService tourService, ISceneService sceneService)
+            ITourService tourService, ISceneService sceneService, IAreaService areaService)
         {
             var identity = context.User.Identity as ClaimsIdentity;
             string? userId = identity?.GetUserId();
 
             if (userId == null || !await tourService.HasUserPermissionToModifyTour(tourId, userId))
                 Results.Unauthorized();
+
+            if(string.IsNullOrWhiteSpace(newScene.Name) && newScene.ParentId != null)
+            {
+                var relatedArea = await areaService.GetArea(tourId, newScene.ParentId!);
+                newScene.Name = relatedArea?.Name ?? newScene.Name;
+            }
 
             var createdSceneId = await sceneService.CreateScene(tourId, newScene);
 

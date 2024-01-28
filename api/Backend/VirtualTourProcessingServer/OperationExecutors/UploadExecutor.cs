@@ -26,7 +26,7 @@ namespace VirtualTourProcessingServer.OperationExecutors
                     {
                         TourId = parameters.Operation.TourId,
                         ParentId = parameters.Operation.AreaId,
-                        Name = "50 photos",
+                        Name = string.Empty,
                     };
 
                     var result = await _vtClient.Service.CreateScene(createSceneParameters);
