@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ccquarters/common/images/asset_image.dart';
 import 'package:ccquarters/common/messages/error_message.dart';
 import 'package:ccquarters/common/images/image.dart';
@@ -60,7 +62,9 @@ class _PhotosGridState extends State<PhotosGrid> {
           title: "W tej zakładce nie masz\n jeszcze żadnych ogłoszeń",
           imageWidget: Icon(
             Icons.home,
-            size: MediaQuery.of(context).size.width * 0.25,
+            size: min(MediaQuery.of(context).size.height,
+                    MediaQuery.of(context).size.width) *
+                0.25,
             color: Theme.of(context).primaryColor,
           ),
           adjustToLandscape: true,
