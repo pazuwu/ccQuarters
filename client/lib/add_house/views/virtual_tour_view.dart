@@ -113,7 +113,8 @@ class _VirtualTourFormViewState extends State<VirtualTourFormView> {
               titleBuilder: (value) => Text(value.name),
               searchBoxHintText: "Wyszukaj wirtualny spacer",
               filter: (values, query) => values
-                  .where((v) => v.name.contains(query.toLowerCase()))
+                  .where(
+                      (v) => v.name.toLowerCase().contains(query.toLowerCase()))
                   .toList(),
               validator: (value) => value == null && _usedVirtualTour != null
                   ? "Wybierz wirtualny spacer"
